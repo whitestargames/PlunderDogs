@@ -55,7 +55,7 @@ void UIWindowTest::HandleCollision(std::unique_ptr<Sprite> & sprite, std::unique
 	//sprite is the mouse cursor sprite
 	// collideWith is the tile
 	CollisionInfo info;
-	if (sprite->CheckCollision(*collideWith.get(), &info))
+	//if (sprite->CheckCollision(*collideWith.get(), &info)) //TODO: This line is the evil one 
 	{
 
 	}
