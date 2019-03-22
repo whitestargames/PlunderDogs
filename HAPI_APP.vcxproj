@@ -113,7 +113,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TIXML_USE_STL;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>HAPI_SPRITES;HAPI_SPRITES\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -156,7 +156,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TIXML_USE_STL;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>HAPI_SPRITES;HAPI_SPRITES\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -170,7 +170,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\BattleSystem.cpp" />
+    <ClCompile Include="src\entity.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Map.cpp" />
+    <ClCompile Include="src\OverworldUI.cpp" />
+    <ClCompile Include="src\Pathfinding.cpp" />
+    <ClCompile Include="src\UIClass.cpp" />
+    <ClCompile Include="src\Utilities\Base64.cpp" />
+    <ClCompile Include="src\Utilities\MapParser.cpp" />
+    <ClCompile Include="src\Utilities\tinyxml.cpp" />
+    <ClCompile Include="src\Utilities\tinyxmlerror.cpp" />
+    <ClCompile Include="src\Utilities\tinyxmlparser.cpp" />
+    <ClCompile Include="src\Utilities\Utilities.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\BattleSystem.h" />
+    <ClInclude Include="src\entity.h" />
+    <ClInclude Include="src\Global.h" />
+    <ClInclude Include="src\Map.h" />
+    <ClInclude Include="src\OverworldUI.h" />
+    <ClInclude Include="src\Pathfinding.h" />
+    <ClInclude Include="src\UIClass.h" />
+    <ClInclude Include="src\Utilities\Base64.h" />
+    <ClInclude Include="src\Utilities\MapParser.h" />
+    <ClInclude Include="src\Utilities\tinyxml.h" />
+    <ClInclude Include="src\Utilities\Utilities.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
