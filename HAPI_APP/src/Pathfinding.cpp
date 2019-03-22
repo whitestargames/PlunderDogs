@@ -62,8 +62,7 @@ void Pathfinding::tracePath(const std::vector<std::vector<cell> >& cellDetails, 
 
 void Pathfinding::aStarSearch(Map &map, Pair src, Pair dest)
 {
-	const std::vector<Tile> grid = *map.getMap();
-	m_size = grid.size()/2;
+	m_size = (map.getDimensions().first * map.getDimensions().second) /2;
 	if (!isValid(dest.first, dest.second))
 	{
 		std::cout << "Destination is invalid" << std::endl;
@@ -176,8 +175,7 @@ void Pathfinding::aStarSearch(Map &map, Pair src, Pair dest)
 
 void Pathfinding::findAvailableTiles(Pair src, Map &map, int depth)
 {
-	const std::vector<Tile> grid = *map.getMap();
-	m_size = grid.size()/2;
+	m_size = (map.getDimensions().first * map.getDimensions().second) / 2;
 	int currentDepth = 0;
 	int i;
 	int j;

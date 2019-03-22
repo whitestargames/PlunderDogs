@@ -10,7 +10,6 @@ class Entity;
 
 struct Tile
 {
-	//Weak_ptr
 	enum eTileType m_type;
 	Entity* m_entityOnTile;
 	std::unique_ptr<HAPISPACE::Sprite> m_sprite;
@@ -57,7 +56,7 @@ private:
 public:
 	//Returns a pointer to a given tile, returns nullptr if there is no tile there
 	Tile *getTile(std::pair<int, int> coordinate);
-	//An n = 1 version of getTileRadius for use in pathfinding, returns nullptr for 
+	//An n = 1 version of getTileRadius for use in pathfinding, returns nullptr for each tile out of bounds
 	std::vector<Tile*> getAdjacentTiles(std::pair<int, int> coord);
 	//TODO:Returns tiles in a radius around a given tile, skipping the tile itself
 	std::vector<Tile*> getTileRadius(std::pair<int, int> coord, int range);
@@ -85,9 +84,6 @@ public:
 
 	eDirection getWindDirection() const { return m_windDirection; }
 	void setWindDirection(eDirection direction) { m_windDirection = direction; }
-	
-	//TODO: remove later
-	std::vector<Tile>* getMap() { return &m_data; }
 
 	//TODO: Get constructor working. Need tiled parser or load from xml set up
 	Map(std::pair<int, int> size, const std::vector<std::vector<int>>& tileData);

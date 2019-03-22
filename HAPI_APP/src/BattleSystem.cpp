@@ -21,14 +21,11 @@ BattleSystem::BattleSystem() :
 	m_entities.push_back(std::pair<Entity*, std::pair<int, int> >(testShip, std::pair<int, int>(4, 4)));
 	m_entities.push_back(std::pair<Entity*, std::pair<int, int> >(testShip2, std::pair<int, int>(5, 5)));
 
-
 	for (auto i : m_entities)
 	{
 		m_map.insertEntity(i.first, i.second);
 	}
-	
 }
-
 
 BattleSystem::~BattleSystem()
 {
@@ -48,42 +45,41 @@ void BattleSystem::update()
 	m_map.drawMap();
 	UIWind.Update();
 	
-
-
-	for (int i = 0; i < m_map.getMap()->size(); i++) // temp these 2 vectors not gonna be public had to get test working 
+	for (int y = 0; y < m_map.getDimensions().second; y++) //Iterating through the whole map 
 	{
-		int y = i / m_map.getDimensions().first;
-		UIWind.HandleCollision(UIWind.storage[0], m_map.getTile(std::pair<int, int>(i, y))->m_sprite);
-		tempTileLocation = std::pair<float, float>(m_map.getMap()->data()[i].m_sprite->GetTransformComp().GetPosition().x, 
-			m_map.getMap()->data()[i].m_sprite->GetTransformComp().GetPosition().y);
-		
-		if (tempTileLocation == UIWind.tilePos)
+		for (int x = 0; x < m_map.getDimensions().first; x++)
 		{
-				coord = m_map.getMap()->data()[i].m_tileCoordinate;
-		}
-			
-		for (int j = 0; j < m_entities.size(); j++)
-		{
-			if (m_entities[j].second == coord)
+			std::pair<int, int> currentTile = std::pair<int, int>(x, y);
+			UIWind.HandleCollision(UIWind.storage[0], m_map.getTile(currentTile)->m_sprite);
+			tempTileLocation = std::pair<float, float>(m_map.getTile(currentTile)->m_sprite->GetTransformComp().GetPosition().x,
+				m_map.getTile(currentTile)->m_sprite->GetTransformComp().GetPosition().y);
+
+			if (tempTileLocation == UIWind.tilePos)
 			{
-				entityPositionInVector = j;
+				coord = m_map.getTile(currentTile)->m_tileCoordinate;
+			}
+
+			for (int j = 0; j < m_entities.size(); j++)
+			{
+				if (m_entities[j].second == coord)
+				{
+					entityPositionInVector = j;
+				}
+			}
+
+			if (m_map.moveEntity(std::pair<int, int>(m_entities[entityPositionInVector].second), coord))
+			{
+				m_entities[entityPositionInVector].second = coord;
+			}
+
+			if (m_map.getTile(currentTile)->m_entityOnTile) //This is a horrible way to do this, use m_map.getTilePos() to iterate through the array instead. Also it should've been commented. - Tristan
+			{
+				HAPISPACE::VectorF tempVec{ m_map.getTile(currentTile)->m_sprite->GetTransformComp().GetPosition().x + 30, m_map.getTile(currentTile)->m_sprite->GetTransformComp().GetPosition().y + 40 };
+				m_map.getTile(currentTile)->m_entityOnTile->getSprite().GetTransformComp().SetPosition(tempVec);
+				m_map.getTile(currentTile)->m_entityOnTile->render();
 			}
 		}
-			
-		if (m_map.moveEntity(std::pair<int, int>(m_entities[entityPositionInVector].second), coord))
-		{
-			m_entities[entityPositionInVector].second = coord;
-		}
-
-		if (m_map.getMap()->data()[i].m_entityOnTile != nullptr)
-		{
-			HAPISPACE::VectorF tempVec{ m_map.getMap()->data()[i].m_sprite->GetTransformComp().GetPosition().x + 30, m_map.getMap()->data()[i].m_sprite->GetTransformComp().GetPosition().y + 40 };
-			m_map.getMap()->data()[i].m_entityOnTile->getSprite().GetTransformComp().SetPosition(tempVec);
-			m_map.getMap()->data()[i].m_entityOnTile->render();
-		}
-			
 	}
-	
 }
 
 void BattleSystem::run()
