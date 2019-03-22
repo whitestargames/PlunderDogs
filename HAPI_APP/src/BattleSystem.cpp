@@ -27,7 +27,6 @@ BattleSystem::BattleSystem() :
 		m_map.insertEntity(i.first, i.second);
 	}
 	
-	
 }
 
 

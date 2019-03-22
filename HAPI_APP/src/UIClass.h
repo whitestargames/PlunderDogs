@@ -50,5 +50,5 @@ public:
 	void Update();
 	int mouseX, mouseY;
 	std::pair<float,float> tilePos;// this is to get center of sprite
-	std::vector<std::unique_ptr <Sprite>>storage;
+	std::vector<std::unique_ptr<Sprite>>storage;
 };

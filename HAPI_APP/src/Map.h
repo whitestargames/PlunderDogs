@@ -10,6 +10,7 @@ class Entity;
 
 struct Tile
 {
+	//Weak_ptr
 	enum eTileType m_type;
 	Entity* m_entityOnTile;
 	std::unique_ptr<HAPISPACE::Sprite> m_sprite;

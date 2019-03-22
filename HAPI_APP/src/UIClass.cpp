@@ -56,9 +56,9 @@ void UIWindowTest::HandleCollision(std::unique_ptr<Sprite> & sprite, std::unique
 	// collideWith is the tile
 	CollisionInfo info;
 	//if (sprite->CheckCollision(*collideWith.get(), &info)) //TODO: This line is the evil one 
-	{
+	//{
 
-	}
+	//}
 
 	//	CheckCollision(collideWith, &info) && trigger == true)
 	//{

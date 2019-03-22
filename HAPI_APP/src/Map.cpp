@@ -118,6 +118,8 @@ Tile* Map::getTile(std::pair<int, int> coordinate)
 	return nullptr;
 }
 
+//getAdjacentTiles.getSize() == incorrect
+//Refernce Wrapper
 std::vector<Tile*> Map::getAdjacentTiles(std::pair<int, int> coord)
 {
 	std::vector<Tile*> result;
