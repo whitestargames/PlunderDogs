@@ -7,10 +7,10 @@
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
 
-class OverworldUIWIndowTest : public IHapiSpritesInputListener
+class OverWorldUI : public IHapiSpritesInputListener
 {
 public:
-	OverworldUIWIndowTest();
+	OverWorldUI();
 
 	void Update();
 	void Run();

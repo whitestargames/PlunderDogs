@@ -7,7 +7,7 @@ void HAPI_Sprites_Main()
 	if (!HAPI_Sprites.Initialise(windowSize.first, windowSize.second, "Plunder Dogs", eHSEnableUI))//it lies
 		return;
 
-	OverworldUIWIndowTest OverworldUIWIndowTest;
+	OverWorldUI OverworldUIWIndowTest;
 	HAPI_Sprites.SetShowFPS(true);
 
 	OverworldUIWIndowTest.Run();

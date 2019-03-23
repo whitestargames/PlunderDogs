@@ -2,7 +2,7 @@
 #include "Battle.h"
 #include "Utilities/Utilities.h"
 
-OverworldUIWIndowTest::OverworldUIWIndowTest()
+OverWorldUI::OverWorldUI()
 	: m_battleMapBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "TempBattleMapBackground.png")),
 	m_enemyTerritoryHexSheet(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "EnemyTerritoryHexSheet.png", 2)),
 	m_prebattleUIBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PrebattleUI.png")),
@@ -18,7 +18,7 @@ OverworldUIWIndowTest::OverworldUIWIndowTest()
 	m_backButton->GetTransformComp().SetPosition({ 185, 747 });
 }
 
-void OverworldUIWIndowTest::Update()
+void OverWorldUI::Update()
 {
 	SCREEN_SURFACE->Clear();
 
@@ -37,7 +37,7 @@ void OverworldUIWIndowTest::Update()
 	}
 }
 
-void OverworldUIWIndowTest::Run()
+void OverWorldUI::Run()
 {
 	while (HAPI_Sprites.Update())
 	{
@@ -45,7 +45,7 @@ void OverworldUIWIndowTest::Run()
 	}
 }
 
-void OverworldUIWIndowTest::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData)
+void OverWorldUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData)
 {
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
@@ -74,7 +74,7 @@ void OverworldUIWIndowTest::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMou
 	}
 }
 
-void OverworldUIWIndowTest::OnMouseMove(const HAPI_TMouseData& mouseData)
+void OverWorldUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 {
 	if (m_testBattleMapWindow && !m_testPrebattleWindow)//the battle map is active in the background of the prebattle so we need both checks
 	{
