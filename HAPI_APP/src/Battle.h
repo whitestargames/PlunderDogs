@@ -4,21 +4,21 @@
 #include <vector>
 #include <utility>
 #include "Map.h"
-#include "UIClass.h"
+#include "BattleUI.h"
 #include "entity.h"
 
-class BattleSystem
+class Battle
 {
 private:
 	std::vector<std::pair<Entity, std::pair<int, int> > > m_entities;
 	Map m_map;
-	UIWindowTest UIWind;
+	BattleUI UIWind;
 	std::pair<int, int> coord;
 	
 	void update();
 	void render();
 	
 public:
-	BattleSystem();
+	Battle();
 	void run();
 };

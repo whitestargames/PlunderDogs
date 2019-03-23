@@ -7,7 +7,7 @@
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
 
-class OverworldUIWIndowTest : public IHapiSpritesInputListener, public IHapiSpritesUIListener
+class OverworldUIWIndowTest : public IHapiSpritesInputListener
 {
 public:
 	OverworldUIWIndowTest();
@@ -17,7 +17,6 @@ public:
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
-	void UI_RadioButtonChangeState(UIWindow& window, const std::string& buttonName, bool pressed, int* userId) override final {}
 
 private:
 	std::unique_ptr<Sprite> m_battleMapBackground;

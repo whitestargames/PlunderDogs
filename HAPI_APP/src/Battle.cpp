@@ -1,11 +1,11 @@
-#include "BattleSystem.h"
+#include "Battle.h"
 #include "Utilities/MapParser.h"
 #include "Utilities/Utilities.h"
 #include "entity.h"
 
 using namespace HAPISPACE;
 
-BattleSystem::BattleSystem() : 
+Battle::Battle() : 
 	m_entities(),
 	m_map(MapParser::parseMap(Utilities::getDataDirectory() + "Level1.tmx")),
 	UIWind(),
@@ -22,7 +22,7 @@ BattleSystem::BattleSystem() :
 	}
 }
 
-void BattleSystem::run()
+void Battle::run()
 {
 	while (HAPI_Sprites.Update()) 
 	{
@@ -31,7 +31,7 @@ void BattleSystem::run()
 	}
 }
 
-void BattleSystem::render()
+void Battle::render()
 {
 	SCREEN_SURFACE->Clear();
 
@@ -39,7 +39,7 @@ void BattleSystem::render()
 	UIWind.Update();
 }
 
-void BattleSystem::update()
+void Battle::update()
 {
 	std::pair<float,float> tempTileLocation;
 	int entityPositionInVector = 0;

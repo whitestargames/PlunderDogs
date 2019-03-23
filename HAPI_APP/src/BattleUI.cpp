@@ -1,7 +1,7 @@
-#include "UIClass.h"
+#include "BattleUI.h"
 #include "Utilities/Utilities.h"
 
-UIWindowTest::UIWindowTest()
+BattleUI::BattleUI()
 	: m_mouseX(0),
 	m_mouseY(0),
 	m_mouseCursor(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + "mouseCrossHair.xml"))
@@ -9,7 +9,7 @@ UIWindowTest::UIWindowTest()
 	m_mouseCursor->GetColliderComp().EnablePixelPerfectCollisions(true);
 }
 
-void UIWindowTest::OnMouseMove(const HAPI_TMouseData& mouseData)
+void BattleUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 {
 	m_mouseX = mouseData.x;
 	m_mouseY = mouseData.y;
@@ -17,7 +17,7 @@ void UIWindowTest::OnMouseMove(const HAPI_TMouseData& mouseData)
 	HandleCollision(m_mouseCursor, m_mouseCursor);
 }
 
-void UIWindowTest::HandleCollision(std::unique_ptr<Sprite> & sprite, std::unique_ptr<Sprite> & collideWith)
+void BattleUI::HandleCollision(std::unique_ptr<Sprite> & sprite, std::unique_ptr<Sprite> & collideWith)
 {
 	//sprite is the mouse cursor sprite
 	// collideWith is the tile
@@ -34,7 +34,7 @@ void UIWindowTest::HandleCollision(std::unique_ptr<Sprite> & sprite, std::unique
 	//}
 }
 
-void UIWindowTest::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData)
+void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData)
 {
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
@@ -43,7 +43,7 @@ void UIWindowTest::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& m
 	}
 }
 
-void UIWindowTest::Update()
+void BattleUI::Update()
 {
 	HAPI_Sprites.SetShowCursor(false);
 	m_mouseCursor->GetTransformComp().SetPosition({ (float)m_mouseX - 5,(float)m_mouseY - 5 });//this is the mouse cursor

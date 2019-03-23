@@ -1,5 +1,5 @@
 #include  "OverworldUI.h"
-#include "BattleSystem.h"
+#include "Battle.h"
 #include "Utilities/Utilities.h"
 
 OverworldUIWIndowTest::OverworldUIWIndowTest()
@@ -61,7 +61,7 @@ void OverworldUIWIndowTest::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMou
 		{
 			if (m_playButton->GetSpritesheet()->GetFrameRect(0).Translated(m_playButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
-				BattleSystem world;
+				Battle world;
 				UI.CloseWindow("testWindow");
 				world.run();
 			}

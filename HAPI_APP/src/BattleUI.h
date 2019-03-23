@@ -4,14 +4,14 @@
 using namespace HAPISPACE;
 using namespace HAPI_UI_SPACE;
 
-class UIWindowTest :public IHapiSpritesInputListener
+class BattleUI :public IHapiSpritesInputListener
 {
 private:
 	int m_mouseX;
 	int	m_mouseY;
 
 public:
-	UIWindowTest();
+	BattleUI();
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
