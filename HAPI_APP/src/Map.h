@@ -6,7 +6,7 @@
 #include <HAPISprites_UI.h>
 #include "global.h"
 
-class Entity;
+struct Entity;
 
 struct Tile
 {

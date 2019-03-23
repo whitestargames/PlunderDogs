@@ -7,10 +7,7 @@ void HAPI_Sprites_Main()
 	if (!HAPI_Sprites.Initialise(windowSize.first, windowSize.second, "test Demo ", eHSEnableUI))//it lies
 		return;
 
-	OverworldUIWIndowTest OverworldUIWIndowTest({ windowSize.first, windowSize.second });
-	if (!OverworldUIWIndowTest.Initialise())
-		return;
-
+	OverworldUIWIndowTest OverworldUIWIndowTest;
 	HAPI_Sprites.SetShowFPS(true);
 
 	OverworldUIWIndowTest.Run();

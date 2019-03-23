@@ -16,19 +16,16 @@ BattleSystem::BattleSystem() :
 	UIWind(),
 	coord(std::pair<int, int>(0, 0))
 {
-
 	m_entities.emplace_back(std::pair<Entity, 
 		std::pair<int, int>>((Utilities::getDataDirectory() + "mouseCrossHair.xml"), std::pair<int, int>(4, 4)));
 	m_entities.emplace_back(std::pair<Entity, 
 		std::pair<int, int>>((Utilities::getDataDirectory() + "thingy.xml"), std::pair<int, int>(5, 5)));
 	
-
 	for (auto& i : m_entities)
 	{
 		m_map.insertEntity(i.first, i.second);
 	}
 }
-
 
 void BattleSystem::run()
 {
@@ -83,8 +80,8 @@ void BattleSystem::update()
 			if (m_map.getTile(currentTile)->m_entityOnTile) //This is a horrible way to do this, use m_map.getTilePos() to iterate through the array instead. Also it should've been commented. - Tristan
 			{
 				HAPISPACE::VectorF tempVec{ m_map.getTile(currentTile)->m_sprite->GetTransformComp().GetPosition().x + 30, m_map.getTile(currentTile)->m_sprite->GetTransformComp().GetPosition().y + 40 };
-				m_map.getTile(currentTile)->m_entityOnTile->getSprite().GetTransformComp().SetPosition(tempVec);
-				m_map.getTile(currentTile)->m_entityOnTile->render();
+				m_map.getTile(currentTile)->m_entityOnTile->m_sprite->GetTransformComp().SetPosition(tempVec);
+				m_map.getTile(currentTile)->m_entityOnTile->m_sprite->Render(SCREEN_SURFACE);
 			}
 		}
 

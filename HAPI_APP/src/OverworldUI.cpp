@@ -1,44 +1,39 @@
 #include  "OverworldUI.h"
+#include "BattleSystem.h"
+#include "Utilities/Utilities.h"
 
-
-bool OverworldUIWIndowTest::Initialise()
+OverworldUIWIndowTest::OverworldUIWIndowTest()
+	: m_battleMapBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "TempBattleMapBackground.png")),
+	m_enemyTerritoryHexSheet(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "EnemyTerritoryHexSheet.png", 2)),
+	m_prebattleUIBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PrebattleUI.png")),
+	m_playButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PrebattleUIPlayButton.png", 2)),
+	m_backButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PrebattleUIBackButton.png", 2)),
+	m_testBattleMapWindow(false),
+	m_testPrebattleWindow(false)
 {
-	testBattleMapWindow = true;
-	
-	EnemyTerritoryHexSheet->GetTransformComp().SetPosition({ 100, 600 });
-	PlayButton->GetTransformComp().SetPosition({ 1150, 722 });
-	BackButton->GetTransformComp().SetPosition({ 185, 747 });
+	m_testBattleMapWindow = true;
 
-	//UI.AddWindow("testWindow", HAPISPACE::RectangleI(220, 1050, 510, 710));
-	//for (int i = 0; i < m_entityVector.size(); i++)
-	//{
-	//	UI.GetWindow("testWindow")->AddCanvas("entity" + std::to_string(i), HAPISPACE::RectangleI(50 * i, (50 * i) + 50, 0, 100), m_entityVector[i].getSpritePtr());
-	//}
-
-	return true;
+	m_enemyTerritoryHexSheet->GetTransformComp().SetPosition({ 100, 600 });
+	m_playButton->GetTransformComp().SetPosition({ 1150, 722 });
+	m_backButton->GetTransformComp().SetPosition({ 185, 747 });
 }
 
 void OverworldUIWIndowTest::Update()
 {
 	SCREEN_SURFACE->Clear();
 
-	BattleMapBackground->Render(SCREEN_SURFACE);
-	EnemyTerritoryHexSheet->Render(SCREEN_SURFACE);
+	m_battleMapBackground->Render(SCREEN_SURFACE);
+	m_enemyTerritoryHexSheet->Render(SCREEN_SURFACE);
 
-	if (EnemyTerritoryHexSheet->GetFrameNumber() == 0)//only shows the difficulty number of the hex if the mouse isn't hovered over it
+	if (m_testPrebattleWindow)
 	{
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(EnemyTerritoryHexSheet->GetTransformComp().GetPosition().x + EnemyTerritoryHexSheet->GetCurrentFrame().rect.right / 2.5, EnemyTerritoryHexSheet->GetTransformComp().GetPosition().y + EnemyTerritoryHexSheet->GetCurrentFrame().rect.bottom / 4), difficultyColour, std::to_string(testHexDifficulty), 90);
-	}
-
-	if (testPrebattleWindow)
-	{
-		PrebattleUIBackground->Render(SCREEN_SURFACE);
+		m_prebattleUIBackground->Render(SCREEN_SURFACE);
 		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 270), HAPISPACE::Colour255::BLACK, "45/55", 50);
 		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 355), HAPISPACE::Colour255::BLACK, "3", 50);
 		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 445), HAPISPACE::Colour255::BLACK, "4", 50);
 		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 535), HAPISPACE::Colour255::BLACK, "5", 50);
-		PlayButton->Render(SCREEN_SURFACE);
-		BackButton->Render(SCREEN_SURFACE);
+		m_playButton->Render(SCREEN_SURFACE);
+		m_backButton->Render(SCREEN_SURFACE);
 	}
 }
 
@@ -54,25 +49,25 @@ void OverworldUIWIndowTest::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMou
 {
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
-		if (testBattleMapWindow && !testPrebattleWindow)
+		if (m_testBattleMapWindow && !m_testPrebattleWindow)
 		{
-			if (EnemyTerritoryHexSheet->GetSpritesheet()->GetFrameRect(0).Translated(EnemyTerritoryHexSheet->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			if (m_enemyTerritoryHexSheet->GetSpritesheet()->GetFrameRect(0).Translated(m_enemyTerritoryHexSheet->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
-				testPrebattleWindow = true;
+				m_testPrebattleWindow = true;
 				UI.OpenWindow("testWindow");
 			}
 		}
-		else if (testPrebattleWindow)
+		else if (m_testPrebattleWindow)
 		{
-			if (PlayButton->GetSpritesheet()->GetFrameRect(0).Translated(PlayButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			if (m_playButton->GetSpritesheet()->GetFrameRect(0).Translated(m_playButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				BattleSystem world;
 				UI.CloseWindow("testWindow");
 				world.run();
 			}
-			else if (BackButton->GetSpritesheet()->GetFrameRect(0).Translated(BackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			else if (m_backButton->GetSpritesheet()->GetFrameRect(0).Translated(m_backButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
-				testPrebattleWindow = false;
+				m_testPrebattleWindow = false;
 				UI.CloseWindow("testWindow");
 			}
 		}
@@ -81,35 +76,35 @@ void OverworldUIWIndowTest::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMou
 
 void OverworldUIWIndowTest::OnMouseMove(const HAPI_TMouseData& mouseData)
 {
-	if (testBattleMapWindow && !testPrebattleWindow)//the battle map is active in the background of the prebattle so we need both checks
+	if (m_testBattleMapWindow && !m_testPrebattleWindow)//the battle map is active in the background of the prebattle so we need both checks
 	{
-		if (EnemyTerritoryHexSheet->GetSpritesheet()->GetFrameRect(0).Translated(EnemyTerritoryHexSheet->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//checks if mouse is over button
+		if (m_enemyTerritoryHexSheet->GetSpritesheet()->GetFrameRect(0).Translated(m_enemyTerritoryHexSheet->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//checks if mouse is over button
 		{
-			EnemyTerritoryHexSheet->SetFrameNumber(1);//changes the buttons sprite to hover sprite
+			m_enemyTerritoryHexSheet->SetFrameNumber(1);//changes the buttons sprite to hover sprite
 		}
-		else if (EnemyTerritoryHexSheet->GetFrameNumber() != 0)//if mouse is not over the button and the button has the hover sprite
+		else if (m_enemyTerritoryHexSheet->GetFrameNumber() != 0)//if mouse is not over the button and the button has the hover sprite
 		{
-			EnemyTerritoryHexSheet->SetFrameNumber(0);// sets it to the default sprite
+			m_enemyTerritoryHexSheet->SetFrameNumber(0);// sets it to the default sprite
 		}
 	}
-	else if (testPrebattleWindow)
+	else if (m_testPrebattleWindow)
 	{
-		if (PlayButton->GetSpritesheet()->GetFrameRect(0).Translated(PlayButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		if (m_playButton->GetSpritesheet()->GetFrameRect(0).Translated(m_playButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 		{
-			PlayButton->SetFrameNumber(1);
+			m_playButton->SetFrameNumber(1);
 		}
-		else if (PlayButton->GetFrameNumber() != 0)
+		else if (m_playButton->GetFrameNumber() != 0)
 		{
-			PlayButton->SetFrameNumber(0);
+			m_playButton->SetFrameNumber(0);
 		}
 
-		if (BackButton->GetSpritesheet()->GetFrameRect(0).Translated(BackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		if (m_backButton->GetSpritesheet()->GetFrameRect(0).Translated(m_backButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 		{
-			BackButton->SetFrameNumber(1);
+			m_backButton->SetFrameNumber(1);
 		}
-		else if (BackButton->GetFrameNumber() != 0)
+		else if (m_backButton->GetFrameNumber() != 0)
 		{
-			BackButton->SetFrameNumber(0);
+			m_backButton->SetFrameNumber(0);
 		}
 	}
 }
