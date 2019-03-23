@@ -19,6 +19,7 @@ public:
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
 	void HandleCollision(std::unique_ptr<Sprite>& sprite, std::unique_ptr<Sprite>& collideWith);
 	void Update();
+	void render();
 	
 	std::pair<float,float> m_tilePos;// this is to get center of sprite
 	std::unique_ptr<Sprite> m_mouseCursor;

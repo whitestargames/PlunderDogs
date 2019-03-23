@@ -12,8 +12,9 @@ class Battle
 private:
 	std::vector<std::pair<Entity, std::pair<int, int> > > m_entities;
 	Map m_map;
-	BattleUI UIWind;
+	BattleUI m_battleUI;
 	std::pair<int, int> coord;
+	int m_entityPositionInVector;
 	
 	void update();
 	void render();

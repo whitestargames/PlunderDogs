@@ -8,8 +8,9 @@ using namespace HAPISPACE;
 Battle::Battle() : 
 	m_entities(),
 	m_map(MapParser::parseMap(Utilities::getDataDirectory() + "Level1.tmx")),
-	UIWind(),
-	coord(std::pair<int, int>(0, 0))
+	m_battleUI(),
+	coord(std::pair<int, int>(0, 0)),
+	m_entityPositionInVector(0)
 {
 	m_entities.emplace_back(std::pair<Entity, 
 		std::pair<int, int>>((Utilities::getDataDirectory() + "mouseCrossHair.xml"), std::pair<int, int>(4, 4)));
@@ -26,8 +27,8 @@ void Battle::run()
 {
 	while (HAPI_Sprites.Update()) 
 	{
-		update();
 		render();
+		update();
 	}
 }
 
@@ -36,24 +37,24 @@ void Battle::render()
 	SCREEN_SURFACE->Clear();
 
 	m_map.drawMap();
-	UIWind.Update();
+	m_battleUI.render();
 }
 
 void Battle::update()
 {
+	m_battleUI.Update();
 	std::pair<float,float> tempTileLocation;
-	int entityPositionInVector = 0;
 
 	for (int y = 0; y < m_map.getDimensions().second; y++) //Iterating through the whole map 
 	{
 		for (int x = 0; x < m_map.getDimensions().first; x++)
 		{
 			std::pair<int, int> currentTile = std::pair<int, int>(x, y);
-			UIWind.HandleCollision(UIWind.m_mouseCursor, m_map.getTile(currentTile)->m_sprite);
+			m_battleUI.HandleCollision(m_battleUI.m_mouseCursor, m_map.getTile(currentTile)->m_sprite);
 			tempTileLocation = std::pair<float, float>(m_map.getTile(currentTile)->m_sprite->GetTransformComp().GetPosition().x,
 				m_map.getTile(currentTile)->m_sprite->GetTransformComp().GetPosition().y);
 
-			if (tempTileLocation == UIWind.m_tilePos)
+			if (tempTileLocation == m_battleUI.m_tilePos)
 			{
 				coord = m_map.getTile(currentTile)->m_tileCoordinate;
 			}
@@ -62,13 +63,13 @@ void Battle::update()
 			{
 				if (m_entities[j].second == coord)
 				{
-					entityPositionInVector = j;
+					m_entityPositionInVector = j;
 				}
 			}
 
-			if (m_map.moveEntity(std::pair<int, int>(m_entities[entityPositionInVector].second), coord))
+			if (m_map.moveEntity(std::pair<int, int>(m_entities[m_entityPositionInVector].second), coord))
 			{
-				m_entities[entityPositionInVector].second = coord;
+				m_entities[m_entityPositionInVector].second = coord;
 			}
 
 			if (m_map.getTile(currentTile)->m_entityOnTile) 
