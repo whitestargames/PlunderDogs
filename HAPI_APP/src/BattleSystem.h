@@ -10,7 +10,7 @@
 class BattleSystem
 {
 private:
-	std::vector<std::pair<Entity, std::pair<int, int>>> m_entities;
+	std::vector<std::pair<Entity, std::pair<int, int> > > m_entities;
 	Map m_map;
 	UIWindowTest UIWind;
 	std::pair<int, int> coord;
