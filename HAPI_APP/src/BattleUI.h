@@ -9,6 +9,7 @@ class BattleUI :public IHapiSpritesInputListener
 private:
 	int m_mouseX;
 	int	m_mouseY;
+	bool m_trigger;
 
 public:
 	BattleUI();

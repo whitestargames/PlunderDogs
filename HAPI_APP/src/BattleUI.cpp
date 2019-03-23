@@ -4,6 +4,7 @@
 BattleUI::BattleUI()
 	: m_mouseX(0),
 	m_mouseY(0),
+	m_trigger(false),
 	m_mouseCursor(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + "mouseCrossHair.xml"))
 {
 	m_mouseCursor->GetColliderComp().EnablePixelPerfectCollisions(true);
@@ -18,19 +19,14 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 }
 
 void BattleUI::HandleCollision(std::unique_ptr<Sprite> & sprite, std::unique_ptr<Sprite> & collideWith)
-{
-	//sprite is the mouse cursor sprite
-	// collideWith is the tile
+{/*
+	sprite is the mouse cursor sprite
+	 collideWith is the tile*/
 	CollisionInfo info;
-	//if (sprite->CheckCollision(*collideWith.get(), &info)) //TODO: This line is the evil one 
+	//if (sprite->CheckCollision(*collideWith.get(), &info) && m_trigger) //TODO: This line is the evil one 
 	//{
-	//}
-
-	//	CheckCollision(collideWith, &info) && trigger == true)
-	//{
-	//	//collideWith.AdvanceToNextFrame();
-	//	tilePos =  std::pair<float,float> (collideWith.GetTransformComp().GetPosition().x, collideWith.GetTransformComp().GetPosition().y);
-	//	trigger = false;
+	//	m_tilePos = std::pair<float, float>(collideWith->GetTransformComp().GetPosition().x, collideWith->GetTransformComp().GetPosition().y);
+	//	m_trigger = false;
 	//}
 }
 
@@ -40,6 +36,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouse
 	{
 		m_mouseX = mouseData.x;
 		m_mouseY = mouseData.y;
+		m_trigger = true;
 	}
 }
 

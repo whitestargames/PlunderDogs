@@ -7,7 +7,6 @@
 #include "global.h"
 
 struct Entity;
-
 struct Tile
 {
 	enum eTileType m_type;

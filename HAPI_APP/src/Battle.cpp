@@ -71,7 +71,7 @@ void Battle::update()
 				m_entities[entityPositionInVector].second = coord;
 			}
 
-			if (m_map.getTile(currentTile)->m_entityOnTile) //This is a horrible way to do this, use m_map.getTilePos() to iterate through the array instead. Also it should've been commented. - Tristan
+			if (m_map.getTile(currentTile)->m_entityOnTile) 
 			{
 				HAPISPACE::VectorF tempVec{ m_map.getTile(currentTile)->m_sprite->GetTransformComp().GetPosition().x + 30, m_map.getTile(currentTile)->m_sprite->GetTransformComp().GetPosition().y + 40 };
 				m_map.getTile(currentTile)->m_entityOnTile->m_sprite->GetTransformComp().SetPosition(tempVec);
