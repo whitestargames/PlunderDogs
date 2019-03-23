@@ -237,12 +237,12 @@ bool Map::moveEntity(std::pair<int, int> originalPos, std::pair<int, int> newPos
 	return true;
 }
 
-void Map::insertEntity(Entity * newEntity, std::pair<int, int> coord)
+void Map::insertEntity(Entity& newEntity, std::pair<int, int> coord)
 {
 	Tile* tile = getTile(coord);
 	if (tile && !tile->m_entityOnTile)
 	{
-		tile->m_entityOnTile = newEntity;
+		tile->m_entityOnTile = &newEntity;
 	}
 }
 

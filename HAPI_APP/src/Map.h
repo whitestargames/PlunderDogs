@@ -69,7 +69,7 @@ public:
 	//Moves an entitys position on the map, returns false if the position is already taken
 	bool moveEntity(std::pair<int, int> originalPos, std::pair<int, int> newPos);
 	//Places a new entity on the map (no check for duplicates yet so try to avoid creating multiples)
-	void insertEntity(Entity* newEntity, std::pair<int, int> coord);
+	void insertEntity(Entity& newEntity, std::pair<int, int> coord);
 
 	void drawMap() const;
 	std::pair<int, int> getDrawOffset() const { return m_drawOffset; }
@@ -92,4 +92,3 @@ public:
 	//TODO: Get constructor working. Need tiled parser or load from xml set up
 	Map(std::pair<int, int> size, const std::vector<std::vector<int>>& tileData);
 };
-

@@ -1,67 +1,19 @@
-#include "OverworldUI.h"
+#include  "OverworldUI.h"
 
-
-OverworldUI::OverworldUI()
-{
-}
-
-OverworldUI::~OverworldUI()
-{
-}
 
 bool OverworldUIWIndowTest::Initialise()
 {
-	//UI.AddWindow("testWindow", m_screenRect);
-	//UI.OpenWindow("testWindow");
-
 	testBattleMapWindow = true;
 	
 	EnemyTerritoryHexSheet->GetTransformComp().SetPosition({ 100, 600 });
 	PlayButton->GetTransformComp().SetPosition({ 1150, 722 });
 	BackButton->GetTransformComp().SetPosition({ 185, 747 });
 
-	if (playerFleetPower > testHexDifficulty)
-	{
-		difficultyColour = HAPISPACE::Colour255::GREEN;
-	}
-	else if (playerFleetPower + hard > testHexDifficulty)
-	{
-		difficultyColour = HAPISPACE::Colour255::YELLOW;
-	}
-	else
-	{
-		difficultyColour = HAPISPACE::Colour255::RED;
-	}
-
-	/*Entity newEntity("Data//thing.png");
-	newEntity.setTileLocation(HAPISPACE::VectorI(50, 50));
-	newEntity.setHealth(100);
-	newEntity.setMovementPoints(6);
-	weapon newWeapon;
-	newWeapon.damage = 10;
-	newWeapon.range = 5;
-	newWeapon.type = weaponType::eWeaponType1;
-	newEntity.addWeapon(newWeapon);
-	m_entityVector.push_back(newEntity);
-
-	Entity secondEntity("Data//HAPI Sprites Logo.png");
-	secondEntity.setTileLocation(HAPISPACE::VectorI(50, 100));
-	secondEntity.setHealth(600);
-	secondEntity.setMovementPoints(3);
-	secondEntity.addWeapon(newWeapon);
-	m_entityVector.push_back(secondEntity);*/
-
-	for (int i = 0; i < 20; i++)
-	{
-		Entity newEntity(Utilities::getDataDirectory() + "thingy.xml");
-		m_entityVector.push_back(newEntity);
-	}
-
-	UI.AddWindow("testWindow", HAPISPACE::RectangleI(220, 1050, 510, 710));
-	for (int i = 0; i < m_entityVector.size(); i++)
-	{
-		UI.GetWindow("testWindow")->AddCanvas("entity" + std::to_string(i), HAPISPACE::RectangleI(50 * i, (50 * i) + 50, 0, 100), m_entityVector[i].getSpritePtr());
-	}
+	//UI.AddWindow("testWindow", HAPISPACE::RectangleI(220, 1050, 510, 710));
+	//for (int i = 0; i < m_entityVector.size(); i++)
+	//{
+	//	UI.GetWindow("testWindow")->AddCanvas("entity" + std::to_string(i), HAPISPACE::RectangleI(50 * i, (50 * i) + 50, 0, 100), m_entityVector[i].getSpritePtr());
+	//}
 
 	return true;
 }
@@ -88,8 +40,6 @@ void OverworldUIWIndowTest::Update()
 		PlayButton->Render(SCREEN_SURFACE);
 		BackButton->Render(SCREEN_SURFACE);
 	}
-
-	//render current ship sprite 1200,300
 }
 
 void OverworldUIWIndowTest::Run()
@@ -162,38 +112,4 @@ void OverworldUIWIndowTest::OnMouseMove(const HAPI_TMouseData& mouseData)
 			BackButton->SetFrameNumber(0);
 		}
 	}
-}
-
-void OverworldUIWIndowTest::HandleCollision(Sprite & sprite, Sprite & collideWith)
-{
-
-}
-
-void OverworldUIWIndowTest::OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode)//leaving this in for testing
-{
-
-}
-
-/*
-	This function is called from the UI when a radio button in the window changes state (pressed or unpressed)
-	The userId is something that can be provided on creation but not used in this demo
-*/
-void OverworldUIWIndowTest::UI_RadioButtonChangeState(UIWindow& window, const std::string& buttonName, bool pressed, int* userId)//Leaving this in for now because might use it later. Not using it rn
-{
-	/*if (buttonName == "EnableCollisionInfo")
-	{
-		m_stickySprite->GetColliderComp().CalculateCollisionData(pressed);
-	}
-	if (buttonName == "EnablePixelPerfect")
-	{
-		m_stickySprite->GetColliderComp().EnablePixelPerfectCollisions(pressed);
-	}
-	if (buttonName == "ShowBounds")
-	{
-		m_showBounds = pressed;
-	}
-	if (buttonName == "ShowNormals")
-	{
-		m_showNormals = pressed;
-	}*/
 }

@@ -11,45 +11,43 @@
 using namespace HAPISPACE;
 
 BattleSystem::BattleSystem() : 
+	m_entities(),
 	m_map(MapParser::parseMap(Utilities::getDataDirectory() + "Level1.tmx")),
 	UIWind(),
-	entityPositionInVector(0),
 	coord(std::pair<int, int>(0, 0))
 {
-	Entity* testShip = new Entity(Utilities::getDataDirectory() + "mouseCrossHair.xml");
-	Entity* testShip2 = new Entity(Utilities::getDataDirectory() + "thingy.xml");
-	m_entities.push_back(std::pair<Entity*, std::pair<int, int> >(testShip, std::pair<int, int>(4, 4)));
-	m_entities.push_back(std::pair<Entity*, std::pair<int, int> >(testShip2, std::pair<int, int>(5, 5)));
-
-
-	for (auto i : m_entities)
+	m_entities.emplace_back(std::pair<Entity, 
+		std::pair<int, int>>((Utilities::getDataDirectory() + "mouseCrossHair.xml"), std::pair<int, int>(4, 4)));
+	m_entities.emplace_back(std::pair<Entity, 
+		std::pair<int, int>>((Utilities::getDataDirectory() + "thingy.xml"), std::pair<int, int>(5, 5)));
+	
+	for (auto& i : m_entities)
 	{
 		m_map.insertEntity(i.first, i.second);
 	}
-	
 }
 
-
-BattleSystem::~BattleSystem()
+void BattleSystem::run()
 {
-	for (auto it : m_entities)
+	while (HAPI_Sprites.Update()) 
 	{
-		delete it.first;
+		update();
+		render();
 	}
-	m_entities.clear();
+}
+
+void BattleSystem::render()
+{
+	SCREEN_SURFACE->Clear();
+
+	m_map.drawMap();
+	UIWind.Update();
 }
 
 void BattleSystem::update()
 {
 	std::pair<float,float> tempTileLocation;
-	
-	SCREEN_SURFACE->Clear();
-		
-	m_map.drawMap();
-	UIWind.Update();
-	
-
-
+	int entityPositionInVector = 0;
 	for (int i = 0; i < m_map.getMap()->size(); i++) // temp these 2 vectors not gonna be public had to get test working 
 	{
 		int y = i / m_map.getDimensions().first;
@@ -81,15 +79,5 @@ void BattleSystem::update()
 			m_map.getMap()->data()[i].m_entityOnTile->getSprite().GetTransformComp().SetPosition(tempVec);
 			m_map.getMap()->data()[i].m_entityOnTile->render();
 		}
-			
-	}
-	
-}
-
-void BattleSystem::run()
-{
-	while (HAPI_Sprites.Update()) //Why are there two while loops nested! (Here and one in update)
-	{
-		update();
 	}
 }

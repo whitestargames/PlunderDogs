@@ -81,7 +81,5 @@ public:
 	void setWeapon(weapon newWeapon, int weaponNumber);
 	void resetWeapons();
 	weapon getWeapon(int weaponNumber) const;
-
 };
-
 #endif
