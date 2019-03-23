@@ -2,11 +2,6 @@
 #include "Utilities/MapParser.h"
 #include "Utilities/Utilities.h"
 #include "entity.h"
-////////////////////////////////////////////////////////
-//move all code out of main into here
-// build stage to here to place an entity 
-//set move stage 
-///////////////////////////////////////////////////////
 
 using namespace HAPISPACE;
 
@@ -49,17 +44,16 @@ void BattleSystem::update()
 	std::pair<float,float> tempTileLocation;
 	int entityPositionInVector = 0;
 
-	
 	for (int y = 0; y < m_map.getDimensions().second; y++) //Iterating through the whole map 
 	{
 		for (int x = 0; x < m_map.getDimensions().first; x++)
 		{
 			std::pair<int, int> currentTile = std::pair<int, int>(x, y);
-			UIWind.HandleCollision(UIWind.storage[0], m_map.getTile(currentTile)->m_sprite);
+			UIWind.HandleCollision(UIWind.m_mouseCursor, m_map.getTile(currentTile)->m_sprite);
 			tempTileLocation = std::pair<float, float>(m_map.getTile(currentTile)->m_sprite->GetTransformComp().GetPosition().x,
 				m_map.getTile(currentTile)->m_sprite->GetTransformComp().GetPosition().y);
 
-			if (tempTileLocation == UIWind.tilePos)
+			if (tempTileLocation == UIWind.m_tilePos)
 			{
 				coord = m_map.getTile(currentTile)->m_tileCoordinate;
 			}
@@ -84,6 +78,5 @@ void BattleSystem::update()
 				m_map.getTile(currentTile)->m_entityOnTile->m_sprite->Render(SCREEN_SURFACE);
 			}
 		}
-
 	}
 }
