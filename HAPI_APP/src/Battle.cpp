@@ -2,6 +2,7 @@
 #include "Utilities/MapParser.h"
 #include "Utilities/Utilities.h"
 #include "entity.h"
+#include "Pathfinding.h"
 
 using namespace HAPISPACE;
 
@@ -9,12 +10,14 @@ Battle::Battle() :
 	m_entities(),
 	m_map(MapParser::parseMap(Utilities::getDataDirectory() + "Level1.tmx")),
 	m_entityOnPoint(),
-	m_entitySelected(false),
+	m_isEntitySelected(false),
 	m_mouseCursor(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + "mouseCrossHair.xml"))
 {
 	m_mouseCursor->GetColliderComp().EnablePixelPerfectCollisions(true);
 	addEntity("mouseCrossHair.xml", { 4, 4 });
 	addEntity("thingy.xml", { 5, 5 });
+
+	PathFinding::getPathToTile(m_map, { 5, 5 }, {7, 7});
 }
 
 void Battle::render() const
@@ -68,7 +71,7 @@ void Battle::handleEntityMovement()
 			}
 
 			//Move Selected Entity
-			if (m_entitySelected)
+			if (m_isEntitySelected)
 			{
 				moveEntity(*currentTile);
 				return;
@@ -88,17 +91,21 @@ void Battle::moveEntity(const Tile& tile)
 	//Already existing entity in requested new position
 	if (tile.m_entityOnTile || (tile.m_type != eTileType::eOcean && tile.m_type != eTileType::eSea))
 	{
-		m_entitySelected = false;
+		m_isEntitySelected = false;
 		m_entityOnPoint = {};
 		return;
 	}
 
-	auto& tileTransform = tile.m_sprite->GetTransformComp();
+	const auto& tileTransform = tile.m_sprite->GetTransformComp();
 	for (auto& entity : m_entities)
 	{
 		//Find entity to move
 		if (entity.second == m_entityOnPoint)
 		{
+			//Make sure new point is within movement bounds of the entity
+
+		
+
 			m_map.getTile({ entity.second })->m_entityOnTile = nullptr;
 
 			//Move Entity
@@ -107,7 +114,7 @@ void Battle::moveEntity(const Tile& tile)
 			entity.second = tile.m_tileCoordinate;
 			m_map.getTile({ entity.second })->m_entityOnTile = entity.first.get();
 			
-			m_entitySelected = false;
+			m_isEntitySelected = false;
 			m_entityOnPoint = {};
 			break;
 		}
@@ -122,7 +129,7 @@ void Battle::selectEntity(const Tile& tile)
 		if (entity.second == tile.m_tileCoordinate)
 		{
 			m_entityOnPoint = entity.second;
-			m_entitySelected = true;
+			m_isEntitySelected = true;
 			break;
 		}
 	}

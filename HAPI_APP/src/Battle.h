@@ -13,9 +13,9 @@ private:
 	std::vector<std::pair<std::unique_ptr<Entity>, std::pair<int, int>>> m_entities;
 	Map m_map;
 	std::pair<int, int> m_entityOnPoint;
-	bool m_entitySelected;
+	bool m_isEntitySelected;
 	std::unique_ptr<Sprite> m_mouseCursor;
-	
+
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
 	
