@@ -14,6 +14,7 @@ Battle::Battle() :
 {
 	m_mouseCursor->GetColliderComp().EnablePixelPerfectCollisions(true);
 	addEntity("mouseCrossHair.xml", { 4, 4 });
+	addEntity("thingy.xml", { 5, 5 });
 }
 
 void Battle::render() const
@@ -30,6 +31,7 @@ void Battle::addEntity(const std::string & fileName, std::pair<int, int> point)
 {
 	m_entities.emplace_back(std::pair<std::unique_ptr<Entity>, 
 		std::pair<int, int>>((std::make_unique<Entity>(Utilities::getDataDirectory() + fileName)), point));
+
 	std::pair<int, int> tileScreenPoint = m_map.getTileScreenPos(point);
 	m_entities.back().first->m_sprite->GetTransformComp().SetPosition({ (float)(tileScreenPoint.first + 30), (float)(tileScreenPoint.second + 40)});
 
@@ -83,21 +85,28 @@ void Battle::handleEntityMovement()
 
 void Battle::moveEntity(const Tile& tile)
 {
-	//No entity in new position
+	//Already existing entity in requested new position
 	if (tile.m_entityOnTile)
 	{
+		m_entitySelected = false;
+		m_entityOnPoint = {};
 		return;
 	}
 
 	auto& tileTransform = tile.m_sprite->GetTransformComp();
 	for (auto& entity : m_entities)
 	{
+		//Find entity to move
 		if (entity.second == m_entityOnPoint)
 		{
-			std::pair<int, int> screenPosition = m_map.getTileScreenPos(tile.m_tileCoordinate);
+			m_map.getTile({ entity.second })->m_entityOnTile = nullptr;
+
+			//Move Entity
 			entity.first->m_sprite->GetTransformComp().SetPosition({ (float)(tileTransform.GetPosition().x + 30),
 				(float)(tileTransform.GetPosition().y + 40) });
 			entity.second = tile.m_tileCoordinate;
+			m_map.getTile({ entity.second })->m_entityOnTile = entity.first.get();
+			
 			m_entitySelected = false;
 			m_entityOnPoint = {};
 			break;
@@ -109,6 +118,7 @@ void Battle::selectEntity(const Tile& tile)
 {
 	for (auto& entity : m_entities)
 	{
+		//Find entity that matches requested tile
 		if (entity.second == tile.m_tileCoordinate)
 		{
 			m_entityOnPoint = entity.second;
