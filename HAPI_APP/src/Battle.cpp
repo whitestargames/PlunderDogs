@@ -86,7 +86,7 @@ void Battle::handleEntityMovement()
 void Battle::moveEntity(const Tile& tile)
 {
 	//Already existing entity in requested new position
-	if (tile.m_entityOnTile || (tile.m_type != eTileType::eOcean && tile.m_type != eTileType::eSea))
+	if (tile.m_entityOnTile && (tile.m_type != eTileType::eOcean && tile.m_type != eTileType::eSea))
 	{
 		m_entitySelected = false;
 		m_entityOnPoint = {};
@@ -116,7 +116,7 @@ void Battle::moveEntity(const Tile& tile)
 
 void Battle::selectEntity(const Tile& tile)
 {
-	for (auto& entity : m_entities)
+	for (const auto& entity : m_entities)
 	{
 		//Find entity that matches requested tile
 		if (entity.second == tile.m_tileCoordinate)
