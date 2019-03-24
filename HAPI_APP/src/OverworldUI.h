@@ -26,4 +26,5 @@ private:
 	std::unique_ptr<Sprite> m_backButton;
 	bool m_testBattleMapWindow;
 	bool m_testPrebattleWindow;
+	bool m_battleSystem;
 };

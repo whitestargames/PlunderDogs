@@ -104,9 +104,8 @@ Tile* Map::getTile(std::pair<int, int> coordinate)
 		coordinate.second < m_mapDimensions.second &&
 		coordinate.first >= 0 &&
 		coordinate.second >= 0)
-	{
-		Tile *result = &m_data[coordinate.first + coordinate.second * m_mapDimensions.first];
-		return result;
+	{	 
+		return &m_data[coordinate.first + coordinate.second * m_mapDimensions.first];
 	}
 	/*
 	HAPI_Sprites.UserMessage(
@@ -239,7 +238,7 @@ bool Map::moveEntity(std::pair<int, int> originalPos, std::pair<int, int> newPos
 
 void Map::insertEntity(Entity& newEntity, std::pair<int, int> coord)
 {
-	Tile* tile = getTile(coord);
+	Tile* tile = getTile(coord);	
 	if (tile && !tile->m_entityOnTile)
 	{
 		tile->m_entityOnTile = &newEntity;

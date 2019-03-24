@@ -9,7 +9,8 @@ OverWorldUI::OverWorldUI()
 	m_playButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PrebattleUIPlayButton.png", 2)),
 	m_backButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PrebattleUIBackButton.png", 2)),
 	m_testBattleMapWindow(false),
-	m_testPrebattleWindow(false)
+	m_testPrebattleWindow(false),
+	m_battleSystem(false)
 {
 	m_testBattleMapWindow = true;
 
@@ -21,6 +22,12 @@ OverWorldUI::OverWorldUI()
 void OverWorldUI::Update()
 {
 	SCREEN_SURFACE->Clear();
+
+	if (m_battleSystem)
+	{
+		Battle battle;
+		battle.run();
+	}
 
 	m_battleMapBackground->Render(SCREEN_SURFACE);
 	m_enemyTerritoryHexSheet->Render(SCREEN_SURFACE);
@@ -61,9 +68,9 @@ void OverWorldUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mo
 		{
 			if (m_playButton->GetSpritesheet()->GetFrameRect(0).Translated(m_playButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
-				Battle world;
+				m_battleSystem = true;
+				
 				UI.CloseWindow("testWindow");
-				world.run();
 			}
 			else if (m_backButton->GetSpritesheet()->GetFrameRect(0).Translated(m_backButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
