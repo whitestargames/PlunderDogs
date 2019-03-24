@@ -1,4 +1,4 @@
-#include "OverworldUI.h"
+#include "Overworld.h"
 using namespace HAPISPACE;
 
 void HAPI_Sprites_Main()
@@ -7,7 +7,7 @@ void HAPI_Sprites_Main()
 	if (!HAPI_Sprites.Initialise(windowSize.first, windowSize.second, "Plunder Dogs", eHSEnableUI))//it lies
 		return;
 
-	OverWorldUI OverworldUIWIndowTest;
+	OverWorld OverworldUIWIndowTest;
 	HAPI_Sprites.SetShowFPS(true);
 
 	OverworldUIWIndowTest.Run();

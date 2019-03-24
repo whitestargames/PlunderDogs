@@ -1,8 +1,8 @@
-#include  "OverworldUI.h"
+#include  "Overworld.h"
 #include "Battle.h"
 #include "Utilities/Utilities.h"
 
-OverWorldUI::OverWorldUI()
+OverWorld::OverWorld()
 	: m_battleMapBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "TempBattleMapBackground.png")),
 	m_enemyTerritoryHexSheet(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "EnemyTerritoryHexSheet.png", 2)),
 	m_prebattleUIBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PrebattleUI.png")),
@@ -19,7 +19,7 @@ OverWorldUI::OverWorldUI()
 	m_backButton->GetTransformComp().SetPosition({ 185, 747 });
 }
 
-void OverWorldUI::Update()
+void OverWorld::Update()
 {
 	SCREEN_SURFACE->Clear();
 
@@ -44,7 +44,7 @@ void OverWorldUI::Update()
 	}
 }
 
-void OverWorldUI::Run()
+void OverWorld::Run()
 {
 	while (HAPI_Sprites.Update())
 	{
@@ -52,7 +52,7 @@ void OverWorldUI::Run()
 	}
 }
 
-void OverWorldUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData)
+void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData)
 {
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
@@ -81,7 +81,7 @@ void OverWorldUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mo
 	}
 }
 
-void OverWorldUI::OnMouseMove(const HAPI_TMouseData& mouseData)
+void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
 {
 	if (m_testBattleMapWindow && !m_testPrebattleWindow)//the battle map is active in the background of the prebattle so we need both checks
 	{

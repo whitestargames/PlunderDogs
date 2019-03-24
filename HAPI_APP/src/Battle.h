@@ -4,7 +4,6 @@
 #include <vector>
 #include <utility>
 #include "Map.h"
-#include "BattleUI.h"
 #include "entity.h"
 
 class Battle : public IHapiSpritesInputListener
