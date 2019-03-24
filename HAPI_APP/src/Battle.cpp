@@ -16,17 +16,8 @@ Battle::Battle() :
 	addEntity("mouseCrossHair.xml", { 4, 4 });
 }
 
-void Battle::run()
-{
-	while (HAPI_Sprites.Update()) 
-	{
-		render();
-	}
-}
-
 void Battle::render()
 {
-	SCREEN_SURFACE->Clear();
 	m_map.drawMap();
 	//Draw entities
 	for (const auto& entity : m_entities)
@@ -61,7 +52,7 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 	}
 }
 
-bool Battle::handleTileCollision(std::unique_ptr<Sprite>& tileSprite)
+bool Battle::collision(std::unique_ptr<Sprite>& tileSprite)
 {
 	return m_mouseCursor->CheckCollision(*tileSprite);
 }
@@ -75,7 +66,7 @@ void Battle::storeEntity()
 			Tile* currentTile = m_map.getTile({ x, y });
 			assert(currentTile);
 
-			if (!handleTileCollision(currentTile->m_sprite))
+			if (!collision(currentTile->m_sprite))
 			{
 				continue;
 			}
@@ -103,7 +94,7 @@ void Battle::moveEntity()
 			assert(currentTile);
 
 			// No Collision
-			if (!handleTileCollision(currentTile->m_sprite))
+			if (!collision(currentTile->m_sprite))
 			{
 				continue;
 			}

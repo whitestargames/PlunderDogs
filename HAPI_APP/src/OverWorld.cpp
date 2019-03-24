@@ -8,12 +8,8 @@ OverWorld::OverWorld()
 	m_prebattleUIBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PrebattleUI.png")),
 	m_playButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PrebattleUIPlayButton.png", 2)),
 	m_backButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PrebattleUIBackButton.png", 2)),
-	m_testBattleMapWindow(false),
-	m_testPrebattleWindow(false),
-	m_battleSystem(false)
+	m_currentWindow(OverWorldWindow::LevelSelection)
 {
-	m_testBattleMapWindow = true;
-
 	m_enemyTerritoryHexSheet->GetTransformComp().SetPosition({ 100, 600 });
 	m_playButton->GetTransformComp().SetPosition({ 1150, 722 });
 	m_backButton->GetTransformComp().SetPosition({ 185, 747 });
@@ -23,16 +19,9 @@ void OverWorld::render()
 {
 	SCREEN_SURFACE->Clear();
 
-	if (m_battleSystem)
+	switch (m_currentWindow)
 	{
-		Battle battle;
-		battle.run();
-	}
-
-	m_battleMapBackground->Render(SCREEN_SURFACE);
-	m_enemyTerritoryHexSheet->Render(SCREEN_SURFACE);
-
-	if (m_testPrebattleWindow)
+	case OverWorldWindow::PreBattle :
 	{
 		m_prebattleUIBackground->Render(SCREEN_SURFACE);
 		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 270), HAPISPACE::Colour255::BLACK, "45/55", 50);
@@ -41,14 +30,18 @@ void OverWorld::render()
 		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 535), HAPISPACE::Colour255::BLACK, "5", 50);
 		m_playButton->Render(SCREEN_SURFACE);
 		m_backButton->Render(SCREEN_SURFACE);
+		break;
 	}
-}
-
-void OverWorld::Run()
-{
-	while (HAPI_Sprites.Update())
+	case OverWorldWindow::Battle :
 	{
-		render();
+		m_battle.render();
+		break;
+	}
+	case OverWorldWindow::LevelSelection :
+	{
+		m_battleMapBackground->Render(SCREEN_SURFACE);
+		m_enemyTerritoryHexSheet->Render(SCREEN_SURFACE);
+	}
 	}
 }
 
@@ -56,34 +49,38 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 {
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
-		if (m_testBattleMapWindow && !m_testPrebattleWindow)
+		switch (m_currentWindow)
 		{
-			if (m_enemyTerritoryHexSheet->GetSpritesheet()->GetFrameRect(0).Translated(m_enemyTerritoryHexSheet->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		case OverWorldWindow::LevelSelection:
+		{
+			if (m_enemyTerritoryHexSheet->GetSpritesheet()->GetFrameRect(0).Translated(
+				m_enemyTerritoryHexSheet->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
-				m_testPrebattleWindow = true;
-				UI.OpenWindow("testWindow");
+				m_currentWindow = OverWorldWindow::PreBattle;
 			}
+			break;
 		}
-		else if (m_testPrebattleWindow)
+		case OverWorldWindow::PreBattle:
 		{
 			if (m_playButton->GetSpritesheet()->GetFrameRect(0).Translated(m_playButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
-				m_battleSystem = true;
-				
-				UI.CloseWindow("testWindow");
+				m_currentWindow = OverWorldWindow::Battle;
 			}
 			else if (m_backButton->GetSpritesheet()->GetFrameRect(0).Translated(m_backButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
-				m_testPrebattleWindow = false;
-				UI.CloseWindow("testWindow");
+				m_currentWindow = OverWorldWindow::LevelSelection;
 			}
+			break;
+		}
 		}
 	}
 }
 
 void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
 {
-	if (m_testBattleMapWindow && !m_testPrebattleWindow)//the battle map is active in the background of the prebattle so we need both checks
+	switch (m_currentWindow)
+	{
+	case OverWorldWindow::LevelSelection :
 	{
 		if (m_enemyTerritoryHexSheet->GetSpritesheet()->GetFrameRect(0).Translated(m_enemyTerritoryHexSheet->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//checks if mouse is over button
 		{
@@ -93,8 +90,9 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
 		{
 			m_enemyTerritoryHexSheet->SetFrameNumber(0);// sets it to the default sprite
 		}
+		break;
 	}
-	else if (m_testPrebattleWindow)
+	case OverWorldWindow::PreBattle :
 	{
 		if (m_playButton->GetSpritesheet()->GetFrameRect(0).Translated(m_playButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 		{
@@ -113,5 +111,7 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
 		{
 			m_backButton->SetFrameNumber(0);
 		}
+		break;
+	}
 	}
 }

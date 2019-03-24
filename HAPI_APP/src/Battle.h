@@ -15,18 +15,19 @@ private:
 	bool m_entitySelected;
 	std::unique_ptr<Sprite> m_mouseCursor;
 	
-	void render();
+
 	void addEntity(const std::string& fileName, std::pair<int, int> point);
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
-	bool handleTileCollision(std::unique_ptr<Sprite>& tileSprite);
+	bool collision(std::unique_ptr<Sprite>& tileSprite);
 
 	void storeEntity();
 	void moveEntity();
 
 public:
 	Battle();
-	void run();
+
+	void render();
 };
 
 //void BattleUI::HandleCollision(std::unique_ptr<Sprite> & sprite, std::unique_ptr<Sprite> & collideWith)
