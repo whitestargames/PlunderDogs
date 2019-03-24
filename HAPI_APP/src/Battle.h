@@ -6,6 +6,7 @@
 #include "Map.h"
 #include "entity.h"
 
+struct Tile;
 class Battle : public IHapiSpritesInputListener
 {
 private:
@@ -15,32 +16,17 @@ private:
 	bool m_entitySelected;
 	std::unique_ptr<Sprite> m_mouseCursor;
 	
-
-	void addEntity(const std::string& fileName, std::pair<int, int> point);
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
-	bool collision(std::unique_ptr<Sprite>& tileSprite);
-
-	void storeEntity();
-	void moveEntity();
+	
+	bool collision(std::unique_ptr<Sprite>& tileSprite) const;
+	void addEntity(const std::string& fileName, std::pair<int, int> point);
+	void handleEntityMovement();
+	void moveEntity(const Tile& tile);
+	void selectEntity(const Tile& tile);
 
 public:
 	Battle();
 
-	void render();
+	void render() const;
 };
-
-//void BattleUI::HandleCollision(std::unique_ptr<Sprite> & sprite, std::unique_ptr<Sprite> & collideWith)
-//{
-//	//sprite is the mouse cursor sprite
-//	//collideWith is the tile
-//	CollisionInfo info;
-//	if (sprite->CheckCollision(*collideWith.get(), &info) && m_trigger) //TODO: This line is the evil one 
-//	{
-//		m_collisionPosition = collideWith->GetTransformComp().GetPosition();
-//		m_trigger = false;
-//	}
-//}
-
-//HAPISPACE::VectorF m_collisionPosition;// this is to get center of sprite
-//std::unique_ptr<Sprite> m_mouseCursor;

@@ -13,6 +13,5 @@ void HAPI_Sprites_Main()
 	{
 		overWorld.update();
 		overWorld.render();
-	}
-	
+	}	
 }

@@ -16,7 +16,7 @@ Battle::Battle() :
 	addEntity("mouseCrossHair.xml", { 4, 4 });
 }
 
-void Battle::render()
+void Battle::render() const
 {
 	m_map.drawMap();
 	//Draw entities
@@ -38,26 +38,19 @@ void Battle::addEntity(const std::string & fileName, std::pair<int, int> point)
 
 void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
 {
-	if (mouseEvent == EMouseEvent::eLeftButtonDown && !m_entitySelected)
+	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
-		m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x - 5,(float)mouseData.x - 5 });
-		storeEntity();
-	}
-	else if (mouseEvent == EMouseEvent::eLeftButtonDown && m_entitySelected)
-	{
-		m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x - 5,(float)mouseData.x - 5 });
-		moveEntity();
-		m_entitySelected = false;
-		m_entityOnPoint = {};
+		m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x,(float)mouseData.y });
+		handleEntityMovement();
 	}
 }
 
-bool Battle::collision(std::unique_ptr<Sprite>& tileSprite)
+bool Battle::collision(std::unique_ptr<Sprite>& tileSprite) const
 {
 	return m_mouseCursor->CheckCollision(*tileSprite);
 }
 
-void Battle::storeEntity()
+void Battle::handleEntityMovement()
 {
 	for (int y = 0; y < m_map.getDimensions().second; y++) 
 	{
@@ -66,66 +59,61 @@ void Battle::storeEntity()
 			Tile* currentTile = m_map.getTile({ x, y });
 			assert(currentTile);
 
+			//Check Collision
 			if (!collision(currentTile->m_sprite))
 			{
 				continue;
 			}
-			
-			for (auto& entity : m_entities)
+
+			//If entity selected for movement
+			if (m_entitySelected)
 			{
-				if (entity.second == currentTile->m_tileCoordinate)
-				{
-					m_entityOnPoint = entity.second;
-					m_entitySelected = true;
-					return;
-				}
-			}		
+				moveEntity(*currentTile);
+				return;
+			}
+			//Select new entity for movement
+			else
+			{
+				selectEntity(*currentTile);
+				return;
+			}
 		}
 	}
 }
 
-void Battle::moveEntity()
+void Battle::moveEntity(const Tile& tile)
 {
-	for (int y = 0; y < m_map.getDimensions().second; y++)
+	//No entity in new position
+	if (tile.m_entityOnTile)
 	{
-		for (int x = 0; x < m_map.getDimensions().first; x++)
+		return;
+	}
+
+	auto& tileTransform = tile.m_sprite->GetTransformComp();
+	for (auto& entity : m_entities)
+	{
+		if (entity.second == m_entityOnPoint)
 		{
-			Tile* currentTile = m_map.getTile({ x, y });
-			assert(currentTile);
+			std::pair<int, int> screenPosition = m_map.getTileScreenPos(tile.m_tileCoordinate);
+			entity.first->m_sprite->GetTransformComp().SetPosition({ (float)(tileTransform.GetPosition().x + 30),
+				(float)(tileTransform.GetPosition().y + 40) });
+			entity.second = tile.m_tileCoordinate;
+			m_entitySelected = false;
+			m_entityOnPoint = {};
+			break;
+		}
+	}
+}
 
-			// No Collision
-			if (!collision(currentTile->m_sprite))
-			{
-				continue;
-			}
-
-			//No entity in new position
-			if (currentTile->m_entityOnTile)
-			{
-				return;
-			}
-
-			auto& tileTransform = currentTile->m_sprite->GetTransformComp();
-			for (auto& entity : m_entities)
-			{
-				if (entity.second == m_entityOnPoint)
-				{
-					std::pair<int, int> screenPosition = m_map.getTileScreenPos(currentTile->m_tileCoordinate);
-					entity.first->m_sprite->GetTransformComp().SetPosition({ (float)(tileTransform.GetPosition().x + 30), 
-						(float)(tileTransform.GetPosition().y + 40) });
-					entity.second = currentTile->m_tileCoordinate;
-					return;
-				}
-			}
-
-			//	if (!currentTile->m_entityOnTile) 
-			//	{
-			///*		HAPISPACE::VectorF tempVec{ m_map.getTile({x, y})->m_sprite->GetTransformComp().GetPosition().x + 30, m_map.getTile({x, y})->m_sprite->GetTransformComp().GetPosition().y + 40 };
-			//		m_map.getTile({ x, y })->m_entityOnTile->m_sprite->GetTransformComp().SetPosition(tempVec);*/
-			//		//HAPISPACE::VectorF tempVec{ tileTransform.GetPosition().x + 30, tileTransform.GetPosition().y + 40 };
-			//		//tileTransform.SetPosition(tempVec);
-			//		//currentTile->m_entityOnTile->m_sprite->Render(SCREEN_SURFACE);
-			//	}
+void Battle::selectEntity(const Tile& tile)
+{
+	for (auto& entity : m_entities)
+	{
+		if (entity.second == tile.m_tileCoordinate)
+		{
+			m_entityOnPoint = entity.second;
+			m_entitySelected = true;
+			break;
 		}
 	}
 }

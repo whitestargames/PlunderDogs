@@ -41,6 +41,7 @@ void OverWorld::render()
 	{
 		m_battleMapBackground->Render(SCREEN_SURFACE);
 		m_enemyTerritoryHexSheet->Render(SCREEN_SURFACE);
+		break;
 	}
 	}
 }
