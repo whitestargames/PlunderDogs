@@ -13,7 +13,7 @@ class OverWorld : public IHapiSpritesInputListener
 	enum class OverWorldWindow
 	{
 		Battle = 0,
-		PreBattle,
+		PreBattle,              
 		LevelSelection
 	};
 public:

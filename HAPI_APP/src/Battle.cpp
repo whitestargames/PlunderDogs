@@ -67,7 +67,7 @@ void Battle::handleEntityMovement()
 				continue;
 			}
 
-			//If entity selected for movement
+			//Move Selected Entity
 			if (m_entitySelected)
 			{
 				moveEntity(*currentTile);
@@ -86,7 +86,7 @@ void Battle::handleEntityMovement()
 void Battle::moveEntity(const Tile& tile)
 {
 	//Already existing entity in requested new position
-	if (tile.m_entityOnTile)
+	if (tile.m_entityOnTile || (tile.m_type != eTileType::eOcean && tile.m_type != eTileType::eSea))
 	{
 		m_entitySelected = false;
 		m_entityOnPoint = {};
