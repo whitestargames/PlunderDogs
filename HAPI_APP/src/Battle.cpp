@@ -21,7 +21,6 @@ void Battle::run()
 	while (HAPI_Sprites.Update()) 
 	{
 		render();
-		update();
 	}
 }
 
