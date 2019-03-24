@@ -11,12 +11,10 @@ class Battle : public IHapiSpritesInputListener
 private:
 	std::vector<std::pair<std::unique_ptr<Entity>, std::pair<int, int>>> m_entities;
 	Map m_map;
-	//BattleUI m_battleUI;
 	std::pair<int, int> m_entityOnPoint;
 	bool m_entitySelected;
 	std::unique_ptr<Sprite> m_mouseCursor;
 	
-	void update();
 	void render();
 	void addEntity(const std::string& fileName, std::pair<int, int> point);
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}

@@ -12,7 +12,7 @@ class OverWorld : public IHapiSpritesInputListener
 public:
 	OverWorld();
 
-	void Update();
+	void render();
 	void Run();
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;

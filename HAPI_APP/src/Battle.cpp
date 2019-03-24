@@ -52,7 +52,6 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 	{
 		m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x - 5,(float)mouseData.x - 5 });
 		storeEntity();
-		int i = 0;
 	}
 	else if (mouseEvent == EMouseEvent::eLeftButtonDown && m_entitySelected)
 	{
@@ -60,7 +59,6 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 		moveEntity();
 		m_entitySelected = false;
 		m_entityOnPoint = {};
-		int i = 0;
 	}
 }
 
@@ -140,19 +138,4 @@ void Battle::moveEntity()
 			//	}
 		}
 	}
-}
-
-void Battle::update()
-{
-	//if (m_entitySelected)
-	//{
-
-
-	//	if (m_map.moveEntity(std::pair<int, int>(entity.second), currentTile->m_tileCoordinate))
-	//	{
-	//		m_entities[m_entityPositionInVector].second = currentTile->m_tileCoordinate;
-	//	}
-	//	return;
-	//}
-
 }

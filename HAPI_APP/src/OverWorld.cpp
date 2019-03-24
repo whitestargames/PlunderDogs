@@ -19,7 +19,7 @@ OverWorld::OverWorld()
 	m_backButton->GetTransformComp().SetPosition({ 185, 747 });
 }
 
-void OverWorld::Update()
+void OverWorld::render()
 {
 	SCREEN_SURFACE->Clear();
 
@@ -48,7 +48,7 @@ void OverWorld::Run()
 {
 	while (HAPI_Sprites.Update())
 	{
-		Update();
+		render();
 	}
 }
 
