@@ -75,9 +75,15 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 				continue;
 			}
 
-			//Create movement trail to where mouse cursor is 
+			//Done so that sprite isn't created at point where entity is currently on
+			//Might be an issue with the path finding path being returned but not sure yet.
 			auto pathToTile = PathFinding::getPathToTile(m_map, m_selectedEntityPoint, currentTile->m_tileCoordinate);
-			for (int i = 0; i < pathToTile.size(); i++)
+			if (pathToTile.empty())
+			{
+				return;
+			}
+			//Create movement trail to where mouse cursor is 
+			for (int i = 0; i < pathToTile.size() - 1; i++)
 			{
 				auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
 				m_movementPathSprites.emplace_back(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + "mouseCrossHair.xml"));
