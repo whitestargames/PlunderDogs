@@ -1,5 +1,6 @@
 #include "Pathfinding.h"
 #include "Map.h"
+#include "entity.h"
 
 
 struct Cell
@@ -24,6 +25,7 @@ bool isValid(int row, int col, int size);
 bool isUnBlocked(Map &map, std::pair<int, int> coord);
 bool isDestination(int row, int col, std::pair<int, int> dest);
 double calculateHeuristicValue(int row, int col, std::pair<int, int> dest);
+void findAvailableTiles(std::pair<int, int> src, Map &map, int depth);
 
 void tracePath(const std::vector<std::vector<Cell>>& cellDetails, std::pair<int, int> dest, std::vector<std::pair<int, int>>& path)
 {
@@ -52,9 +54,11 @@ bool isValid(int row, int col, int size)
 bool isUnBlocked(Map & map, std::pair<int, int> coord)
 {
 	if (map.getTile(coord) != nullptr)
-		return true;
-	else
-		return false;
+		if (map.getTile(coord)->m_type == eTileType::eSea ||
+			map.getTile(coord)->m_type == eTileType::eOcean)
+			return true;
+		else
+			return false;
 }
 
 bool isDestination(int row, int col, std::pair<int, int> dest)
@@ -118,7 +122,7 @@ std::vector<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<
 	cellDetails[i][j].m_parent_i = i;
 	cellDetails[i][j].m_parent_j = j;
 
-	//bool closedList[m_size][m_size];
+	//bool closedList[size][size];
 	std::vector < std::vector<bool>> closedList;
 	closedList.resize(size);
 	for (int i = 0; i < closedList.size(); i++)
@@ -185,4 +189,73 @@ std::vector<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<
 
 	assert(path.empty());
 	return path;	
+}
+
+void findAvailableTiles(std::pair<int, int> src, Map &map, int depth)
+{
+	int size = (map.getDimensions().first * map.getDimensions().second) / 2;
+	int currentDepth = 0;
+	int i;
+	int j;
+	auto ship = map.getTile(src)->m_entityOnTile;
+
+	//ship->setDirection(eDirection::eNorth);
+	std::vector < std::vector<bool>> closedList;
+	closedList.resize(size);
+	for (int i = 0; i < closedList.size(); i++)
+		closedList[i].resize(size);
+
+	closedList[src.first][src.second] = true;
+
+
+	unsigned int dir;
+	int totalRange;
+	std::set<std::pair<int, int>> openList;
+	openList.insert(src);
+
+	std::pair<int, int> p = *openList.begin();
+	openList.erase(openList.begin());
+
+	i = p.first;
+	j = p.second;
+	std::vector<Tile*> adjacentCells = map.getAdjacentTiles(std::pair<int, int>(i, j));
+	std::vector<std::pair<int, int>> range;
+	for (int cellIndex = 0; cellIndex < adjacentCells.size(); cellIndex++)
+	{
+		int index = cellIndex;
+		////dir = std::abs((int)ship->getDirection() - index);
+		//if ((int)index == 5)
+		//	//dir = std::abs((int)ship->getDirection() - 1);
+		//else if (index == 4)
+		//	//dir = std::abs((int)ship->getDirection() - 2);
+
+		if (adjacentCells[index] != nullptr)
+		{
+			int x = adjacentCells[index]->m_tileCoordinate.first;
+			int y = adjacentCells[index]->m_tileCoordinate.second;
+			totalRange = depth - dir;
+			for (int rangeToSearch = 0; rangeToSearch < totalRange; rangeToSearch++)
+			{
+
+				if (isValid(x, y, size))
+				{
+					if (!closedList[x][y] && isUnBlocked(map, std::pair<int, int>(x, y)))
+					{
+						openList.insert(std::pair<int, int>(x, y));
+						closedList[x][y] = true;
+						range.push_back(std::pair<int, int>(x, y));
+						adjacentCells = map.getAdjacentTiles(std::pair<int, int>(x, y));
+
+						x = adjacentCells[index]->m_tileCoordinate.first;
+						y = adjacentCells[index]->m_tileCoordinate.second;
+
+
+					}
+				}
+			}
+
+			adjacentCells = map.getAdjacentTiles(std::pair<int, int>(i, j));
+		}
+	}
+
 }
