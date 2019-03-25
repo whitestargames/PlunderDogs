@@ -31,7 +31,6 @@ private:
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
 	//Collision with mouse pointer on left click
 	bool collision(std::unique_ptr<Sprite>& tileSprite) const;
-	void resizeMovementPath(const std::vector<std::pair<int, int>>& tilePath);
 
 public:
 	Battle();

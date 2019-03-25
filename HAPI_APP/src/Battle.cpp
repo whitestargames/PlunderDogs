@@ -28,7 +28,7 @@ void Battle::render() const
 	{
 		entity.first->m_sprite->Render(SCREEN_SURFACE);
 	}
-
+	//Draw Movement Graph
 	for (const auto& i : m_movementPath)
 	{
 		i->Render(SCREEN_SURFACE);
@@ -40,9 +40,11 @@ void Battle::addEntity(const std::string & fileName, std::pair<int, int> point)
 	m_entities.emplace_back(std::pair<std::unique_ptr<Entity>, 
 		std::pair<int, int>>((std::make_unique<Entity>(Utilities::getDataDirectory() + fileName)), point));
 
+	//Assign entity sprite position
 	std::pair<int, int> tileScreenPoint = m_map.getTileScreenPos(point);
 	m_entities.back().first->m_sprite->GetTransformComp().SetPosition({ (float)(tileScreenPoint.first + 30), (float)(tileScreenPoint.second + 40)});
 
+	//Insert entity into map
 	m_map.insertEntity(*m_entities.back().first.get(), point);
 }
 
@@ -53,8 +55,12 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 		m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x,(float)mouseData.y });
 		handleEntityMovement();
 
+		//Initial point for the movement graph
+		//Starts at point where entity has been selected
 		m_previousMousePoint = m_selectedEntityPoint;
 		
+		//If movement path is being displayed and the entity has moved
+		//No further need of movement graph
 		if (!m_movementPath.empty())
 		{
 			m_movementPath.clear();
@@ -83,6 +89,8 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 				continue;
 			}
 
+			//If mouse hovering over tile that has been handled for the movement path
+			//No need to redo the same opreations
 			if (m_previousMousePoint == currentTile->m_tileCoordinate)
 			{
 				return;
@@ -101,7 +109,7 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 				m_movementPath.emplace_back(HAPI_Sprites.MakeSprite(m_mouseCursor->GetSpritesheet()));
 				m_movementPath.back()->GetTransformComp().SetPosition({ (float)tileScreenPosition.first + 30, (float)tileScreenPosition.second + 40 });
 			}
-
+			//Assign last position for the end of the movement graph
 			m_previousMousePoint = currentTile->m_tileCoordinate;
 		}
 	}
@@ -110,11 +118,6 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 bool Battle::collision(std::unique_ptr<Sprite>& tileSprite) const
 {
 	return m_mouseCursor->CheckCollision(*tileSprite);
-}
-
-void Battle::resizeMovementPath(const std::vector<std::pair<int, int>>& tilePath)
-{
-
 }
 
 void Battle::handleEntityMovement()
