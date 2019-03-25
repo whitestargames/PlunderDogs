@@ -31,6 +31,10 @@ private:
 	std::unique_ptr<Sprite> m_prebattleUIBackground;
 	std::unique_ptr<Sprite> m_playButton;
 	std::unique_ptr<Sprite> m_backButton;
+	std::vector<Entity> m_entityVector;
+	std::vector<Entity> m_selectedEntities;
+	std::shared_ptr<Entity> m_currentlySelected {nullptr};
+	HAPISPACE::SliderLayout sliderLayout;
 	OverWorldWindow m_currentWindow;
 	Battle m_battle;
 };

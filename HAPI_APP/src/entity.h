@@ -13,4 +13,7 @@ struct Entity
 
 	std::shared_ptr<HAPISPACE::Sprite> m_sprite;
 	int m_movementPoints;
+	int m_healthPoints;
+	int m_range;
+	int m_damage;
 };

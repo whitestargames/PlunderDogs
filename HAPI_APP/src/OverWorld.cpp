@@ -13,6 +13,22 @@ OverWorld::OverWorld()
 	m_enemyTerritoryHexSheet->GetTransformComp().SetPosition({ 100, 600 });
 	m_playButton->GetTransformComp().SetPosition({ 1150, 722 });
 	m_backButton->GetTransformComp().SetPosition({ 185, 747 });
+	for (int i = 0; i < 20; i++)
+	{
+		Entity newEntity(Utilities::getDataDirectory() + "thingy.xml");
+		newEntity.m_healthPoints = i + 1;
+		newEntity.m_damage = i + 2;
+		newEntity.m_range = i + 3;
+		m_entityVector.push_back(newEntity);
+	}
+	UI.AddWindow("fleetWindow", HAPISPACE::RectangleI(220, 1050, 510, 710));
+	for (int i = 0; i < m_entityVector.size(); i++)
+	{
+		UI.GetWindow("fleetWindow")->AddCanvas("entity" + std::to_string(i), HAPISPACE::RectangleI(50 * i, (50 * i) + 50, 0, 100), m_entityVector[i].m_sprite);
+	}
+	UI.GetWindow("fleetWindow")->AddSlider("fleetSlider", HAPISPACE::RectangleI(0, 830, 110, 210), sliderLayout);
+	UI.AddWindow("battleFleetWindow", HAPISPACE::RectangleI(220, 1050, 220, 420));
+	UI.GetWindow("battleFleetWindow")->AddSlider("battleFleetSlider", HAPISPACE::RectangleI(0, 830, 110, 210), sliderLayout);
 }
 
 void OverWorld::render()
@@ -24,12 +40,19 @@ void OverWorld::render()
 	case OverWorldWindow::PreBattle :
 	{
 		m_prebattleUIBackground->Render(SCREEN_SURFACE);
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 270), HAPISPACE::Colour255::BLACK, "45/55", 50);
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 355), HAPISPACE::Colour255::BLACK, "3", 50);
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 445), HAPISPACE::Colour255::BLACK, "4", 50);
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 535), HAPISPACE::Colour255::BLACK, "5", 50);
+		//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 270), HAPISPACE::Colour255::BLACK, "45/55", 50);
+		//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 355), HAPISPACE::Colour255::BLACK, "3", 50);
+		//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 445), HAPISPACE::Colour255::BLACK, "4", 50);
+		//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 535), HAPISPACE::Colour255::BLACK, "5", 50);
 		m_playButton->Render(SCREEN_SURFACE);
 		m_backButton->Render(SCREEN_SURFACE);
+		if (m_currentlySelected != nullptr)
+		{
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 270), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_healthPoints), 50);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 355), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_damage), 50);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 445), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_movementPoints), 50);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 535), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_range), 50);
+		}
 		break;
 	}
 	case OverWorldWindow::Battle :
@@ -58,6 +81,8 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 				m_enemyTerritoryHexSheet->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				m_currentWindow = OverWorldWindow::PreBattle;
+				UI.OpenWindow("fleetWindow");
+				UI.OpenWindow("battleFleetWindow");
 			}
 			break;
 		}
@@ -70,9 +95,52 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 			else if (m_backButton->GetSpritesheet()->GetFrameRect(0).Translated(m_backButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				m_currentWindow = OverWorldWindow::LevelSelection;
+				UI.CloseWindow("fleetWindow");
+				UI.CloseWindow("battleFleetWindow");
+			}
+			bool selection = false;
+			for (int i = 0; i < m_entityVector.size(); i++)
+			{
+				UI.GetWindow("fleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((50 * i) - ((50 * m_entityVector.size()) * UI.GetWindow("fleetWindow")->GetObject("fleetSlider")->GetValue()), 0));
+				if (UI.GetWindow("fleetWindow")->GetObject("entity" + std::to_string(i))->GetBoundingRectangleScreenSpace(HAPISPACE::VectorI(220, 510)).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+				{
+					m_currentlySelected = std::make_shared<Entity>(m_entityVector[i]);
+					selection = true;
+				}
+			}
+			for (int i = 0; i < m_selectedEntities.size(); i++)
+			{
+				UI.GetWindow("battleFleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((50 * i) - ((50 * m_entityVector.size()) * UI.GetWindow("battleFleetWindow")->GetObject("battleFleetSlider")->GetValue()), 0));
+				if (UI.GetWindow("battleFleetWindow")->GetObject("entity" + std::to_string(i))->GetBoundingRectangleScreenSpace(HAPISPACE::VectorI(220, 220)).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+				{
+					m_currentlySelected = std::make_shared<Entity>(m_selectedEntities[i]);
+					selection = true;
+				}
+			}
+			if (selection == false)
+			{
+				m_currentlySelected = nullptr;
 			}
 			break;
 		}
+		}
+	}
+	if (mouseEvent == EMouseEvent::eRightButtonDown)
+	{
+		for (int i = 0; i < m_entityVector.size(); i++)
+		{
+			UI.GetWindow("fleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((50 * i) - ((50 * m_entityVector.size()) * UI.GetWindow("fleetWindow")->GetObject("fleetSlider")->GetValue()), 0));
+			if (UI.GetWindow("fleetWindow")->GetObject("entity" + std::to_string(i))->GetBoundingRectangleScreenSpace(HAPISPACE::VectorI(220, 510)).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			{
+				m_selectedEntities.push_back(m_entityVector[i]);
+				for (int i = 0; i < m_selectedEntities.size(); i++)
+				{
+					if (UI.GetWindow("battleFleetWindow")->GetObject("entity") == nullptr)
+					{
+						UI.GetWindow("battleFleetWindow")->AddCanvas("entity" + std::to_string(i), HAPISPACE::RectangleI(50 * i, (50 * i) + 50, 0, 100), m_selectedEntities[i].m_sprite);
+					}
+				}
+			}
 		}
 	}
 }
@@ -111,6 +179,17 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
 		else if (m_backButton->GetFrameNumber() != 0)
 		{
 			m_backButton->SetFrameNumber(0);
+		}
+		if (mouseData.leftButtonDown)
+		{
+			for (int i = 0; i < m_entityVector.size(); i++)
+			{
+				UI.GetWindow("fleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((50 * i) - ((50 * m_entityVector.size()) * UI.GetWindow("fleetWindow")->GetObject("fleetSlider")->GetValue()), 0));
+			}
+			for (int i = 0; i < m_selectedEntities.size(); i++)
+			{
+				UI.GetWindow("battleFleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((50 * i) - ((50 * m_selectedEntities.size()) * UI.GetWindow("battleFleetWindow")->GetObject("battleFleetSlider")->GetValue()), 0));
+			}
 		}
 		break;
 	}
