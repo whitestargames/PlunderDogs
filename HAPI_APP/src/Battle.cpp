@@ -9,15 +9,14 @@ using namespace HAPISPACE;
 Battle::Battle() :
 	m_entities(),
 	m_map(MapParser::parseMap(Utilities::getDataDirectory() + "Level1.tmx")),
-	m_entityOnPoint(),
+	m_selectedEntityPoint(),
 	m_isEntitySelected(false),
-	m_mouseCursor(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + "mouseCrossHair.xml"))
+	m_mouseCursor(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + "mouseCrossHair.xml")),
+	m_movementPathSprites()
 {
 	m_mouseCursor->GetColliderComp().EnablePixelPerfectCollisions(true);
 	addEntity("mouseCrossHair.xml", { 4, 4 });
 	addEntity("thingy.xml", { 5, 5 });
-
-	PathFinding::getPathToTile(m_map, { 5, 5 }, {7, 7});
 }
 
 void Battle::render() const
@@ -27,6 +26,11 @@ void Battle::render() const
 	for (const auto& entity : m_entities)
 	{
 		entity.first->m_sprite->Render(SCREEN_SURFACE);
+	}
+
+	for (const auto& i : m_movementPathSprites)
+	{
+		i->Render(SCREEN_SURFACE);
 	}
 }
 
@@ -47,6 +51,39 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 	{
 		m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x,(float)mouseData.y });
 		handleEntityMovement();
+	}
+}
+
+void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
+{
+	if (!m_isEntitySelected)
+	{
+		return;
+	}
+
+	m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x,(float)mouseData.y });
+	m_movementPathSprites.clear();
+	for (int y = 0; y < m_map.getDimensions().second; y++)
+	{
+		for (int x = 0; x < m_map.getDimensions().first; x++)
+		{
+			Tile* currentTile = m_map.getTile({ x, y });
+			assert(currentTile);
+
+			if (!collision(currentTile->m_sprite))
+			{
+				continue;
+			}
+
+			//Create movement trail to where mouse cursor is 
+			auto pathToTile = PathFinding::getPathToTile(m_map, m_selectedEntityPoint, currentTile->m_tileCoordinate);
+			for (int i = 0; i < pathToTile.size(); i++)
+			{
+				auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
+				m_movementPathSprites.emplace_back(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + "mouseCrossHair.xml"));
+				m_movementPathSprites.back()->GetTransformComp().SetPosition({ (float)tileScreenPosition.first + 30, (float)tileScreenPosition.second + 40});
+			}
+		}
 	}
 }
 
@@ -92,30 +129,35 @@ void Battle::moveEntity(const Tile& tile)
 	if (tile.m_entityOnTile || (tile.m_type != eTileType::eOcean && tile.m_type != eTileType::eSea))
 	{
 		m_isEntitySelected = false;
-		m_entityOnPoint = {};
+		m_selectedEntityPoint = {};
 		return;
 	}
 
-	const auto& tileTransform = tile.m_sprite->GetTransformComp();
 	for (auto& entity : m_entities)
 	{
 		//Find entity to move
-		if (entity.second == m_entityOnPoint)
+		if (entity.second == m_selectedEntityPoint)
 		{
 			//Make sure new point is within movement bounds of the entity
-
-		
+			std::vector<std::pair<int, int>> pathToTile = PathFinding::getPathToTile(m_map, m_selectedEntityPoint, tile.m_tileCoordinate);
+			if (pathToTile.size() > entity.first->m_movementPoints)
+			{
+				m_isEntitySelected = false;
+				m_selectedEntityPoint = {};
+				break;
+			}
 
 			m_map.getTile({ entity.second })->m_entityOnTile = nullptr;
-
+		
 			//Move Entity
+			const auto& tileTransform = tile.m_sprite->GetTransformComp();
 			entity.first->m_sprite->GetTransformComp().SetPosition({ (float)(tileTransform.GetPosition().x + 30),
 				(float)(tileTransform.GetPosition().y + 40) });
 			entity.second = tile.m_tileCoordinate;
 			m_map.getTile({ entity.second })->m_entityOnTile = entity.first.get();
 			
 			m_isEntitySelected = false;
-			m_entityOnPoint = {};
+			m_selectedEntityPoint = {};
 			break;
 		}
 	}
@@ -128,7 +170,7 @@ void Battle::selectEntity(const Tile& tile)
 		//Find entity that matches requested tile
 		if (entity.second == tile.m_tileCoordinate)
 		{
-			m_entityOnPoint = entity.second;
+			m_selectedEntityPoint = entity.second;
 			m_isEntitySelected = true;
 			break;
 		}
