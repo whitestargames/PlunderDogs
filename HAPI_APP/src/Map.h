@@ -52,17 +52,26 @@ private:
 	std::pair<int, int> cubeToOffset(std::pair<int, int> cube) const;
 	int cubeDistance(std::pair<int, int> a, std::pair<int, int> b) const;
 	bool inCone(std::pair<int, int> orgHex, std::pair<int, int> testHex, eDirection dir) const;
+	//Finds the euclidean distance from a point to a tile's centre, used by getMouseClickCoord
+	float tileDistanceMag(std::pair<int, int> tileCoord, std::pair<int, int> mouseClick) const;
 public:
 	//Returns a pointer to a given tile, returns nullptr if there is no tile there
 	Tile *getTile(std::pair<int, int> coordinate);
-	//An n = 1 version of getTileRadius for use in pathfinding, returns nullptr for each tile out of bounds
+	//An n = 1 version of getTileRadius for use in pathfinding, 
+	//returns nullptr for each tile out of bounds
 	std::vector<Tile*> getAdjacentTiles(std::pair<int, int> coord);
 	//TODO:Returns tiles in a radius around a given tile, skipping the tile itself
 	std::vector<Tile*> getTileRadius(std::pair<int, int> coord, int range);
 	//TODO: Returns tiles in a cone emanating from a given tile, skipping the tile itself
 	std::vector<Tile*> getTileCone(std::pair<int, int> coord, int range, eDirection direction);
 
+	//For finding the location on the screen a given tile is being drawn
 	std::pair<int, int> getTileScreenPos(std::pair<int, int> coord) const;
+
+	//For finding the closest tile to the current mouse location, 
+	//can give values that aren't valid tiles if you click off the map 
+	//so check if getTile is null before using
+	std::pair<int, int> getMouseClickCoord(std::pair<int, int> mouseCoord) const;
 
 	//Moves an entitys position on the map, returns false if the position is already taken
 	bool moveEntity(std::pair<int, int> originalPos, std::pair<int, int> newPos);
