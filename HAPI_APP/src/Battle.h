@@ -22,13 +22,15 @@ private:
 	std::pair<int, int> m_selectedEntityPoint;
 	bool m_isEntitySelected;
 	std::unique_ptr<Sprite> m_mouseCursor;
-	std::vector<std::unique_ptr<Sprite>> m_movementPathSprites;
+	std::vector<std::unique_ptr<Sprite>> m_movementPath;
+	std::pair<int, int> m_previousMousePoint;
+
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
+	//Collision with mouse pointer on left click
 	bool collision(std::unique_ptr<Sprite>& tileSprite) const;
-
 
 public:
 	Battle();

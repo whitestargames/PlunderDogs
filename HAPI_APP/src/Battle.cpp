@@ -12,7 +12,8 @@ Battle::Battle() :
 	m_selectedEntityPoint(),
 	m_isEntitySelected(false),
 	m_mouseCursor(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + "mouseCrossHair.xml")),
-	m_movementPathSprites()
+	m_movementPath(),
+	m_previousMousePoint()
 {
 	m_mouseCursor->GetColliderComp().EnablePixelPerfectCollisions(true);
 	addEntity("mouseCrossHair.xml", { 4, 4 });
@@ -27,8 +28,8 @@ void Battle::render() const
 	{
 		entity.first->m_sprite->Render(SCREEN_SURFACE);
 	}
-
-	for (const auto& i : m_movementPathSprites)
+	//Draw Movement Graph
+	for (const auto& i : m_movementPath)
 	{
 		i->Render(SCREEN_SURFACE);
 	}
@@ -39,9 +40,11 @@ void Battle::addEntity(const std::string & fileName, std::pair<int, int> point)
 	m_entities.emplace_back(std::pair<std::unique_ptr<Entity>, 
 		std::pair<int, int>>((std::make_unique<Entity>(Utilities::getDataDirectory() + fileName)), point));
 
+	//Assign entity sprite position
 	std::pair<int, int> tileScreenPoint = m_map.getTileScreenPos(point);
 	m_entities.back().first->m_sprite->GetTransformComp().SetPosition({ (float)(tileScreenPoint.first + 30), (float)(tileScreenPoint.second + 40)});
 
+	//Insert entity into map
 	m_map.insertEntity(*m_entities.back().first.get(), point);
 }
 
@@ -51,6 +54,17 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 	{
 		m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x,(float)mouseData.y });
 		handleEntityMovement();
+
+		//Initial point for the movement graph
+		//Starts at point where entity has been selected
+		m_previousMousePoint = m_selectedEntityPoint;
+		
+		//If movement path is being displayed and the entity has moved
+		//No further need of movement graph
+		if (!m_movementPath.empty())
+		{
+			m_movementPath.clear();
+		}
 	}
 }
 
@@ -62,7 +76,7 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 	}
 
 	m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x,(float)mouseData.y });
-	m_movementPathSprites.clear();
+	
 	for (int y = 0; y < m_map.getDimensions().second; y++)
 	{
 		for (int x = 0; x < m_map.getDimensions().first; x++)
@@ -75,20 +89,28 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 				continue;
 			}
 
-			//Done so that sprite isn't created at point where entity is currently on
-			//Might be an issue with the path finding path being returned but not sure yet.
+			//If mouse hovering over tile that has been handled for the movement path
+			//No need to redo the same opreations
+			if (m_previousMousePoint == currentTile->m_tileCoordinate)
+			{
+				return;
+			}
+
 			auto pathToTile = PathFinding::getPathToTile(m_map, m_selectedEntityPoint, currentTile->m_tileCoordinate);
 			if (pathToTile.empty())
 			{
 				return;
 			}
 			//Create movement trail to where mouse cursor is 
+			m_movementPath.clear();
 			for (int i = 0; i < pathToTile.size() - 1; i++)
 			{
 				auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
-				m_movementPathSprites.emplace_back(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + "mouseCrossHair.xml"));
-				m_movementPathSprites.back()->GetTransformComp().SetPosition({ (float)tileScreenPosition.first + 30, (float)tileScreenPosition.second + 40});
+				m_movementPath.emplace_back(HAPI_Sprites.MakeSprite(m_mouseCursor->GetSpritesheet()));
+				m_movementPath.back()->GetTransformComp().SetPosition({ (float)tileScreenPosition.first + 30, (float)tileScreenPosition.second + 40 });
 			}
+			//Assign last position for the end of the movement graph
+			m_previousMousePoint = currentTile->m_tileCoordinate;
 		}
 	}
 }
