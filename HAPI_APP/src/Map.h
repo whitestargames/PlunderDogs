@@ -6,7 +6,9 @@
 #include <HAPISprites_UI.h>
 #include "global.h"
 
+//Info for HAPI_SPRITES - Leave for now. 
 /*
+//	//m_sprite->GetSpritesheet()->GenerateNormals(true);
 **** HAPI Sprites: ERROR Detected
 ** Description: H_INVALID_PARAMETER - passed parameter was not valid
 ** System: HAPI Sprites
@@ -36,8 +38,6 @@ struct Tile
 	{
 		//HAPI's make sprite takes a pointer to an existing spritesheet
 		m_sprite = HAPI_Sprites.MakeSprite(spriteSheet);
-
-		m_sprite->GetSpritesheet()->GenerateNormals(true);
 	}
 	Tile(const Tile &other) : m_tileCoordinate(std::pair<int, int>(other.m_tileCoordinate.first, other.m_tileCoordinate.second))
 	{
