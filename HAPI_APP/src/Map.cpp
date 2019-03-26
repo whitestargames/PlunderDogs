@@ -110,6 +110,7 @@ float Map::tileDistanceMag(intPair tileCoord, intPair mouseClick) const
 	const float diffX = tileCentre.first - static_cast<float>(mouseClick.first);
 	const float diffY = tileCentre.second - static_cast<float>(mouseClick.second);
 
+	std::cout << "Difference " << ((diffX * diffX) + (diffY * diffY)) << std::endl;//Test
 	return (diffX * diffX) + (diffY * diffY);
 }
 
@@ -267,8 +268,8 @@ intPair Map::getTileScreenPos(intPair coord) const
 		m_data[0].m_sprite->FrameWidth(),
 		FRAME_HEIGHT);
 
-	const float xPos = (float)(coord.first * textureDimensions.first) * 3 / 4;
-	const float yPos = (float)((((1 + coord.first) % 2) + 2 * coord.second) 
+	const float xPos = static_cast<float>(coord.first * textureDimensions.first) * 3 / 4;
+	const float yPos = static_cast<float>((((1 + coord.first) % 2) + 2 * coord.second)
 		* textureDimensions.second) / 2;
 
 	return intPair(
@@ -287,9 +288,9 @@ intPair Map::getMouseClickCoord(intPair mouseCoord) const
 	const int predictedTileX = static_cast<const int>(translatedX * 4 / (3 * textureDimensions.first));
 	const int predictedTileY = static_cast<const int>(translatedY / textureDimensions.second);
 	
-	std::cout << "Tile guess: " << predictedTileX << ", " << predictedTileY;//Test
-	float distance{ 10 };
-	intPair closestTile(predictedTileX - 1, predictedTileY - 1);
+	std::cout << "Tile guess: " << predictedTileX << ", " << predictedTileY << std::endl;//Test
+	float distance{ 10000000 };//An arbitrary big number
+	intPair closestTile(predictedTileX, predictedTileY);
 	//Iterate through the 9 tiles around the guess to find the actual closest tile to the click
 	for (int y = predictedTileY - 1; y <= predictedTileY + 1; y++)
 	{

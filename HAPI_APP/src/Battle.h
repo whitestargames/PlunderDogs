@@ -19,7 +19,7 @@ private:
 	void selectEntity(const Tile& tile);
 
 	//UI
-	std::pair<int, int> m_selectedEntityPoint;
+	int m_selectedEntity;
 	bool m_isEntitySelected;
 	std::unique_ptr<Sprite> m_mouseCursor;
 	std::vector<std::unique_ptr<Sprite>> m_movementPath;
