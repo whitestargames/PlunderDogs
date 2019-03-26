@@ -5,6 +5,8 @@
 #include "Pathfinding.h"
 
 using namespace HAPISPACE;
+constexpr float DRAW_OFFSET_X{ 30.0 };
+constexpr float DRAW_OFFSET_Y{ 40.0 };
 
 Battle::Battle() :
 	m_entity(),
@@ -21,6 +23,11 @@ Battle::Battle() :
 void Battle::render() const
 {
 	m_map.drawMap();
+
+	const std::pair<int, int> tileTransform = m_map.getTileScreenPos(m_entity.second);
+	m_entity.first->m_sprite->GetTransformComp().SetPosition({
+		static_cast<float>(tileTransform.first + DRAW_OFFSET_X),
+		static_cast<float>(tileTransform.second + DRAW_OFFSET_Y) });
 	
 	m_entity.first->m_sprite->Render(SCREEN_SURFACE);
 
@@ -37,7 +44,9 @@ void Battle::initializeEntity(const std::string & fileName, std::pair<int, int> 
 
 	//Assign entity sprite position
 	std::pair<int, int> tileScreenPoint = m_map.getTileScreenPos(point);
-	m_entity.first->m_sprite->GetTransformComp().SetPosition({ (float)(tileScreenPoint.first + 30), (float)(tileScreenPoint.second + 40)});
+	m_entity.first->m_sprite->GetTransformComp().SetPosition({ 
+		(float)(tileScreenPoint.first + DRAW_OFFSET_X * m_map.getDrawScale()), 
+		(float)(tileScreenPoint.second + DRAW_OFFSET_Y * m_map.getDrawScale())});
 
 	//Insert entity into map
 	m_map.insertEntity(*m_entity.first.get(), point);
@@ -106,7 +115,9 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 			{
 				auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
 				m_movementPath.emplace_back(HAPI_Sprites.MakeSprite(m_mouseCursor->GetSpritesheet()));
-				m_movementPath.back()->GetTransformComp().SetPosition({ (float)tileScreenPosition.first + 30, (float)tileScreenPosition.second + 40 });
+				m_movementPath.back()->GetTransformComp().SetPosition({ 
+					(float)tileScreenPosition.first + DRAW_OFFSET_X, 
+					(float)tileScreenPosition.second + DRAW_OFFSET_Y});
 			}
 
 			//Assign last position for the end of the movement graph
@@ -167,16 +178,8 @@ void Battle::moveEntity(const Tile& tile)
 		m_isEntitySelected = false;
 	}
 
-	//Move Entity
-	const auto& tileTransform = tile.m_sprite->GetTransformComp();
-	m_entity.first->m_sprite->GetTransformComp().SetPosition({ (float)(tileTransform.GetPosition().x + 30),
-		(float)(tileTransform.GetPosition().y + 40) });
-
+	m_map.moveEntity(m_entity.second, tile.m_tileCoordinate);
 	m_entity.second = tile.m_tileCoordinate;
-
-	m_map.getTile({ m_entity.second })->m_entityOnTile = nullptr;
-	m_map.getTile({ m_entity.second })->m_entityOnTile = m_entity.first.get();
-
 	m_isEntitySelected = false;
 }
 
