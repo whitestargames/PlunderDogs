@@ -5,8 +5,8 @@
 #include "Pathfinding.h"
 
 using namespace HAPISPACE;
-constexpr float DRAW_OFFSET_X{ 30.0 };
-constexpr float DRAW_OFFSET_Y{ 40.0 };
+constexpr float DRAW_OFFSET_X{ 16 };
+constexpr float DRAW_OFFSET_Y{ 28 };
 
 Battle::Battle() :
 	m_entities(),

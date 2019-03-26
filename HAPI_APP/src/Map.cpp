@@ -3,14 +3,14 @@
 #include <math.h>
 #include <algorithm>
 #include <HAPISprites_Lib.h>
-//#include <iostream> //For testing
+//#include <iostream> //Test
 #include "Utilities/Utilities.h"
 
 typedef std::pair<int, int> intPair;
 
 constexpr int FRAME_HEIGHT = 28;
-constexpr int FRAME_CENTRE_X = 15;
-constexpr int FRAME_CENTRE_Y = 34;
+constexpr float FRAME_CENTRE_X{ 15.5 };
+constexpr float FRAME_CENTRE_Y{ 32.5 };
 
 void Map::drawMap() const 
 {
@@ -56,7 +56,7 @@ intPair Map::offsetToCube(intPair offset) const
 	int cubeX = offset.first;
 	int cubeY = - offset.first - (offset.second - (offset.first + (offset.first & 1)) / 2);
 	int cubeZ = -cubeX - cubeY;
-	//std::cout << cubeX << ", " << cubeY << ", " << cubeZ << std::endl;//For testing
+	//std::cout << cubeX << ", " << cubeY << ", " << cubeZ << std::endl;//Test
 	return intPair(cubeX, cubeY);
 }
 
@@ -64,7 +64,7 @@ intPair Map::cubeToOffset(intPair cube) const
 {
 	int offsetX = cube.first;
 	int offsetY = -cube.first - cube.second + (cube.first + (cube.first & 1)) / 2;
-	//std::cout << offsetX << ", " << offsetY << std::endl;//For testing
+	//std::cout << offsetX << ", " << offsetY << std::endl;//Test
 	return intPair(offsetX, offsetY);
 }
 
@@ -110,7 +110,7 @@ float Map::tileDistanceMag(intPair tileCoord, intPair mouseClick) const
 	const float diffX = tileCentre.first - static_cast<float>(mouseClick.first);
 	const float diffY = tileCentre.second - static_cast<float>(mouseClick.second);
 
-	std::cout << "Difference " << ((diffX * diffX) + (diffY * diffY)) << std::endl;//Test
+	//std::cout << "Difference " << ((diffX * diffX) + (diffY * diffY)) << std::endl;//Test
 	return (diffX * diffX) + (diffY * diffY);
 }
 
@@ -190,7 +190,7 @@ std::vector<Tile*> Map::getTileRadius(intPair coord, int range)
 				if (cubeDistance(cubeCoord, offsetToCube(intPair(x, y))) <= range)
 				{
 					tileStore.push_back(getTile(intPair(x, y)));
-					//std::cout << "CubeCheck " << x << ", " << y << std::endl;//For testing
+					//std::cout << "CubeCheck " << x << ", " << y << std::endl;//Test
 				}
 			}
 		}
@@ -229,7 +229,7 @@ std::vector<Tile*> Map::getTileCone(intPair coord, int range, eDirection directi
 					if (inCone(cubeCoord, tempCube, direction))
 					{
 						tileStore.push_back(getTile(intPair(x, y)));
-						//std::cout << "CubeCheck " << x << ", " << y << std::endl;//For testing
+						//std::cout << "CubeCheck " << x << ", " << y << std::endl;//Test
 					}
 				}
 			}
@@ -288,7 +288,7 @@ intPair Map::getMouseClickCoord(intPair mouseCoord) const
 	const int predictedTileX = static_cast<const int>(translatedX * 4 / (3 * textureDimensions.first));
 	const int predictedTileY = static_cast<const int>(translatedY / textureDimensions.second);
 	
-	std::cout << "Tile guess: " << predictedTileX << ", " << predictedTileY << std::endl;//Test
+	//std::cout << "Tile guess: " << predictedTileX << ", " << predictedTileY << std::endl;//Test
 	float distance{ 10000000 };//An arbitrary big number
 	intPair closestTile(predictedTileX, predictedTileY);
 	//Iterate through the 9 tiles around the guess to find the actual closest tile to the click
