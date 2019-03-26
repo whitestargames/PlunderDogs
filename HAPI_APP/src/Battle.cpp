@@ -79,6 +79,11 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 			m_movementPath.clear();
 		}
 	}
+	else if (mouseEvent == EMouseEvent::eRightButtonDown)
+	{
+		m_isEntitySelected = false;
+		m_movementPath.clear();
+	}
 }
 
 void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
@@ -171,8 +176,7 @@ void Battle::moveEntity(const Tile& tile)
 	}
 	//Make sure new point is within movement bounds of the entity
 	auto pathToTile = PathFinding::getPathToTile(m_map, m_entity.second, tile.m_tileCoordinate);
-
-	if (pathToTile.size() > m_entity.first->m_movementPoints)
+	if (pathToTile.size() > m_entity.first->m_movementPoints + 1)
 	{
 		m_isEntitySelected = false;
 		return;
