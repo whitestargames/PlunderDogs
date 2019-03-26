@@ -101,7 +101,7 @@ std::vector<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<
 	for (int i = 0; i < cellDetails.size(); i++)
 		cellDetails[i].resize(sizeY);
 
-	int i, j;
+	int i = 0, j = 0;
 
 	for (i = 0; i < sizeX; i++)
 	{
@@ -198,6 +198,7 @@ void findAvailableTiles(std::pair<int, int> src, Map &map, int depth)
 	int currentDepth = 0;
 	int i{ 0 };
 	int j{ 0 };
+
 	auto ship = map.getTile(src)->m_entityOnTile;
 
 	//ship->setDirection(eDirection::eNorth);

@@ -6,6 +6,13 @@
 #include <HAPISprites_UI.h>
 #include "global.h"
 
+/*
+**** HAPI Sprites: ERROR Detected
+** Description: H_INVALID_PARAMETER - passed parameter was not valid
+** System: HAPI Sprites
+** Detail: surface width does not divide equally by numFrames
+****
+*/
 struct Entity;
 struct Tile
 {
@@ -21,6 +28,7 @@ struct Tile
 		//HAPI's Sprite constructor takes two strings: the name of the file to load (append .xml) 
 		//and the path to that file relative to the program
 		m_sprite = HAPI_Sprites.LoadSprite(spriteName);
+
 	}
 	Tile(eTileType type, std::shared_ptr<HAPISPACE::SpriteSheet> spriteSheet, std::pair<int, int> coord) :
 		m_type(type), m_tileCoordinate(coord),
@@ -28,6 +36,8 @@ struct Tile
 	{
 		//HAPI's make sprite takes a pointer to an existing spritesheet
 		m_sprite = HAPI_Sprites.MakeSprite(spriteSheet);
+
+		m_sprite->GetSpritesheet()->GenerateNormals(true);
 	}
 	Tile(const Tile &other) : m_tileCoordinate(std::pair<int, int>(other.m_tileCoordinate.first, other.m_tileCoordinate.second))
 	{

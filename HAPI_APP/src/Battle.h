@@ -10,16 +10,16 @@ struct Tile;
 class Battle : public IHapiSpritesInputListener
 {
 private:
-	std::vector<std::pair<std::unique_ptr<Entity>, std::pair<int, int>>> m_entities;
+	std::pair<std::unique_ptr<Entity>, std::pair<int, int>> m_entity;
 	Map m_map;
 
-	void addEntity(const std::string& fileName, std::pair<int, int> point);
+	void initializeEntity(const std::string& fileName, std::pair<int, int> point);
 	void handleEntityMovement();
+	void handleMovementPath();
 	void moveEntity(const Tile& tile);
 	void selectEntity(const Tile& tile);
 
 	//UI
-	int m_selectedEntity;
 	bool m_isEntitySelected;
 	std::unique_ptr<Sprite> m_mouseCursor;
 	std::vector<std::unique_ptr<Sprite>> m_movementPath;
