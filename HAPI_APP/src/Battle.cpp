@@ -83,47 +83,7 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 	}
 
 	m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x,(float)mouseData.y });
-	
-	for (int y = 0; y < m_map.getDimensions().second; y++)
-	{
-		for (int x = 0; x < m_map.getDimensions().first; x++)
-		{
-			Tile* currentTile = m_map.getTile({ x, y });
-			assert(currentTile);
-
-			if (!collision(currentTile->m_sprite))
-			{
-				continue;
-			}
-
-			//If mouse hovering over tile that has been handled for the movement path
-			//No need to redo the same opreations
-			if (m_previousMousePoint == currentTile->m_tileCoordinate)
-			{
-				return;
-			}
-
-			auto pathToTile = PathFinding::getPathToTile(m_map, m_entity.second, currentTile->m_tileCoordinate);
-			if (pathToTile.empty())
-			{
-				return;
-			}
-
-			//Create movement trail to where mouse cursor is 
-			m_movementPath.clear();
-			for (int i = 0; i < pathToTile.size() - 1; i++)
-			{
-				auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
-				m_movementPath.emplace_back(HAPI_Sprites.MakeSprite(m_mouseCursor->GetSpritesheet()));
-				m_movementPath.back()->GetTransformComp().SetPosition({ 
-					(float)tileScreenPosition.first + DRAW_OFFSET_X, 
-					(float)tileScreenPosition.second + DRAW_OFFSET_Y});
-			}
-
-			//Assign last position for the end of the movement graph
-			m_previousMousePoint = currentTile->m_tileCoordinate;
-		}
-	}
+	handleMovementPath();
 }
 
 bool Battle::collision(std::unique_ptr<Sprite>& tileSprite) const
@@ -158,6 +118,50 @@ void Battle::handleEntityMovement()
 				selectEntity(*currentTile);
 				return;
 			}
+		}
+	}
+}
+
+void Battle::handleMovementPath()
+{
+	for (int y = 0; y < m_map.getDimensions().second; y++)
+	{
+		for (int x = 0; x < m_map.getDimensions().first; x++)
+		{
+			Tile* currentTile = m_map.getTile({ x, y });
+			assert(currentTile);
+
+			if (!collision(currentTile->m_sprite))
+			{
+				continue;
+			}
+
+			//If mouse hovering over tile that has been handled for the movement path
+			//No need to redo the same opreations
+			if (m_previousMousePoint == currentTile->m_tileCoordinate)
+			{
+				return;
+			}
+
+			auto pathToTile = PathFinding::getPathToTile(m_map, m_entity.second, currentTile->m_tileCoordinate);
+			if (pathToTile.empty())
+			{
+				return;
+			}
+
+			//Create movement trail to where mouse cursor is 
+			m_movementPath.clear();
+			for (int i = 0; i < pathToTile.size() - 1; i++)
+			{
+				auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
+				m_movementPath.emplace_back(HAPI_Sprites.MakeSprite(m_mouseCursor->GetSpritesheet()));
+				m_movementPath.back()->GetTransformComp().SetPosition({
+					(float)tileScreenPosition.first + DRAW_OFFSET_X,
+					(float)tileScreenPosition.second + DRAW_OFFSET_Y });
+			}
+
+			//Assign last position for the end of the movement graph
+			m_previousMousePoint = currentTile->m_tileCoordinate;
 		}
 	}
 }
