@@ -23,6 +23,9 @@ void OverWorld::render()
 	{
 	case OverWorldWindow::PreBattle :
 	{
+		m_battleMapBackground->Render(SCREEN_SURFACE);//renders the map behind the smaller prebattle window
+		m_enemyTerritoryHexSheet->Render(SCREEN_SURFACE);
+
 		m_prebattleUIBackground->Render(SCREEN_SURFACE);
 		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 270), HAPISPACE::Colour255::BLACK, "45/55", 50);
 		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 355), HAPISPACE::Colour255::BLACK, "3", 50);
