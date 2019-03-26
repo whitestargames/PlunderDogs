@@ -174,14 +174,14 @@ void Battle::moveEntity(const Tile& tile)
 				m_selectedEntityPoint = {};
 				break;
 			}
-
-			m_map.getTile({ entity.second })->m_entityOnTile = nullptr;
 		
 			//Move Entity
 			const auto& tileTransform = tile.m_sprite->GetTransformComp();
 			entity.first->m_sprite->GetTransformComp().SetPosition({ (float)(tileTransform.GetPosition().x + 30),
 				(float)(tileTransform.GetPosition().y + 40) });
 			entity.second = tile.m_tileCoordinate;
+
+			m_map.getTile({ entity.second })->m_entityOnTile = nullptr;
 			m_map.getTile({ entity.second })->m_entityOnTile = entity.first.get();
 			
 			m_isEntitySelected = false;
