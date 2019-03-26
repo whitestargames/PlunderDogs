@@ -8,14 +8,16 @@
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
 
+enum class OverWorldWindow
+{
+	Battle = 0,
+	PreBattle,
+	LevelSelection
+};
+
 class OverWorld : public IHapiSpritesInputListener
 {
-	enum class OverWorldWindow
-	{
-		Battle = 0,
-		PreBattle,              
-		LevelSelection
-	};
+
 public:
 	OverWorld();
 
@@ -24,6 +26,8 @@ public:
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
+	
+	static OverWorldWindow CURRENT_WINDOW;
 
 private:
 	std::unique_ptr<Sprite> m_battleMapBackground;
@@ -31,6 +35,5 @@ private:
 	std::unique_ptr<Sprite> m_prebattleUIBackground;
 	std::unique_ptr<Sprite> m_playButton;
 	std::unique_ptr<Sprite> m_backButton;
-	OverWorldWindow m_currentWindow;
 	Battle m_battle;
 };

@@ -3,6 +3,7 @@
 #include "Utilities/Utilities.h"
 #include "entity.h"
 #include "Pathfinding.h"
+#include "OverWorld.h"
 
 using namespace HAPISPACE;
 constexpr float DRAW_OFFSET_X{ 12 };
@@ -56,6 +57,11 @@ void Battle::initializeEntity(const std::string & fileName, std::pair<int, int> 
 
 void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
 {
+	if (OverWorld::CURRENT_WINDOW != OverWorldWindow::Battle)
+	{
+		return;
+	}
+
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
 		m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x,(float)mouseData.y });
@@ -78,6 +84,11 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 
 void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 {
+	if (OverWorld::CURRENT_WINDOW != OverWorldWindow::Battle)
+	{
+		return;
+	}
+
 	if (!m_isEntitySelected)
 	{
 		return;
