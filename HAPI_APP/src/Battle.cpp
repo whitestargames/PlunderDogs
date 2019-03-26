@@ -17,6 +17,7 @@ Battle::Battle() :
 	m_previousMousePoint()
 {
 	m_mouseCursor->GetColliderComp().EnablePixelPerfectCollisions(true);
+	m_mouseCursor->GetSpritesheet()->GenerateNormals(true);
 	initializeEntity("thingy.xml", { 5, 5 });
 }
 
@@ -88,6 +89,8 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 
 bool Battle::collision(std::unique_ptr<Sprite>& tileSprite) const
 {
+	/*CollisionInfo info;
+	m_mouseCursor->GetColliderComp().CalculateCollisionData();*/
 	return m_mouseCursor->CheckCollision(*tileSprite);
 }
 
