@@ -8,7 +8,6 @@ using namespace HAPISPACE;
 constexpr float DRAW_OFFSET_X{ 12 };
 constexpr float DRAW_OFFSET_Y{ 28 };
 
-
 Battle::Battle() :
 	m_entity(),
 	m_map(MapParser::parseMap(Utilities::getDataDirectory() + "Level1.tmx")),
@@ -90,37 +89,47 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 
 void Battle::handleEntityMovement()
 {
-	const std::pair<int, int> mouseLocation(
-		HAPI_Sprites.GetMouseData().x, HAPI_Sprites.GetMouseData().y);
+	const std::pair<int, int> mouseLocation(HAPI_Sprites.GetMouseData().x, HAPI_Sprites.GetMouseData().y);
 	Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(mouseLocation));
 	if (!currentTile)
+	{
 		return;
+	}
 
 	//Move Selected Entity
 	if (m_isEntitySelected)
+	{
 		moveEntity(*currentTile);
-
+	}
 	//Select new entity for movement
 	else
+	{
 		selectEntity(*currentTile);//Note: this means that "selectEntity" is actually more like "selectTile"
+	}
 }
 
 void Battle::handleMovementPath()
 {
-	const std::pair<int, int> mouseLocation(
-		HAPI_Sprites.GetMouseData().x, HAPI_Sprites.GetMouseData().y);
+	const std::pair<int, int> mouseLocation(HAPI_Sprites.GetMouseData().x, HAPI_Sprites.GetMouseData().y);
 	Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(mouseLocation));
 	if (!currentTile)
+	{
 		return;
+	}
+	
 	//If mouse hovering over tile that has been handled for the movement path
 	//No need to redo the same opreations
 	if (m_previousMousePoint == currentTile->m_tileCoordinate)
+	{
 		return;
-
+	}
+	
 	auto pathToTile = PathFinding::getPathToTile(m_map, m_entity.second, currentTile->m_tileCoordinate);
 	if (pathToTile.empty())
+	{
 		return;
-
+	}
+		
 	//Create movement trail to where mouse cursor is 
 	m_movementPath.clear();
 	for (int i = 0; i < pathToTile.size() - 1; i++)
@@ -151,14 +160,14 @@ void Battle::moveEntity(const Tile& tile)
 		return;
 	}
 	//Make sure new point is within movement bounds of the entity
-	auto pathToTile = PathFinding::getPathToTile(
-		m_map, m_entity.second, tile.m_tileCoordinate);
+	auto pathToTile = PathFinding::getPathToTile(m_map, m_entity.second, tile.m_tileCoordinate);
 
 	if (pathToTile.size() > m_entity.first->m_movementPoints)
 	{
 		m_isEntitySelected = false;
 		return;
 	}
+
 	//Change map's coordinate for entity
 	m_map.moveEntity(m_entity.second, tile.m_tileCoordinate);
 	//Change entity's coordinate
@@ -170,5 +179,7 @@ void Battle::moveEntity(const Tile& tile)
 void Battle::selectEntity(const Tile& tile)
 {
 	if (m_entity.second == tile.m_tileCoordinate)
+	{
 		m_isEntitySelected = true;
+	}	
 }
