@@ -19,13 +19,13 @@ void OverWorld::render()
 {
 	SCREEN_SURFACE->Clear();
 
+	m_battleMapBackground->Render(SCREEN_SURFACE);
+	m_enemyTerritoryHexSheet->Render(SCREEN_SURFACE);
+
 	switch (m_currentWindow)
 	{
 	case OverWorldWindow::PreBattle :
 	{
-		m_battleMapBackground->Render(SCREEN_SURFACE);//renders the map behind the smaller prebattle window
-		m_enemyTerritoryHexSheet->Render(SCREEN_SURFACE);
-
 		m_prebattleUIBackground->Render(SCREEN_SURFACE);
 		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 270), HAPISPACE::Colour255::BLACK, "45/55", 50);
 		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 355), HAPISPACE::Colour255::BLACK, "3", 50);
@@ -40,10 +40,8 @@ void OverWorld::render()
 		m_battle.render();
 		break;
 	}
-	case OverWorldWindow::LevelSelection :
+	case OverWorldWindow::LevelSelection ://level selection always wants to be rendered so is outside the switch case
 	{
-		m_battleMapBackground->Render(SCREEN_SURFACE);
-		m_enemyTerritoryHexSheet->Render(SCREEN_SURFACE);
 		break;
 	}
 	}

@@ -170,6 +170,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BattleUI.cpp" />
     <ClCompile Include="src\Battle.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Map.cpp" />
@@ -183,6 +184,7 @@
     <ClCompile Include="src\Utilities\Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BattleUI.h" />
     <ClInclude Include="src\Battle.h" />
     <ClInclude Include="src\entity.h" />
     <ClInclude Include="src\Global.h" />
