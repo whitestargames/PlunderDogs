@@ -101,6 +101,7 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 			{
 				return;
 			}
+
 			//Create movement trail to where mouse cursor is 
 			m_movementPath.clear();
 			for (int i = 0; i < pathToTile.size() - 1; i++)
@@ -109,6 +110,7 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 				m_movementPath.emplace_back(HAPI_Sprites.MakeSprite(m_mouseCursor->GetSpritesheet()));
 				m_movementPath.back()->GetTransformComp().SetPosition({ (float)tileScreenPosition.first + 30, (float)tileScreenPosition.second + 40 });
 			}
+
 			//Assign last position for the end of the movement graph
 			m_previousMousePoint = currentTile->m_tileCoordinate;
 		}
@@ -179,6 +181,7 @@ void Battle::moveEntity(const Tile& tile)
 			const auto& tileTransform = tile.m_sprite->GetTransformComp();
 			entity.first->m_sprite->GetTransformComp().SetPosition({ (float)(tileTransform.GetPosition().x + 30),
 				(float)(tileTransform.GetPosition().y + 40) });
+
 			entity.second = tile.m_tileCoordinate;
 
 			m_map.getTile({ entity.second })->m_entityOnTile = nullptr;
