@@ -18,7 +18,6 @@ Battle::Battle() :
 	m_previousMousePoint()
 {
 	m_mouseCursor->GetColliderComp().EnablePixelPerfectCollisions(true);
-	m_mouseCursor->GetSpritesheet()->GenerateNormals(true);
 	initializeEntity("thingy.xml", { 5, 5 });
 }
 
