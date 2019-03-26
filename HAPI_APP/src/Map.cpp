@@ -8,7 +8,7 @@
 
 typedef std::pair<int, int> intPair;
 
-constexpr int FRAME_HEIGHT = 28;
+constexpr int FRAME_HEIGHT{ 28 };
 constexpr float FRAME_CENTRE_X{ 15.5 };
 constexpr float FRAME_CENTRE_Y{ 32.5 };
 
@@ -17,7 +17,6 @@ void Map::drawMap() const
 	intPair textureDimensions = intPair(
 		m_data[0].m_sprite->FrameWidth(),
 		FRAME_HEIGHT);
-		//m_data[0].m_sprite->FrameHeight());
 
 	int access{ 0 };
 	for (int y = 0; y < m_mapDimensions.second; y++)
