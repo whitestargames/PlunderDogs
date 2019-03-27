@@ -21,6 +21,8 @@ OverWorld::OverWorld()
 		newEntity.m_range = i + 3;
 		m_entityVector.push_back(newEntity);
 	}
+
+	//adding the windows and sliders, also populates the fleet window with all current entities
 	UI.AddWindow("fleetWindow", HAPISPACE::RectangleI(220, 1050, 510, 710));
 	for (int i = 0; i < m_entityVector.size(); i++)
 	{
@@ -40,10 +42,6 @@ void OverWorld::render()
 	case OverWorldWindow::PreBattle :
 	{
 		m_prebattleUIBackground->Render(SCREEN_SURFACE);
-		//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 270), HAPISPACE::Colour255::BLACK, "45/55", 50);
-		//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 355), HAPISPACE::Colour255::BLACK, "3", 50);
-		//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 445), HAPISPACE::Colour255::BLACK, "4", 50);
-		//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 535), HAPISPACE::Colour255::BLACK, "5", 50);
 		m_playButton->Render(SCREEN_SURFACE);
 		m_backButton->Render(SCREEN_SURFACE);
 		if (m_currentlySelected != nullptr)
@@ -101,6 +99,9 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 				UI.CloseWindow("battleFleetWindow");
 			}
 			bool selection = false;
+
+			//loops through the entity vector to make sure the object is positioned correctly and tests to see if the mouse is on one of the objects.
+			//selects a ship to display the stats of
 			if (UI.GetWindow("fleetWindow")->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
 				for (int i = 0; i < m_entityVector.size(); i++)
@@ -115,6 +116,7 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 					}
 				}
 			}
+			//same for the battlefleet window
 			if (UI.GetWindow("battleFleetWindow")->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
 				for (int i = 0; i < m_selectedEntities.size(); i++)
@@ -141,6 +143,8 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 		{
 		case OverWorldWindow::PreBattle :
 		{
+			//loops through the entity vector to make sure the object is positioned correctly and tests to see if the mouse is on one of the objects.
+			//selects a ship to go into battle
 			if (UI.GetWindow("fleetWindow")->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
 				for (int i = 0; i < m_entityVector.size(); i++)
@@ -159,6 +163,7 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 					}
 				}
 			}
+			//same for the battlefleet window but deselects ships
 			if (UI.GetWindow("battleFleetWindow")->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
 				for (int i = 0; i < m_selectedEntities.size(); i++)
@@ -223,6 +228,7 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
 		{
 			m_backButton->SetFrameNumber(0);
 		}
+		//code for using the slider, slider varies from 0 to 1. this code block makes sure that when the slider value changes the window objects get positioned accordingly
 		if (mouseData.leftButtonDown)
 		{
 			if (UI.GetWindow("fleetWindow")->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
