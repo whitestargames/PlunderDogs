@@ -35,6 +35,8 @@ private:
 	std::vector<Entity*> m_selectedEntities;
 	Entity* m_currentlySelected {nullptr};
 	HAPISPACE::SliderLayout sliderLayout;
+	HAPISPACE::VectorI m_fleetWindowTopLeft{HAPISPACE::VectorI(220, 510)};
+	HAPISPACE::VectorI m_battleFleetWindowTopLeft{HAPISPACE::VectorI(220, 220)};
 	OverWorldWindow m_currentWindow;
 	Battle m_battle;
 };

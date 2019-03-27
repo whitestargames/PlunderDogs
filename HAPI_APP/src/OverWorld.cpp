@@ -2,6 +2,11 @@
 #include "Battle.h"
 #include "Utilities/Utilities.h"
 
+constexpr int WINDOW_OBJECTWIDTH = 50;
+constexpr int WINDOW_OBJECTHEIGHT = 100;
+constexpr int WINDOW_WIDTH = 830;
+constexpr int WINDOW_HEIGHT = 200;
+
 OverWorld::OverWorld()
 	: m_battleMapBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "TempBattleMapBackground.png")),
 	m_enemyTerritoryHexSheet(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "EnemyTerritoryHexSheet.png", 2)),
@@ -26,7 +31,7 @@ OverWorld::OverWorld()
 	UI.AddWindow("fleetWindow", HAPISPACE::RectangleI(220, 1050, 510, 710));
 	for (int i = 0; i < m_entityVector.size(); i++)
 	{
-		UI.GetWindow("fleetWindow")->AddCanvas("entity" + std::to_string(i), HAPISPACE::RectangleI(50 * i, (50 * i) + 50, 0, 100), m_entityVector[i].m_sprite);
+		UI.GetWindow("fleetWindow")->AddCanvas("entity" + std::to_string(i), HAPISPACE::RectangleI(WINDOW_OBJECTWIDTH * i, (WINDOW_OBJECTWIDTH * i) + WINDOW_OBJECTWIDTH, 0, WINDOW_OBJECTHEIGHT), m_entityVector[i].m_sprite);
 	}
 	UI.GetWindow("fleetWindow")->AddSlider("fleetSlider", HAPISPACE::RectangleI(0, 830, 110, 210), sliderLayout);
 	UI.AddWindow("battleFleetWindow", HAPISPACE::RectangleI(220, 1050, 220, 420));
@@ -108,8 +113,8 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 				{
 					UI.GetWindow("fleetWindow")->PositionObject(
 						"entity" + std::to_string(i),
-						HAPISPACE::VectorI((50 * i) - ((50 * m_entityVector.size()) * UI.GetWindow("fleetWindow")->GetObject("fleetSlider")->GetValue()), 0));
-					if (UI.GetWindow("fleetWindow")->GetObject("entity" + std::to_string(i))->GetBoundingRectangleScreenSpace(HAPISPACE::VectorI(220, 510)).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+						HAPISPACE::VectorI((WINDOW_OBJECTWIDTH * i) - ((WINDOW_OBJECTWIDTH * m_entityVector.size()) * UI.GetWindow("fleetWindow")->GetObject("fleetSlider")->GetValue()), 0));
+					if (UI.GetWindow("fleetWindow")->GetObject("entity" + std::to_string(i))->GetBoundingRectangleScreenSpace(m_fleetWindowTopLeft).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 					{
 						m_currentlySelected = &m_entityVector[i];
 						selection = true;
@@ -121,8 +126,8 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 			{
 				for (int i = 0; i < m_selectedEntities.size(); i++)
 				{
-					UI.GetWindow("battleFleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((50 * i) - ((50 * m_entityVector.size()) * UI.GetWindow("battleFleetWindow")->GetObject("battleFleetSlider")->GetValue()), 0));
-					if (UI.GetWindow("battleFleetWindow")->GetObject("entity" + std::to_string(i))->GetBoundingRectangleScreenSpace(HAPISPACE::VectorI(220, 220)).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+					UI.GetWindow("battleFleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((WINDOW_OBJECTWIDTH * i) - ((WINDOW_OBJECTWIDTH * m_entityVector.size()) * UI.GetWindow("battleFleetWindow")->GetObject("battleFleetSlider")->GetValue()), 0));
+					if (UI.GetWindow("battleFleetWindow")->GetObject("entity" + std::to_string(i))->GetBoundingRectangleScreenSpace(m_battleFleetWindowTopLeft).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 					{
 						m_currentlySelected = *&m_selectedEntities[i];
 						selection = true;
@@ -149,15 +154,15 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 			{
 				for (int i = 0; i < m_entityVector.size(); i++)
 				{
-					UI.GetWindow("fleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((50 * i) - ((50 * m_entityVector.size()) * UI.GetWindow("fleetWindow")->GetObject("fleetSlider")->GetValue()), 0));
-					if (UI.GetWindow("fleetWindow")->GetObject("entity" + std::to_string(i))->GetBoundingRectangleScreenSpace(HAPISPACE::VectorI(220, 510)).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+					UI.GetWindow("fleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((WINDOW_OBJECTWIDTH * i) - ((WINDOW_OBJECTWIDTH * m_entityVector.size()) * UI.GetWindow("fleetWindow")->GetObject("fleetSlider")->GetValue()), 0));
+					if (UI.GetWindow("fleetWindow")->GetObject("entity" + std::to_string(i))->GetBoundingRectangleScreenSpace(m_fleetWindowTopLeft).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 					{
 						m_selectedEntities.push_back(&m_entityVector[i]);
 						for (int i = 0; i < m_selectedEntities.size(); i++)
 						{
 							if (UI.GetWindow("battleFleetWindow")->GetObject("entity") == nullptr)
 							{
-								UI.GetWindow("battleFleetWindow")->AddCanvas("entity" + std::to_string(i), HAPISPACE::RectangleI(50 * i, (50 * i) + 50, 0, 100), m_selectedEntities[i]->m_sprite);
+								UI.GetWindow("battleFleetWindow")->AddCanvas("entity" + std::to_string(i), HAPISPACE::RectangleI(WINDOW_OBJECTWIDTH * i, (WINDOW_OBJECTWIDTH * i) + WINDOW_OBJECTWIDTH, 0, WINDOW_OBJECTHEIGHT), m_selectedEntities[i]->m_sprite);
 							}
 						}
 					}
@@ -168,8 +173,8 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 			{
 				for (int i = 0; i < m_selectedEntities.size(); i++)
 				{
-					UI.GetWindow("battleFleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((50 * i) - ((50 * m_entityVector.size()) * UI.GetWindow("battleFleetWindow")->GetObject("battleFleetSlider")->GetValue()), 0));
-					if (UI.GetWindow("battleFleetWindow")->GetObject("entity" + std::to_string(i))->GetBoundingRectangleScreenSpace(HAPISPACE::VectorI(220, 220)).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+					UI.GetWindow("battleFleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((WINDOW_OBJECTWIDTH * i) - ((WINDOW_OBJECTWIDTH * m_entityVector.size()) * UI.GetWindow("battleFleetWindow")->GetObject("battleFleetSlider")->GetValue()), 0));
+					if (UI.GetWindow("battleFleetWindow")->GetObject("entity" + std::to_string(i))->GetBoundingRectangleScreenSpace(m_battleFleetWindowTopLeft).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 					{
 						for (int i = 0; i < m_selectedEntities.size(); i++)
 						{
@@ -180,7 +185,7 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 						{
 							if (UI.GetWindow("battleFleetWindow")->GetObject("entity") == nullptr)
 							{
-								UI.GetWindow("battleFleetWindow")->AddCanvas("entity" + std::to_string(i), HAPISPACE::RectangleI(50 * i, (50 * i) + 50, 0, 100), m_selectedEntities[i]->m_sprite);
+								UI.GetWindow("battleFleetWindow")->AddCanvas("entity" + std::to_string(i), HAPISPACE::RectangleI(WINDOW_OBJECTWIDTH * i, (WINDOW_OBJECTWIDTH * i) + WINDOW_OBJECTWIDTH, 0, WINDOW_OBJECTHEIGHT), m_selectedEntities[i]->m_sprite);
 							}
 						}
 					}
@@ -235,14 +240,14 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
 			{
 				for (int i = 0; i < m_entityVector.size(); i++)
 				{
-					UI.GetWindow("fleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((50 * i) - ((50 * m_entityVector.size()) * UI.GetWindow("fleetWindow")->GetObject("fleetSlider")->GetValue()), 0));
+					UI.GetWindow("fleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((WINDOW_OBJECTWIDTH * i) - ((WINDOW_OBJECTWIDTH * m_entityVector.size()) * UI.GetWindow("fleetWindow")->GetObject("fleetSlider")->GetValue()), 0));
 				}
 			}
 			if (UI.GetWindow("fleetWindow")->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
 				for (int i = 0; i < m_selectedEntities.size(); i++)
 				{
-					UI.GetWindow("battleFleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((50 * i) - ((50 * m_selectedEntities.size()) * UI.GetWindow("battleFleetWindow")->GetObject("battleFleetSlider")->GetValue()), 0));
+					UI.GetWindow("battleFleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((WINDOW_OBJECTWIDTH * i) - ((WINDOW_OBJECTWIDTH * m_selectedEntities.size()) * UI.GetWindow("battleFleetWindow")->GetObject("battleFleetSlider")->GetValue()), 0));
 				}
 			}
 		}
