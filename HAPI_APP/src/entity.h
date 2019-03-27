@@ -7,10 +7,13 @@
 struct Entity
 {
 	Entity(const std::string& spriteName)
-		: m_sprite(HAPI_Sprites.LoadSprite(spriteName)),
-		m_movementPoints(5)
-	{}
+	: m_sprite(HAPI_Sprites.LoadSprite(spriteName)),
+			m_movementPoints(5)
+		{}
+	
 
 	std::shared_ptr<HAPISPACE::Sprite> m_sprite;
 	int m_movementPoints;
+
+	void render() const { m_sprite->Render(SCREEN_SURFACE); }
 };

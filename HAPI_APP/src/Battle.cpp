@@ -4,6 +4,7 @@
 #include "entity.h"
 #include "Pathfinding.h"
 #include "OverWorld.h"
+#include "HAPIWrapper.h"
 
 using namespace HAPISPACE;
 constexpr float DRAW_OFFSET_X{ 12 };
@@ -14,7 +15,7 @@ Battle::Battle() :
 	m_entity(),
 	m_map(MapParser::parseMap(Utilities::getDataDirectory() + "Level1.tmx")),
 	m_isEntitySelected(false),
-	m_mouseCursor(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + "mouseCrossHair.xml")),
+	m_mouseCursor(HAPI_Wrapper::loadSprite("mouseCrossHair.xml")),
 	m_movementPath(),
 	m_previousMousePoint()
 {
@@ -41,7 +42,7 @@ void Battle::render() const
 		static_cast<float>(tileTransform.first + DRAW_OFFSET_X * m_map.getDrawScale()),
 		static_cast<float>(tileTransform.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
 	//Render entity
-	m_entity.first->m_sprite->Render(SCREEN_SURFACE);
+	m_entity.first->render();
 	//Draw Movement Graph
 	for (const auto& i : m_movementPath)
 	{
@@ -126,7 +127,7 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 
 void Battle::handleEntityMovement()
 {
-	const std::pair<int, int> mouseLocation(HAPI_Sprites.GetMouseData().x, HAPI_Sprites.GetMouseData().y);
+	const std::pair<int, int> mouseLocation(HAPI_Wrapper::getMouseLocation());
 	Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(mouseLocation));
 	if (!currentTile)
 	{
@@ -147,7 +148,7 @@ void Battle::handleEntityMovement()
 
 void Battle::handleMovementPath()
 {
-	const std::pair<int, int> mouseLocation(HAPI_Sprites.GetMouseData().x, HAPI_Sprites.GetMouseData().y);
+	const std::pair<int, int> mouseLocation(HAPI_Wrapper::getMouseLocation());
 	Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(mouseLocation));
 	if (!currentTile)
 	{

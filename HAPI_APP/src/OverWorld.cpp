@@ -56,7 +56,7 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 		{
 		case OverWorldWindow::LevelSelection:
 		{
-			if (HAPI_Wrapper::spriteTranslated(m_enemyTerritoryHexSheet, mouseData, 0))
+			if (HAPI_Wrapper::isSpriteTranslated(m_enemyTerritoryHexSheet, mouseData, 0))
 			{
 				CURRENT_WINDOW = OverWorldWindow::PreBattle;
 			}
@@ -64,11 +64,11 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 		}
 		case OverWorldWindow::PreBattle:
 		{
-			if (HAPI_Wrapper::spriteTranslated(m_playButton, mouseData, 0))
+			if (HAPI_Wrapper::isSpriteTranslated(m_playButton, mouseData, 0))
 			{
 				CURRENT_WINDOW = OverWorldWindow::Battle;
 			}
-			else if (HAPI_Wrapper::spriteTranslated(m_backButton, mouseData, 0))
+			else if (HAPI_Wrapper::isSpriteTranslated(m_backButton, mouseData, 0))
 			{
 				CURRENT_WINDOW = OverWorldWindow::LevelSelection;
 			}
@@ -84,7 +84,7 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
 	{
 	case OverWorldWindow::LevelSelection :
 	{
-		if (HAPI_Wrapper::spriteTranslated(m_enemyTerritoryHexSheet, mouseData, 0))
+		if (HAPI_Wrapper::isSpriteTranslated(m_enemyTerritoryHexSheet, mouseData, 0))
 		{
 			m_enemyTerritoryHexSheet->SetFrameNumber(1);//changes the buttons sprite to hover sprite
 		}
@@ -97,7 +97,7 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
 	case OverWorldWindow::PreBattle :
 	{
 		//Play Button
-		if (HAPI_Wrapper::spriteTranslated(m_playButton, mouseData, 0))
+		if (HAPI_Wrapper::isSpriteTranslated(m_playButton, mouseData, 0))
 		{
 			m_playButton->SetFrameNumber(1);
 		}
@@ -106,7 +106,7 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
 			m_playButton->SetFrameNumber(0);
 		}
 		//Back Button
-		if (HAPI_Wrapper::spriteTranslated(m_backButton, mouseData, 0))
+		if (HAPI_Wrapper::isSpriteTranslated(m_backButton, mouseData, 0))
 		{
 			m_backButton->SetFrameNumber(1);
 		}
