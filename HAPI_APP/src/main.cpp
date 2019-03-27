@@ -12,6 +12,7 @@ void HAPI_Sprites_Main()
 	OverWorld overWorld;
 	while (HAPI_Sprites.Update())
 	{
+		SCREEN_SURFACE->Clear();
 		overWorld.update();
 		overWorld.render();
 	}	

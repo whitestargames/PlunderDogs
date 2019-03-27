@@ -44,7 +44,7 @@ void Battle::render() const
 	//Render entity
 	m_entity.first->render();
 	//Draw Movement Graph
-	for (const auto& i : m_movementPath)
+	for (auto& i : m_movementPath)
 	{
 		if (!i.second)
 		{
@@ -127,8 +127,7 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 
 void Battle::handleEntityMovement()
 {
-	const std::pair<int, int> mouseLocation(HAPI_Wrapper::getMouseLocation());
-	Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(mouseLocation));
+	Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 	if (!currentTile)
 	{
 		return;
@@ -148,8 +147,7 @@ void Battle::handleEntityMovement()
 
 void Battle::handleMovementPath()
 {
-	const std::pair<int, int> mouseLocation(HAPI_Wrapper::getMouseLocation());
-	Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(mouseLocation));
+	Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 	if (!currentTile)
 	{
 		return;
@@ -180,7 +178,6 @@ void Battle::handleMovementPath()
 		std::cout << i << "\n";
 	}
 	std::cout << "NEW LINE\n";
-	
 
 
 	////Create movement trail to where mouse cursor is 

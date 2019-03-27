@@ -17,7 +17,6 @@ enum class OverWorldWindow
 
 class OverWorld : public IHapiSpritesInputListener
 {
-
 public:
 	OverWorld();
 
