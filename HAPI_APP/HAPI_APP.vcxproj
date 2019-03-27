@@ -171,6 +171,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Battle.cpp" />
+    <ClCompile Include="src\HAPIWrapper.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Map.cpp" />
     <ClCompile Include="src\OverWorld.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="src\Battle.h" />
     <ClInclude Include="src\entity.h" />
     <ClInclude Include="src\Global.h" />
+    <ClInclude Include="src\HAPIWrapper.h" />
     <ClInclude Include="src\Map.h" />
     <ClInclude Include="src\OverWorld.h" />
     <ClInclude Include="src\Pathfinding.h" />

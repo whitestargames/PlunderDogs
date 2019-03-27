@@ -8,6 +8,7 @@
 using namespace HAPISPACE;
 constexpr float DRAW_OFFSET_X{ 12 };
 constexpr float DRAW_OFFSET_Y{ 28 };
+constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
 
 Battle::Battle() :
 	m_entity(),
@@ -19,6 +20,15 @@ Battle::Battle() :
 {
 	m_mouseCursor->GetColliderComp().EnablePixelPerfectCollisions(true);
 	initializeEntity("thingy.xml", { 5, 5 });
+	
+	m_movementPath.reserve(size_t(MOVEMENT_PATH_SIZE));
+	for (int i = 0; i < MOVEMENT_PATH_SIZE; i++)
+	{
+		std::pair<std::unique_ptr<Sprite>, bool> sprite;
+		sprite.first = HAPI_Sprites.MakeSprite(m_mouseCursor->GetSpritesheet());
+		sprite.second = false;
+		m_movementPath.push_back(std::move(sprite));
+	}
 }
 
 void Battle::render() const
@@ -35,7 +45,12 @@ void Battle::render() const
 	//Draw Movement Graph
 	for (const auto& i : m_movementPath)
 	{
-		i->Render(SCREEN_SURFACE);
+		if (!i.second)
+		{
+			break;
+		}
+
+		i.first->Render(SCREEN_SURFACE);
 	}
 }
 
@@ -72,12 +87,19 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 		{
 			m_previousMousePoint = m_entity.second;
 		}
-		//If movement path is being displayed and the entity has moved
-		//No further need of movement graph
-		if (!m_movementPath.empty())
+		else
 		{
-			m_movementPath.clear();
+			for (auto& i : m_movementPath)
+			{
+				i.second = false;
+			}
 		}
+		////If movement path is being displayed and the entity has moved
+		////No further need of movement graph
+		//if (!m_movementPath.empty())
+		//{
+		//	m_movementPath.clear();
+		//}
 	}
 	else if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
@@ -140,21 +162,36 @@ void Battle::handleMovementPath()
 	}
 	
 	auto pathToTile = PathFinding::getPathToTile(m_map, m_entity.second, currentTile->m_tileCoordinate);
-	if (pathToTile.empty())
+	if (pathToTile.empty() || pathToTile.size() > m_entity.first->m_movementPoints)
 	{
 		return;
 	}
-		
-	//Create movement trail to where mouse cursor is 
-	m_movementPath.clear();
-	for (int i = 0; i < pathToTile.size() - 1; i++)
+	
+	
+	for (auto i = pathToTile.size(); --i;)
 	{
 		auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
-		m_movementPath.emplace_back(HAPI_Sprites.MakeSprite(m_mouseCursor->GetSpritesheet()));
-		m_movementPath.back()->GetTransformComp().SetPosition({
+		m_movementPath[i].first->GetTransformComp().SetPosition({
 			static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
-			static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale())});
+			static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
+
+		m_movementPath[i - 1].second = true;
+		std::cout << i << "\n";
 	}
+	std::cout << "NEW LINE\n";
+	
+
+
+	////Create movement trail to where mouse cursor is 
+	//m_movementPath.clear();
+	//for (int i = 0; i < pathToTile.size() - 1; i++)
+	//{
+	//	auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
+	//	m_movementPath.emplace_back(HAPI_Sprites.MakeSprite(m_mouseCursor->GetSpritesheet()));
+	//	m_movementPath.back()->GetTransformComp().SetPosition({
+	//		static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
+	//		static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale())});
+	//}
 
 	//Assign last position for the end of the movement graph
 	m_previousMousePoint = currentTile->m_tileCoordinate;

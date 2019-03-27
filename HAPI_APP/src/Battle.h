@@ -22,7 +22,7 @@ private:
 	//UI
 	bool m_isEntitySelected;
 	std::unique_ptr<Sprite> m_mouseCursor;
-	std::vector<std::unique_ptr<Sprite>> m_movementPath;
+	std::vector<std::pair<std::unique_ptr<Sprite>, bool>> m_movementPath;
 	std::pair<int, int> m_previousMousePoint;
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}

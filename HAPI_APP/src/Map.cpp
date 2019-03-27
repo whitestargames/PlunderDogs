@@ -303,7 +303,7 @@ intPair Map::getMouseClickCoord(intPair mouseCoord) const
 			}
 		}
 	}
-	std::cout << " Final tile: " << closestTile.first << ", " << closestTile.second << std::endl;//Test
+	//std::cout << " Final tile: " << closestTile.first << ", " << closestTile.second << std::endl;//Test
 	return closestTile;
 }
 
