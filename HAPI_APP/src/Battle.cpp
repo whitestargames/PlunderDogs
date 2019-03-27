@@ -13,7 +13,7 @@ constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
 
 Battle::Battle() :
 	m_entity(),
-	m_map(MapParser::parseMap(Utilities::getDataDirectory() + "Level1.tmx")),
+	m_map(MapParser::parseMap("Level1.tmx")),
 	m_isEntitySelected(false),
 	m_mouseCursor(HAPI_Wrapper::loadSprite("mouseCrossHair.xml")),
 	m_movementPath(),

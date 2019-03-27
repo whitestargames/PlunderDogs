@@ -3,6 +3,7 @@
 #include "tinyxml.h"
 #include "../Map.h"
 #include <assert.h>
+#include "Utilities.h"
 
 std::vector<std::vector<int>> parseTileData(const TiXmlElement& rootElement, const std::pair<int, int> mapSize);
 std::pair<int, int> parseMapSize(const TiXmlElement& rootElement);
@@ -11,7 +12,7 @@ std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElem
 Map MapParser::parseMap(const std::string& name)
 {
 	TiXmlDocument mapFile;
-	bool mapLoaded = mapFile.LoadFile(name);
+	bool mapLoaded = mapFile.LoadFile(Utilities::getDataDirectory() + name);
 	assert(mapLoaded);
 
 	const auto& rootElement = mapFile.RootElement();
