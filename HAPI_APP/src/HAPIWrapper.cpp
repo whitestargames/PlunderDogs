@@ -41,3 +41,8 @@ void HAPI_Wrapper::clearScreen()
 {
 	SCREEN_SURFACE->Clear();
 }
+
+void HAPI_Wrapper::addWindow(const std::string & name, const RectangleI & rect)
+{
+	UI.AddWindow(name, rect);
+}

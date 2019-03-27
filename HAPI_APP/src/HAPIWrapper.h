@@ -18,4 +18,5 @@ namespace HAPI_Wrapper
 	void render(std::unique_ptr<Sprite>& sprite);
 	void setPosition(std::unique_ptr<Sprite>& sprite, VectorF position);
 	void clearScreen();
+	void addWindow(const std::string& name, const RectangleI& rect);
 }
