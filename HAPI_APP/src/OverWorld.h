@@ -23,9 +23,17 @@ public:
 	void update() {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
-	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
+	void OnKeyEvent(EKeyEvent keyEvent, BYTE ikeyCode) override final {}
 
 private:
+	void positionEntity(const std::string& windowName, const std::string& windowSliderName, std::string windowObjectName, int objectNumber, std::vector<Entity> &entityVector);
+	void positionEntity(const std::string& windowName, const std::string& windowSliderName, std::string windowObjectName, int objectNumber, std::vector<Entity*> &entityVector);
+	float getWindowSliderValue(const std::string &windowName, const std::string &windowSliderName);
+	HAPISPACE::RectangleI calculateObjectWindowPosition(int objectNumber);
+	HAPISPACE::VectorI calculateObjectScrolledPosition(const std::string& windowName, const std::string& windowSliderName, int objectNumber, std::vector<Entity> &entityVector);
+	HAPISPACE::VectorI calculateObjectScrolledPosition(const std::string& windowName, const std::string& windowSliderName, int objectNumber, std::vector<Entity*> &entityVector);
+	bool entityContainsMouse(const std::string& windowName, std::string windowObjectName, HAPISPACE::VectorI windowTopLeft, HAPISPACE::VectorI mousePosition);
+
 	std::unique_ptr<Sprite> m_battleMapBackground;
 	std::unique_ptr<Sprite> m_enemyTerritoryHexSheet;
 	std::unique_ptr<Sprite> m_prebattleUIBackground;
@@ -39,4 +47,9 @@ private:
 	HAPISPACE::VectorI m_battleFleetWindowTopLeft{HAPISPACE::VectorI(220, 220)};
 	OverWorldWindow m_currentWindow;
 	Battle m_battle;
+
+	const std::string FLEET_WINDOW = "fleetwindow";
+	const std::string BATTLE_FLEET_WINDOW = "battleFleetWindow";
+	const std::string FLEET_SLIDER = "fleetSlider";
+	const std::string BATTLE_FLEET_SLIDER = "battleFleetSlider";
 };

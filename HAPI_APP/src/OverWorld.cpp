@@ -28,14 +28,14 @@ OverWorld::OverWorld()
 	}
 
 	//adding the windows and sliders, also populates the fleet window with all current entities
-	UI.AddWindow("fleetWindow", HAPISPACE::RectangleI(220, 1050, 510, 710));
+	UI.AddWindow(FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 510, 710));
 	for (int i = 0; i < m_entityVector.size(); i++)
 	{
-		UI.GetWindow("fleetWindow")->AddCanvas("entity" + std::to_string(i), HAPISPACE::RectangleI(WINDOW_OBJECTWIDTH * i, (WINDOW_OBJECTWIDTH * i) + WINDOW_OBJECTWIDTH, 0, WINDOW_OBJECTHEIGHT), m_entityVector[i].m_sprite);
+		UI.GetWindow(FLEET_WINDOW)->AddCanvas("entity" + std::to_string(i), calculateObjectWindowPosition(i), m_entityVector[i].m_sprite);
 	}
-	UI.GetWindow("fleetWindow")->AddSlider("fleetSlider", HAPISPACE::RectangleI(0, 830, 110, 210), sliderLayout);
-	UI.AddWindow("battleFleetWindow", HAPISPACE::RectangleI(220, 1050, 220, 420));
-	UI.GetWindow("battleFleetWindow")->AddSlider("battleFleetSlider", HAPISPACE::RectangleI(0, 830, 110, 210), sliderLayout);
+	UI.GetWindow(FLEET_WINDOW)->AddSlider(FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 110, 210), sliderLayout);
+	UI.AddWindow(BATTLE_FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 220, 420));
+	UI.GetWindow(BATTLE_FLEET_WINDOW)->AddSlider(BATTLE_FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 110, 210), sliderLayout);
 }
 
 void OverWorld::render()
@@ -84,8 +84,8 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 				m_enemyTerritoryHexSheet->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				m_currentWindow = OverWorldWindow::PreBattle;
-				UI.OpenWindow("fleetWindow");
-				UI.OpenWindow("battleFleetWindow");
+				UI.OpenWindow(FLEET_WINDOW);
+				UI.OpenWindow(BATTLE_FLEET_WINDOW);
 			}
 			break;
 		}
@@ -93,28 +93,26 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 		{
 			if (m_playButton->GetSpritesheet()->GetFrameRect(0).Translated(m_playButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
-				UI.CloseWindow("fleetWindow");
-				UI.CloseWindow("battleFleetWindow");
+				UI.CloseWindow(FLEET_WINDOW);
+				UI.CloseWindow(BATTLE_FLEET_WINDOW);
 				m_currentWindow = OverWorldWindow::Battle;
 			}
 			else if (m_backButton->GetSpritesheet()->GetFrameRect(0).Translated(m_backButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				m_currentWindow = OverWorldWindow::LevelSelection;
-				UI.CloseWindow("fleetWindow");
-				UI.CloseWindow("battleFleetWindow");
+				UI.CloseWindow(FLEET_WINDOW);
+				UI.CloseWindow(BATTLE_FLEET_WINDOW);
 			}
 			bool selection = false;
 
 			//loops through the entity vector to make sure the object is positioned correctly and tests to see if the mouse is on one of the objects.
 			//selects a ship to display the stats of
-			if (UI.GetWindow("fleetWindow")->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			if (UI.GetWindow(FLEET_WINDOW)->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
 				for (int i = 0; i < m_entityVector.size(); i++)
 				{
-					UI.GetWindow("fleetWindow")->PositionObject(
-						"entity" + std::to_string(i),
-						HAPISPACE::VectorI((WINDOW_OBJECTWIDTH * i) - ((WINDOW_OBJECTWIDTH * m_entityVector.size()) * UI.GetWindow("fleetWindow")->GetObject("fleetSlider")->GetValue()), 0));
-					if (UI.GetWindow("fleetWindow")->GetObject("entity" + std::to_string(i))->GetBoundingRectangleScreenSpace(m_fleetWindowTopLeft).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+					positionEntity(FLEET_WINDOW, FLEET_SLIDER, "entity" + std::to_string(i), i, m_entityVector);
+					if (entityContainsMouse(FLEET_WINDOW, "entity" + std::to_string(i), m_fleetWindowTopLeft, HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 					{
 						m_currentlySelected = &m_entityVector[i];
 						selection = true;
@@ -122,12 +120,12 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 				}
 			}
 			//same for the battlefleet window
-			if (UI.GetWindow("battleFleetWindow")->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			if (UI.GetWindow(BATTLE_FLEET_WINDOW)->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
 				for (int i = 0; i < m_selectedEntities.size(); i++)
 				{
-					UI.GetWindow("battleFleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((WINDOW_OBJECTWIDTH * i) - ((WINDOW_OBJECTWIDTH * m_entityVector.size()) * UI.GetWindow("battleFleetWindow")->GetObject("battleFleetSlider")->GetValue()), 0));
-					if (UI.GetWindow("battleFleetWindow")->GetObject("entity" + std::to_string(i))->GetBoundingRectangleScreenSpace(m_battleFleetWindowTopLeft).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+					positionEntity(BATTLE_FLEET_WINDOW, BATTLE_FLEET_SLIDER, "entity" + std::to_string(i), i, m_selectedEntities);
+					if (entityContainsMouse(BATTLE_FLEET_WINDOW, "entity" + std::to_string(i), m_battleFleetWindowTopLeft, HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 					{
 						m_currentlySelected = *&m_selectedEntities[i];
 						selection = true;
@@ -150,42 +148,42 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 		{
 			//loops through the entity vector to make sure the object is positioned correctly and tests to see if the mouse is on one of the objects.
 			//selects a ship to go into battle
-			if (UI.GetWindow("fleetWindow")->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			if (UI.GetWindow(FLEET_WINDOW)->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
 				for (int i = 0; i < m_entityVector.size(); i++)
 				{
-					UI.GetWindow("fleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((WINDOW_OBJECTWIDTH * i) - ((WINDOW_OBJECTWIDTH * m_entityVector.size()) * UI.GetWindow("fleetWindow")->GetObject("fleetSlider")->GetValue()), 0));
-					if (UI.GetWindow("fleetWindow")->GetObject("entity" + std::to_string(i))->GetBoundingRectangleScreenSpace(m_fleetWindowTopLeft).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+					positionEntity(FLEET_WINDOW, FLEET_SLIDER, "entity" + std::to_string(i), i, m_entityVector);
+					if (entityContainsMouse(FLEET_WINDOW, "entity" + std::to_string(i), m_fleetWindowTopLeft, HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 					{
 						m_selectedEntities.push_back(&m_entityVector[i]);
 						for (int i = 0; i < m_selectedEntities.size(); i++)
 						{
-							if (UI.GetWindow("battleFleetWindow")->GetObject("entity") == nullptr)
+							if (UI.GetWindow(BATTLE_FLEET_WINDOW)->GetObject("entity") == nullptr)
 							{
-								UI.GetWindow("battleFleetWindow")->AddCanvas("entity" + std::to_string(i), HAPISPACE::RectangleI(WINDOW_OBJECTWIDTH * i, (WINDOW_OBJECTWIDTH * i) + WINDOW_OBJECTWIDTH, 0, WINDOW_OBJECTHEIGHT), m_selectedEntities[i]->m_sprite);
+								UI.GetWindow(BATTLE_FLEET_WINDOW)->AddCanvas("entity" + std::to_string(i), calculateObjectWindowPosition(i), m_selectedEntities[i]->m_sprite);
 							}
 						}
 					}
 				}
 			}
 			//same for the battlefleet window but deselects ships
-			if (UI.GetWindow("battleFleetWindow")->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			if (UI.GetWindow(BATTLE_FLEET_WINDOW)->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
 				for (int i = 0; i < m_selectedEntities.size(); i++)
 				{
-					UI.GetWindow("battleFleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((WINDOW_OBJECTWIDTH * i) - ((WINDOW_OBJECTWIDTH * m_entityVector.size()) * UI.GetWindow("battleFleetWindow")->GetObject("battleFleetSlider")->GetValue()), 0));
-					if (UI.GetWindow("battleFleetWindow")->GetObject("entity" + std::to_string(i))->GetBoundingRectangleScreenSpace(m_battleFleetWindowTopLeft).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+					positionEntity(BATTLE_FLEET_WINDOW, BATTLE_FLEET_SLIDER, "entity" + std::to_string(i), i, m_selectedEntities);
+					if (entityContainsMouse(BATTLE_FLEET_WINDOW, "entity" + std::to_string(i), m_battleFleetWindowTopLeft, HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 					{
 						for (int i = 0; i < m_selectedEntities.size(); i++)
 						{
-							UI.GetWindow("battleFleetWindow")->DeleteObject("entity" + std::to_string(i));
+							UI.GetWindow(BATTLE_FLEET_WINDOW)->DeleteObject("entity" + std::to_string(i));
 						}
 						m_selectedEntities.erase(m_selectedEntities.begin() + i);
 						for (int i = 0; i < m_selectedEntities.size(); i++)
 						{
-							if (UI.GetWindow("battleFleetWindow")->GetObject("entity") == nullptr)
+							if (UI.GetWindow(BATTLE_FLEET_WINDOW)->GetObject("entity") == nullptr)
 							{
-								UI.GetWindow("battleFleetWindow")->AddCanvas("entity" + std::to_string(i), HAPISPACE::RectangleI(WINDOW_OBJECTWIDTH * i, (WINDOW_OBJECTWIDTH * i) + WINDOW_OBJECTWIDTH, 0, WINDOW_OBJECTHEIGHT), m_selectedEntities[i]->m_sprite);
+								UI.GetWindow(BATTLE_FLEET_WINDOW)->AddCanvas("entity" + std::to_string(i), calculateObjectWindowPosition(i), m_selectedEntities[i]->m_sprite);
 							}
 						}
 					}
@@ -233,25 +231,64 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
 		{
 			m_backButton->SetFrameNumber(0);
 		}
-		//code for using the slider, slider varies from 0 to 1. this code block makes sure that when the slider value changes the window objects get positioned accordingly
+		//varies the position of objects based on the slder value
 		if (mouseData.leftButtonDown)
 		{
-			if (UI.GetWindow("fleetWindow")->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			if (UI.GetWindow(FLEET_WINDOW)->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
 				for (int i = 0; i < m_entityVector.size(); i++)
 				{
-					UI.GetWindow("fleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((WINDOW_OBJECTWIDTH * i) - ((WINDOW_OBJECTWIDTH * m_entityVector.size()) * UI.GetWindow("fleetWindow")->GetObject("fleetSlider")->GetValue()), 0));
+					positionEntity(FLEET_WINDOW, FLEET_SLIDER, "entity" + std::to_string(i), i, m_entityVector);
 				}
 			}
-			if (UI.GetWindow("fleetWindow")->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			if (UI.GetWindow(BATTLE_FLEET_WINDOW)->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
 				for (int i = 0; i < m_selectedEntities.size(); i++)
 				{
-					UI.GetWindow("battleFleetWindow")->PositionObject("entity" + std::to_string(i), HAPISPACE::VectorI((WINDOW_OBJECTWIDTH * i) - ((WINDOW_OBJECTWIDTH * m_selectedEntities.size()) * UI.GetWindow("battleFleetWindow")->GetObject("battleFleetSlider")->GetValue()), 0));
+					positionEntity(BATTLE_FLEET_WINDOW, BATTLE_FLEET_SLIDER, "entity" + std::to_string(i), i, m_selectedEntities);
 				}
 			}
 		}
 		break;
 	}
 	}
+}
+
+void OverWorld::positionEntity(const std::string & windowName, const std::string& windowSliderName, std::string windowObjectName, int objectNumber, std::vector<Entity> &entityVector)
+{
+	UI.GetWindow(windowName)->PositionObject(windowObjectName, calculateObjectScrolledPosition(windowName, windowSliderName, objectNumber, entityVector));
+}
+
+void OverWorld::positionEntity(const std::string & windowName, const std::string& windowSliderName, std::string windowObjectName, int objectNumber, std::vector<Entity*> &entityVector)
+{
+	UI.GetWindow(windowName)->PositionObject(windowObjectName, calculateObjectScrolledPosition(windowName, windowSliderName, objectNumber, entityVector));
+}
+
+float OverWorld::getWindowSliderValue(const std::string & windowName, const std::string & windowSliderName)
+{
+	return UI.GetWindow(windowName)->GetObject(windowSliderName)->GetValue();
+}
+
+HAPISPACE::RectangleI OverWorld::calculateObjectWindowPosition(int objectNumber)
+{
+	return HAPISPACE::RectangleI(WINDOW_OBJECTWIDTH * objectNumber, (WINDOW_OBJECTWIDTH * objectNumber) + WINDOW_OBJECTWIDTH, 0, WINDOW_OBJECTHEIGHT);
+}
+
+HAPISPACE::VectorI OverWorld::calculateObjectScrolledPosition(const std::string & windowName, const std::string & windowSliderName, int objectNumber, std::vector<Entity>& entityVector)
+{
+	return HAPISPACE::VectorI((WINDOW_OBJECTWIDTH * objectNumber) - ((WINDOW_OBJECTWIDTH * entityVector.size()) * getWindowSliderValue(windowName, windowSliderName)), 0);
+}
+
+HAPISPACE::VectorI OverWorld::calculateObjectScrolledPosition(const std::string & windowName, const std::string & windowSliderName, int objectNumber, std::vector<Entity*>& entityVector)
+{
+	return HAPISPACE::VectorI((WINDOW_OBJECTWIDTH * objectNumber) - ((WINDOW_OBJECTWIDTH * entityVector.size()) * getWindowSliderValue(windowName, windowSliderName)), 0);
+}
+
+bool OverWorld::entityContainsMouse(const std::string & windowName, std::string windowObjectName, HAPISPACE::VectorI windowTopLeft, HAPISPACE::VectorI mousePosition)
+{
+	if (UI.GetWindow(windowName)->GetObject(windowObjectName)->GetBoundingRectangleScreenSpace(windowTopLeft).Contains(mousePosition))
+	{
+		return true;
+	}
+	return false;
 }
