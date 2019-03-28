@@ -18,6 +18,10 @@ OverWorld::OverWorld()
 	m_enemyTerritoryHexSheet->GetTransformComp().SetPosition({ 100, 600 });
 	m_playButton->GetTransformComp().SetPosition({ 1150, 722 });
 	m_backButton->GetTransformComp().SetPosition({ 185, 747 });
+	//
+	//Initalize all varaibles within the entity constructor 
+	//Instead of assigning these variables, pass them as arguements into the entity.
+	//
 	for (int i = 0; i < 20; i++)
 	{
 		Entity newEntity(Utilities::getDataDirectory() + "thingy.xml");
@@ -166,6 +170,12 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 					}
 				}
 			}
+
+			//
+			//All window accesing calls here are too long 
+			//Wite a functoin that accesses them 
+			//
+			//
 			//same for the battlefleet window but deselects ships
 			if (UI.GetWindow(BATTLE_FLEET_WINDOW)->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
@@ -181,6 +191,7 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 						m_selectedEntities.erase(m_selectedEntities.begin() + i);
 						for (int i = 0; i < m_selectedEntities.size(); i++)
 						{
+	
 							if (UI.GetWindow(BATTLE_FLEET_WINDOW)->GetObject("entity") == nullptr)
 							{
 								UI.GetWindow(BATTLE_FLEET_WINDOW)->AddCanvas("entity" + std::to_string(i), calculateObjectWindowPosition(i), m_selectedEntities[i]->m_sprite);
@@ -231,6 +242,26 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
 		{
 			m_backButton->SetFrameNumber(0);
 		}
+
+
+		struct HAPI_Window : private UIWindow
+		{
+			HAPI_Window(const std::string& name);
+
+			bool contains(const HAPI_TMouseData& mouseData) const
+			{
+				UI.GetWindow(m_name)->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y));
+			}
+
+			std::string m_name;
+		};
+
+
+		//
+		//Lines too long here
+		//Need to find a way of reducing hte way of accessing hte window components. 
+		//The only function your using here through window is contins, then passing data into it.
+		//
 		//varies the position of objects based on the slder value
 		if (mouseData.leftButtonDown)
 		{
