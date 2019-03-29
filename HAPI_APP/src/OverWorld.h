@@ -30,13 +30,14 @@ private:
 	void positionEntity(const std::string& windowName, const std::string& windowSliderName, std::string windowObjectName, int objectNumber, std::vector<Entity*> &entityVector);
 	float getWindowSliderValue(const std::string &windowName, const std::string &windowSliderName);
 	HAPISPACE::RectangleI calculateObjectWindowPosition(int objectNumber);
+	HAPISPACE::RectangleI windowScreenRect(const std::string& windowName);
 	//
 	//These two functions can be split up into one
 	//By passing in the size of the vector variable
 	//
-	HAPISPACE::VectorI calculateObjectScrolledPosition(const std::string& windowName, const std::string& windowSliderName, int objectNumber, std::vector<Entity> &entityVector);
-	HAPISPACE::VectorI calculateObjectScrolledPosition(const std::string& windowName, const std::string& windowSliderName, int objectNumber, std::vector<Entity*> &entityVector);
+	HAPISPACE::VectorI calculateObjectScrolledPosition(const std::string& windowName, const std::string& windowSliderName, int objectNumber, size_t vectorSize);
 	bool entityContainsMouse(const std::string& windowName, std::string windowObjectName, HAPISPACE::VectorI windowTopLeft, HAPISPACE::VectorI mousePosition);
+	bool windowObjectExists(const std::string& windowName, std::string windowObjectName);
 
 	//
 	//IMPORTANT: Split apart all UI functions & varaibles. Then seperate all game code variables 

@@ -111,7 +111,7 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 
 			//loops through the entity vector to make sure the object is positioned correctly and tests to see if the mouse is on one of the objects.
 			//selects a ship to display the stats of
-			if (UI.GetWindow(FLEET_WINDOW)->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			if (windowScreenRect(FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
 				for (int i = 0; i < m_entityVector.size(); i++)
 				{
@@ -124,7 +124,7 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 				}
 			}
 			//same for the battlefleet window
-			if (UI.GetWindow(BATTLE_FLEET_WINDOW)->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			if (windowScreenRect(BATTLE_FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
 				for (int i = 0; i < m_selectedEntities.size(); i++)
 				{
@@ -152,7 +152,7 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 		{
 			//loops through the entity vector to make sure the object is positioned correctly and tests to see if the mouse is on one of the objects.
 			//selects a ship to go into battle
-			if (UI.GetWindow(FLEET_WINDOW)->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			if (windowScreenRect(FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
 				for (int i = 0; i < m_entityVector.size(); i++)
 				{
@@ -162,7 +162,7 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 						m_selectedEntities.push_back(&m_entityVector[i]);
 						for (int i = 0; i < m_selectedEntities.size(); i++)
 						{
-							if (UI.GetWindow(BATTLE_FLEET_WINDOW)->GetObject("entity") == nullptr)
+							if (!windowObjectExists(BATTLE_FLEET_WINDOW, "entity" + std::to_string(i)))
 							{
 								UI.GetWindow(BATTLE_FLEET_WINDOW)->AddCanvas("entity" + std::to_string(i), calculateObjectWindowPosition(i), m_selectedEntities[i]->m_sprite);
 							}
@@ -177,7 +177,7 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 			//
 			//
 			//same for the battlefleet window but deselects ships
-			if (UI.GetWindow(BATTLE_FLEET_WINDOW)->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			if (windowScreenRect(BATTLE_FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
 				for (int i = 0; i < m_selectedEntities.size(); i++)
 				{
@@ -192,7 +192,7 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 						for (int i = 0; i < m_selectedEntities.size(); i++)
 						{
 	
-							if (UI.GetWindow(BATTLE_FLEET_WINDOW)->GetObject("entity") == nullptr)
+							if (!windowObjectExists(BATTLE_FLEET_WINDOW, "enitity" + std::to_string(i)))
 							{
 								UI.GetWindow(BATTLE_FLEET_WINDOW)->AddCanvas("entity" + std::to_string(i), calculateObjectWindowPosition(i), m_selectedEntities[i]->m_sprite);
 							}
@@ -265,14 +265,14 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
 		//varies the position of objects based on the slder value
 		if (mouseData.leftButtonDown)
 		{
-			if (UI.GetWindow(FLEET_WINDOW)->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			if (windowScreenRect(FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
 				for (int i = 0; i < m_entityVector.size(); i++)
 				{
 					positionEntity(FLEET_WINDOW, FLEET_SLIDER, "entity" + std::to_string(i), i, m_entityVector);
 				}
 			}
-			if (UI.GetWindow(BATTLE_FLEET_WINDOW)->GetScreenRect().Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			if (windowScreenRect(BATTLE_FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
 				for (int i = 0; i < m_selectedEntities.size(); i++)
 				{
@@ -287,12 +287,12 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
 
 void OverWorld::positionEntity(const std::string & windowName, const std::string& windowSliderName, std::string windowObjectName, int objectNumber, std::vector<Entity> &entityVector)
 {
-	UI.GetWindow(windowName)->PositionObject(windowObjectName, calculateObjectScrolledPosition(windowName, windowSliderName, objectNumber, entityVector));
+	UI.GetWindow(windowName)->PositionObject(windowObjectName, calculateObjectScrolledPosition(windowName, windowSliderName, objectNumber, entityVector.size()));
 }
 
 void OverWorld::positionEntity(const std::string & windowName, const std::string& windowSliderName, std::string windowObjectName, int objectNumber, std::vector<Entity*> &entityVector)
 {
-	UI.GetWindow(windowName)->PositionObject(windowObjectName, calculateObjectScrolledPosition(windowName, windowSliderName, objectNumber, entityVector));
+	UI.GetWindow(windowName)->PositionObject(windowObjectName, calculateObjectScrolledPosition(windowName, windowSliderName, objectNumber, entityVector.size()));
 }
 
 float OverWorld::getWindowSliderValue(const std::string & windowName, const std::string & windowSliderName)
@@ -305,19 +305,29 @@ HAPISPACE::RectangleI OverWorld::calculateObjectWindowPosition(int objectNumber)
 	return HAPISPACE::RectangleI(WINDOW_OBJECTWIDTH * objectNumber, (WINDOW_OBJECTWIDTH * objectNumber) + WINDOW_OBJECTWIDTH, 0, WINDOW_OBJECTHEIGHT);
 }
 
-HAPISPACE::VectorI OverWorld::calculateObjectScrolledPosition(const std::string & windowName, const std::string & windowSliderName, int objectNumber, std::vector<Entity>& entityVector)
+HAPISPACE::RectangleI OverWorld::windowScreenRect(const std::string & windowName)
 {
-	return HAPISPACE::VectorI((WINDOW_OBJECTWIDTH * objectNumber) - ((WINDOW_OBJECTWIDTH * entityVector.size()) * getWindowSliderValue(windowName, windowSliderName)), 0);
+	return UI.GetWindow(windowName)->GetScreenRect();
 }
 
-HAPISPACE::VectorI OverWorld::calculateObjectScrolledPosition(const std::string & windowName, const std::string & windowSliderName, int objectNumber, std::vector<Entity*>& entityVector)
+HAPISPACE::VectorI OverWorld::calculateObjectScrolledPosition(const std::string & windowName, const std::string & windowSliderName, int objectNumber, size_t vectorSize)
 {
-	return HAPISPACE::VectorI((WINDOW_OBJECTWIDTH * objectNumber) - ((WINDOW_OBJECTWIDTH * entityVector.size()) * getWindowSliderValue(windowName, windowSliderName)), 0);
+	return HAPISPACE::VectorI((WINDOW_OBJECTWIDTH * objectNumber) - ((WINDOW_OBJECTWIDTH * vectorSize) * getWindowSliderValue(windowName, windowSliderName)), 0);
 }
+
 
 bool OverWorld::entityContainsMouse(const std::string & windowName, std::string windowObjectName, HAPISPACE::VectorI windowTopLeft, HAPISPACE::VectorI mousePosition)
 {
 	if (UI.GetWindow(windowName)->GetObject(windowObjectName)->GetBoundingRectangleScreenSpace(windowTopLeft).Contains(mousePosition))
+	{
+		return true;
+	}
+	return false;
+}
+
+bool OverWorld::windowObjectExists(const std::string & windowName, std::string windowObjectName)
+{
+	if (UI.GetWindow(windowName)->GetObject(windowObjectName) != nullptr)
 	{
 		return true;
 	}
