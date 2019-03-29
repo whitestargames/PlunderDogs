@@ -33,4 +33,5 @@ public:
 	Battle();
 
 	void render() const;
+	std::vector<std::pair<int, int>> getPathToTile(std::pair<int, int> dest);
 };

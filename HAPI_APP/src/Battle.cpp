@@ -55,6 +55,7 @@ void Battle::render() const
 	}
 }
 
+
 void Battle::initializeEntity(const std::string & fileName, std::pair<int, int> point)
 {
 	m_entity.first = std::make_unique<Entity>(Utilities::getDataDirectory() + fileName);
@@ -88,13 +89,7 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 		{
 			m_previousMousePoint = m_entity.second;
 		}
-		else
-		{
-			for (auto& i : m_movementPath)
-			{
-				i.second = false;
-			}
-		}
+
 		////If movement path is being displayed and the entity has moved
 		////No further need of movement graph
 		//if (!m_movementPath.empty())
@@ -105,7 +100,11 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 	else if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
 		m_isEntitySelected = false;
-		m_movementPath.clear();
+		for (auto& i : m_movementPath)
+		{
+			i.second = false;
+		}
+
 	}
 }
 
@@ -160,25 +159,32 @@ void Battle::handleMovementPath()
 		return;
 	}
 	
-	auto pathToTile = PathFinding::getPathToTile(m_map, m_entity.second, currentTile->m_tileCoordinate);
-	if (pathToTile.empty() || pathToTile.size() > m_entity.first->m_movementPoints)
+	auto pathToTile = getPathToTile(currentTile->m_tileCoordinate);
+	//if (pathToTile.empty() || pathToTile.size() > m_entity.first->m_movementPoints)
+	
+	if(pathToTile.empty())
 	{
 		return;
 	}
-	
-	
-	for (auto i = pathToTile.size(); --i;)
+
+	if (pathToTile.size() > 6)
+	{
+		int i = 0;
+	}
+
+	for (auto& i : m_movementPath)
+	{
+		i.second = false;
+	}
+
+	for (int i = 1; i < pathToTile.size(); ++i)
 	{
 		auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
-		m_movementPath[i].first->GetTransformComp().SetPosition({
+		m_movementPath[i - 1].first->GetTransformComp().SetPosition({
 			static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
 			static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
-
 		m_movementPath[i - 1].second = true;
-		std::cout << i << "\n";
 	}
-	std::cout << "NEW LINE\n";
-
 
 	////Create movement trail to where mouse cursor is 
 	//m_movementPath.clear();
@@ -231,4 +237,27 @@ void Battle::selectEntity(const Tile& tile)
 	{
 		m_isEntitySelected = true;
 	}	
+}
+
+std::vector<std::pair<int, int>> Battle::getPathToTile(std::pair<int, int> dest)
+{
+	auto pathToTile = PathFinding::getPathToTile(m_map, m_entity.second, dest);
+	if (pathToTile.empty())
+	{
+		return std::vector<std::pair<int, int>>();
+	}
+
+	std::vector<std::pair<int, int>> path;
+	path.reserve(pathToTile.size());
+	for (int i = pathToTile.size() - 1; i >= 0; i--)
+	{
+		path.push_back(pathToTile[i]);
+	}
+	
+	if (pathToTile.size() > 5)
+	{
+		int i = 0;
+	}
+
+	return path;
 }
