@@ -24,6 +24,7 @@ private:
 	std::unique_ptr<Sprite> m_mouseCursor;
 	std::vector<std::pair<std::unique_ptr<Sprite>, bool>> m_movementPath;
 	std::pair<int, int> m_previousMousePoint;
+	std::vector<std::pair<int, int>> getPathToTile(std::pair<int, int> dest);
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
@@ -33,5 +34,5 @@ public:
 	Battle();
 
 	void render() const;
-	std::vector<std::pair<int, int>> getPathToTile(std::pair<int, int> dest);
+	
 };
