@@ -9,11 +9,16 @@ void HAPI_Sprites_Main()
 	HAPI_Sprites.SetShowFPS(true);
 	HAPI_Sprites.LimitFrameRate(200);
 
+	int lastFrameStart = HAPI_Sprites.GetTime();
 	OverWorld overWorld;
 	while (HAPI_Sprites.Update())
 	{
+		int frameStart = HAPI_Sprites.GetTime();
+
 		SCREEN_SURFACE->Clear();
-		overWorld.update();
+		overWorld.update(static_cast<float>(frameStart / lastFrameStart) / 1000.0f);
 		overWorld.render();
+
+		lastFrameStart = frameStart;
 	}	
 }

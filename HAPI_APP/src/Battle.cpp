@@ -100,11 +100,11 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 	else if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
 		m_isEntitySelected = false;
+
 		for (auto& i : m_movementPath)
 		{
 			i.second = false;
 		}
-
 	}
 }
 

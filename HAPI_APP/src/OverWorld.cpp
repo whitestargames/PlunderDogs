@@ -15,8 +15,6 @@ OverWorld::OverWorld()
 	HAPI_Wrapper::setPosition(m_enemyTerritoryHexSheet, { 100, 600 });
 	HAPI_Wrapper::setPosition(m_playButton, { 1150, 722 });
 	HAPI_Wrapper::setPosition(m_backButton, { 185, 747 });
-
-	
 }
 
 void OverWorld::render()
@@ -43,6 +41,18 @@ void OverWorld::render()
 	{
 		HAPI_Wrapper::render(m_battleMapBackground);
 		HAPI_Wrapper::render(m_enemyTerritoryHexSheet);
+		break;
+	}
+	}
+}
+
+void OverWorld::update(float deltaTime)
+{
+	switch (CURRENT_WINDOW)
+	{
+	case OverWorldWindow::Battle :
+	{
+		m_battle.update(deltaTime);
 		break;
 	}
 	}
