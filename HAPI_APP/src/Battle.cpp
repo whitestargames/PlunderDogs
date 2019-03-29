@@ -55,6 +55,10 @@ void Battle::render() const
 	}
 }
 
+void Battle::update(float deltaTime)
+{
+
+}
 
 void Battle::initializeEntity(const std::string & fileName, std::pair<int, int> point)
 {
@@ -160,7 +164,7 @@ void Battle::handleMovementPath()
 	}
 	
 	auto pathToTile = getPathToTile(currentTile->m_tileCoordinate);
-	if(pathToTile.empty() || pathToTile.size() > m_entity.first->m_movementPoints)
+	if(pathToTile.empty() || pathToTile.size() > m_entity.first->m_movementPoints + 1)
 	{
 		return;
 	}
@@ -194,13 +198,6 @@ void Battle::moveEntity(const Tile& tile)
 	}
 	//Not a travellable tile
 	if (tile.m_type != eTileType::eOcean && tile.m_type != eTileType::eSea)
-	{
-		m_isEntitySelected = false;
-		return;
-	}
-	//Make sure new point is within movement bounds of the entity
-	auto pathToTile = PathFinding::getPathToTile(m_map, m_entity.second, tile.m_tileCoordinate);
-	if (pathToTile.size() > m_entity.first->m_movementPoints + 1)
 	{
 		m_isEntitySelected = false;
 		return;
