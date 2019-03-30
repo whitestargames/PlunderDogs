@@ -55,6 +55,7 @@ void Battle::render() const
 	}
 }
 
+
 void Battle::update(float deltaTime)
 {
 
