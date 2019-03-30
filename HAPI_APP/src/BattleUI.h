@@ -37,7 +37,7 @@ private:
 	std::unique_ptr<Sprite> m_resumeButton;
 	std::unique_ptr<Sprite> m_quitButton;
 
-	BattleWindow m_currentWindow;
+	BattleWindow m_currentWindow{BattleWindow::Battle};
 
 	Battle m_battle;
 	/*Map m_map;*/

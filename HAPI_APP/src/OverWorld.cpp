@@ -7,9 +7,12 @@ OverWorld::OverWorld()
 	m_prebattleUIBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PrebattleUI.png")),
 	m_playButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PrebattleUIPlayButton.png", 2)),
 	m_backButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PrebattleUIBackButton.png", 2)),
+	m_upgradesButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "upgradesButton.png", 2)),
 	m_currentWindow(OverWorldWindow::LevelSelection)
 {
 	m_enemyTerritoryHexSheet->GetTransformComp().SetPosition({ 100, 600 });
+	m_upgradesButton->GetTransformComp().SetPosition({ 1300, 25 });
+
 	m_playButton->GetTransformComp().SetPosition({ 1150, 722 });
 	m_backButton->GetTransformComp().SetPosition({ 185, 747 });
 }
@@ -20,6 +23,7 @@ void OverWorld::render()
 
 	m_battleMapBackground->Render(SCREEN_SURFACE);
 	m_enemyTerritoryHexSheet->Render(SCREEN_SURFACE);
+	m_upgradesButton->Render(SCREEN_SURFACE);
 
 	switch (m_currentWindow)
 	{
@@ -59,6 +63,12 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 			{
 				m_currentWindow = OverWorldWindow::PreBattle;
 			}
+
+			if (m_upgradesButton->GetSpritesheet()->GetFrameRect(0).Translated(
+				m_upgradesButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				m_currentWindow = OverWorldWindow::Upgrade;
+			}
 			break;
 		}
 		case OverWorldWindow::PreBattle:
@@ -90,6 +100,15 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
 		else if (m_enemyTerritoryHexSheet->GetFrameNumber() != 0)//if mouse is not over the button and the button has the hover sprite
 		{
 			m_enemyTerritoryHexSheet->SetFrameNumber(0);// sets it to the default sprite
+		}
+
+		if (m_upgradesButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradesButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_upgradesButton->SetFrameNumber(1);
+		}
+		else if (m_upgradesButton->GetFrameNumber() != 0)
+		{
+			m_upgradesButton->SetFrameNumber(0);
 		}
 		break;
 	}

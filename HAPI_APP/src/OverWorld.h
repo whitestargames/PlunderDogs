@@ -13,7 +13,8 @@ class OverWorld : public IHapiSpritesInputListener
 	{
 		Battle = 0,
 		PreBattle,              
-		LevelSelection
+		LevelSelection,
+		Upgrade
 	};
 public:
 	OverWorld();
@@ -31,5 +32,6 @@ private:
 	std::unique_ptr<Sprite> m_prebattleUIBackground;
 	std::unique_ptr<Sprite> m_playButton;
 	std::unique_ptr<Sprite> m_backButton;
+	std::unique_ptr<Sprite> m_upgradesButton;
 	OverWorldWindow m_currentWindow;
 };
