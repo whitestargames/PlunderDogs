@@ -1,4 +1,5 @@
 #include "Overworld.h"
+#include "BattleUI.h"
 using namespace HAPISPACE;
 
 void HAPI_Sprites_Main()
@@ -9,9 +10,18 @@ void HAPI_Sprites_Main()
 	HAPI_Sprites.SetShowFPS(true);
 
 	OverWorld overWorld;
+	BattleUI battleUI;
+
 	while (HAPI_Sprites.Update())
 	{
-		overWorld.update();
-		overWorld.render();
+		//overWorld.update();//I think we can just delete this
+		if (!overWorld.battleState)
+		{
+			overWorld.render();
+		}
+		else
+		{
+			battleUI.render();
+		}
 	}	
 }

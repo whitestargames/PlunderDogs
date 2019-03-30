@@ -1,5 +1,4 @@
 #include  "Overworld.h"
-#include "Battle.h"
 #include "Utilities/Utilities.h"
 
 OverWorld::OverWorld()
@@ -37,7 +36,7 @@ void OverWorld::render()
 	}
 	case OverWorldWindow::Battle :
 	{
-		m_battle.render();
+		battleState = true;
 		break;
 	}
 	case OverWorldWindow::LevelSelection ://level selection always wants to be rendered so is outside the switch case

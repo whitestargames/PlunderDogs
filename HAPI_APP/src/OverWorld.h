@@ -3,7 +3,6 @@
 #include <HAPISprites_lib.h>
 #include <HAPISprites_UI.h>
 #include <string>
-#include "Battle.h"
 
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
@@ -24,6 +23,7 @@ public:
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
+	bool battleState = false;
 
 private:
 	std::unique_ptr<Sprite> m_battleMapBackground;
@@ -32,5 +32,4 @@ private:
 	std::unique_ptr<Sprite> m_playButton;
 	std::unique_ptr<Sprite> m_backButton;
 	OverWorldWindow m_currentWindow;
-	Battle m_battle;
 };

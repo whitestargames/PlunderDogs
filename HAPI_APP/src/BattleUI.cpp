@@ -1,5 +1,6 @@
 #include "BattleUI.h"
 #include "Utilities/Utilities.h"
+//#include "Utilities/MapParser.h"
 
 BattleUI::BattleUI()
 	: m_battleIcons(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "battleIcons.png")),
@@ -8,33 +9,93 @@ BattleUI::BattleUI()
 	m_pauseMenuBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "pauseMenuBackground.png")),
 	m_resumeButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "resumeButton.png", 2)),
 	m_quitButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "quitButton.png", 2))
+	//m_map(MapParser::parseMap(Utilities::getDataDirectory() + "Level1.tmx"))
 {
 	m_battleIcons->GetTransformComp().SetPosition({ 350, 800 });
 	m_pauseButton->GetTransformComp().SetPosition({ 1450, 50 });
 	m_chickenButton->GetTransformComp().SetPosition({ 1450, 750 });
 
-	m_pauseMenuBackground->GetTransformComp().SetPosition({ 568, 152 });
-	m_resumeButton->GetTransformComp().SetPosition({ 658, 307 });
-	m_quitButton->GetTransformComp().SetPosition({ 658, 322 });
+	//m_pauseMenuBackground->GetTransformComp().SetPosition({ 568, 152 });
+	m_resumeButton->GetTransformComp().SetPosition({ 658, 297 });
+	m_quitButton->GetTransformComp().SetPosition({ 658, 427 });
 }
 
 void BattleUI::render()
 {
 	SCREEN_SURFACE->Clear();
 
-	m_battleIcons->Render(SCREEN_SURFACE);
+	m_battle.render();
+
+	if (shipSelected)
+	{
+		if (playAnimation)
+		{
+			animationOffset = 100 - (HAPI_Sprites.GetTime() - animationStartTime);
+			if (animationOffset<1)
+			{
+				playAnimation = false;
+				animationOffset = 0;
+			}
+
+			m_battleIcons->GetTransformComp().SetPosition({ 350, (800 + static_cast<float>(animationOffset)) });
+		}
+		m_battleIcons->Render(SCREEN_SURFACE);
+
+		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(440, (815 + animationOffset)), HAPISPACE::Colour255::BLACK, "45/55", 44);
+		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(700, (815 + animationOffset)), HAPISPACE::Colour255::BLACK, "4", 44);
+		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(900, (815 + animationOffset)), HAPISPACE::Colour255::BLACK, "3/4", 44);
+		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1135, (815 + animationOffset)), HAPISPACE::Colour255::BLACK, "5", 44);
+		
+	}
 	m_pauseButton->Render(SCREEN_SURFACE);
 	m_chickenButton->Render(SCREEN_SURFACE);
-
-	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(300, 800), HAPISPACE::Colour255::BLACK, "45/55", 50);
-	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(400, 800), HAPISPACE::Colour255::BLACK, "3", 50);
-	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(500, 800), HAPISPACE::Colour255::BLACK, "4", 50);
-	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(600, 800), HAPISPACE::Colour255::BLACK, "5", 50);
 
 	switch (m_currentWindow)
 	{
 	case BattleWindow::Battle:
 	{
+		////camera pan
+		//if (!pendingCameraMovement.IsZero())
+		//{
+		//	CameraPositionOffset.first += pendingCameraMovement.x;//translates the camera position
+		//	CameraPositionOffset.second += pendingCameraMovement.y;
+
+		//	if (CameraPositionOffset.first < -500)//checks for if its reached any of the 4 boundries, need to change it to a width variable
+		//	{
+		//		CameraPositionOffset.first = -500;
+		//		sideBoundary = true;
+		//	}
+		//	else if (CameraPositionOffset.first > 500)
+		//	{
+		//		CameraPositionOffset.first = 500;
+		//		sideBoundary = true;
+		//	}
+		//	else
+		//	{
+		//		sideBoundary = false;
+		//	}
+		//	if (CameraPositionOffset.second < -400)
+		//	{
+		//		CameraPositionOffset.second = -400;
+		//		floorBoundary = true;
+		//	}
+		//	else if (CameraPositionOffset.second > 400)
+		//	{
+		//		CameraPositionOffset.second = 400;
+		//		floorBoundary = true;
+		//	}
+		//	else
+		//	{
+		//		floorBoundary = false;
+		//	}
+
+		//	if (!sideBoundary && !floorBoundary)
+		//	{
+		//		CameraPositionOffset.first += pendingCameraMovement.x;
+		//		CameraPositionOffset.second += pendingCameraMovement.y;
+		//		m_map.setDrawOffset(CameraPositionOffset);
+		//	}
+		//}
 		break;//the battle should continue to render behind the pause menu so is before the switch case
 	}
 	case BattleWindow::Pause:
@@ -59,6 +120,18 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouse
 				m_pauseButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
 			{
 				m_currentWindow = BattleWindow::Pause;//enables the pause menu
+			}
+
+			if (m_chickenButton->GetSpritesheet()->GetFrameRect(0).Translated(
+				m_chickenButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
+			{
+				animationStartTime = HAPI_Sprites.GetTime();
+				shipSelected = true;
+				playAnimation = true;
+			}
+			else
+			{
+				shipSelected = false;
 			}
 			break;
 		}
@@ -89,6 +162,30 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 		{
 			m_pauseButton->SetFrameNumber(0);// sets it to the default sprite
 		}
+
+
+		////moves the sprites when the mouse is on the edge of the screen
+		////only checks when mouse moves. if mouse doesnt move, it knows its still in the same spot and will keep scrolling without checking
+		//pendingCameraMovement = VectorF{ 0,0 };
+
+		//if (mouseData.x < 100)
+		//{
+		//	pendingCameraMovement = VectorF{ 1,0 };
+		//}
+		//else if (mouseData.x > 1500)
+		//{
+		//	pendingCameraMovement = VectorF{ -1,0 };
+		//}
+
+		//if (mouseData.y < 100)
+		//{
+		//	pendingCameraMovement = VectorF{ 0,1 };
+		//}
+		//else if (mouseData.y > 800)
+		//{
+		//	pendingCameraMovement = VectorF{ 0,-1 };
+		//}
+
 		break;
 	}
 	case BattleWindow::Pause:
