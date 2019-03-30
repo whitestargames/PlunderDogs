@@ -55,6 +55,19 @@ void Battle::render() const
 	}
 }
 
+//float dx = target->x - x;
+//float dy = target->y - y;
+//float dist = std::sqrt(dx*dx + dy * dy);
+//if (dist > speed * delta) {
+//	dx /= dist;
+//	dy /= dist;
+//	x += dx * speed * delta;
+//	y += dy * speed * delta;
+//}
+//else {
+//	x = target->x;
+//	y = target->y;
+//}
 
 void Battle::update(float deltaTime)
 {
