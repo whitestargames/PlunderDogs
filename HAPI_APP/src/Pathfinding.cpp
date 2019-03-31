@@ -10,7 +10,8 @@ struct Cell
 		m_parent_j(0),
 		m_f(0),
 		m_g(0),
-		m_h(0)
+		m_h(0),
+		direction(eDirection::eNorth)
 	{}
 
 	int m_parent_i;
@@ -18,30 +19,32 @@ struct Cell
 	double m_f;
 	double m_g;
 	double m_h;
+	eDirection direction;
 };
 
-void tracePath(const std::vector<std::vector<Cell> >& cellDetails, std::pair<int, int> dest, std::vector<std::pair<int, int>>& path);
+void tracePath(const std::vector<std::vector<Cell> >& cellDetails, 
+	std::pair<int, int> dest, std::vector<pPair>& path);
 bool isValid(int row, int col, int sizeX, int sizeY);
 bool isUnBlocked(Map &map, std::pair<int, int> coord);
 bool isDestination(int row, int col, std::pair<int, int> dest);
 double calculateHeuristicValue(int row, int col, std::pair<int, int> dest);
 void findAvailableTiles(std::pair<int, int> src, Map &map, int depth);
 
-void tracePath(const std::vector<std::vector<Cell>>& cellDetails, std::pair<int, int> dest, std::vector<std::pair<int, int>>& path)
+void tracePath(const std::vector<std::vector<Cell>>& cellDetails, std::pair<int, int> dest, std::vector<pPair>& path)
 {
 	int row = dest.first;
 	int col = dest.second;
 
 	while (!(cellDetails[row][col].m_parent_i == row && cellDetails[row][col].m_parent_j == col))
 	{
-		path.emplace_back(std::make_pair(row, col));
+		path.emplace_back(std::make_pair(cellDetails[row][col].direction, std::make_pair(row, col)));
 		int tempRow = cellDetails[row][col].m_parent_i;
 		int tempCol = cellDetails[row][col].m_parent_j;
 
 		row = tempRow;
 		col = tempCol;
 	}
-	path.emplace_back(std::make_pair(row, col));
+	path.emplace_back(std::make_pair(cellDetails[row][col].direction, std::make_pair(row, col)));
 }
 
 bool isValid(int row, int col, int sizeX, int sizeY)
@@ -70,30 +73,33 @@ bool isDestination(int row, int col, std::pair<int, int> dest)
 
 double calculateHeuristicValue(int row, int col, std::pair<int, int> dest)
 {
-	//calculated using Euclidean Distance
-	return((double)sqrt((row - dest.first)*(row - dest.first) + (col - dest.second) * (col - dest.second)));
+	//calculated using Manhattan Distance+
+
+	return (abs(row - dest.first) + abs(col - dest.second));
 }
 
-std::vector<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<int, int> src, std::pair<int, int> dest)
+std::vector<pPair> PathFinding::getPathToTile(Map &map, std::pair<int, int> src, std::pair<int, int> dest)
 {
 	int sizeX = map.getDimensions().first;
 	int sizeY = map.getDimensions().second;
+	Entity *ship = map.getTile(src)->m_entityOnTile;
+
 	if (!isValid(dest.first, dest.second, sizeX, sizeY))//TODO
 	{
 		std::cout << "Destination is invalid" << std::endl;
-		return std::vector<std::pair<int, int>>();
+		return std::vector<pPair>();
 	}
 
 	if (!isUnBlocked(map, src) || !isUnBlocked(map, dest))
 	{
 		std::cout << "Source or Destination blocked" << std::endl;
-		return std::vector<std::pair<int, int>>();
+		return std::vector<pPair>();
 	}
 
 	if (isDestination(src.first, src.second, dest))
 	{
 		std::cout << "Destination Already reached" << std::endl;
-		return std::vector<std::pair<int, int>>();
+		return std::vector<pPair>();
 	}
 
 	std::vector<std::vector<Cell>> cellDetails;
@@ -135,7 +141,7 @@ std::vector<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<
 	openList.insert(std::make_pair(0.0, std::make_pair(i, j)));
 
 	bool destFound = false;
-	std::vector<std::pair<int, int>> path;
+	std::vector<pPair> path;
 	while (!openList.empty())
 	{
 		pPair p = *openList.begin();
@@ -164,8 +170,10 @@ std::vector<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<
 					//If cell is destination point
 					if (isDestination(x, y, dest))
 					{
+						
 						cellDetails[x][y].m_parent_i = i;
 						cellDetails[x][y].m_parent_j = j;
+						cellDetails[x][y].direction = (eDirection)cellIndex;
 						tracePath(cellDetails, dest, path);
 						destFound = true;
 						return path;
@@ -185,6 +193,7 @@ std::vector<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<
 							cellDetails[x][y].m_h = sucH;
 							cellDetails[x][y].m_parent_i = i;
 							cellDetails[x][y].m_parent_j = j;
+							cellDetails[x][y].direction = (eDirection)cellIndex;
 						}
 					}
 				}
@@ -193,7 +202,7 @@ std::vector<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<
 	}
 	if (!destFound)
 		std::cout << "Failed to find destination" << std::endl;
-	return std::vector<std::pair<int, int>>();	
+	return std::vector<pPair>();
 }
 
 void findAvailableTiles(std::pair<int, int> src, Map &map, int depth)
@@ -205,7 +214,7 @@ void findAvailableTiles(std::pair<int, int> src, Map &map, int depth)
 	int j{ 0 };
 
 	auto ship = map.getTile(src)->m_entityOnTile;
-
+	
 	//ship->setDirection(eDirection::eNorth);
 	std::vector < std::vector<bool>> closedList;
 	closedList.resize(sizeX);

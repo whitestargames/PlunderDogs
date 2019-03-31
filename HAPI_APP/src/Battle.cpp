@@ -2,7 +2,7 @@
 #include "Utilities/MapParser.h"
 #include "Utilities/Utilities.h"
 #include "entity.h"
-#include "Pathfinding.h"
+
 #include "OverWorld.h"
 #include "HAPIWrapper.h"
 
@@ -58,6 +58,15 @@ void Battle::render() const
 void Battle::update(float deltaTime)
 {
 
+}
+
+unsigned int Battle::calculateDirectionCost(int currentDirection, int newDirection)
+{
+	unsigned int diff = std::abs(newDirection - currentDirection);
+	if (diff == 0)
+		return 0;
+	//number of direction % difference between the new and old directions
+	return (5 % diff)+1;
 }
 
 void Battle::initializeEntity(const std::string & fileName, std::pair<int, int> point)
@@ -150,6 +159,7 @@ void Battle::handleEntityMovement()
 
 void Battle::handleMovementPath()
 {
+	
 	Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 	if (!currentTile)
 	{
@@ -164,7 +174,8 @@ void Battle::handleMovementPath()
 	}
 	
 	auto pathToTile = getPathToTile(currentTile->m_tileCoordinate);
-	if(pathToTile.empty() || pathToTile.size() > m_entity.first->m_movementPoints + 1)
+	
+	if(pathToTile.empty() || pathToTile.size() > m_entity.first->m_movementPoints + 1 || m_entity.first->m_movementPoints + 1 <= 0)
 	{
 		return;
 	}
@@ -175,13 +186,26 @@ void Battle::handleMovementPath()
 	}
 
 	//Don't interact with path from source.
+
 	for (int i = 1; i < pathToTile.size(); ++i)
 	{
-		auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
+		m_entity.first->m_movementPoints = 5;
+		auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i].second);
 		m_movementPath[i - 1].first->GetTransformComp().SetPosition({
 			static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
 			static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
 		m_movementPath[i - 1].second = true;
+
+		//used to check if direction had been implemented correctly
+		//int entityDir = (int)m_entity.first->m_entityDirection;
+		//int pathDir = (int)pathToTile[i].first;
+		//
+		//
+		//int cost = calculateDirectionCost(entityDir, pathDir) + 1;
+		////m_entity.first->m_entityDirection = (eDirection)pathDir;
+		//m_entity.first->m_movementPoints -= cost;
+		//std::cout <<"Old Dir:" << entityDir <<"New Dir:" << pathDir << "cost: " << cost << std::endl;
+		//std::cout << "move Points" << m_entity.first->m_movementPoints << std::endl;
 	}
 
 	//Assign last position for the end of the movement graph
@@ -219,15 +243,15 @@ void Battle::selectEntity(const Tile& tile)
 	}	
 }
 
-std::vector<std::pair<int, int>> Battle::getPathToTile(std::pair<int, int> dest)
+std::vector<std::pair<double, std::pair<int, int>>> Battle::getPathToTile(std::pair<int, int> dest)
 {
 	auto pathToTile = PathFinding::getPathToTile(m_map, m_entity.second, dest);
 	if (pathToTile.empty())
 	{
-		return std::vector<std::pair<int, int>>();
+		return std::vector<std::pair<double, std::pair<int, int>>>();
 	}
 
-	std::vector<std::pair<int, int>> path;
+	std::vector<std::pair<double, std::pair<int, int>>> path;
 	path.reserve(pathToTile.size());
 	for (int i = pathToTile.size() - 1; i >= 0; i--)
 	{
