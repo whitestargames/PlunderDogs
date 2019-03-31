@@ -60,7 +60,7 @@ void Battle::update(float deltaTime)
 {
 
 }
-
+//Gabriel--
 unsigned int Battle::calculateDirectionCost(int currentDirection, int newDirection)
 {
 	unsigned int diff = std::abs(newDirection - currentDirection);
@@ -69,7 +69,7 @@ unsigned int Battle::calculateDirectionCost(int currentDirection, int newDirecti
 	//number of direction % difference between the new and old directions
 	return (5 % diff)+1;
 }
-
+//--Gabriel
 void Battle::initializeEntity(const std::string & fileName, std::pair<int, int> point)
 {
 	m_entity.first = std::make_unique<Entity>(Utilities::getDataDirectory() + fileName);
@@ -94,8 +94,9 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
-		std::cout << m_entity.first->m_entityDirection << std::endl;
+		//Gabriel--
 		m_entity.first->m_entityPrevDirection = m_entity.first->m_entityDirection;
+		//--Gabriel
 		m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x,(float)mouseData.y });
 		handleEntityMovement();
 
@@ -136,8 +137,10 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 		return;
 	}
 	//Make the cursor image follow the cursor
+	//Gabriel--
 	m_movementPointsUsed = 0;
 	m_entity.first->m_entityDirection = m_entity.first->m_entityPrevDirection;
+	//--Gabriel
 	m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x,(float)mouseData.y });
 	handleMovementPath();
 	
@@ -227,6 +230,7 @@ void Battle::handleMovementPath()
 			m_movementPointsUsed -= bonusMove;
 		}
 
+		
 		std::cout <<"Old Dir: " << entityDir <<"New Dir: " << pathDir << "cost: " << cost << std::endl;
 		std::cout << "move Points" << m_movementPointsUsed << std::endl;
 		//--Gabriel
