@@ -73,9 +73,10 @@ bool isDestination(int row, int col, std::pair<int, int> dest)
 
 double calculateHeuristicValue(int row, int col, std::pair<int, int> dest)
 {
-	//calculated using Manhattan Distance+
+	//calculated using Diagonal Distance
 
-	return (abs(row - dest.first) + abs(col - dest.second));
+	return ((double)sqrt((row - dest.first)*(row - dest.first)
+		+ (col - dest.second)*(col - dest.second)));
 }
 
 std::vector<pPair> PathFinding::getPathToTile(Map &map, std::pair<int, int> src, std::pair<int, int> dest)
@@ -181,7 +182,7 @@ std::vector<pPair> PathFinding::getPathToTile(Map &map, std::pair<int, int> src,
 
 					else if (!closedList[x][y] && isUnBlocked(map, std::pair<int, int>(x, y)))
 					{
-						sucG = cellDetails[i][j].m_g + 1.0;
+						sucG =  1.0;
 						sucH = calculateHeuristicValue(x, y, dest);
 						sucF = sucG + sucH;
 

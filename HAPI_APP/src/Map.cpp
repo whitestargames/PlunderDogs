@@ -312,7 +312,7 @@ Map::Map(intPair size, const std::vector<std::vector<int>>& tileData) :
 	m_data(),
 	m_drawOffset(intPair(10, 60)),
 	m_windDirection(eNorth),
-	m_windStrength(0.0),
+	m_windStrength(0.4),
 	m_drawScale(2),
 	motherSprite(nullptr)
 {

@@ -17,7 +17,8 @@ Battle::Battle() :
 	m_isEntitySelected(false),
 	m_mouseCursor(HAPI_Wrapper::loadSprite("mouseCrossHair.xml")),
 	m_movementPath(),
-	m_previousMousePoint()
+	m_previousMousePoint(),
+	m_movementPointsUsed(0)
 {
 	m_mouseCursor->GetColliderComp().EnablePixelPerfectCollisions(true);
 	initializeEntity("thingy.xml", { 5, 5 });
@@ -93,6 +94,8 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
+		std::cout << m_entity.first->m_entityDirection << std::endl;
+		m_entity.first->m_entityPrevDirection = m_entity.first->m_entityDirection;
 		m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x,(float)mouseData.y });
 		handleEntityMovement();
 
@@ -133,8 +136,11 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 		return;
 	}
 	//Make the cursor image follow the cursor
+	m_movementPointsUsed = 0;
+	m_entity.first->m_entityDirection = m_entity.first->m_entityPrevDirection;
 	m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x,(float)mouseData.y });
 	handleMovementPath();
+	
 }
 
 void Battle::handleEntityMovement()
@@ -159,6 +165,7 @@ void Battle::handleEntityMovement()
 
 void Battle::handleMovementPath()
 {
+	m_entity.first->m_movementPoints = 5;
 	
 	Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 	if (!currentTile)
@@ -173,9 +180,13 @@ void Battle::handleMovementPath()
 		return;
 	}
 	
-	auto pathToTile = getPathToTile(currentTile->m_tileCoordinate);
 	
-	if(pathToTile.empty() || pathToTile.size() > m_entity.first->m_movementPoints + 1 || m_entity.first->m_movementPoints + 1 <= 0)
+
+	auto pathToTile = getPathToTile(currentTile->m_tileCoordinate);
+	if (m_movementPointsUsed > pathToTile.size())
+		m_movementPointsUsed = pathToTile.size();
+
+	if(pathToTile.empty() || m_movementPointsUsed > m_entity.first->m_movementPoints  || m_entity.first->m_movementPoints  <= 0)
 	{
 		return;
 	}
@@ -186,26 +197,39 @@ void Battle::handleMovementPath()
 	}
 
 	//Don't interact with path from source.
-
+	int bonusMove = 0;
 	for (int i = 1; i < pathToTile.size(); ++i)
 	{
-		m_entity.first->m_movementPoints = 5;
+		
 		auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i].second);
 		m_movementPath[i - 1].first->GetTransformComp().SetPosition({
 			static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
 			static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
 		m_movementPath[i - 1].second = true;
-
+		
+		//Gabriel--
 		//used to check if direction had been implemented correctly
-		//int entityDir = (int)m_entity.first->m_entityDirection;
-		//int pathDir = (int)pathToTile[i].first;
-		//
-		//
-		//int cost = calculateDirectionCost(entityDir, pathDir) + 1;
-		////m_entity.first->m_entityDirection = (eDirection)pathDir;
-		//m_entity.first->m_movementPoints -= cost;
-		//std::cout <<"Old Dir:" << entityDir <<"New Dir:" << pathDir << "cost: " << cost << std::endl;
-		//std::cout << "move Points" << m_entity.first->m_movementPoints << std::endl;
+		++m_movementPointsUsed;
+		int entityDir = (int)m_entity.first->m_entityDirection;
+		int pathDir = (int)pathToTile[i].first;
+		
+		int cost = calculateDirectionCost(entityDir, pathDir) ;
+
+		m_entity.first->m_entityDirection = (eDirection)pathDir;
+		m_movementPointsUsed += cost;
+
+		if (m_movementPointsUsed > m_entity.first->m_movementPoints-1)
+			break;
+
+		if (m_entity.first->m_entityDirection == m_map.getWindDirection() && bonusMove == 0)
+		{
+			bonusMove = (int)(m_entity.first->m_movementPoints * m_map.getWindStrength());
+			m_movementPointsUsed -= bonusMove;
+		}
+
+		std::cout <<"Old Dir: " << entityDir <<"New Dir: " << pathDir << "cost: " << cost << std::endl;
+		std::cout << "move Points" << m_movementPointsUsed << std::endl;
+		//--Gabriel
 	}
 
 	//Assign last position for the end of the movement graph
@@ -233,6 +257,8 @@ void Battle::moveEntity(const Tile& tile)
 	m_entity.second = tile.m_tileCoordinate;
 	//Deselect entity
 	m_isEntitySelected = false;
+	m_movementPointsUsed = 0;
+	
 }
 
 void Battle::selectEntity(const Tile& tile)
