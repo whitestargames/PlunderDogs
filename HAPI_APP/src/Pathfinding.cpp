@@ -71,7 +71,7 @@ bool isDestination(int row, int col, std::pair<int, int> dest)
 double calculateHeuristicValue(int row, int col, std::pair<int, int> dest)
 {
 	//calculated using Euclidean Distance
-	return((double)sqrt((row - dest.first)*(row - dest.first) + (col - dest.second) * (col - dest.second)));
+	return((double)sqrt((row - dest.first) * (row - dest.first) + (col - dest.second) * (col - dest.second)));
 }
 
 std::vector<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<int, int> src, std::pair<int, int> dest)
