@@ -86,6 +86,14 @@ void Battle::render() const
 	}
 }
 
+void Battle::resetMovementPath()
+{
+	for (auto& i : m_movementPath)
+	{
+		i.second = false;
+	}
+}
+
 void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
 {
 	if (OverWorld::CURRENT_WINDOW != OverWorldWindow::Battle)
@@ -105,11 +113,7 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 		if (m_isEntitySelected)
 		{
 			moveEntity(*currentTile);
-			//Clear movement trail once moved
-			for (auto& i : m_movementPath)
-			{
-				i.second = false;
-			}
+			resetMovementPath();
 		}
 		//Select new entity for movement
 		else
@@ -120,11 +124,7 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 	else if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
 		m_isEntitySelected = false;
-
-		for (auto& i : m_movementPath)
-		{
-			i.second = false;
-		}
+		resetMovementPath();
 	}
 }
 
@@ -166,11 +166,7 @@ void Battle::handleMovementPath()
 	//Assign last position for the end of the movement graph
 	m_previousMousePoint = currentTile->m_tileCoordinate;
 
-	//Reset movement path before changing size
-	for (auto& i : m_movementPath)
-	{
-		i.second = false;
-	}
+	resetMovementPath();
 
 	//Mouse cursor not in bounds of movement of entity
 	//Draw until limit of movementof entity
