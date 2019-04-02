@@ -22,7 +22,7 @@ Battle::Battle() :
 {
 	m_mouseCursor->GetColliderComp().EnablePixelPerfectCollisions(true);
 	initializeEntity("thingy.xml", { 5, 5 });
-	
+
 	m_movementPath.reserve(size_t(MOVEMENT_PATH_SIZE));
 	for (int i = 0; i < MOVEMENT_PATH_SIZE; i++)
 	{
@@ -32,7 +32,6 @@ Battle::Battle() :
 		m_movementPath.push_back(std::move(sprite));
 	}
 }
-
 void Battle::render() const
 {
 	m_map.drawMap();
@@ -65,9 +64,12 @@ unsigned int Battle::calculateDirectionCost(int currentDirection, int newDirecti
 {
 	unsigned int diff = std::abs(newDirection - currentDirection);
 	if (diff == 0)
+	{
 		return 0;
+	}
+		
 	//number of direction % difference between the new and old directions
-	return (5 % diff)+1;
+	return (static_cast<int>(eDirection::Total - 1) % diff) + 1;
 }
 //--Gabriel
 void Battle::initializeEntity(const std::string & fileName, std::pair<int, int> point)
@@ -168,8 +170,6 @@ void Battle::handleEntityMovement()
 
 void Battle::handleMovementPath()
 {
-	m_entity.first->m_movementPoints = 5;
-	
 	Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 	if (!currentTile)
 	{
@@ -183,11 +183,12 @@ void Battle::handleMovementPath()
 		return;
 	}
 	
-	
-
 	auto pathToTile = getPathToTile(currentTile->m_tileCoordinate);
 	if (m_movementPointsUsed > pathToTile.size())
+	{
 		m_movementPointsUsed = pathToTile.size();
+	}
+		
 
 	if(pathToTile.empty() || m_movementPointsUsed > m_entity.first->m_movementPoints  || m_entity.first->m_movementPoints  <= 0)
 	{
@@ -216,13 +217,15 @@ void Battle::handleMovementPath()
 		int entityDir = (int)m_entity.first->m_entityDirection;
 		int pathDir = (int)pathToTile[i].first;
 		
-		int cost = calculateDirectionCost(entityDir, pathDir) ;
+		int movementCost = calculateDirectionCost(entityDir, pathDir);
 
 		m_entity.first->m_entityDirection = (eDirection)pathDir;
-		m_movementPointsUsed += cost;
+		m_movementPointsUsed += movementCost;
 
-		if (m_movementPointsUsed > m_entity.first->m_movementPoints-1)
+		if (m_movementPointsUsed > m_entity.first->m_movementPoints - 1)
+		{
 			break;
+		}
 
 		if (m_entity.first->m_entityDirection == m_map.getWindDirection() && bonusMove == 0)
 		{
@@ -231,7 +234,7 @@ void Battle::handleMovementPath()
 		}
 
 		
-		std::cout <<"Old Dir: " << entityDir <<"New Dir: " << pathDir << "cost: " << cost << std::endl;
+		std::cout <<"Old Dir: " << entityDir <<"New Dir: " << pathDir << "cost: " << movementCost << std::endl;
 		std::cout << "move Points" << m_movementPointsUsed << std::endl;
 		//--Gabriel
 	}

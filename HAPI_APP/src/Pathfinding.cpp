@@ -225,8 +225,8 @@ void findAvailableTiles(std::pair<int, int> src, Map &map, int depth)
 	closedList[src.first][src.second] = true;
 
 
-	unsigned int dir;
-	int totalRange;
+	unsigned int dir = 0;
+	int totalRange = 0;
 	std::set<std::pair<int, int>> openList;
 	openList.insert(src);
 
