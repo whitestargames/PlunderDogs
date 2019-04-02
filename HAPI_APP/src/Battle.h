@@ -5,7 +5,7 @@
 #include <utility>
 #include "Map.h"
 #include "entity.h"
-
+#include "Pathfinding.h"
 struct Tile;
 class Battle : public IHapiSpritesInputListener
 {
@@ -25,7 +25,7 @@ private:
 	void resetMovementPath();
 	void setMovementGraphPositions(const std::vector<std::pair<int, int>>& pathToTile, int maxNode);
 	void handleMovementPath();
-
+	
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
@@ -34,5 +34,8 @@ public:
 	Battle();
 
 	void render() const;
-	void update(float deltaTime) {}
+
+	void update(float deltaTime);
+	//calculates the cost of turning onto a new direction 
+	unsigned int calculateDirectionCost(int currentDirection, int newDirection);
 };
