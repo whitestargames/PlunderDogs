@@ -13,7 +13,6 @@ private:
 	std::pair<std::unique_ptr<Entity>, std::pair<int, int>> m_entity;
 	Map m_map;
 
-
 	void moveEntity(const Tile& tile);
 	void selectEntity(const Tile& tile);
 
