@@ -153,12 +153,23 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 					positionEntity(FLEET_WINDOW, FLEET_SLIDER, ENTITY + std::to_string(i), i, m_entityVector);
 					if (entityContainsMouse(FLEET_WINDOW, ENTITY + std::to_string(i), m_fleetWindowTopLeft, HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 					{
-						m_selectedEntities.push_back(&m_entityVector[i]);
-						for (int i = 0; i < m_selectedEntities.size(); i++)
+						bool isSelected{ false };
+						for (int it = 0; it < m_selectedEntities.size(); it++)
 						{
-							if (!windowObjectExists(BATTLE_FLEET_WINDOW, ENTITY + std::to_string(i)))
+							if (m_selectedEntities[it] == &m_entityVector[i])
 							{
-								UI.GetWindow(BATTLE_FLEET_WINDOW)->AddCanvas(ENTITY + std::to_string(i), calculateObjectWindowPosition(i), m_selectedEntities[i]->m_sprite);
+								isSelected = true;
+							}
+						}
+						if (!isSelected)
+						{
+							m_selectedEntities.push_back(&m_entityVector[i]);
+							for (int i = 0; i < m_selectedEntities.size(); i++)
+							{
+								if (!windowObjectExists(BATTLE_FLEET_WINDOW, ENTITY + std::to_string(i)))
+								{
+									UI.GetWindow(BATTLE_FLEET_WINDOW)->AddCanvas(ENTITY + std::to_string(i), calculateObjectWindowPosition(i), m_selectedEntities[i]->m_sprite);
+								}
 							}
 						}
 					}
