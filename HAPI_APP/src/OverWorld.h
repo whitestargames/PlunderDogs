@@ -23,8 +23,9 @@ public:
 	void render();
 	void update(float deltaTime);
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
-	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
+	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
+	
 	static OverWorldWindow CURRENT_WINDOW;
 
 private:

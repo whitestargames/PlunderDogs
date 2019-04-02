@@ -2,7 +2,7 @@
 #include "Utilities/MapParser.h"
 #include "Utilities/Utilities.h"
 #include "entity.h"
-
+#include "Pathfinding.h"
 #include "OverWorld.h"
 #include "HAPIWrapper.h"
 
@@ -38,11 +38,10 @@ Battle::Battle() :
 	m_movementAllowed(true),
 	m_mouseCursor(HAPI_Wrapper::loadSprite("mouseCrossHair.xml")),
 	m_movementPath(),
-	m_previousMousePoint(),
-	m_movementPointsUsed(0)
+	m_previousMousePoint()
 {
 	m_mouseCursor->GetColliderComp().EnablePixelPerfectCollisions(true);
-
+	
 	//Initialize Entity
 	m_entity.first = std::make_unique<Entity>(Utilities::getDataDirectory() + "thingy.xml");
 	m_entity.second = std::make_pair<int, int>(5, 5);
@@ -55,7 +54,6 @@ Battle::Battle() :
 	m_map.insertEntity(*m_entity.first.get(), m_entity.second);
 	
 	//Initialize Movement Path
-
 	m_movementPath.reserve(size_t(MOVEMENT_PATH_SIZE));
 	for (int i = 0; i < MOVEMENT_PATH_SIZE; i++)
 	{
@@ -65,6 +63,7 @@ Battle::Battle() :
 		m_movementPath.push_back(std::move(sprite));
 	}
 }
+
 void Battle::render() const
 {
 	m_map.drawMap();
@@ -96,16 +95,17 @@ void Battle::resetMovementPath()
 	}
 }
 
-unsigned int Battle::calculateDirectionCost(int currentDirection, int newDirection)
+void Battle::setMovementGraphPositions(const std::vector<std::pair<int, int>>& pathToTile, int maxNode)
 {
-	unsigned int diff = std::abs(newDirection - currentDirection);
-	if (diff == 0)
+	//Don't interact with path from source.
+	for (int i = 1; i < maxNode; ++i)
 	{
-		return 0;
+		auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
+		m_movementPath[i - 1].first->GetTransformComp().SetPosition({
+			static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
+			static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
+		m_movementPath[i - 1].second = true;
 	}
-		
-	//number of direction % difference between the new and old directions
-	return (static_cast<int>(eDirection::Total - 1) % diff) + 1;
 }
 
 void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
@@ -122,8 +122,6 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 		{
 			return;
 		}
-
-		m_entity.first->m_entityPrevDirection = m_entity.first->m_entityDirection;
 
 		//Select new entity for movement
 		if (!m_entitySelected)
@@ -148,16 +146,8 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 {
 	if (m_entitySelected && OverWorld::CURRENT_WINDOW == OverWorldWindow::Battle)
 	{
-
 		handleMovementPath();
-
-		return;
 	}
-	//Make the cursor image follow the cursor
-	m_movementPointsUsed = 0;
-	m_entity.first->m_entityDirection = m_entity.first->m_entityPrevDirection;
-	m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x,(float)mouseData.y });
-	
 }
 
 void Battle::handleMovementPath()
@@ -176,14 +166,8 @@ void Battle::handleMovementPath()
 		return;
 	}
 	
-	auto pathToTile = getPathToTile(currentTile->m_tileCoordinate);
-	if (m_movementPointsUsed > pathToTile.size())
-	{
-		m_movementPointsUsed = pathToTile.size();
-	}
-		
-
-	if(pathToTile.empty() || m_movementPointsUsed > m_entity.first->m_movementPoints  || m_entity.first->m_movementPoints  <= 0)
+	auto pathToTile = getPathToTile(m_entity.second, currentTile->m_tileCoordinate, m_map);
+	if(pathToTile.empty())
 	{
 		return;
 	}
@@ -202,48 +186,9 @@ void Battle::handleMovementPath()
 	}
 	//Mouse cursor within bounds of movement of entity
 	else
-{
-	m_movementAllowed = true;
-	setMovementGraphPositions(pathToTile, pathToTile.size());
-}
-
-	//Don't interact with path from source.
-	int bonusMove = 0;
-	for (int i = 1; i < pathToTile.size(); ++i)
 	{
-		
-		auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i].second);
-		m_movementPath[i - 1].first->GetTransformComp().SetPosition({
-			static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
-			static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
-		m_movementPath[i - 1].second = true;
-		
-		//Gabriel--
-		//used to check if direction had been implemented correctly
-		++m_movementPointsUsed;
-		int entityDir = (int)m_entity.first->m_entityDirection;
-		int pathDir = (int)pathToTile[i].first;
-		
-		int movementCost = calculateDirectionCost(entityDir, pathDir);
-
-		m_entity.first->m_entityDirection = (eDirection)pathDir;
-		m_movementPointsUsed += movementCost;
-
-		if (m_movementPointsUsed > m_entity.first->m_movementPoints - 1)
-		{
-			break;
-		}
-
-		if (m_entity.first->m_entityDirection == m_map.getWindDirection() && bonusMove == 0)
-		{
-			bonusMove = (int)(m_entity.first->m_movementPoints * m_map.getWindStrength());
-			m_movementPointsUsed -= bonusMove;
-		}
-
-		
-		std::cout <<"Old Dir: " << entityDir <<"New Dir: " << pathDir << "cost: " << movementCost << std::endl;
-		std::cout << "move Points" << m_movementPointsUsed << std::endl;
-		//--Gabriel
+		m_movementAllowed = true;
+		setMovementGraphPositions(pathToTile, pathToTile.size());
 	}
 }
 
@@ -256,7 +201,6 @@ void Battle::moveEntity(const Tile& tile)
 	}
 
 	m_entitySelected = false;
-	m_movementPointsUsed = 0;
 }
 
 void Battle::selectEntity(const Tile& tile)

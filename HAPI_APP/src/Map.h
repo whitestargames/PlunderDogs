@@ -70,9 +70,9 @@ public:
 	//An n = 1 version of getTileRadius for use in pathfinding, 
 	//returns nullptr for each tile out of bounds
 	std::vector<Tile*> getAdjacentTiles(std::pair<int, int> coord);
-	//Returns tiles in a radius around a given tile, skipping the tile itself
+	//TODO:Returns tiles in a radius around a given tile, skipping the tile itself
 	std::vector<Tile*> getTileRadius(std::pair<int, int> coord, int range);
-	//Returns tiles in a cone emanating from a given tile, skipping the tile itself
+	//TODO: Returns tiles in a cone emanating from a given tile, skipping the tile itself
 	std::vector<Tile*> getTileCone(std::pair<int, int> coord, int range, eDirection direction);
 
 	//For finding the location on the screen a given tile is being drawn
@@ -103,5 +103,6 @@ public:
 	eDirection getWindDirection() const { return m_windDirection; }
 	void setWindDirection(eDirection direction) { m_windDirection = direction; }
 
+	//TODO: Get constructor working. Need tiled parser or load from xml set up
 	Map(std::pair<int, int> size, const std::vector<std::vector<int>>& tileData);
 };

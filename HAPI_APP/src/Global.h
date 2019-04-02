@@ -7,9 +7,7 @@ enum eDirection
 	eSouthEast,
 	eSouth,
 	eSouthWest,
-	eNorthWest,
-	Total
-	
+	eNorthWest
 };
 
 enum eTileType
