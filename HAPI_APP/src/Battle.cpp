@@ -200,14 +200,15 @@ void Battle::handleMovementPath()
 void Battle::moveEntity(const Tile& tile)
 {
 	//Not a travellable tile
-	if (tile.m_type != eTileType::eOcean && tile.m_type != eTileType::eSea)
+	if (tile.m_type == eTileType::eOcean || tile.m_type == eTileType::eSea)
 	{
+		m_map.moveEntity(m_entity.second, tile.m_tileCoordinate);
+		m_entity.second = tile.m_tileCoordinate;/*
 		m_isEntitySelected = false;
-		return;
+		return;*/
 	}
 
-	m_map.moveEntity(m_entity.second, tile.m_tileCoordinate);
-	m_entity.second = tile.m_tileCoordinate;
+	
 	m_isEntitySelected = false;
 }
 
