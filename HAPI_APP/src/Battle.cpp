@@ -11,6 +11,26 @@ constexpr float DRAW_OFFSET_X{ 12 };
 constexpr float DRAW_OFFSET_Y{ 28 };
 constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
 
+std::vector<std::pair<int, int>> getPathToTile(std::pair<int, int> src, std::pair<int, int> dest, Map& map);
+
+std::vector<std::pair<int, int>> getPathToTile(std::pair<int, int> src, std::pair<int, int> dest, Map & map)
+{
+	auto pathToTile = PathFinding::getPathToTile(map, src, dest);
+	if (pathToTile.empty())
+	{
+		return std::vector<std::pair<int, int>>();
+	}
+
+	std::vector<std::pair<int, int>> path;
+	path.reserve(pathToTile.size());
+	for (int i = pathToTile.size() - 1; i >= 0; i--)
+	{
+		path.push_back(pathToTile[i]);
+	}
+
+	return path;
+}
+
 Battle::Battle() :
 	m_entity(),
 	m_map(MapParser::parseMap("Level1.tmx")),
@@ -20,8 +40,19 @@ Battle::Battle() :
 	m_previousMousePoint()
 {
 	m_mouseCursor->GetColliderComp().EnablePixelPerfectCollisions(true);
-	initializeEntity("thingy.xml", { 5, 5 });
 	
+	//Initialize Entity
+	m_entity.first = std::make_unique<Entity>(Utilities::getDataDirectory() + "thingy.xml");
+	m_entity.second = std::make_pair<int, int>(5, 5);
+	//Assign entity sprite position
+	std::pair<int, int> tileScreenPoint = m_map.getTileScreenPos(m_entity.second);
+	m_entity.first->m_sprite->GetTransformComp().SetPosition({
+		(float)(tileScreenPoint.first + DRAW_OFFSET_X * m_map.getDrawScale()),
+		(float)(tileScreenPoint.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
+	//Insert entity into map
+	m_map.insertEntity(*m_entity.first.get(), m_entity.second);
+	
+	//Initialize Movement Path
 	m_movementPath.reserve(size_t(MOVEMENT_PATH_SIZE));
 	for (int i = 0; i < MOVEMENT_PATH_SIZE; i++)
 	{
@@ -74,21 +105,6 @@ void Battle::update(float deltaTime)
 
 }
 
-void Battle::initializeEntity(const std::string & fileName, std::pair<int, int> point)
-{
-	m_entity.first = std::make_unique<Entity>(Utilities::getDataDirectory() + fileName);
-	m_entity.second = point;
-
-	//Assign entity sprite position
-	std::pair<int, int> tileScreenPoint = m_map.getTileScreenPos(point);
-	m_entity.first->m_sprite->GetTransformComp().SetPosition({ 
-		(float)(tileScreenPoint.first + DRAW_OFFSET_X * m_map.getDrawScale()), 
-		(float)(tileScreenPoint.second + DRAW_OFFSET_Y * m_map.getDrawScale())});
-
-	//Insert entity into map
-	m_map.insertEntity(*m_entity.first.get(), point);
-}
-
 void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
 {
 	if (OverWorld::CURRENT_WINDOW != OverWorldWindow::Battle)
@@ -108,7 +124,7 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 		if (m_isEntitySelected)
 		{
 			moveEntity(*currentTile);
-			//Clear movement trail
+			//Clear movement trail once moved
 			for (auto& i : m_movementPath)
 			{
 				i.second = false;
@@ -117,7 +133,6 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 		//Select new entity for movement
 		else
 		{
-			//Note: this means that "selectEntity" is actually more like "selectTile"
 			selectEntity(*currentTile);
 		}
 	}
@@ -139,17 +154,15 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 		return;
 	}
 
-	if (!m_isEntitySelected)
+	if (m_isEntitySelected)
 	{
-		return;
+		handleMovementPath();
 	}
-	//Make the cursor image follow the cursor
-	m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x,(float)mouseData.y });
-	handleMovementPath();
 }
 
 void Battle::handleMovementPath()
 {
+	//Tile at mouse location
 	Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 	if (!currentTile)
 	{
@@ -163,17 +176,23 @@ void Battle::handleMovementPath()
 		return;
 	}
 	
-	auto pathToTile = getPathToTile(currentTile->m_tileCoordinate);
+	auto pathToTile = getPathToTile(m_entity.second, currentTile->m_tileCoordinate, m_map);
 	if(pathToTile.empty())
 	{
 		return;
 	}
 
+	//Assign last position for the end of the movement graph
+	m_previousMousePoint = currentTile->m_tileCoordinate;
+
+	//Reset movement path before changing size
 	for (auto& i : m_movementPath)
 	{
 		i.second = false;
 	}
 
+	//Mouse cursor not in bounds of movement of entity
+	//Draw until limit of movementof entity
 	if (pathToTile.size() > m_entity.first->m_movementPoints + 1)
 	{
 		//Don't interact with path from source.
@@ -186,6 +205,7 @@ void Battle::handleMovementPath()
 			m_movementPath[i - 1].second = true;
 		}
 	}
+	//Mouse cursor within bounds of movement of entity
 	else
 	{
 		//Don't interact with path from source.
@@ -198,20 +218,10 @@ void Battle::handleMovementPath()
 			m_movementPath[i - 1].second = true;
 		}
 	}
-
-
-	//Assign last position for the end of the movement graph
-	m_previousMousePoint = currentTile->m_tileCoordinate;
 }
 
 void Battle::moveEntity(const Tile& tile)
 {
-	//Already existing entity in requested new position
-	if (tile.m_entityOnTile)
-	{
-		m_isEntitySelected = tile.m_entityOnTile;
-		return;
-	}
 	//Not a travellable tile
 	if (tile.m_type != eTileType::eOcean && tile.m_type != eTileType::eSea)
 	{
@@ -219,11 +229,8 @@ void Battle::moveEntity(const Tile& tile)
 		return;
 	}
 
-	//Change map's coordinate for entity
 	m_map.moveEntity(m_entity.second, tile.m_tileCoordinate);
-	//Change entity's coordinate
 	m_entity.second = tile.m_tileCoordinate;
-	//Deselect entity
 	m_isEntitySelected = false;
 }
 
@@ -234,22 +241,4 @@ void Battle::selectEntity(const Tile& tile)
 		m_isEntitySelected = true;
 		m_previousMousePoint = m_entity.second;
 	}	
-}
-
-std::vector<std::pair<int, int>> Battle::getPathToTile(std::pair<int, int> dest)
-{
-	auto pathToTile = PathFinding::getPathToTile(m_map, m_entity.second, dest);
-	if (pathToTile.empty())
-	{
-		return std::vector<std::pair<int, int>>();
-	}
-
-	std::vector<std::pair<int, int>> path;
-	path.reserve(pathToTile.size());
-	for (int i = pathToTile.size() - 1; i >= 0; i--)
-	{
-		path.push_back(pathToTile[i]);
-	}
-
-	return path;
 }
