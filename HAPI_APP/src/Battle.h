@@ -31,5 +31,5 @@ public:
 	Battle();
 
 	void render() const;
-	void update(float deltaTime);
+	void update(float deltaTime) {}
 };
