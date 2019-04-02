@@ -178,7 +178,7 @@ void Battle::handleMovementPath()
 	}
 	
 	auto pathToTile = getPathToTile(currentTile->m_tileCoordinate);
-	if(pathToTile.empty() || pathToTile.size() > m_entity.first->m_movementPoints + 1)
+	if(pathToTile.empty())
 	{
 		return;
 	}
@@ -188,15 +188,31 @@ void Battle::handleMovementPath()
 		i.second = false;
 	}
 
-	//Don't interact with path from source.
-	for (int i = 1; i < pathToTile.size(); ++i)
+	if (pathToTile.size() > m_entity.first->m_movementPoints + 1)
 	{
-		auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
-		m_movementPath[i - 1].first->GetTransformComp().SetPosition({
-			static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
-			static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
-		m_movementPath[i - 1].second = true;
+		//Don't interact with path from source.
+		for (int i = 1; i < m_entity.first->m_movementPoints + 1; ++i)
+		{
+			auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
+			m_movementPath[i - 1].first->GetTransformComp().SetPosition({
+				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
+				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
+			m_movementPath[i - 1].second = true;
+		}
 	}
+	else
+	{
+		//Don't interact with path from source.
+		for (int i = 1; i < pathToTile.size(); ++i)
+		{
+			auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
+			m_movementPath[i - 1].first->GetTransformComp().SetPosition({
+				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
+				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
+			m_movementPath[i - 1].second = true;
+		}
+	}
+
 
 	//Assign last position for the end of the movement graph
 	m_previousMousePoint = currentTile->m_tileCoordinate;
