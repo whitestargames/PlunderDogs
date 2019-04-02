@@ -11,10 +11,10 @@ class Battle : public IHapiSpritesInputListener
 {
 private:
 	std::vector<std::pair<std::unique_ptr<Entity>, std::pair<int, int>>> m_entities;
-	Map m_map;
 	std::pair<int, int> m_entityOnPoint;
 	bool m_isEntitySelected;
 	std::unique_ptr<Sprite> m_mouseCursor;
+	Map m_map;
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
@@ -27,6 +27,7 @@ private:
 
 public:
 	Battle();
+	void setMapDrawOffset(std::pair<int, int> offset) { m_map.setDrawOffset(offset); }
 
 	void render() const;
 };

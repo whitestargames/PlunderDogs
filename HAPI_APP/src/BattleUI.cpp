@@ -1,6 +1,6 @@
 #include "BattleUI.h"
 #include "Utilities/Utilities.h"
-//#include "Utilities/MapParser.h"
+#include "Utilities/MapParser.h"
 
 BattleUI::BattleUI()
 	: m_battleIcons(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "battleIcons.png")),
@@ -8,7 +8,7 @@ BattleUI::BattleUI()
 	m_chickenButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "chickenButton.png")),
 	m_pauseMenuBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "pauseMenuBackground.png")),
 	m_resumeButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "resumeButton.png", 2)),
-	m_quitButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "quitButton.png", 2))
+	m_quitButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "quitButton.png", 2))//,
 	//m_map(MapParser::parseMap(Utilities::getDataDirectory() + "Level1.tmx"))
 {
 	m_battleIcons->GetTransformComp().SetPosition({ 350, 800 });
@@ -54,48 +54,39 @@ void BattleUI::render()
 	{
 	case BattleWindow::Battle:
 	{
-		////camera pan
-		//if (!pendingCameraMovement.IsZero())
-		//{
-		//	CameraPositionOffset.first += pendingCameraMovement.x;//translates the camera position
-		//	CameraPositionOffset.second += pendingCameraMovement.y;
+		//camera pan
+		if (!pendingCameraMovement.IsZero())
+		{
+			CameraPositionOffset.first += pendingCameraMovement.x;//translates the camera position
+			CameraPositionOffset.second += pendingCameraMovement.y;
 
-		//	if (CameraPositionOffset.first < -500)//checks for if its reached any of the 4 boundries, need to change it to a width variable
-		//	{
-		//		CameraPositionOffset.first = -500;
-		//		sideBoundary = true;
-		//	}
-		//	else if (CameraPositionOffset.first > 500)
-		//	{
-		//		CameraPositionOffset.first = 500;
-		//		sideBoundary = true;
-		//	}
-		//	else
-		//	{
-		//		sideBoundary = false;
-		//	}
-		//	if (CameraPositionOffset.second < -400)
-		//	{
-		//		CameraPositionOffset.second = -400;
-		//		floorBoundary = true;
-		//	}
-		//	else if (CameraPositionOffset.second > 400)
-		//	{
-		//		CameraPositionOffset.second = 400;
-		//		floorBoundary = true;
-		//	}
-		//	else
-		//	{
-		//		floorBoundary = false;
-		//	}
+			if (CameraPositionOffset.first < -500)//checks for if its reached any of the 4 boundries, need to change it to a width variable
+			{
+				CameraPositionOffset.first = -500;
+			}
+			else if (CameraPositionOffset.first > 500)
+			{
+				CameraPositionOffset.first = 500;
+			}
+			else
+			{
+				CameraPositionOffset.first += pendingCameraMovement.x;
+			}
+			if (CameraPositionOffset.second < -400)
+			{
+				CameraPositionOffset.second = -400;
+			}
+			else if (CameraPositionOffset.second > 400)
+			{
+				CameraPositionOffset.second = 400;
+			}
+			else
+			{
+				CameraPositionOffset.second += pendingCameraMovement.y;
+			}
 
-		//	if (!sideBoundary && !floorBoundary)
-		//	{
-		//		CameraPositionOffset.first += pendingCameraMovement.x;
-		//		CameraPositionOffset.second += pendingCameraMovement.y;
-		//		m_map.setDrawOffset(CameraPositionOffset);
-		//	}
-		//}
+			m_battle.setMapDrawOffset(CameraPositionOffset);
+		}
 		break;//the battle should continue to render behind the pause menu so is before the switch case
 	}
 	case BattleWindow::Pause:
@@ -164,27 +155,27 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 		}
 
 
-		////moves the sprites when the mouse is on the edge of the screen
-		////only checks when mouse moves. if mouse doesnt move, it knows its still in the same spot and will keep scrolling without checking
-		//pendingCameraMovement = VectorF{ 0,0 };
+		//moves the sprites when the mouse is on the edge of the screen
+		//only checks when mouse moves. if mouse doesnt move, it knows its still in the same spot and will keep scrolling without checking
+		pendingCameraMovement = VectorF{ 0,0 };
 
-		//if (mouseData.x < 100)
-		//{
-		//	pendingCameraMovement = VectorF{ 1,0 };
-		//}
-		//else if (mouseData.x > 1500)
-		//{
-		//	pendingCameraMovement = VectorF{ -1,0 };
-		//}
+		if (mouseData.x < 100)
+		{
+			pendingCameraMovement += VectorF{ -1,0 };
+		}
+		else if (mouseData.x > 1500)
+		{
+			pendingCameraMovement += VectorF{ 1,0 };
+		}
 
-		//if (mouseData.y < 100)
-		//{
-		//	pendingCameraMovement = VectorF{ 0,1 };
-		//}
-		//else if (mouseData.y > 800)
-		//{
-		//	pendingCameraMovement = VectorF{ 0,-1 };
-		//}
+		if (mouseData.y < 100)
+		{
+			pendingCameraMovement += VectorF{ 0,-1 };
+		}
+		else if (mouseData.y > 800)
+		{
+			pendingCameraMovement += VectorF{ 0,1 };
+		}
 
 		break;
 	}

@@ -263,7 +263,7 @@ std::pair<int, int> Map::getTileScreenPos(std::pair<int, int> coord) const
 Map::Map(std::pair<int, int> size, const std::vector<std::vector<int>>& tileData) :
 	m_mapDimensions(size),
 	m_data(),
-	m_drawOffset(std::pair<int, int>(10, 60)),
+	m_drawOffset(std::pair<int, int>(0, 0)),
 	m_windDirection(eNorth),
 	m_windStrength(0.0),
 	m_drawScale(2),

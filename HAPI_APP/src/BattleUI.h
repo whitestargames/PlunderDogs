@@ -3,7 +3,7 @@
 #include <HAPISprites_lib.h>
 #include <HAPISprites_UI.h>
 #include "Battle.h"
-//#include "Map.h"
+#include "Map.h"
 
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
@@ -18,11 +18,9 @@ class BattleUI : public IHapiSpritesInputListener
 	};
 public:
 	BattleUI();
-	//bool sideBoundary = false;
-	//bool floorBoundary = false;//if sides are on the left and right, what is on the top and bottom. I dont think a word exists for that. vertical, plane & floor arnt quite right.
-	//VectorF pendingCameraMovement{ 0 };
-	//std::pair<int, int> CameraPositionOffset;//camera offset that will be used by the map
-	//float cameraZoom = 1.0f;//variable to multiply scale by
+	VectorF pendingCameraMovement{ 0 };
+	std::pair<int, int> CameraPositionOffset;//camera offset that will be used by the map
+	float cameraZoom = 1.0f;//variable to multiply scale by
 
 	void render();
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
@@ -40,7 +38,7 @@ private:
 	BattleWindow m_currentWindow{BattleWindow::Battle};
 
 	Battle m_battle;
-	/*Map m_map;*/
+	//Map m_map;
 	DWORD animationStartTime;
 	bool shipSelected;
 	bool playAnimation;
