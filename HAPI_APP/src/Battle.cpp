@@ -98,21 +98,27 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
-		m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x,(float)mouseData.y });
-		handleEntityMovement();
-
-		//Initial point for the movement graph
-		//Starts at point where entity has been selected
-		if (m_isEntitySelected)
+		Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
+		if (!currentTile)
 		{
-			m_previousMousePoint = m_entity.second;
+			return;
 		}
 
-		//Once entity has moved
-		//Clear movement trail
-		for (auto& i : m_movementPath)
+		//Move Selected Entity
+		if (m_isEntitySelected)
 		{
-			i.second = false;
+			moveEntity(*currentTile);
+			//Clear movement trail
+			for (auto& i : m_movementPath)
+			{
+				i.second = false;
+			}
+		}
+		//Select new entity for movement
+		else
+		{
+			//Note: this means that "selectEntity" is actually more like "selectTile"
+			selectEntity(*currentTile);
 		}
 	}
 	else if (mouseEvent == EMouseEvent::eRightButtonDown)
@@ -140,26 +146,6 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 	//Make the cursor image follow the cursor
 	m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x,(float)mouseData.y });
 	handleMovementPath();
-}
-
-void Battle::handleEntityMovement()
-{
-	Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
-	if (!currentTile)
-	{
-		return;
-	}
-
-	//Move Selected Entity
-	if (m_isEntitySelected)
-	{
-		moveEntity(*currentTile);
-	}
-	//Select new entity for movement
-	else
-	{
-		selectEntity(*currentTile);//Note: this means that "selectEntity" is actually more like "selectTile"
-	}
 }
 
 void Battle::handleMovementPath()
@@ -246,6 +232,7 @@ void Battle::selectEntity(const Tile& tile)
 	if (m_entity.second == tile.m_tileCoordinate)
 	{
 		m_isEntitySelected = true;
+		m_previousMousePoint = m_entity.second;
 	}	
 }
 

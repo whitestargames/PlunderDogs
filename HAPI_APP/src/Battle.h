@@ -14,7 +14,6 @@ private:
 	Map m_map;
 
 	void initializeEntity(const std::string& fileName, std::pair<int, int> point);
-	void handleEntityMovement();
 	void handleMovementPath();
 	void moveEntity(const Tile& tile);
 	void selectEntity(const Tile& tile);
