@@ -9,10 +9,6 @@
 struct Tile;
 class Battle : public IHapiSpritesInputListener
 {
-	struct MovementGraph
-	{
-
-	};
 private:
 	std::pair<std::unique_ptr<Entity>, std::pair<int, int>> m_entity;
 	Map m_map;
