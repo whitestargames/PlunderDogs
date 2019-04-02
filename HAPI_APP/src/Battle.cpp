@@ -60,7 +60,7 @@ void Battle::update(float deltaTime)
 
 }
 //Gabriel--
-unsigned int Battle::calculateDirectionCost(int currentDirection, int newDirection)
+unsigned int Battle::getDirectionCost(int currentDirection, int newDirection)
 {
 	unsigned int diff = std::abs(newDirection - currentDirection);
 	if (diff == 0)
@@ -138,14 +138,29 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 	{
 		return;
 	}
+
+	Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
+	if (!currentTile)
+	{
+		return;
+	}
+
+	//If mouse hovering over tile that has been handled for the movement path
+	//No need to redo the same opreations
+	if (m_previousMousePoint == currentTile->m_tileCoordinate)
+	{
+		return;
+	}
+
+	m_entity.first->m_entityDirection = m_entity.first->m_entityPrevDirection;
+
 	//Make the cursor image follow the cursor
 	//Gabriel--
 	m_movementPointsUsed = 0;
-	m_entity.first->m_entityDirection = m_entity.first->m_entityPrevDirection;
+	
 	//--Gabriel
 	m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x,(float)mouseData.y });
-	handleMovementPath();
-	
+	handleMovementPath(*currentTile);
 }
 
 void Battle::handleEntityMovement()
@@ -168,28 +183,14 @@ void Battle::handleEntityMovement()
 	}
 }
 
-void Battle::handleMovementPath()
+void Battle::handleMovementPath(const Tile& currentTile)
 {
-	Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
-	if (!currentTile)
-	{
-		return;
-	}
-	
-	//If mouse hovering over tile that has been handled for the movement path
-	//No need to redo the same opreations
-	if (m_previousMousePoint == currentTile->m_tileCoordinate)
-	{
-		return;
-	}
-	
-	auto pathToTile = getPathToTile(currentTile->m_tileCoordinate);
+	auto pathToTile = getPathToTile(currentTile.m_tileCoordinate);
 	if (m_movementPointsUsed > pathToTile.size())
 	{
 		m_movementPointsUsed = pathToTile.size();
 	}
-		
-
+	
 	if(pathToTile.empty() || m_movementPointsUsed > m_entity.first->m_movementPoints  || m_entity.first->m_movementPoints  <= 0)
 	{
 		return;
@@ -217,7 +218,7 @@ void Battle::handleMovementPath()
 		int entityDir = (int)m_entity.first->m_entityDirection;
 		int pathDir = (int)pathToTile[i].first;
 		
-		int movementCost = calculateDirectionCost(entityDir, pathDir);
+		int movementCost = getDirectionCost(entityDir, pathDir);
 
 		m_entity.first->m_entityDirection = (eDirection)pathDir;
 		m_movementPointsUsed += movementCost;
@@ -240,7 +241,7 @@ void Battle::handleMovementPath()
 	}
 
 	//Assign last position for the end of the movement graph
-	m_previousMousePoint = currentTile->m_tileCoordinate;
+	m_previousMousePoint = currentTile.m_tileCoordinate;
 }
 
 void Battle::moveEntity(const Tile& tile)

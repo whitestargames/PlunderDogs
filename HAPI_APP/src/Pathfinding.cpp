@@ -171,7 +171,6 @@ std::vector<pPair> PathFinding::getPathToTile(Map &map, std::pair<int, int> src,
 					//If cell is destination point
 					if (isDestination(x, y, dest))
 					{
-						
 						cellDetails[x][y].m_parent_i = i;
 						cellDetails[x][y].m_parent_j = j;
 						cellDetails[x][y].direction = (eDirection)cellIndex;
@@ -204,75 +203,4 @@ std::vector<pPair> PathFinding::getPathToTile(Map &map, std::pair<int, int> src,
 	if (!destFound)
 		std::cout << "Failed to find destination" << std::endl;
 	return std::vector<pPair>();
-}
-
-void findAvailableTiles(std::pair<int, int> src, Map &map, int depth)
-{
-	int sizeX = map.getDimensions().first;
-	int sizeY = map.getDimensions().second;
-	int currentDepth = 0;
-	int i{ 0 };
-	int j{ 0 };
-
-	auto ship = map.getTile(src)->m_entityOnTile;
-	
-	//ship->setDirection(eDirection::eNorth);
-	std::vector < std::vector<bool>> closedList;
-	closedList.resize(sizeX);
-	for (int i = 0; i < closedList.size(); i++)
-		closedList[i].resize(sizeY);
-
-	closedList[src.first][src.second] = true;
-
-
-	unsigned int dir = 0;
-	int totalRange = 0;
-	std::set<std::pair<int, int>> openList;
-	openList.insert(src);
-
-	std::pair<int, int> p = *openList.begin();
-	openList.erase(openList.begin());
-
-	i = p.first;
-	j = p.second;
-	std::vector<Tile*> adjacentCells = map.getAdjacentTiles(std::pair<int, int>(i, j));
-	std::vector<std::pair<int, int>> range;
-	for (int cellIndex = 0; cellIndex < adjacentCells.size(); cellIndex++)
-	{
-		int index = cellIndex;
-		////dir = std::abs((int)ship->getDirection() - index);
-		//if ((int)index == 5)
-		//	//dir = std::abs((int)ship->getDirection() - 1);
-		//else if (index == 4)
-		//	//dir = std::abs((int)ship->getDirection() - 2);
-
-		if (adjacentCells[index] != nullptr)
-		{
-			int x = adjacentCells[index]->m_tileCoordinate.first;
-			int y = adjacentCells[index]->m_tileCoordinate.second;
-			totalRange = depth - dir;
-			for (int rangeToSearch = 0; rangeToSearch < totalRange; rangeToSearch++)
-			{
-
-				if (isValid(x, y, sizeX, sizeY))
-				{
-					if (!closedList[x][y] && isUnBlocked(map, std::pair<int, int>(x, y)))
-					{
-						openList.insert(std::pair<int, int>(x, y));
-						closedList[x][y] = true;
-						range.push_back(std::pair<int, int>(x, y));
-						adjacentCells = map.getAdjacentTiles(std::pair<int, int>(x, y));
-
-						x = adjacentCells[index]->m_tileCoordinate.first;
-						y = adjacentCells[index]->m_tileCoordinate.second;
-
-
-					}
-				}
-			}
-
-			adjacentCells = map.getAdjacentTiles(std::pair<int, int>(i, j));
-		}
-	}
-
 }
