@@ -13,7 +13,7 @@ private:
 	std::pair<std::unique_ptr<Entity>, std::pair<int, int>> m_entity;
 	Map m_map;
 
-	void handleMovementPath();
+
 	void moveEntity(const Tile& tile);
 	void selectEntity(const Tile& tile);
 
@@ -25,6 +25,7 @@ private:
 	std::pair<int, int> m_previousMousePoint;
 	void resetMovementPath();
 	void setMovementGraphPositions(const std::vector<std::pair<int, int>>& pathToTile, int maxNode);
+	void handleMovementPath();
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
