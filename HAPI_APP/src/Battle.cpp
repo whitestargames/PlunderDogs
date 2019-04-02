@@ -145,35 +145,35 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 {
 	if (m_entitySelected && OverWorld::CURRENT_WINDOW == OverWorldWindow::Battle)
-	{
-		handleMovementPath();
+	{	
+		//Tile at mouse location
+		Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
+		if (!currentTile)
+		{
+			return;
+		}
+
+		//If mouse hovering over tile that has been handled for the movement path
+		//No need to redo the same opreations
+		if (m_previousMousePoint == currentTile->m_tileCoordinate)
+		{
+			return;
+		}
+
+		handleMovementPath(*currentTile);
 	}
 }
 
-void Battle::handleMovementPath()
+void Battle::handleMovementPath(const Tile& currentTile)
 {
-	//Tile at mouse location
-	Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
-	if (!currentTile)
-	{
-		return;
-	}
-	
-	//If mouse hovering over tile that has been handled for the movement path
-	//No need to redo the same opreations
-	if (m_previousMousePoint == currentTile->m_tileCoordinate)
-	{
-		return;
-	}
-	
-	auto pathToTile = getPathToTile(m_entity.second, currentTile->m_tileCoordinate, m_map);
+	auto pathToTile = getPathToTile(m_entity.second, currentTile.m_tileCoordinate, m_map);
 	if(pathToTile.empty())
 	{
 		return;
 	}
 
 	//Assign last position for the end of the movement graph
-	m_previousMousePoint = currentTile->m_tileCoordinate;
+	m_previousMousePoint = currentTile.m_tileCoordinate;
 
 	resetMovementPath();
 

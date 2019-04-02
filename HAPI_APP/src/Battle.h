@@ -24,7 +24,7 @@ private:
 	std::pair<int, int> m_previousMousePoint;
 	void resetMovementPath();
 	void setMovementGraphPositions(const std::vector<std::pair<int, int>>& pathToTile, int maxNode);
-	void handleMovementPath();
+	void handleMovementPath(const Tile& currentTile);
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
