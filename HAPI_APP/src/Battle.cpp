@@ -95,6 +95,19 @@ void Battle::resetMovementPath()
 	}
 }
 
+void Battle::setMovementGraphPositions(const std::vector<std::pair<int, int>>& pathToTile, int maxNode)
+{
+	//Don't interact with path from source.
+	for (int i = 1; i < maxNode; ++i)
+	{
+		auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
+		m_movementPath[i - 1].first->GetTransformComp().SetPosition({
+			static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
+			static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
+		m_movementPath[i - 1].second = true;
+	}
+}
+
 void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
 {
 	if (OverWorld::CURRENT_WINDOW != OverWorldWindow::Battle)
@@ -174,29 +187,13 @@ void Battle::handleMovementPath()
 	if (pathToTile.size() > m_entity.first->m_movementPoints + 1)
 	{
 		m_movementAllowed = false;
-		//Don't interact with path from source.
-		for (int i = 1; i < m_entity.first->m_movementPoints + 1; ++i)
-		{
-			auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
-			m_movementPath[i - 1].first->GetTransformComp().SetPosition({
-				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
-				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
-			m_movementPath[i - 1].second = true;
-		}
+		setMovementGraphPositions(pathToTile, m_entity.first->m_movementPoints + 1);
 	}
 	//Mouse cursor within bounds of movement of entity
 	else
 	{
 		m_movementAllowed = true;
-		//Don't interact with path from source.
-		for (int i = 1; i < pathToTile.size(); ++i)
-		{
-			auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
-			m_movementPath[i - 1].first->GetTransformComp().SetPosition({
-				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
-				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
-			m_movementPath[i - 1].second = true;
-		}
+		setMovementGraphPositions(pathToTile, pathToTile.size());
 	}
 }
 
