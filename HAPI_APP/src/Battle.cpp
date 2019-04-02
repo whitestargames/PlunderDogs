@@ -144,12 +144,7 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 
 void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 {
-	if (OverWorld::CURRENT_WINDOW != OverWorldWindow::Battle)
-	{
-		return;
-	}
-
-	if (m_entitySelected)
+	if (m_entitySelected && OverWorld::CURRENT_WINDOW == OverWorldWindow::Battle)
 	{
 		handleMovementPath();
 	}
