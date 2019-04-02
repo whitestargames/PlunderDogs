@@ -32,14 +32,13 @@ private:
 	Battle m_battle;
 
 	//UI
-	void positionEntity(const std::string& windowName, const std::string& windowSliderName, std::string windowObjectName, int objectNumber, std::vector<Entity> &entityVector);
-	void positionEntity(const std::string& windowName, const std::string& windowSliderName, std::string windowObjectName, int objectNumber, std::vector<Entity*> &entityVector);
+	void positionEntity(const std::string& windowName, const std::string& windowSliderName, const std::string& windowObjectName, int objectNumber, size_t vectorSize);
 	float getWindowSliderValue(const std::string &windowName, const std::string &windowSliderName) const;
-	HAPISPACE::RectangleI calculateObjectWindowPosition(int objectNumber);
+	HAPISPACE::RectangleI calculateObjectWindowPosition(int objectNumber) const;
 	HAPISPACE::RectangleI windowScreenRect(const std::string& windowName) const;
 	HAPISPACE::VectorI calculateObjectScrolledPosition(const std::string& windowName, const std::string& windowSliderName, int objectNumber, size_t vectorSize);
-	bool entityContainsMouse(const std::string& windowName, std::string windowObjectName, HAPISPACE::VectorI windowTopLeft, HAPISPACE::VectorI mousePosition) const;
-	bool windowObjectExists(const std::string& windowName, std::string windowObjectName) const;
+	bool entityContainsMouse(const std::string& windowName, const std::string& windowObjectName, HAPISPACE::VectorI windowTopLeft, HAPISPACE::VectorI mousePosition) const;
+	bool windowObjectExists(const std::string& windowName, const std::string& windowObjectName) const;
 
 	std::unique_ptr<Sprite> m_battleMapBackground;
 	std::unique_ptr<Sprite> m_enemyTerritoryHexSheet;
@@ -51,6 +50,8 @@ private:
 	HAPISPACE::VectorI m_battleFleetWindowTopLeft{ HAPISPACE::VectorI(220, 220) };
 	OverWorldWindow m_currentWindow;
 
+	const std::string fleetWindowSliderSkinName;
+	const std::string fleetWindowSkinName;
 	const std::string ENTITY = "entity";
 	const std::string FLEET_WINDOW = "fleetwindow";
 	const std::string BATTLE_FLEET_WINDOW = "battleFleetWindow";
