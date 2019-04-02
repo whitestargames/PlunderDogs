@@ -34,7 +34,8 @@ std::vector<std::pair<int, int>> getPathToTile(std::pair<int, int> src, std::pai
 Battle::Battle() :
 	m_entity(),
 	m_map(MapParser::parseMap("Level1.tmx")),
-	m_isEntitySelected(false),
+	m_entitySelected(false),
+	m_movementAllowed(true),
 	m_mouseCursor(HAPI_Wrapper::loadSprite("mouseCrossHair.xml")),
 	m_movementPath(),
 	m_previousMousePoint()
@@ -109,21 +110,21 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 			return;
 		}
 
+		//Select new entity for movement
+		if (!m_entitySelected)
+		{
+			selectEntity(*currentTile);
+		}
 		//Move Selected Entity
-		if (m_isEntitySelected)
+		else if (m_movementAllowed)
 		{
 			moveEntity(*currentTile);
 			resetMovementPath();
 		}
-		//Select new entity for movement
-		else
-		{
-			selectEntity(*currentTile);
-		}
 	}
 	else if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
-		m_isEntitySelected = false;
+		m_entitySelected = false;
 		resetMovementPath();
 	}
 }
@@ -135,7 +136,7 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 		return;
 	}
 
-	if (m_isEntitySelected)
+	if (m_entitySelected)
 	{
 		handleMovementPath();
 	}
@@ -172,6 +173,7 @@ void Battle::handleMovementPath()
 	//Draw until limit of movementof entity
 	if (pathToTile.size() > m_entity.first->m_movementPoints + 1)
 	{
+		m_movementAllowed = false;
 		//Don't interact with path from source.
 		for (int i = 1; i < m_entity.first->m_movementPoints + 1; ++i)
 		{
@@ -185,6 +187,7 @@ void Battle::handleMovementPath()
 	//Mouse cursor within bounds of movement of entity
 	else
 	{
+		m_movementAllowed = true;
 		//Don't interact with path from source.
 		for (int i = 1; i < pathToTile.size(); ++i)
 		{
@@ -199,24 +202,25 @@ void Battle::handleMovementPath()
 
 void Battle::moveEntity(const Tile& tile)
 {
-	//Not a travellable tile
 	if (tile.m_type == eTileType::eOcean || tile.m_type == eTileType::eSea)
 	{
 		m_map.moveEntity(m_entity.second, tile.m_tileCoordinate);
-		m_entity.second = tile.m_tileCoordinate;/*
-		m_isEntitySelected = false;
-		return;*/
+		m_entity.second = tile.m_tileCoordinate;
 	}
 
-	
-	m_isEntitySelected = false;
+	m_entitySelected = false;
 }
 
 void Battle::selectEntity(const Tile& tile)
 {
 	if (m_entity.second == tile.m_tileCoordinate)
 	{
-		m_isEntitySelected = true;
+		m_entitySelected = true;
 		m_previousMousePoint = m_entity.second;
 	}	
+	else
+	{
+		m_entitySelected = false;
+		resetMovementPath();
+	}
 }

@@ -18,7 +18,8 @@ private:
 	void selectEntity(const Tile& tile);
 
 	//UI
-	bool m_isEntitySelected;
+	bool m_entitySelected;
+	bool m_movementAllowed;
 	std::unique_ptr<Sprite> m_mouseCursor;
 	std::vector<std::pair<std::unique_ptr<Sprite>, bool>> m_movementPath;
 	std::pair<int, int> m_previousMousePoint;
