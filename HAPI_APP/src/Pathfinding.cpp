@@ -152,12 +152,16 @@ std::vector<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<
 
 			for (int cellIndex = 0; cellIndex < adjacentCells.size(); cellIndex++)
 			{
+				 //Cell doesn't exist
 				if (!adjacentCells[cellIndex])
 					continue;
+
 				int x = adjacentCells[cellIndex]->m_tileCoordinate.first;
 				int y = adjacentCells[cellIndex]->m_tileCoordinate.second;
+				//If adjacent cell is valid
 				if (isValid(x, y, sizeX, sizeY))//TODO
 				{
+					//If cell is destination point
 					if (isDestination(x, y, dest))
 					{
 						cellDetails[x][y].m_parent_i = i;
@@ -166,6 +170,7 @@ std::vector<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<
 						destFound = true;
 						return path;
 					}
+
 					else if (!closedList[x][y] && isUnBlocked(map, std::pair<int, int>(x, y)))
 					{
 						sucG = cellDetails[i][j].m_g + 1.0;

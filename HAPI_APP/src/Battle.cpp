@@ -4,21 +4,64 @@
 #include "entity.h"
 #include "Pathfinding.h"
 #include "OverWorld.h"
+#include "HAPIWrapper.h"
 
 using namespace HAPISPACE;
 constexpr float DRAW_OFFSET_X{ 12 };
 constexpr float DRAW_OFFSET_Y{ 28 };
+constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
+
+std::vector<std::pair<int, int>> getPathToTile(std::pair<int, int> src, std::pair<int, int> dest, Map& map);
+
+std::vector<std::pair<int, int>> getPathToTile(std::pair<int, int> src, std::pair<int, int> dest, Map & map)
+{
+	auto pathToTile = PathFinding::getPathToTile(map, src, dest);
+	if (pathToTile.empty())
+	{
+		return std::vector<std::pair<int, int>>();
+	}
+
+	std::vector<std::pair<int, int>> path;
+	path.reserve(pathToTile.size());
+	for (int i = pathToTile.size() - 1; i >= 0; i--)
+	{
+		path.push_back(pathToTile[i]);
+	}
+
+	return path;
+}
 
 Battle::Battle() :
 	m_entity(),
-	m_map(MapParser::parseMap(Utilities::getDataDirectory() + "Level1.tmx")),
-	m_isEntitySelected(false),
-	m_mouseCursor(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + "mouseCrossHair.xml")),
+	m_map(MapParser::parseMap("Level1.tmx")),
+	m_entitySelected(false),
+	m_movementAllowed(true),
+	m_mouseCursor(HAPI_Wrapper::loadSprite("mouseCrossHair.xml")),
 	m_movementPath(),
 	m_previousMousePoint()
 {
 	m_mouseCursor->GetColliderComp().EnablePixelPerfectCollisions(true);
-	initializeEntity("thingy.xml", { 5, 5 });
+	
+	//Initialize Entity
+	m_entity.first = std::make_unique<Entity>(Utilities::getDataDirectory() + "thingy.xml");
+	m_entity.second = std::make_pair<int, int>(5, 5);
+	//Assign entity sprite position
+	std::pair<int, int> tileScreenPoint = m_map.getTileScreenPos(m_entity.second);
+	m_entity.first->m_sprite->GetTransformComp().SetPosition({
+		(float)(tileScreenPoint.first + DRAW_OFFSET_X * m_map.getDrawScale()),
+		(float)(tileScreenPoint.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
+	//Insert entity into map
+	m_map.insertEntity(*m_entity.first.get(), m_entity.second);
+	
+	//Initialize Movement Path
+	m_movementPath.reserve(size_t(MOVEMENT_PATH_SIZE));
+	for (int i = 0; i < MOVEMENT_PATH_SIZE; i++)
+	{
+		std::pair<std::unique_ptr<Sprite>, bool> sprite;
+		sprite.first = HAPI_Sprites.MakeSprite(m_mouseCursor->GetSpritesheet());
+		sprite.second = false;
+		m_movementPath.push_back(std::move(sprite));
+	}
 }
 
 void Battle::render() const
@@ -31,27 +74,38 @@ void Battle::render() const
 		static_cast<float>(tileTransform.first + DRAW_OFFSET_X * m_map.getDrawScale()),
 		static_cast<float>(tileTransform.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
 	//Render entity
-	m_entity.first->m_sprite->Render(SCREEN_SURFACE);
+	m_entity.first->render();
 	//Draw Movement Graph
-	for (const auto& i : m_movementPath)
+	for (auto& i : m_movementPath)
 	{
-		i->Render(SCREEN_SURFACE);
+		if (!i.second)
+		{
+			break;
+		}
+
+		i.first->Render(SCREEN_SURFACE);
 	}
 }
 
-void Battle::initializeEntity(const std::string & fileName, std::pair<int, int> point)
+void Battle::resetMovementPath()
 {
-	m_entity.first = std::make_unique<Entity>(Utilities::getDataDirectory() + fileName);
-	m_entity.second = point;
+	for (auto& i : m_movementPath)
+	{
+		i.second = false;
+	}
+}
 
-	//Assign entity sprite position
-	std::pair<int, int> tileScreenPoint = m_map.getTileScreenPos(point);
-	m_entity.first->m_sprite->GetTransformComp().SetPosition({ 
-		(float)(tileScreenPoint.first + DRAW_OFFSET_X * m_map.getDrawScale()), 
-		(float)(tileScreenPoint.second + DRAW_OFFSET_Y * m_map.getDrawScale())});
-
-	//Insert entity into map
-	m_map.insertEntity(*m_entity.first.get(), point);
+void Battle::setMovementGraphPositions(const std::vector<std::pair<int, int>>& pathToTile, int maxNode)
+{
+	//Don't interact with path from source.
+	for (int i = 1; i < maxNode; ++i)
+	{
+		auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
+		m_movementPath[i - 1].first->GetTransformComp().SetPosition({
+			static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
+			static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
+		m_movementPath[i - 1].second = true;
+	}
 }
 
 void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
@@ -63,65 +117,43 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
-		m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x,(float)mouseData.y });
-		handleEntityMovement();
+		Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
+		if (!currentTile)
+		{
+			return;
+		}
 
-		//Initial point for the movement graph
-		//Starts at point where entity has been selected
-		if (m_isEntitySelected)
+		//Select new entity for movement
+		if (!m_entitySelected)
 		{
-			m_previousMousePoint = m_entity.second;
+			selectEntity(*currentTile);
 		}
-		//If movement path is being displayed and the entity has moved
-		//No further need of movement graph
-		if (!m_movementPath.empty())
+		//Move Selected Entity
+		else if (m_movementAllowed)
 		{
-			m_movementPath.clear();
+			moveEntity(*currentTile);
+			resetMovementPath();
 		}
+	}
+	else if (mouseEvent == EMouseEvent::eRightButtonDown)
+	{
+		m_entitySelected = false;
+		resetMovementPath();
 	}
 }
 
 void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 {
-	if (OverWorld::CURRENT_WINDOW != OverWorldWindow::Battle)
+	if (m_entitySelected && OverWorld::CURRENT_WINDOW == OverWorldWindow::Battle)
 	{
-		return;
-	}
-
-	if (!m_isEntitySelected)
-	{
-		return;
-	}
-	//Make the cursor image follow the cursor
-	m_mouseCursor->GetTransformComp().SetPosition({ (float)mouseData.x,(float)mouseData.y });
-	handleMovementPath();
-}
-
-void Battle::handleEntityMovement()
-{
-	const std::pair<int, int> mouseLocation(HAPI_Sprites.GetMouseData().x, HAPI_Sprites.GetMouseData().y);
-	Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(mouseLocation));
-	if (!currentTile)
-	{
-		return;
-	}
-
-	//Move Selected Entity
-	if (m_isEntitySelected)
-	{
-		moveEntity(*currentTile);
-	}
-	//Select new entity for movement
-	else
-	{
-		selectEntity(*currentTile);//Note: this means that "selectEntity" is actually more like "selectTile"
+		handleMovementPath();
 	}
 }
 
 void Battle::handleMovementPath()
 {
-	const std::pair<int, int> mouseLocation(HAPI_Sprites.GetMouseData().x, HAPI_Sprites.GetMouseData().y);
-	Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(mouseLocation));
+	//Tile at mouse location
+	Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 	if (!currentTile)
 	{
 		return;
@@ -134,62 +166,53 @@ void Battle::handleMovementPath()
 		return;
 	}
 	
-	auto pathToTile = PathFinding::getPathToTile(m_map, m_entity.second, currentTile->m_tileCoordinate);
-	if (pathToTile.empty())
+	auto pathToTile = getPathToTile(m_entity.second, currentTile->m_tileCoordinate, m_map);
+	if(pathToTile.empty())
 	{
 		return;
-	}
-		
-	//Create movement trail to where mouse cursor is 
-	m_movementPath.clear();
-	for (int i = 0; i < pathToTile.size() - 1; i++)
-	{
-		auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
-		m_movementPath.emplace_back(HAPI_Sprites.MakeSprite(m_mouseCursor->GetSpritesheet()));
-		m_movementPath.back()->GetTransformComp().SetPosition({
-			static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
-			static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale())});
 	}
 
 	//Assign last position for the end of the movement graph
 	m_previousMousePoint = currentTile->m_tileCoordinate;
+
+	resetMovementPath();
+
+	//Mouse cursor not in bounds of movement of entity
+	//Draw until limit of movementof entity
+	if (pathToTile.size() > m_entity.first->m_movementPoints + 1)
+	{
+		m_movementAllowed = false;
+		setMovementGraphPositions(pathToTile, m_entity.first->m_movementPoints + 1);
+	}
+	//Mouse cursor within bounds of movement of entity
+	else
+	{
+		m_movementAllowed = true;
+		setMovementGraphPositions(pathToTile, pathToTile.size());
+	}
 }
 
 void Battle::moveEntity(const Tile& tile)
 {
-	//Already existing entity in requested new position
-	if (tile.m_entityOnTile)
+	if (tile.m_type == eTileType::eOcean || tile.m_type == eTileType::eSea)
 	{
-		m_isEntitySelected = tile.m_entityOnTile;
-		return;
-	}
-	//Not a travellable tile
-	if (tile.m_type != eTileType::eOcean && tile.m_type != eTileType::eSea)
-	{
-		m_isEntitySelected = false;
-		return;
-	}
-	//Make sure new point is within movement bounds of the entity
-	auto pathToTile = PathFinding::getPathToTile(m_map, m_entity.second, tile.m_tileCoordinate);
-
-	if (pathToTile.size() > m_entity.first->m_movementPoints)
-	{
-		m_isEntitySelected = false;
-		return;
+		m_map.moveEntity(m_entity.second, tile.m_tileCoordinate);
+		m_entity.second = tile.m_tileCoordinate;
 	}
 
-	//Change map's coordinate for entity
-	m_map.moveEntity(m_entity.second, tile.m_tileCoordinate);
-	//Change entity's coordinate
-	m_entity.second = tile.m_tileCoordinate;
-	//Deselect entity
-	m_isEntitySelected = false;
+	m_entitySelected = false;
 }
 
 void Battle::selectEntity(const Tile& tile)
 {
 	if (m_entity.second == tile.m_tileCoordinate)
 	{
-		m_isEntitySelected = true;
+		m_entitySelected = true;
+		m_previousMousePoint = m_entity.second;
 	}	
+	else
+	{
+		m_entitySelected = false;
+		resetMovementPath();
+	}
 }

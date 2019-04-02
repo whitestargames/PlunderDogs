@@ -13,17 +13,18 @@ private:
 	std::pair<std::unique_ptr<Entity>, std::pair<int, int>> m_entity;
 	Map m_map;
 
-	void initializeEntity(const std::string& fileName, std::pair<int, int> point);
-	void handleEntityMovement();
-	void handleMovementPath();
 	void moveEntity(const Tile& tile);
 	void selectEntity(const Tile& tile);
 
 	//UI
-	bool m_isEntitySelected;
+	bool m_entitySelected;
+	bool m_movementAllowed;
 	std::unique_ptr<Sprite> m_mouseCursor;
-	std::vector<std::unique_ptr<Sprite>> m_movementPath;
+	std::vector<std::pair<std::unique_ptr<Sprite>, bool>> m_movementPath;
 	std::pair<int, int> m_previousMousePoint;
+	void resetMovementPath();
+	void setMovementGraphPositions(const std::vector<std::pair<int, int>>& pathToTile, int maxNode);
+	void handleMovementPath();
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
@@ -33,4 +34,5 @@ public:
 	Battle();
 
 	void render() const;
+	void update(float deltaTime) {}
 };
