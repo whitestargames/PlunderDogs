@@ -137,8 +137,9 @@ Tile* Map::getTile(intPair coordinate)
 //Refernce Wrapper
 std::vector<Tile*> Map::getAdjacentTiles(intPair coord)
 {
+	const size_t allAdjacentTiles = 6;
 	std::vector<Tile*> result;
-	result.reserve(size_t(6));
+	result.reserve(size_t(allAdjacentTiles));
 	if (coord.first & 1)//Is an odd tile
 	{
 		result.push_back(getTile(intPair(coord.first, coord.second - 1)));		//N
@@ -239,7 +240,7 @@ std::vector<Tile*> Map::getTileCone(intPair coord, int range, eDirection directi
 
 bool Map::moveEntity(intPair originalPos, intPair newPos)
 {
-	const Tile* oldTile = getTile(originalPos);
+	Tile* oldTile = getTile(originalPos);
 	Tile* newTile = getTile(newPos);
 	
 	if (!oldTile || !newTile)
@@ -344,7 +345,6 @@ Map::Map(intPair size, const std::vector<std::vector<int>>& tileData) :
 				return;
 			}
 			m_data[x + y * m_mapDimensions.first].m_sprite->SetFrameNumber(tileID);
-			//cubeToOffset(offsetToCube(intPair(x, y)));
 		}
 	}
 }
