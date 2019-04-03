@@ -10,7 +10,7 @@
 using namespace HAPISPACE;
 constexpr float DRAW_OFFSET_X{ 12 };
 constexpr float DRAW_OFFSET_Y{ 28 };
-constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
+
 
 std::deque<std::pair<int, int>> getPathToTile(std::pair<int, int> src, std::pair<int, int> dest, Map& map);
 
@@ -53,15 +53,7 @@ Battle::Battle() :
 	//Insert entity into map
 	m_map.insertEntity(*m_entity.first.get(), m_entity.second.m_currentPosition);
 	
-	//Initialize Movement Path
-	m_movementPath.reserve(size_t(MOVEMENT_PATH_SIZE));
-	for (int i = 0; i < MOVEMENT_PATH_SIZE; i++)
-	{
-		std::pair<std::unique_ptr<Sprite>, bool> sprite;
-		sprite.first = HAPI_Sprites.MakeSprite(m_mouseCursor->GetSpritesheet());
-		sprite.second = false;
-		m_movementPath.push_back(std::move(sprite));
-	}
+
 }
 
 void Battle::render() const
@@ -76,15 +68,7 @@ void Battle::render() const
 	//Render entity
 	m_entity.first->render();
 	//Draw Movement Graph
-	for (auto& i : m_movementPath)
-	{
-		if (!i.second)
-		{
-			break;
-		}
 
-		i.first->Render(SCREEN_SURFACE);
-	}
 }
 
 void Battle::update(float deltaTime)
@@ -112,14 +96,6 @@ void Battle::update(float deltaTime)
 	if (!m_movementAllowed || m_entity.second.m_pathToTile.empty())
 	{
 		int i = 0;
-	}
-}
-
-void Battle::resetMovementPath()
-{
-	for (auto& i : m_movementPath)
-	{
-		i.second = false;
 	}
 }
 
@@ -238,3 +214,76 @@ void Battle::selectEntity(const Tile& tile)
 		resetMovementPath();
 	}
 }
+
+//Battle::MovementPath::MovementPath(size_t size)
+//{
+
+//}
+
+
+//void Battle::MovementPath::render() const
+//{
+//	for (const auto& i : m_movementPath)
+//	{
+//		if (!i.second)
+//		{
+//			break;
+//		}
+//
+//		i.first->Render(SCREEN_SURFACE);
+//	}
+//}
+//
+//void Battle::MovementPath::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
+//{
+//	if (OverWorld::CURRENT_WINDOW == OverWorldWindow::Battle)
+//	{
+//
+//	}
+//}
+//
+//void Battle::MovementPath::OnMouseMove(const HAPI_TMouseData & mouseData)
+//{
+//	if (OverWorld::CURRENT_WINDOW == OverWorldWindow::Battle)
+//	{
+//		m_mousePosition = HAPI_Wrapper::getMouseLocation();
+//	}
+//}
+//
+//void Battle::MovementPath::selectEntity(const Tile & tile)
+//{
+//
+//}
+//
+//void Battle::MovementPath::resetMovementPath()
+//{
+//
+//}
+//
+//void Battle::MovementPath::setMovementGraphPositions(const Entity & currentEntity)
+//{
+//	if (currentEntity.second.m_pathToTile.size() > m_entity.first->m_movementPoints + 1)
+//	{
+//		//Don't interact with path from source.
+//		for (int i = 1; i < m_entity.first->m_movementPoints + 1; ++i)
+//		{
+//			auto tileScreenPosition = m_map.getTileScreenPos(m_entity.second.m_pathToTile[i]);
+//			m_movementPath[i - 1].first->GetTransformComp().SetPosition({
+//				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
+//				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
+//			m_movementPath[i - 1].second = true;
+//		}
+//	}
+//	else
+//	{
+//		//Don't interact with path from source.
+//		for (int i = 1; i < m_entity.second.m_pathToTile.size(); ++i)
+//		{
+//			auto tileScreenPosition = m_map.getTileScreenPos(m_entity.second.m_pathToTile[i]);
+//			m_movementPath[i - 1].first->GetTransformComp().SetPosition({
+//				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
+//				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
+//			m_movementPath[i - 1].second = true;
+//		}
+//	}
+//}

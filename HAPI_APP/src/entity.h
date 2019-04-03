@@ -6,6 +6,22 @@
 #include "Timer.h"
 
 
+class MovementPath : public IHapiSpritesInputListener
+{
+public:
+	MovementPath(Entity& owningEntity);
+
+	void update();
+	void render() const;
+	
+protected:
+	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
+	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
+	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
+
+private:
+	Entity& m_owningEntity;
+};
 
 struct Entity
 {
