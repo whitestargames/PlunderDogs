@@ -20,11 +20,6 @@ class Battle : public IHapiSpritesInputListener
 		std::pair<int, int> m_oldPosition;
 		std::vector<std::pair<int, int>> m_pathToTile;
 	};
-	enum class BattleState
-	{
-		ChoosePosition = 0,
-		Move
-	};
 
 private:
 	std::pair<std::unique_ptr<Entity>, EntityDetails> m_entity;

@@ -103,6 +103,7 @@ void Battle::update(float deltaTime)
 	{
 		movementTimer.reset();
 		m_entity.second.m_currentPosition = m_entity.second.m_pathToTile.front();
+
 	}
 
 
