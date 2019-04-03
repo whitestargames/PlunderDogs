@@ -12,18 +12,17 @@ constexpr float DRAW_OFFSET_X{ 12 };
 constexpr float DRAW_OFFSET_Y{ 28 };
 constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
 
-std::vector<std::pair<int, int>> getPathToTile(std::pair<int, int> src, std::pair<int, int> dest, Map& map);
+std::deque<std::pair<int, int>> getPathToTile(std::pair<int, int> src, std::pair<int, int> dest, Map& map);
 
-std::vector<std::pair<int, int>> getPathToTile(std::pair<int, int> src, std::pair<int, int> dest, Map & map)
+std::deque<std::pair<int, int>> getPathToTile(std::pair<int, int> src, std::pair<int, int> dest, Map & map)
 {
 	auto pathToTile = PathFinding::getPathToTile(map, src, dest);
 	if (pathToTile.empty())
 	{
-		return std::vector<std::pair<int, int>>();
+		return std::deque<std::pair<int, int>>();
 	}
 
-	std::vector<std::pair<int, int>> path;
-	path.reserve(pathToTile.size());
+	std::deque<std::pair<int, int>> path;
 	for (int i = pathToTile.size() - 1; i >= 0; i--)
 	{
 		path.push_back(pathToTile[i]);
@@ -93,7 +92,7 @@ void Battle::update(float deltaTime)
 	/*m_map.moveEntity(m_entity.second.m_currentPosition, tile.m_tileCoordinate);
 	m_entity.second.m_currentPosition = tile.m_tileCoordinate;*/
 
-	if (!m_movementAllowed)
+	if (!m_movementAllowed || m_entity.second.m_pathToTile.empty())
 	{
 		return;
 	}
@@ -102,13 +101,15 @@ void Battle::update(float deltaTime)
 	if (movementTimer.isExpired())
 	{
 		movementTimer.reset();
+		
+		m_entity.second.m_oldPosition = m_entity.second.m_currentPosition;
 		m_entity.second.m_currentPosition = m_entity.second.m_pathToTile.front();
+		m_map.moveEntity(m_entity.second.m_oldPosition, m_entity.second.m_currentPosition);
 
+		m_entity.second.m_pathToTile.pop_front();
 	}
 
-
-	std::cout << m_entity.first->m_movementTimer.getElaspedTime() << "\n";
-	if (m_entity.first->m_movementTimer.getElaspedTime() > 10.0f)
+	if (!m_movementAllowed || m_entity.second.m_pathToTile.empty())
 	{
 		int i = 0;
 	}
@@ -122,16 +123,31 @@ void Battle::resetMovementPath()
 	}
 }
 
-void Battle::setMovementGraphPositions(const std::vector<std::pair<int, int>>& pathToTile, int maxNode)
+void Battle::setMovementGraphPositions()
 {
-	//Don't interact with path from source.
-	for (int i = 1; i < maxNode; ++i)
+	if (m_entity.second.m_pathToTile.size() > m_entity.first->m_movementPoints + 1)
 	{
-		auto tileScreenPosition = m_map.getTileScreenPos(pathToTile[i]);
-		m_movementPath[i - 1].first->GetTransformComp().SetPosition({
-			static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
-			static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
-		m_movementPath[i - 1].second = true;
+		//Don't interact with path from source.
+		for (int i = 1; i < m_entity.first->m_movementPoints + 1; ++i)
+		{
+			auto tileScreenPosition = m_map.getTileScreenPos(m_entity.second.m_pathToTile[i]);
+			m_movementPath[i - 1].first->GetTransformComp().SetPosition({
+				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
+				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
+			m_movementPath[i - 1].second = true;
+		}
+	}
+	else
+	{
+		//Don't interact with path from source.
+		for (int i = 1; i < m_entity.second.m_pathToTile.size(); ++i)
+		{
+			auto tileScreenPosition = m_map.getTileScreenPos(m_entity.second.m_pathToTile[i]);
+			m_movementPath[i - 1].first->GetTransformComp().SetPosition({
+				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * m_map.getDrawScale()),
+				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
+			m_movementPath[i - 1].second = true;
+		}
 	}
 }
 
@@ -155,6 +171,7 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 		{
 			selectEntity(*currentTile);
 		}
+		
 		////Move Selected Entity
 		//else if (m_movementAllowed)
 		//{
@@ -164,6 +181,7 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 	}
 	else if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
+		//Cancel selected entity
 		m_entitySelected = false;
 		resetMovementPath();
 	}
@@ -172,50 +190,26 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 {
 	if (m_entitySelected && OverWorld::CURRENT_WINDOW == OverWorldWindow::Battle)
-	{	
+	{
 		//Tile at mouse location
-		Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
-		if (!currentTile)
+		const Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
+		if (!currentTile || m_previousMousePoint == currentTile->m_tileCoordinate)
 		{
 			return;
 		}
 
-		//If mouse hovering over tile that has been handled for the movement path
-		//No need to redo the same opreations
-		if (m_previousMousePoint == currentTile->m_tileCoordinate)
+		//Assign mouse point to new tile
+		m_previousMousePoint = currentTile->m_tileCoordinate;
+
+		m_entity.second.m_pathToTile = getPathToTile(m_entity.second.m_currentPosition, currentTile->m_tileCoordinate, m_map);
+		if (m_entity.second.m_pathToTile.empty())
 		{
 			return;
 		}
 
-		generateMovementPath(*currentTile);
-	}
-}
-
-void Battle::generateMovementPath(const Tile& currentTile)
-{
-	m_entity.second.m_pathToTile = getPathToTile(m_entity.second.m_currentPosition, currentTile.m_tileCoordinate, m_map);
-	if(m_entity.second.m_pathToTile.empty())
-	{
-		return;
-	}
-
-	//Assign last position for the end of the movement graph
-	m_previousMousePoint = currentTile.m_tileCoordinate;
-
-	resetMovementPath();
-
-	//Mouse cursor not in bounds of movement of entity
-	//Draw until limit of movementof entity
-	if (m_entity.second.m_pathToTile.size() > m_entity.first->m_movementPoints + 1)
-	{
-		m_movementAllowed = false;
-		setMovementGraphPositions(m_entity.second.m_pathToTile, m_entity.first->m_movementPoints + 1);
-	}
-	//Mouse cursor within bounds of movement of entity
-	else
-	{
-		m_movementAllowed = true;
-		setMovementGraphPositions(m_entity.second.m_pathToTile, m_entity.second.m_pathToTile.size());
+		m_movementAllowed = (m_entity.second.m_pathToTile.size() <= m_entity.first->m_movementPoints + 1);
+		resetMovementPath();
+		setMovementGraphPositions();
 	}
 }
 

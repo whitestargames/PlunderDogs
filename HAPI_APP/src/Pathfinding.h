@@ -2,7 +2,6 @@
 #include <deque>
 
 class Map;
-struct Tile;
 
 typedef std::pair<double, std::pair<int, int>> pPair;
 

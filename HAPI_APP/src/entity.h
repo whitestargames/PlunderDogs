@@ -12,7 +12,7 @@ struct Entity
 	Entity(const std::string& spriteName)
 	: m_sprite(HAPI_Sprites.LoadSprite(spriteName)),
 		m_movementPoints(5),
-		m_movementTimer(1.5f)
+		m_movementTimer(0.5f)
 		{}
 	
 

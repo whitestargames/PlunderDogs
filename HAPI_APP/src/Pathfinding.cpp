@@ -81,19 +81,16 @@ std::deque<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<i
 	int sizeY = map.getDimensions().second;
 	if (!isValid(dest.first, dest.second, sizeX, sizeY))//TODO
 	{
-		std::cout << "Destination is invalid" << std::endl;
 		return std::deque<std::pair<int, int>>();
 	}
 
 	if (!isUnBlocked(map, src) || !isUnBlocked(map, dest))
 	{
-		std::cout << "Source or Destination blocked" << std::endl;
 		return std::deque<std::pair<int, int>>();
 	}
 
 	if (isDestination(src.first, src.second, dest))
 	{
-		std::cout << "Destination Already reached" << std::endl;
 		return std::deque<std::pair<int, int>>();
 	}
 
@@ -193,6 +190,5 @@ std::deque<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<i
 		}
 	}
 	if (!destFound)
-		std::cout << "Failed to find destination" << std::endl;
 	return std::deque<std::pair<int, int>>();	
 }

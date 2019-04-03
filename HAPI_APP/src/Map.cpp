@@ -246,7 +246,7 @@ bool Map::moveEntity(intPair originalPos, intPair newPos)
 	if (!oldTile || !newTile)
 	{
 		return false;
-	}	
+	}
 
 	if (newTile->m_entityOnTile != nullptr || oldTile->m_entityOnTile == nullptr)
 	{

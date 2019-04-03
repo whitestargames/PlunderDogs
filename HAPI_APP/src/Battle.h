@@ -5,6 +5,7 @@
 #include <utility>
 #include "Map.h"
 #include "entity.h"
+#include <deque>
 
 struct Tile;
 class Battle : public IHapiSpritesInputListener
@@ -18,7 +19,7 @@ class Battle : public IHapiSpritesInputListener
 	
 		std::pair<int, int> m_currentPosition;
 		std::pair<int, int> m_oldPosition;
-		std::vector<std::pair<int, int>> m_pathToTile;
+		std::deque<std::pair<int, int>> m_pathToTile;
 	};
 
 private:
@@ -36,8 +37,7 @@ private:
 	std::pair<int, int> m_previousMousePoint;
 
 	void resetMovementPath();
-	void setMovementGraphPositions(const std::vector<std::pair<int, int>>& pathToTile, int maxNode);
-	void generateMovementPath(const Tile& currentTile);
+	void setMovementGraphPositions();
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
