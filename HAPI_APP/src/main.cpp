@@ -16,7 +16,7 @@ void HAPI_Sprites_Main()
 		int frameStart = HAPI_Sprites.GetTime();
 
 		SCREEN_SURFACE->Clear();
-		overWorld.update(static_cast<float>(frameStart / lastFrameStart) / 1000.0f);
+		overWorld.update(static_cast<float>(frameStart / lastFrameStart) / 100.0f);
 		overWorld.render();
 
 		lastFrameStart = frameStart;

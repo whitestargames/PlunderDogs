@@ -5,6 +5,7 @@
 #include "Pathfinding.h"
 #include "OverWorld.h"
 #include "HAPIWrapper.h"
+#include "Timer.h"
 
 using namespace HAPISPACE;
 constexpr float DRAW_OFFSET_X{ 12 };
@@ -44,14 +45,14 @@ Battle::Battle() :
 	
 	//Initialize Entity
 	m_entity.first = std::make_unique<Entity>(Utilities::getDataDirectory() + "thingy.xml");
-	m_entity.second = std::make_pair<int, int>(5, 5);
+	m_entity.second.m_currentPosition = std::make_pair<int, int>(5, 5);
 	//Assign entity sprite position
-	std::pair<int, int> tileScreenPoint = m_map.getTileScreenPos(m_entity.second);
+	std::pair<int, int> tileScreenPoint = m_map.getTileScreenPos(m_entity.second.m_currentPosition);
 	m_entity.first->m_sprite->GetTransformComp().SetPosition({
 		(float)(tileScreenPoint.first + DRAW_OFFSET_X * m_map.getDrawScale()),
 		(float)(tileScreenPoint.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
 	//Insert entity into map
-	m_map.insertEntity(*m_entity.first.get(), m_entity.second);
+	m_map.insertEntity(*m_entity.first.get(), m_entity.second.m_currentPosition);
 	
 	//Initialize Movement Path
 	m_movementPath.reserve(size_t(MOVEMENT_PATH_SIZE));
@@ -69,7 +70,7 @@ void Battle::render() const
 	m_map.drawMap();
 
 	//Move entity sprite
-	const std::pair<int, int> tileTransform = m_map.getTileScreenPos(m_entity.second);
+	const std::pair<int, int> tileTransform = m_map.getTileScreenPos(m_entity.second.m_currentPosition);
 	m_entity.first->m_sprite->GetTransformComp().SetPosition({
 		static_cast<float>(tileTransform.first + DRAW_OFFSET_X * m_map.getDrawScale()),
 		static_cast<float>(tileTransform.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
@@ -84,6 +85,31 @@ void Battle::render() const
 		}
 
 		i.first->Render(SCREEN_SURFACE);
+	}
+}
+
+void Battle::update(float deltaTime)
+{
+	/*m_map.moveEntity(m_entity.second.m_currentPosition, tile.m_tileCoordinate);
+	m_entity.second.m_currentPosition = tile.m_tileCoordinate;*/
+
+	if (!m_movementAllowed)
+	{
+		return;
+	}
+	auto& movementTimer = m_entity.first->m_movementTimer;
+	movementTimer.update(deltaTime);
+	if (movementTimer.isExpired())
+	{
+		movementTimer.reset();
+		m_entity.second.m_currentPosition = m_entity.second.m_pathToTile.front();
+	}
+
+
+	std::cout << m_entity.first->m_movementTimer.getElaspedTime() << "\n";
+	if (m_entity.first->m_movementTimer.getElaspedTime() > 10.0f)
+	{
+		int i = 0;
 	}
 }
 
@@ -128,12 +154,12 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 		{
 			selectEntity(*currentTile);
 		}
-		//Move Selected Entity
-		else if (m_movementAllowed)
-		{
-			moveEntity(*currentTile);
-			resetMovementPath();
-		}
+		////Move Selected Entity
+		//else if (m_movementAllowed)
+		//{
+		//	moveEntity(*currentTile);
+		//	resetMovementPath();
+		//}
 	}
 	else if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
@@ -160,14 +186,14 @@ void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 			return;
 		}
 
-		handleMovementPath(*currentTile);
+		generateMovementPath(*currentTile);
 	}
 }
 
-void Battle::handleMovementPath(const Tile& currentTile)
+void Battle::generateMovementPath(const Tile& currentTile)
 {
-	auto pathToTile = getPathToTile(m_entity.second, currentTile.m_tileCoordinate, m_map);
-	if(pathToTile.empty())
+	m_entity.second.m_pathToTile = getPathToTile(m_entity.second.m_currentPosition, currentTile.m_tileCoordinate, m_map);
+	if(m_entity.second.m_pathToTile.empty())
 	{
 		return;
 	}
@@ -179,16 +205,16 @@ void Battle::handleMovementPath(const Tile& currentTile)
 
 	//Mouse cursor not in bounds of movement of entity
 	//Draw until limit of movementof entity
-	if (pathToTile.size() > m_entity.first->m_movementPoints + 1)
+	if (m_entity.second.m_pathToTile.size() > m_entity.first->m_movementPoints + 1)
 	{
 		m_movementAllowed = false;
-		setMovementGraphPositions(pathToTile, m_entity.first->m_movementPoints + 1);
+		setMovementGraphPositions(m_entity.second.m_pathToTile, m_entity.first->m_movementPoints + 1);
 	}
 	//Mouse cursor within bounds of movement of entity
 	else
 	{
 		m_movementAllowed = true;
-		setMovementGraphPositions(pathToTile, pathToTile.size());
+		setMovementGraphPositions(m_entity.second.m_pathToTile, m_entity.second.m_pathToTile.size());
 	}
 }
 
@@ -196,8 +222,8 @@ void Battle::moveEntity(const Tile& tile)
 {
 	if (tile.m_type == eTileType::eOcean || tile.m_type == eTileType::eSea)
 	{
-		m_map.moveEntity(m_entity.second, tile.m_tileCoordinate);
-		m_entity.second = tile.m_tileCoordinate;
+		m_map.moveEntity(m_entity.second.m_currentPosition, tile.m_tileCoordinate);
+		m_entity.second.m_currentPosition = tile.m_tileCoordinate;
 	}
 
 	m_entitySelected = false;
@@ -205,10 +231,11 @@ void Battle::moveEntity(const Tile& tile)
 
 void Battle::selectEntity(const Tile& tile)
 {
-	if (m_entity.second == tile.m_tileCoordinate)
+	if (m_entity.second.m_currentPosition == tile.m_tileCoordinate)
 	{
 		m_entitySelected = true;
-		m_previousMousePoint = m_entity.second;
+		m_previousMousePoint = m_entity.second.m_currentPosition;
+		m_movementAllowed = true;
 	}	
 	else
 	{

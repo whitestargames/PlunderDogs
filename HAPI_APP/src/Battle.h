@@ -9,8 +9,25 @@
 struct Tile;
 class Battle : public IHapiSpritesInputListener
 {
+	struct EntityDetails
+	{
+		EntityDetails()
+			: m_currentPosition(),
+			m_pathToTile()
+		{}
+	
+		std::pair<int, int> m_currentPosition;
+		std::pair<int, int> m_oldPosition;
+		std::vector<std::pair<int, int>> m_pathToTile;
+	};
+	enum class BattleState
+	{
+		ChoosePosition = 0,
+		Move
+	};
+
 private:
-	std::pair<std::unique_ptr<Entity>, std::pair<int, int>> m_entity;
+	std::pair<std::unique_ptr<Entity>, EntityDetails> m_entity;
 	Map m_map;
 
 	void moveEntity(const Tile& tile);
@@ -22,10 +39,10 @@ private:
 	std::unique_ptr<Sprite> m_mouseCursor;
 	std::vector<std::pair<std::unique_ptr<Sprite>, bool>> m_movementPath;
 	std::pair<int, int> m_previousMousePoint;
+
 	void resetMovementPath();
 	void setMovementGraphPositions(const std::vector<std::pair<int, int>>& pathToTile, int maxNode);
-	void handleMovementPath(const Tile& currentTile);
-
+	void generateMovementPath(const Tile& currentTile);
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
@@ -34,5 +51,5 @@ public:
 	Battle();
 
 	void render() const;
-	void update(float deltaTime) {}
+	void update(float deltaTime);
 };
