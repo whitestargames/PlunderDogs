@@ -154,10 +154,10 @@ void Battle::setMovementGraphPositions()
 
 void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
 {
-	if (OverWorld::CURRENT_WINDOW != OverWorldWindow::Battle)
-	{
-		return;
-	}
+	//if (OverWorld::CURRENT_WINDOW != OverWorldWindow::Battle)
+	//{
+	//	return;
+	//}
 
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
@@ -190,7 +190,8 @@ void Battle::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseD
 
 void Battle::OnMouseMove(const HAPI_TMouseData & mouseData)
 {
-	if (m_entitySelected && OverWorld::CURRENT_WINDOW == OverWorldWindow::Battle)
+	//if (m_entitySelected && OverWorld::CURRENT_WINDOW == OverWorldWindow::Battle)
+	if (m_entitySelected)
 	{
 		//Tile at mouse location
 		const Tile* currentTile = m_map.getTile(m_map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
