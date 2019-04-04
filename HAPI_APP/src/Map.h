@@ -19,7 +19,7 @@ struct Entity;
 struct Tile
 {
 	enum eTileType m_type;
-	Entity* m_entityOnTile;
+	std::pair<std::unique_ptr<Entity>, EntityDetails>* m_entityOnTile;
 	std::unique_ptr<HAPISPACE::Sprite> m_sprite;
 	const std::pair<int, int> m_tileCoordinate;
 
