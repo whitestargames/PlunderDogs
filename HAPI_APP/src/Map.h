@@ -6,15 +6,6 @@
 #include <HAPISprites_UI.h>
 #include "global.h"
 
-//Info for HAPI_SPRITES - Leave for now. 
-/*
-//	//m_sprite->GetSpritesheet()->GenerateNormals(true);
-**** HAPI Sprites: ERROR Detected
-** Description: H_INVALID_PARAMETER - passed parameter was not valid
-** System: HAPI Sprites
-** Detail: surface width does not divide equally by numFrames
-****
-*/
 struct Entity;
 struct Tile
 {
@@ -103,6 +94,5 @@ public:
 	eDirection getWindDirection() const { return m_windDirection; }
 	void setWindDirection(eDirection direction) { m_windDirection = direction; }
 
-	//TODO: Get constructor working. Need tiled parser or load from xml set up
 	Map(std::pair<int, int> size, const std::vector<std::vector<int>>& tileData);
 };
