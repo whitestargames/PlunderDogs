@@ -189,6 +189,6 @@ std::deque<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<i
 			}
 		}
 	}
-	if (!destFound)
+	
 	return std::deque<std::pair<int, int>>();	
 }

@@ -10,6 +10,7 @@
 using namespace HAPISPACE;
 constexpr float DRAW_OFFSET_X{ 12 };
 constexpr float DRAW_OFFSET_Y{ 28 };
+constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
 
 
 std::deque<std::pair<int, int>> getPathToTile(std::pair<int, int> src, std::pair<int, int> dest, Map& map);
@@ -54,6 +55,14 @@ Battle::Battle() :
 	m_map.insertEntity(*m_entity.first.get(), m_entity.second.m_currentPosition);
 	
 
+	m_movementPath.reserve(size_t(MOVEMENT_PATH_SIZE));
+	for (int i = 0; i < MOVEMENT_PATH_SIZE; i++)
+	{
+		std::pair<std::unique_ptr<Sprite>, bool> sprite;
+		sprite.first = HAPI_Sprites.MakeSprite(m_mouseCursor->GetSpritesheet());
+		sprite.second = false;
+		m_movementPath.push_back(std::move(sprite));
+	}
 }
 
 void Battle::render() const
@@ -68,7 +77,15 @@ void Battle::render() const
 	//Render entity
 	m_entity.first->render();
 	//Draw Movement Graph
+	for (const auto& i : m_movementPath)
+	{
+		if (!i.second)
+		{
+			return;
+		}
 
+		i.first->Render(SCREEN_SURFACE);
+	}
 }
 
 void Battle::update(float deltaTime)
@@ -96,6 +113,14 @@ void Battle::update(float deltaTime)
 	if (!m_movementAllowed || m_entity.second.m_pathToTile.empty())
 	{
 		int i = 0;
+	}
+}
+
+void Battle::resetMovementPath()
+{
+	for (auto& i : m_movementPath)
+	{
+		i.second = false;
 	}
 }
 

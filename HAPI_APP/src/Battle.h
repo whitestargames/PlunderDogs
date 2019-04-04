@@ -8,7 +8,7 @@
 #include <deque>
 
 struct Tile;
-class Battle
+class Battle : public IHapiSpritesInputListener
 {
 	struct EntityDetails
 	{
@@ -22,34 +22,6 @@ class Battle
 		std::deque<std::pair<int, int>> m_pathToTile;
 	};
 
-	//class MovementPath : public IHapiSpritesInputListener
-	//{
-	//public:
-	//	MovementPath(size_t size);
-	//	
-	//	void render() const;
-
-	//	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
-	//	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
-	//	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
-
-	//	void selectEntity(const Tile& tile);
-	//private:
-	//	std::vector<std::pair<std::unique_ptr<Sprite>, bool>> m_movementPath;
-
-	//	//UI
-	//	bool m_entitySelected;
-	//	bool m_movementAllowed;
-	//	std::unique_ptr<Sprite> m_mouseCursor;
-	//	std::vector<std::pair<std::unique_ptr<Sprite>, bool>> m_movementPath;
-	//	std::pair<int, int> m_previousMousePoint;
-	//	std::pair<int, int> m_mousePosition;
-
-	//	void resetMovementPath();
-	//	void setMovementGraphPositions(const Entity& currentEntity);
-	//};
-
-
 public:
 	Battle();
 
@@ -61,7 +33,21 @@ private:
 	Map m_map;
 
 	void moveEntity(const Tile& tile);
-	
 
+	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
+	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
+	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
+
+	//UI
+	bool m_entitySelected;
+	bool m_movementAllowed;
+	std::unique_ptr<Sprite> m_mouseCursor;
+	std::vector<std::pair<std::unique_ptr<Sprite>, bool>> m_movementPath;
+	std::pair<int, int> m_previousMousePoint;
+	std::pair<int, int> m_mousePosition;
+
+	void resetMovementPath();
+	void setMovementGraphPositions();
+	void selectEntity(const Tile& tile);
 
 };
