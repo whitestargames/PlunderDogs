@@ -14,7 +14,8 @@ class BattleUI : public IHapiSpritesInputListener
 	enum class BattleWindow
 	{
 		Battle = 0,
-		Pause
+		Pause,
+		PostBattle
 	};
 public:
 	BattleUI();

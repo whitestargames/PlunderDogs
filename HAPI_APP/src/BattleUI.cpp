@@ -96,6 +96,13 @@ void BattleUI::render()
 		m_quitButton->Render(SCREEN_SURFACE);
 		break;
 	}
+	case BattleWindow::PostBattle:
+	{
+		//render post battle background
+		//render continue button
+		//if render victory/defeat
+		break;
+	}
 	}
 }
 
@@ -132,6 +139,16 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouse
 				m_resumeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the resume button
 			{
 				m_currentWindow = BattleWindow::Battle;//disables the pause menu
+			}
+			break;
+		}
+		case BattleWindow::PostBattle:
+		{
+			//change to continue button
+			if (m_pauseButton->GetSpritesheet()->GetFrameRect(0).Translated(
+				m_pauseButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
+			{
+				//switch to overworld
 			}
 			break;
 		}
@@ -197,6 +214,19 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 		else if (m_quitButton->GetFrameNumber() != 0)
 		{
 			m_quitButton->SetFrameNumber(0);
+		}
+		break;
+	}
+	case BattleWindow::PostBattle:
+	{
+		//continue button
+		if (m_resumeButton->GetSpritesheet()->GetFrameRect(0).Translated(m_resumeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_resumeButton->SetFrameNumber(1);
+		}
+		else if (m_resumeButton->GetFrameNumber() != 0)
+		{
+			m_resumeButton->SetFrameNumber(0);
 		}
 		break;
 	}

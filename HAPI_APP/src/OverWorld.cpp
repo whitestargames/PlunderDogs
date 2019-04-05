@@ -8,6 +8,10 @@ OverWorld::OverWorld()
 	m_playButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PrebattleUIPlayButton.png", 2)),
 	m_backButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PrebattleUIBackButton.png", 2)),
 	m_upgradesButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "upgradesButton.png", 2)),
+	//upgrade background
+	//upgrade buttons
+	m_upgradeBackButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PrebattleUIBackButton.png", 2)),
+
 	m_currentWindow(OverWorldWindow::LevelSelection)
 {
 	m_enemyTerritoryHexSheet->GetTransformComp().SetPosition({ 100, 600 });
@@ -15,6 +19,9 @@ OverWorld::OverWorld()
 
 	m_playButton->GetTransformComp().SetPosition({ 1150, 722 });
 	m_backButton->GetTransformComp().SetPosition({ 185, 747 });
+
+	//upgrade buttons positions
+	m_upgradeBackButton->GetTransformComp().SetPosition({ 1150, 722 });
 }
 
 void OverWorld::render()
@@ -43,8 +50,19 @@ void OverWorld::render()
 		battleState = true;
 		break;
 	}
-	case OverWorldWindow::LevelSelection ://level selection always wants to be rendered so is outside the switch case
+	case OverWorldWindow::LevelSelection ://level selection always wants to be rendered behind the other smaller overworld windows so is outside the switch case
 	{
+		break;
+	}
+	case OverWorldWindow::Upgrade :
+	{
+		//render background
+		//draw text gold
+		//draw stat text*4
+		//render back button
+		m_upgradeBackButton->Render(SCREEN_SURFACE);
+		//if render "+" button*5
+		//if render "-" button*5
 		break;
 	}
 	}
@@ -80,6 +98,46 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 			else if (m_backButton->GetSpritesheet()->GetFrameRect(0).Translated(m_backButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				m_currentWindow = OverWorldWindow::LevelSelection;
+			}
+			break;
+		}
+		case OverWorldWindow::Upgrade:
+		{
+			if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				m_currentWindow = OverWorldWindow::LevelSelection;
+			}
+			else if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//health+
+			}
+			else if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//movement+
+			}
+			else if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//damage+
+			}
+			else if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//range+
+			}
+			else if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//health-
+			}
+			else if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//movement-
+			}
+			else if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//damage-
+			}
+			else if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//range-
 			}
 			break;
 		}
@@ -131,6 +189,84 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
 		{
 			m_backButton->SetFrameNumber(0);
 		}
+		break;
+	}
+	case OverWorldWindow::Upgrade :
+	{
+		if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_upgradeBackButton->SetFrameNumber(1);
+		}
+		else if (m_upgradeBackButton->GetFrameNumber() != 0)
+		{
+			m_upgradeBackButton->SetFrameNumber(0);
+		}
+
+		if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_upgradeBackButton->SetFrameNumber(1);//health+
+		}
+		else if (m_upgradeBackButton->GetFrameNumber() != 0)
+		{
+			m_upgradeBackButton->SetFrameNumber(0);
+		}
+		if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_upgradeBackButton->SetFrameNumber(1);//damage+
+		}
+		else if (m_upgradeBackButton->GetFrameNumber() != 0)
+		{
+			m_upgradeBackButton->SetFrameNumber(0);
+		}
+		if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_upgradeBackButton->SetFrameNumber(1);//movement+
+		}
+		else if (m_upgradeBackButton->GetFrameNumber() != 0)
+		{
+			m_upgradeBackButton->SetFrameNumber(0);
+		}
+		if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_upgradeBackButton->SetFrameNumber(1);//range+
+		}
+		else if (m_upgradeBackButton->GetFrameNumber() != 0)
+		{
+			m_upgradeBackButton->SetFrameNumber(0);
+		}
+		if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_upgradeBackButton->SetFrameNumber(1);//health-
+		}
+		else if (m_upgradeBackButton->GetFrameNumber() != 0)
+		{
+			m_upgradeBackButton->SetFrameNumber(0);
+		}
+		if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_upgradeBackButton->SetFrameNumber(1);//damage-
+		}
+		else if (m_upgradeBackButton->GetFrameNumber() != 0)
+		{
+			m_upgradeBackButton->SetFrameNumber(0);
+		}
+		if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_upgradeBackButton->SetFrameNumber(1);//movement-
+		}
+		else if (m_upgradeBackButton->GetFrameNumber() != 0)
+		{
+			m_upgradeBackButton->SetFrameNumber(0);
+		}
+		if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_upgradeBackButton->SetFrameNumber(1);//range-
+		}
+		else if (m_upgradeBackButton->GetFrameNumber() != 0)
+		{
+			m_upgradeBackButton->SetFrameNumber(0);
+		}
+
 		break;
 	}
 	}
