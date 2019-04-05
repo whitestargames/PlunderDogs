@@ -4,7 +4,6 @@
 #include <HAPISprites_UI.h>
 
 struct Tile;
-class Map;
 class Battle;
 class BattleUI : public IHapiSpritesInputListener
 {
@@ -18,6 +17,7 @@ class BattleUI : public IHapiSpritesInputListener
 		std::unique_ptr<Sprite> m_sprite;
 		bool m_renderSprite;
 	};
+
 public:
 	BattleUI(Battle& battle);
 

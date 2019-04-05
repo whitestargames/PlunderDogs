@@ -125,18 +125,16 @@ void Entity::update(float deltaTime, EntityBattleProperties & entityDetails, Map
 		{
 			entityDetails.m_movementTimer.reset();
 
-			entityDetails.m_oldPosition = entityDetails.m_currentPosition;
 			entityDetails.m_currentPosition = entityDetails.m_pathToTile.front();
-			
 			entityDetails.m_movementPath.eraseNode(entityDetails.m_currentPosition, map);
-			map.moveEntity(entityDetails.m_oldPosition, entityDetails.m_currentPosition);
-
+			
 			entityDetails.m_pathToTile.pop_front();
 		}
 
 		//reached destination
 		if (entityDetails.m_pathToTile.empty())
 		{
+			map.moveEntity(entityDetails.m_oldPosition, entityDetails.m_currentPosition);
 			map.getTile(entityDetails.m_currentPosition)->m_destinationOfEntity = false;
 			entityDetails.m_moving = false;
 		}

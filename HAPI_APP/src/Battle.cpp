@@ -51,6 +51,7 @@ void Battle::moveEntityTo(BattleEntity* entity, Tile & destination)
 			entity->m_battleProperties.m_moving = true;
 			entity->m_battleProperties.m_pathToTile = pathToTile;
 			destination.m_destinationOfEntity = true;
+			entity->m_battleProperties.m_oldPosition = entity->m_battleProperties.m_currentPosition;
 		}
 		else
 		{
