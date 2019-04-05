@@ -1,12 +1,8 @@
 #pragma once
 
-#include <HAPISprites_lib.h>
-#include <vector>
-#include <utility>
 #include "Map.h"
 #include "entity.h"
 #include "BattleUI.h"
-#include <deque>
 
 class Battle
 {
@@ -17,10 +13,10 @@ public:
 
 	void render();
 	void update(float deltaTime);
-	void moveEntityTo(std::pair<std::unique_ptr<Entity>, EntityDetails>& entity, Tile& destination);
+	void moveEntityTo(std::pair<std::unique_ptr<Entity>, BattleProperties>& entity, Tile& destination);
 
 private:
-	std::pair<std::unique_ptr<Entity>, EntityDetails> m_entity;
+	std::pair<std::unique_ptr<Entity>, BattleProperties> m_entity;
 	Map m_map;
 	BattleUI m_battleUI;
 };

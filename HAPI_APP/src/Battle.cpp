@@ -8,7 +8,6 @@
 #include "Timer.h"
 
 using namespace HAPISPACE;
-constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
 
 Battle::Battle() :
 	m_entity(),
@@ -39,18 +38,16 @@ void Battle::update(float deltaTime)
 	m_entity.first->update(deltaTime, m_entity.second, m_map);
 }
 
-void Battle::moveEntityTo(std::pair<std::unique_ptr<Entity>, EntityDetails>& entity, Tile & destination)
+void Battle::moveEntityTo(std::pair<std::unique_ptr<Entity>, BattleProperties>& entity, Tile & destination)
 {
-	if (entity.second.m_moving)
+	if (!entity.second.m_moving)
 	{
-		return;
-	}
-
-	auto pathToTile = PathFinding::getPathToTile(m_map, entity.second.m_currentPosition, destination.m_tileCoordinate);
-	if (!pathToTile.empty() && pathToTile.size() <= entity.first->m_movementPoints + 1)
-	{
-		entity.second.m_moving = true;
-		entity.second.m_pathToTile = pathToTile;
+		auto pathToTile = PathFinding::getPathToTile(m_map, entity.second.m_currentPosition, destination.m_tileCoordinate);
+		if (!pathToTile.empty() && pathToTile.size() <= entity.first->m_movementPoints + 1)
+		{
+			entity.second.m_moving = true;
+			entity.second.m_pathToTile = pathToTile;
+		}
 	}
 }
 

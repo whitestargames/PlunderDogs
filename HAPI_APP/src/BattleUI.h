@@ -3,7 +3,6 @@
 #include <HAPISprites_lib.h>
 #include <HAPISprites_UI.h>
 
-
 struct Tile;
 class Map;
 class Battle;

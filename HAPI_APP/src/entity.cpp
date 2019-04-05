@@ -6,18 +6,19 @@
 constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
 
 //ENTITY DETAILS
-EntityDetails::EntityDetails()
+BattleProperties::BattleProperties()
 	: m_currentPosition(),
 	m_oldPosition(),
 	m_pathToTile(),
 	m_movementTimer(0.35f),
-	m_moving(false)
+	m_moving(false),
+	m_movementPath()
 {}
 
 //
 //MOVEMENT PATH
 //
-Entity::MovementPath::MovementPath()
+BattleProperties::MovementPath::MovementPath()
 	: m_movementPath(),
 	m_mouseCursor(HAPI_Wrapper::loadSprite("mouseCrossHair.xml"))
 {
@@ -31,7 +32,7 @@ Entity::MovementPath::MovementPath()
 	}
 }
 
-void Entity::MovementPath::render() const
+void BattleProperties::MovementPath::render() const
 {
 	for (const auto& i : m_movementPath)
 	{
@@ -42,7 +43,7 @@ void Entity::MovementPath::render() const
 	}
 }
 
-void Entity::MovementPath::generatePath(Map& map, const Tile& source, const Tile& destination)
+void BattleProperties::MovementPath::generatePath(Map& map, const Tile& source, const Tile& destination)
 {
 	auto pathToTile = PathFinding::getPathToTile(map, source.m_tileCoordinate, destination.m_tileCoordinate);
 	if (pathToTile.empty())
@@ -78,7 +79,7 @@ void Entity::MovementPath::generatePath(Map& map, const Tile& source, const Tile
 	}
 }
 
-void Entity::MovementPath::eraseNode(std::pair<int, int> position, Map& map)
+void BattleProperties::MovementPath::eraseNode(std::pair<int, int> position, const Map& map)
 {
 	for (auto iter = m_movementPath.begin(); iter != m_movementPath.end(); ++iter)
 	{
@@ -90,12 +91,22 @@ void Entity::MovementPath::eraseNode(std::pair<int, int> position, Map& map)
 	}
 }
 
-void Entity::MovementPath::clearPath()
+void BattleProperties::MovementPath::clearPath()
 {
 	for (auto& i : m_movementPath)
 	{
 		i.second = false;
 	}
+}
+
+void BattleProperties::generateMovementGraph(Map & map, const Tile & source, const Tile & destination)
+{
+	m_movementPath.generatePath(map, source, destination);
+}
+
+void BattleProperties::clearMovementPath()
+{
+	m_movementPath.clearPath();
 }
 
 //ENTITY
@@ -104,7 +115,7 @@ Entity::Entity(const std::string & spriteName)
 	m_movementPoints(5)
 {}
 
-void Entity::update(float deltaTime, EntityDetails & entityDetails, Map& map)
+void Entity::update(float deltaTime, BattleProperties & entityDetails, Map& map)
 {
 	if (entityDetails.m_moving && !entityDetails.m_pathToTile.empty())
 	{
@@ -117,7 +128,7 @@ void Entity::update(float deltaTime, EntityDetails & entityDetails, Map& map)
 			entityDetails.m_currentPosition = entityDetails.m_pathToTile.front();
 			entityDetails.m_pathToTile.pop_front();
 			
-			m_movementPath.eraseNode(entityDetails.m_currentPosition, map);
+			entityDetails.m_movementPath.eraseNode(entityDetails.m_currentPosition, map);
 			map.moveEntity(entityDetails.m_oldPosition, entityDetails.m_currentPosition);
 		}
 
@@ -128,7 +139,7 @@ void Entity::update(float deltaTime, EntityDetails & entityDetails, Map& map)
 	}
 }
 
-void Entity::render(Map & map, const EntityDetails & entityDetails)
+void Entity::render(Map & map, const BattleProperties & entityDetails)
 {
 	//Move entity sprite
 	const std::pair<int, int> tileTransform = map.getTileScreenPos(entityDetails.m_currentPosition);
@@ -138,5 +149,5 @@ void Entity::render(Map & map, const EntityDetails & entityDetails)
 	//Render entity
 	m_sprite->Render(SCREEN_SURFACE);
 
-	m_movementPath.render();
+	entityDetails.m_movementPath.render();
 }

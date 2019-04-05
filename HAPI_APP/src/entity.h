@@ -6,20 +6,9 @@
 #include <string>
 #include "Timer.h"
 
-struct EntityDetails
-{
-	EntityDetails();
-
-	std::pair<int, int> m_currentPosition;
-	std::pair<int, int> m_oldPosition;
-	std::deque<std::pair<int, int>> m_pathToTile;
-	Timer m_movementTimer;
-	bool m_moving;
-};
-
 struct Tile;
 class Map;
-struct Entity
+struct BattleProperties
 {
 	class MovementPath
 	{
@@ -28,22 +17,35 @@ struct Entity
 
 		void render() const;
 		void generatePath(Map& map, const Tile& source, const Tile& destination);
-		void eraseNode(std::pair<int, int> position, Map& map);
+		void eraseNode(std::pair<int, int> position, const Map& map);
+		void clearPath();
 
 	private:
 		std::vector<std::pair<std::unique_ptr<Sprite>, bool>> m_movementPath;
 		std::unique_ptr<Sprite> m_mouseCursor;
-
-		void clearPath();
-		
 	};
 
+	BattleProperties();
+
+	void generateMovementGraph(Map& map, const Tile& source, const Tile& destination);
+	void clearMovementPath();
+
+	std::pair<int, int> m_currentPosition;
+	std::pair<int, int> m_oldPosition;
+	std::deque<std::pair<int, int>> m_pathToTile;
+	Timer m_movementTimer;
+	bool m_moving;
+	MovementPath m_movementPath;
+};
+
+
+struct Entity
+{
 	Entity(const std::string& spriteName);
 	
-	void update(float deltaTime, EntityDetails& entityDetails, Map& map);
-	void render(Map& map, const EntityDetails& entityDetails);
+	void update(float deltaTime, BattleProperties& entityDetails, Map& map);
+	void render(Map& map, const BattleProperties& entityDetails);
 
 	std::unique_ptr<HAPISPACE::Sprite> m_sprite;
 	int m_movementPoints;
-	MovementPath m_movementPath;
 };
