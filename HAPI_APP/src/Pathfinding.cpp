@@ -22,8 +22,9 @@ struct Cell
 	eDirection direction;
 };
 
-void tracePath(const std::vector<std::vector<Cell> >& cellDetails, 
-	std::pair<int, int> dest, std::vector<std::pair<eDirection, std::pair<int, int>>>& path);
+void tracePath(const std::vector<std::vector<Cell>>
+	&cellDetails, std::pair<int, int> dest, 
+	std::vector<std::pair<eDirection, std::pair<int, int>>>& path);
 bool isValid(int row, int col, int sizeX, int sizeY);
 bool isUnBlocked(Map &map, std::pair<int, int> coord);
 bool isDestination(int row, int col, std::pair<int, int> dest);
@@ -56,10 +57,11 @@ bool isValid(int row, int col, int sizeX, int sizeY)
 
 bool isUnBlocked(Map & map, std::pair<int, int> coord)
 {
-	if (map.getTile(coord) != nullptr)
-		if (map.getTile(coord)->m_type == eTileType::eSea ||
-			map.getTile(coord)->m_type == eTileType::eOcean ||
-			map.getTile(coord)->m_entityOnTile != nullptr )
+	auto * tile = map.getTile(coord);
+	if (tile != nullptr)
+		if (tile->m_type == eTileType::eSea ||
+			tile->m_type == eTileType::eOcean &&
+			map.getTile(coord)->m_entityOnTile == nullptr )
 			return true;
 	return false;
 }
@@ -91,7 +93,7 @@ std::vector<std::pair<eDirection, std::pair<int, int>>> PathFinding::getPathToTi
 		return std::vector<std::pair<eDirection, std::pair<int, int>>>();
 	}
 
-	if (!isUnBlocked(map, src) || !isUnBlocked(map, dest))
+	if (!isUnBlocked(map, dest))
 	{
 		return std::vector<std::pair<eDirection, std::pair<int, int>>>();
 	}

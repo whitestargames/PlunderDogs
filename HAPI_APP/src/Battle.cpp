@@ -14,7 +14,7 @@ constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
 
 Battle::Battle() :
 	m_entity(),
-	m_map(MapParser::parseMap("Level1.tmx")),
+	m_map(MapParser::parseMap("TropicalIslands.tmx")),
 	m_isEntitySelected(false),
 	m_mouseCursor(HAPI_Wrapper::loadSprite("mouseCrossHair.xml")),
 	m_movementPath(),
@@ -60,7 +60,7 @@ void Battle::render() const
 
 void Battle::update(float deltaTime)
 {
-	handleRotation();
+	//handleRotation();
 }
 //Gabriel--
 unsigned int Battle::getDirectionCost(int currentDirection, int newDirection)
@@ -72,7 +72,7 @@ unsigned int Battle::getDirectionCost(int currentDirection, int newDirection)
 	}
 		
 	//number of direction % difference between the new and old directions
-	return (static_cast<int>(eDirection::eSouthWest) % diff) + 1;
+	return (static_cast<int>(eDirection::eNorthWest) % diff) + 1;
 }
 //--Gabriel
 void Battle::initializeEntity(const std::string & fileName, std::pair<int, int> point)
@@ -185,6 +185,8 @@ void Battle::handleEntityMovement()
 	{
 		selectEntity(*currentTile);//Note: this means that "selectEntity" is actually more like "selectTile"
 	}
+
+	handleRotation();
 }
 
 void Battle::handleMovementPath(const Tile& currentTile)
@@ -222,9 +224,9 @@ void Battle::handleMovementPath(const Tile& currentTile)
 		++m_movementPointsUsed;
 		int entityDir = m_entity.first->m_entityDirection;
 		int pathDir = pathToTile[i].first;
+		m_currentUIRotation = pathToTile[1].first;
 		int movementCost = getDirectionCost(entityDir, pathDir);
 
-		m_currentUIRotation = pathToTile[1].first;
 		m_entity.first->m_entityDirection = (eDirection)pathDir;
 		m_movementPointsUsed += movementCost;
 
