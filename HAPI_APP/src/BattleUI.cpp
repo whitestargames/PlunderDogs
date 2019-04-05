@@ -91,7 +91,7 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 					(float)screenPos.first + DRAW_OFFSET_X * m_battle.getMap().getDrawScale(),
 					(float)screenPos.second + DRAW_OFFSET_Y * m_battle.getMap().getDrawScale() });
 				m_renderSprite = true;
-
+				m_currentTileSelected->m_entityOnTile->second.clearMovementPath();
 			}
 			else
 			{
