@@ -8,20 +8,35 @@
 
 using namespace HAPISPACE;
 
-BattleUI::BattleUI(Battle & battle)
-	: m_battle(battle),
-	m_currentTileSelected(nullptr),
+BattleUI::InvalidMovementLocationSprite::InvalidMovementLocationSprite(const std::string & spriteName)
+	: m_sprite(HAPI_Wrapper::loadSprite(spriteName)),
 	m_renderSprite(false)
-{
-	m_invalidLocationSprite = HAPI_Wrapper::loadSprite(("thingy.xml"));
-}
+{}
 
-void BattleUI::render() const
+void BattleUI::InvalidMovementLocationSprite::render() const
 {
 	if (m_renderSprite)
 	{
-		m_invalidLocationSprite->Render(SCREEN_SURFACE);
+		m_sprite->Render(SCREEN_SURFACE);
 	}
+}
+
+void BattleUI::InvalidMovementLocationSprite::setPosition(std::pair<int, int> screenPosition, float mapDrawScale)
+{
+	m_sprite->GetTransformComp().SetPosition({
+		(float)screenPosition.first + DRAW_OFFSET_X * mapDrawScale,
+		(float)screenPosition.second + DRAW_OFFSET_Y * mapDrawScale });
+}
+
+BattleUI::BattleUI(Battle & battle)
+	: m_battle(battle),
+	m_currentTileSelected(nullptr),
+	m_invalidMovementLocationSprite("thingy.xml")
+{}
+
+void BattleUI::render() const
+{
+	m_invalidMovementLocationSprite.render();
 }
 
 void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
@@ -49,6 +64,9 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 
 			return;
 		}
+		
+		//TODO: DON'T ALLOW TO SELECT ENTITY WHEN MOVING
+		//IT DRAWS THE GRAPH
 
 		if (m_currentTileSelected)
 		{
@@ -56,6 +74,10 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 			if (tile->m_entityOnTile)
 			{
 				m_currentTileSelected = tile;
+				if (m_currentTileSelected->m_entityOnTile)
+				{
+					m_currentTileSelected->m_entityOnTile->m_battleProperties.clearMovementPath();
+				}
 			}
 			//Instruct Entity to move to new location
 			else if (m_currentTileSelected->m_entityOnTile && (m_currentTileSelected->m_tileCoordinate != tile->m_tileCoordinate))
@@ -96,17 +118,14 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 		{
 			if (tile->m_type != eTileType::eSea && tile->m_type != eTileType::eOcean)
 			{
-				auto screenPos = m_battle.getMap().getTileScreenPos(tile->m_tileCoordinate);
-				m_invalidLocationSprite->GetTransformComp().SetPosition({
-					(float)screenPos.first + DRAW_OFFSET_X * m_battle.getMap().getDrawScale(),
-					(float)screenPos.second + DRAW_OFFSET_Y * m_battle.getMap().getDrawScale() });
-				m_renderSprite = true;
+				m_invalidMovementLocationSprite.setPosition(m_battle.getMap().getTileScreenPos(tile->m_tileCoordinate), m_battle.getMap().getDrawScale());
+				m_invalidMovementLocationSprite.m_renderSprite = true;
 				m_currentTileSelected->m_entityOnTile->m_battleProperties.clearMovementPath();
 			}
 			else
 			{
 				m_currentTileSelected->m_entityOnTile->m_battleProperties.generateMovementGraph(m_battle.getMap(), *m_currentTileSelected, *tile);
-				m_renderSprite = false;
+				m_invalidMovementLocationSprite.m_renderSprite = false;
 			}
 		}
 	}

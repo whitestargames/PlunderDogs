@@ -8,6 +8,16 @@ class Map;
 class Battle;
 class BattleUI : public IHapiSpritesInputListener
 {
+	struct InvalidMovementLocationSprite
+	{
+		InvalidMovementLocationSprite(const std::string& spriteName);
+
+		void render() const;
+		void setPosition(std::pair<int, int> screenPosition, float mapDrawScale);
+
+		std::unique_ptr<Sprite> m_sprite;
+		bool m_renderSprite;
+	};
 public:
 	BattleUI(Battle& battle);
 
@@ -20,6 +30,5 @@ public:
 private:
 	Battle& m_battle;
 	Tile* m_currentTileSelected;
-	std::unique_ptr<Sprite> m_invalidLocationSprite;
-	bool m_renderSprite;
+	InvalidMovementLocationSprite m_invalidMovementLocationSprite;
 };
