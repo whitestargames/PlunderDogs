@@ -172,6 +172,7 @@
   <ItemGroup>
     <ClCompile Include="src\Battle.cpp" />
     <ClCompile Include="src\BattleUI.cpp" />
+    <ClCompile Include="src\entity.cpp" />
     <ClCompile Include="src\HAPIWrapper.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Map.cpp" />
