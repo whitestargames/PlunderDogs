@@ -44,7 +44,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 		{
 			if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile)
 			{
-				m_currentTileSelected->m_entityOnTile->second.clearMovementPath();
+				m_currentTileSelected->m_entityOnTile->m_battleProperties.clearMovementPath();
 			}
 
 			return;
@@ -60,7 +60,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 			//Instruct Entity to move to new location
 			else if (m_currentTileSelected->m_entityOnTile && (m_currentTileSelected->m_tileCoordinate != tile->m_tileCoordinate))
 			{
-				m_battle.moveEntityTo(*m_currentTileSelected->m_entityOnTile, *tile);
+				m_battle.moveEntityTo(m_currentTileSelected->m_entityOnTile, *tile);
 				m_currentTileSelected = nullptr;
 			}
 		}
@@ -68,6 +68,16 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 		{
 			m_currentTileSelected = tile;
 		}
+	}
+	else if (mouseEvent == EMouseEvent::eRightButtonDown)
+	{
+		//Cancel selected Entity
+		if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile)
+		{
+			m_currentTileSelected->m_entityOnTile->m_battleProperties.clearMovementPath();
+		}
+
+		m_currentTileSelected = nullptr;
 	}
 }
 
@@ -91,11 +101,11 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 					(float)screenPos.first + DRAW_OFFSET_X * m_battle.getMap().getDrawScale(),
 					(float)screenPos.second + DRAW_OFFSET_Y * m_battle.getMap().getDrawScale() });
 				m_renderSprite = true;
-				m_currentTileSelected->m_entityOnTile->second.clearMovementPath();
+				m_currentTileSelected->m_entityOnTile->m_battleProperties.clearMovementPath();
 			}
 			else
 			{
-				m_currentTileSelected->m_entityOnTile->second.generateMovementGraph(m_battle.getMap(), *m_currentTileSelected, *tile);
+				m_currentTileSelected->m_entityOnTile->m_battleProperties.generateMovementGraph(m_battle.getMap(), *m_currentTileSelected, *tile);
 				m_renderSprite = false;
 			}
 		}

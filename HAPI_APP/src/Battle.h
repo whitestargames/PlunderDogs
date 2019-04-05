@@ -13,10 +13,13 @@ public:
 
 	void render();
 	void update(float deltaTime);
-	void moveEntityTo(std::pair<std::unique_ptr<Entity>, EntityBattleProperties>& entity, Tile& destination);
+	//TODO: BAD - will change exposure of raw pointer
+	void moveEntityTo(BattleEntity* entity, Tile& destination);
 
 private:
-	std::pair<std::unique_ptr<Entity>, EntityBattleProperties> m_entity;
+	std::vector<std::unique_ptr<BattleEntity>> m_entities;
 	Map m_map;
 	BattleUI m_battleUI;
+
+	void insertEntity(std::pair<int, int> startingPosition);
 };

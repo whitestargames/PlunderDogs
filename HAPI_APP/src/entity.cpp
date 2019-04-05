@@ -2,13 +2,14 @@
 #include "Map.h"
 #include "HAPIWrapper.h"
 #include "Pathfinding.h"
+#include "Utilities/Utilities.h"
 
 constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
 
 //ENTITY DETAILS
-EntityBattleProperties::EntityBattleProperties()
-	: m_currentPosition(),
-	m_oldPosition(),
+EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosition)
+	: m_currentPosition(startingPosition),
+	m_oldPosition(startingPosition),
 	m_pathToTile(),
 	m_movementTimer(0.35f),
 	m_moving(false),
@@ -53,10 +54,10 @@ void EntityBattleProperties::MovementPath::generatePath(Map& map, const Tile& so
 
 	clearPath();
 
-	if (pathToTile.size() > source.m_entityOnTile->first->m_movementPoints + 1)
+	if (pathToTile.size() > source.m_entityOnTile->m_entity.m_movementPoints + 1)
 	{
 		//Don't interact with path from source.
-		for (int i = 1; i < source.m_entityOnTile->first->m_movementPoints + 1; ++i)
+		for (int i = 1; i < source.m_entityOnTile->m_entity.m_movementPoints + 1; ++i)
 		{
 			auto tileScreenPosition = map.getTileScreenPos(pathToTile[i]);
 			m_movementPath[i - 1].first->GetTransformComp().SetPosition({
@@ -111,8 +112,8 @@ void EntityBattleProperties::clearMovementPath()
 
 //ENTITY
 Entity::Entity(const std::string & spriteName)
-	: m_sprite(HAPI_Sprites.LoadSprite(spriteName)),
-	m_movementPoints(5)
+	: m_sprite(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + spriteName)),
+	m_movementPoints(15)
 {}
 
 void Entity::update(float deltaTime, EntityBattleProperties & entityDetails, Map& map)
@@ -150,4 +151,10 @@ void Entity::render(Map & map, const EntityBattleProperties & entityDetails)
 	m_sprite->Render(SCREEN_SURFACE);
 
 	entityDetails.m_movementPath.render();
+}
+
+BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const std::string & spriteName)
+	: m_entity(spriteName),
+	m_battleProperties(startingPosition)
+{
 }

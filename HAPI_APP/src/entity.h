@@ -25,7 +25,7 @@ struct EntityBattleProperties
 		std::unique_ptr<Sprite> m_mouseCursor;
 	};
 
-	EntityBattleProperties();
+	EntityBattleProperties(std::pair<int, int> startingPosition);
 
 	void generateMovementGraph(Map& map, const Tile& source, const Tile& destination);
 	void clearMovementPath();
@@ -47,4 +47,12 @@ struct Entity
 
 	std::unique_ptr<HAPISPACE::Sprite> m_sprite;
 	int m_movementPoints;
+};
+
+struct BattleEntity
+{
+	BattleEntity(std::pair<int, int> startingPosition, const std::string& spriteName);
+
+	Entity m_entity;
+	EntityBattleProperties m_battleProperties;
 };

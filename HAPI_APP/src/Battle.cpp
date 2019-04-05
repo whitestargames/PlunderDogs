@@ -6,55 +6,70 @@
 #include "OverWorld.h"
 #include "HAPIWrapper.h"
 #include "Timer.h"
+#include <utility>
 
 using namespace HAPISPACE;
 
 Battle::Battle() :
-	m_entity(),
+	m_entities(),
 	m_map(MapParser::parseMap("Level1.tmx")),
 	m_battleUI(*this)
-{	
-	//Initialize Entity
-	m_entity.first = std::make_unique<Entity>(Utilities::getDataDirectory() + "thingy.xml");
-	m_entity.second.m_currentPosition = std::make_pair<int, int>(5, 5);
-	m_entity.second.m_oldPosition = std::make_pair<int, int>(5, 5);
-	//Assign entity sprite position
-	std::pair<int, int> tileScreenPoint = m_map.getTileScreenPos(m_entity.second.m_currentPosition);
-	m_entity.first->m_sprite->GetTransformComp().SetPosition({
-		(float)(tileScreenPoint.first + DRAW_OFFSET_X * m_map.getDrawScale()),
-		(float)(tileScreenPoint.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
-	//Insert entity into map
-	m_map.insertEntity(m_entity);
+{
+	insertEntity({ 5, 5 });
+	insertEntity({ 4, 4 });
+	insertEntity({ 8, 8 });
 }
 
 void Battle::render()
 {
 	m_map.drawMap();
-	m_entity.first->render(m_map, m_entity.second);
+	
+	for (const auto& entity : m_entities)
+	{
+		entity->m_entity.render(m_map, entity->m_battleProperties);
+	}
+
 	m_battleUI.render();
 }
 
 void Battle::update(float deltaTime)
 {
-	m_entity.first->update(deltaTime, m_entity.second, m_map);
+	for (auto& entity : m_entities)
+	{
+		entity->m_entity.update(deltaTime, entity->m_battleProperties, m_map);
+	}
 }
 
-void Battle::moveEntityTo(std::pair<std::unique_ptr<Entity>, EntityBattleProperties>& entity, Tile & destination)
+void Battle::moveEntityTo(BattleEntity* entity, Tile & destination)
 {
-	if (!entity.second.m_moving)
+	if (!entity->m_battleProperties.m_moving)
 	{
-		auto pathToTile = PathFinding::getPathToTile(m_map, entity.second.m_currentPosition, destination.m_tileCoordinate);
+		auto pathToTile = PathFinding::getPathToTile(m_map, entity->m_battleProperties.m_currentPosition, destination.m_tileCoordinate);
 		//Able to move entity to new position
-		if (!pathToTile.empty() && pathToTile.size() <= entity.first->m_movementPoints + 1)
+		if (!pathToTile.empty() && pathToTile.size() <= entity->m_entity.m_movementPoints + 1)
 		{
-			entity.second.m_moving = true;
-			entity.second.m_pathToTile = pathToTile;
+			entity->m_battleProperties.m_moving = true;
+			entity->m_battleProperties.m_pathToTile = pathToTile;
 		}
 		else
 		{
-			entity.second.clearMovementPath();
+			entity->m_battleProperties.clearMovementPath();
 		}
 	}
+}
+
+void Battle::insertEntity(std::pair<int, int> startingPosition)
+{
+	auto entity = std::make_unique<BattleEntity>(startingPosition, "thingy.xml");
+
+	//Assign entity sprite position - TODO change this at later date
+	std::pair<int, int> tileScreenPoint = m_map.getTileScreenPos(entity->m_battleProperties.m_currentPosition);
+	entity->m_entity.m_sprite->GetTransformComp().SetPosition({
+		(float)(tileScreenPoint.first + DRAW_OFFSET_X * m_map.getDrawScale()),
+		(float)(tileScreenPoint.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
+	
+	m_entities.push_back(std::move(entity));
+	m_map.insertEntity(*m_entities.back());
 }
 
 Map & Battle::getMap()

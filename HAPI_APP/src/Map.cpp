@@ -259,9 +259,9 @@ bool Map::moveEntity(intPair originalPos, intPair newPos)
 	return true;
 }
 
-void Map::insertEntity(std::pair<std::unique_ptr<Entity>, EntityBattleProperties>& newEntity)
+void Map::insertEntity(BattleEntity& newEntity)
 {
-	Tile* tile = getTile(newEntity.second.m_currentPosition);	
+	Tile* tile = getTile(newEntity.m_battleProperties.m_currentPosition);	
 	if (tile && !tile->m_entityOnTile)
 	{
 		tile->m_entityOnTile = &newEntity;
