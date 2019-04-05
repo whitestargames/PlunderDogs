@@ -21,7 +21,7 @@ Battle::Battle() :
 	m_movementPointsUsed(0)
 {
 	m_mouseCursor->GetColliderComp().EnablePixelPerfectCollisions(true);
-	initializeEntity("thingy.xml", { 5, 5 });
+	initializeEntity("ship.xml", { 5, 5 });
 
 	m_movementPath.reserve(size_t(MOVEMENT_PATH_SIZE));
 	for (int i = 0; i < MOVEMENT_PATH_SIZE; i++)

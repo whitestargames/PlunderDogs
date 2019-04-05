@@ -181,7 +181,7 @@ std::vector<std::pair<double, std::pair<int, int>>> PathFinding::getPathToTile(M
 					{
 						//calculates cost based on G(cost of moving to a tile)
 						//and H(diagonal distance between the tile and the destination)
-						successorG = cellDetails[x][y].m_g + 1.0;
+						successorG =  1.0;
 						successorH = calculateHeuristicValue(x, y, dest);
 						successorF = successorG + successorH;
 
