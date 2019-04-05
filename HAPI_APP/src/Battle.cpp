@@ -52,8 +52,6 @@ void Battle::moveEntityTo(std::pair<std::unique_ptr<Entity>, EntityDetails>& ent
 		entity.second.m_moving = true;
 		entity.second.m_pathToTile = pathToTile;
 	}
-
-
 }
 
 Map & Battle::getMap()

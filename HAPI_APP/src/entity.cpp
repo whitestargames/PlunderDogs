@@ -3,6 +3,7 @@
 #include "HAPIWrapper.h"
 #include "Pathfinding.h"
 
+constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
 
 //ENTITY DETAILS
 EntityDetails::EntityDetails()
@@ -20,8 +21,8 @@ Entity::MovementPath::MovementPath()
 	: m_movementPath(),
 	m_mouseCursor(HAPI_Wrapper::loadSprite("mouseCrossHair.xml"))
 {
-	m_movementPath.reserve(size_t(32));
-	for (int i = 0; i < 32; ++i)
+	m_movementPath.reserve(size_t(MOVEMENT_PATH_SIZE));
+	for (int i = 0; i < MOVEMENT_PATH_SIZE; ++i)
 	{
 		std::pair<std::unique_ptr<Sprite>, bool> sprite;
 		sprite.first = HAPI_Sprites.MakeSprite(m_mouseCursor->GetSpritesheet());
