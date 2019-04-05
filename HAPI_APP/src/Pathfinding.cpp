@@ -23,14 +23,14 @@ struct Cell
 };
 
 void tracePath(const std::vector<std::vector<Cell> >& cellDetails, 
-	std::pair<int, int> dest, std::vector<std::pair<double, std::pair<int, int>>>& path);
+	std::pair<int, int> dest, std::vector<std::pair<eDirection, std::pair<int, int>>>& path);
 bool isValid(int row, int col, int sizeX, int sizeY);
 bool isUnBlocked(Map &map, std::pair<int, int> coord);
 bool isDestination(int row, int col, std::pair<int, int> dest);
 double calculateHeuristicValue(int row, int col, std::pair<int, int> dest);
-void findAvailableTiles(std::pair<int, int> src, Map &map, int depth);
 
-void tracePath(const std::vector<std::vector<Cell>>& cellDetails, std::pair<int, int> dest, std::vector<std::pair<double, std::pair<int, int>>>& path)
+
+void tracePath(const std::vector<std::vector<Cell>>& cellDetails, std::pair<int, int> dest, std::vector<std::pair<eDirection, std::pair<int, int>>>& path)
 {
 	int row = dest.first;
 	int col = dest.second;
@@ -80,7 +80,7 @@ double calculateHeuristicValue(int row, int col, std::pair<int, int> dest)
 		+ (col - dest.second)*(col - dest.second)));
 }
 
-std::vector<std::pair<double, std::pair<int, int>>> PathFinding::getPathToTile(Map &map, std::pair<int, int> src, std::pair<int, int> dest)
+std::vector<std::pair<eDirection, std::pair<int, int>>> PathFinding::getPathToTile(Map &map, std::pair<int, int> src, std::pair<int, int> dest)
 {
 	int sizeX = map.getDimensions().first;
 	int sizeY = map.getDimensions().second;
@@ -88,17 +88,17 @@ std::vector<std::pair<double, std::pair<int, int>>> PathFinding::getPathToTile(M
 
 	if (!isValid(dest.first, dest.second, sizeX, sizeY))//TODO
 	{
-		return std::vector<std::pair<double, std::pair<int, int>>>();
+		return std::vector<std::pair<eDirection, std::pair<int, int>>>();
 	}
 
 	if (!isUnBlocked(map, src) || !isUnBlocked(map, dest))
 	{
-		return std::vector<std::pair<double, std::pair<int, int>>>();
+		return std::vector<std::pair<eDirection, std::pair<int, int>>>();
 	}
 
 	if (isDestination(src.first, src.second, dest))
 	{
-		return std::vector<std::pair<double, std::pair<int, int>>>();
+		return std::vector<std::pair<eDirection, std::pair<int, int>>>();
 	}
 
 	
@@ -141,7 +141,7 @@ std::vector<std::pair<double, std::pair<int, int>>> PathFinding::getPathToTile(M
 	openList.insert(std::make_pair(0.0, std::make_pair(i, j)));
 
 	bool destFound = false;
-	std::vector<std::pair<double, std::pair<int, int>>> path;
+	std::vector<std::pair<eDirection, std::pair<int, int>>> path;
 	while (!openList.empty())
 	{
 		std::pair<double, std::pair<int, int>> p = *openList.begin();
@@ -204,5 +204,5 @@ std::vector<std::pair<double, std::pair<int, int>>> PathFinding::getPathToTile(M
 	}
 	if (!destFound)
 		std::cout << "Failed to find destination" << std::endl;
-	return std::vector<std::pair<double, std::pair<int, int>>>();
+	return std::vector<std::pair<eDirection, std::pair<int, int>>>();
 }

@@ -19,7 +19,8 @@ Battle::Battle() :
 	m_mouseCursor(HAPI_Wrapper::loadSprite("mouseCrossHair.xml")),
 	m_movementPath(),
 	m_previousMousePoint(),
-	m_movementPointsUsed(0)
+	m_movementPointsUsed(0),
+	m_currentUIRotation(eDirection::eNorth)
 {
 	m_mouseCursor->GetColliderComp().EnablePixelPerfectCollisions(true);
 	initializeEntity("ship.xml", { 5, 5 });
@@ -59,7 +60,7 @@ void Battle::render() const
 
 void Battle::update(float deltaTime)
 {
-	
+	handleRotation();
 }
 //Gabriel--
 unsigned int Battle::getDirectionCost(int currentDirection, int newDirection)
@@ -71,7 +72,7 @@ unsigned int Battle::getDirectionCost(int currentDirection, int newDirection)
 	}
 		
 	//number of direction % difference between the new and old directions
-	return (static_cast<int>(eDirection::Total - 1) % diff) + 1;
+	return (static_cast<int>(eDirection::eSouthWest) % diff) + 1;
 }
 //--Gabriel
 void Battle::initializeEntity(const std::string & fileName, std::pair<int, int> point)
@@ -177,7 +178,7 @@ void Battle::handleEntityMovement()
 	if (m_isEntitySelected)
 	{
 		moveEntity(*currentTile);
-		handleRotation();
+
 	}
 	//Select new entity for movement
 	else
@@ -217,12 +218,13 @@ void Battle::handleMovementPath(const Tile& currentTile)
 		
 		//Gabriel--
 		//used to check if direction had been implemented correctly
-		++m_movementPointsUsed;
-		int entityDir = (int)m_entity.first->m_entityDirection;
-		int pathDir = (int)pathToTile[i].first;
 		
+		++m_movementPointsUsed;
+		int entityDir = m_entity.first->m_entityDirection;
+		int pathDir = pathToTile[i].first;
 		int movementCost = getDirectionCost(entityDir, pathDir);
 
+		m_currentUIRotation = pathToTile[1].first;
 		m_entity.first->m_entityDirection = (eDirection)pathDir;
 		m_movementPointsUsed += movementCost;
 
@@ -237,9 +239,6 @@ void Battle::handleMovementPath(const Tile& currentTile)
 			m_movementPointsUsed -= bonusMove;
 		}
 
-		
-		std::cout <<"Old Dir: " << entityDir <<"New Dir: " << pathDir << "cost: " << movementCost << std::endl;
-		std::cout << "move Points" << m_movementPointsUsed << std::endl;
 		//--Gabriel
 	}
 
@@ -282,20 +281,33 @@ void Battle::selectEntity(const Tile& tile)
 
 void Battle::handleRotation()
 {
-	int directionToTurn = m_entity.first->m_entityDirection;
+	int directionToTurn = 0; 
 	int rotationAngle = 60;
-	m_entity.first->m_sprite->GetTransformComp().SetRotation(DEGREES_TO_RADIANS(directionToTurn*rotationAngle % 360));
+	if (m_isEntitySelected)
+	{
+		directionToTurn = m_currentUIRotation;
+		m_entity.first->m_sprite->GetTransformComp().SetRotation(
+			DEGREES_TO_RADIANS(directionToTurn*rotationAngle % 360));
+	}
+	else
+	{
+		directionToTurn = m_entity.first->m_entityDirection;
+		m_entity.first->m_sprite->GetTransformComp().SetRotation(
+			DEGREES_TO_RADIANS(directionToTurn*rotationAngle % 360));
+	}
+		
+
 }
 
-std::vector<std::pair<double, std::pair<int, int>>> Battle::getPathToTile(std::pair<int, int> dest)
+std::vector<std::pair<eDirection, std::pair<int, int>>> Battle::getPathToTile(std::pair<int, int> dest)
 {
 	auto pathToTile = PathFinding::getPathToTile(m_map, m_entity.second, dest);
 	if (pathToTile.empty())
 	{
-		return std::vector<std::pair<double, std::pair<int, int>>>();
+		return std::vector<std::pair<eDirection, std::pair<int, int>>>();
 	}
 
-	std::vector<std::pair<double, std::pair<int, int>>> path;
+	std::vector<std::pair<eDirection, std::pair<int, int>>> path;
 	path.reserve(pathToTile.size());
 	for (int i = pathToTile.size() - 1; i >= 0; i--)
 	{

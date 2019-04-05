@@ -22,16 +22,18 @@ private:
 	//UI
 	bool m_isEntitySelected;
 	float m_movementPointsUsed;
+	eDirection m_currentUIRotation;
 	std::unique_ptr<Sprite> m_mouseCursor;
 	std::vector<std::pair<std::unique_ptr<Sprite>, bool>> m_movementPath;
 	std::pair<int, int> m_previousMousePoint;
-	void handleRotation();
+	
 
-	std::vector<std::pair<double, std::pair<int, int>>> getPathToTile(std::pair<int, int> dest);
+	std::vector<std::pair<eDirection, std::pair<int, int>>> getPathToTile(std::pair<int, int> dest);
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
 	unsigned int getDirectionCost(int currentDirection, int newDirection);
+	void handleRotation();
 	
 
 public:
