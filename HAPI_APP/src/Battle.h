@@ -17,7 +17,7 @@ public:
 
 	void render();
 	void update(float deltaTime);
-	void entityMoveTo(Entity& entity, std::pair<int, int> newPosition);
+	void moveEntityTo(std::pair<std::unique_ptr<Entity>, EntityDetails>& entity, Tile& destination);
 
 private:
 	std::pair<std::unique_ptr<Entity>, EntityDetails> m_entity;

@@ -5,6 +5,7 @@
 #include <HAPISprites_Lib.h>
 //#include <iostream> //Test
 #include "Utilities/Utilities.h"
+#include "entity.h"
 
 typedef std::pair<int, int> intPair;
 
@@ -258,9 +259,9 @@ bool Map::moveEntity(intPair originalPos, intPair newPos)
 	return true;
 }
 
-void Map::insertEntity(Entity& newEntity, intPair coord)
+void Map::insertEntity(std::pair<std::unique_ptr<Entity>, EntityDetails>& newEntity)
 {
-	Tile* tile = getTile(coord);	
+	Tile* tile = getTile(newEntity.second.m_currentPosition);	
 	if (tile && !tile->m_entityOnTile)
 	{
 		tile->m_entityOnTile = &newEntity;

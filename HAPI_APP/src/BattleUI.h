@@ -16,7 +16,7 @@ class BattleUI : public IHapiSpritesInputListener
 		MovementPath();
 
 		void render() const;
-		void generatePath(Map& map, const Tile& currentTileSelected);
+		void generatePath(Map& map, const Tile& source, const Tile& destination);
 
 	private:
 		std::vector<std::pair<std::unique_ptr<Sprite>, bool>> m_movementPath;

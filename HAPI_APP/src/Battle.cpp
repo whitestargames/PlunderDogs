@@ -41,13 +41,14 @@ Battle::Battle() :
 	//Initialize Entity
 	m_entity.first = std::make_unique<Entity>(Utilities::getDataDirectory() + "thingy.xml");
 	m_entity.second.m_currentPosition = std::make_pair<int, int>(5, 5);
+	m_entity.second.m_oldPosition = std::make_pair<int, int>(5, 5);
 	//Assign entity sprite position
 	std::pair<int, int> tileScreenPoint = m_map.getTileScreenPos(m_entity.second.m_currentPosition);
 	m_entity.first->m_sprite->GetTransformComp().SetPosition({
 		(float)(tileScreenPoint.first + DRAW_OFFSET_X * m_map.getDrawScale()),
 		(float)(tileScreenPoint.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
 	//Insert entity into map
-	m_map.insertEntity(*m_entity.first.get(), m_entity.second.m_currentPosition);
+	m_map.insertEntity(m_entity);
 }
 
 void Battle::render()
@@ -88,12 +89,43 @@ void Battle::update(float deltaTime)
 	//{
 	//	int i = 0;
 	//}
+
+	if (m_entity.second.m_moving && !m_entity.second.m_pathToTile.empty())
+	{
+		auto& movementTimer = m_entity.first->m_movementTimer;
+		movementTimer.update(deltaTime);
+		if (movementTimer.isExpired())
+		{
+			movementTimer.reset();
+			
+			m_entity.second.m_oldPosition = m_entity.second.m_currentPosition;
+			m_entity.second.m_currentPosition = m_entity.second.m_pathToTile.front();
+			m_map.moveEntity(m_entity.second.m_oldPosition, m_entity.second.m_currentPosition);
+			m_entity.second.m_pathToTile.pop_front();
+		}
+		if (m_entity.second.m_pathToTile.empty())
+		{
+			m_entity.second.m_moving = false;
+		}
+	}
 }
 
-void Battle::entityMoveTo(Entity & entity, std::pair<int, int> newPosition)
+void Battle::moveEntityTo(std::pair<std::unique_ptr<Entity>, EntityDetails>& entity, Tile & destination)
 {
-	
+	if (entity.second.m_moving)
+	{
+		return;
+	}
+
+	auto pathToTile = PathFinding::getPathToTile(m_map, entity.second.m_currentPosition, destination.m_tileCoordinate);
+	if (!pathToTile.empty())
+	{
+		entity.second.m_moving = true;
+		entity.second.m_pathToTile = pathToTile;
+	}
+
 }
+
 
 Map & Battle::getMap()
 {

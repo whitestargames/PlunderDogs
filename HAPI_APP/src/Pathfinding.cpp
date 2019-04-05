@@ -4,7 +4,6 @@
 #include <stack>
 #include <set>
 
-
 struct Cell
 {
 	Cell()
@@ -27,6 +26,18 @@ bool isValid(int row, int col, int sizeX, int sizeY);
 bool isUnBlocked(Map &map, std::pair<int, int> coord);
 bool isDestination(int row, int col, std::pair<int, int> dest);
 double calculateHeuristicValue(int row, int col, std::pair<int, int> dest);
+std::deque<std::pair<int, int>> reversePath(const std::deque<std::pair<int, int>>& pathToTile);
+
+std::deque<std::pair<int, int>> reversePath(const std::deque<std::pair<int, int>>& pathToTile)
+{
+	std::deque<std::pair<int, int>> path;
+	for (int i = pathToTile.size() - 1; i >= 0; i--)
+	{
+		path.push_back(pathToTile[i]);
+	}
+
+	return path;
+}
 
 void tracePath(const std::vector<std::vector<Cell>>& cellDetails, std::pair<int, int> dest, std::deque<std::pair<int, int>>& path)
 {
@@ -166,7 +177,7 @@ std::deque<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<i
 						cellDetails[x][y].m_parent_j = j;
 						tracePath(cellDetails, dest, path);
 						destFound = true;
-						return path;
+						return reversePath(path);
 					}
 
 					else if (!closedList[x][y] && isUnBlocked(map, std::pair<int, int>(x, y)))

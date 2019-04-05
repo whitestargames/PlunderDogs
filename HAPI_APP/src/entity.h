@@ -20,19 +20,17 @@ struct EntityDetails
 	bool m_moving;
 };
 
+struct Tile;
 class Map;
 struct Entity
 {
 	Entity(const std::string& spriteName)
 	: m_sprite(HAPI_Sprites.LoadSprite(spriteName)),
 		m_movementPoints(5),
-		m_movementTimer(0.5f)
+		m_movementTimer(0.35f)
 		{}
 	
-
-	std::shared_ptr<HAPISPACE::Sprite> m_sprite;
+	std::unique_ptr<HAPISPACE::Sprite> m_sprite;
 	int m_movementPoints;
 	Timer m_movementTimer;
-	
-	void render(Map& map, float drawOffsetX, float drawOffsetY);
 };

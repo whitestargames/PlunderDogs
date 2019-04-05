@@ -5,24 +5,6 @@
 
 using namespace HAPISPACE;
 
-std::deque<std::pair<int, int>> getPathToTile(std::pair<int, int> src, std::pair<int, int> dest, Map& map);
-std::deque<std::pair<int, int>> getPathToTile(std::pair<int, int> src, std::pair<int, int> dest, Map & map)
-{
-	auto pathToTile = PathFinding::getPathToTile(map, src, dest);
-	if (pathToTile.empty())
-	{
-		return std::deque<std::pair<int, int>>();
-	}
-
-	std::deque<std::pair<int, int>> path;
-	for (int i = pathToTile.size() - 1; i >= 0; i--)
-	{
-		path.push_back(pathToTile[i]);
-	}
-
-	return path;
-}
-
 //
 //MOVEMENT PATH
 //
@@ -53,34 +35,22 @@ void BattleUI::MovementPath::render() const
 	}
 }
 
-void BattleUI::MovementPath::generatePath(Map& map, const Tile& currentTileSelected)
+void BattleUI::MovementPath::generatePath(Map& map, const Tile& source, const Tile& destination)
 {
-	//m_map.getTile(m_map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
-	Tile* tile = map.getTile(map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
-	//Tile* tileAtPosition = map.getTile(tilePosition);
-	auto path = getPathToTile(currentTileSelected.m_tileCoordinate, tile->m_tileCoordinate, map);
-	if (path.empty())
+	auto pathToTile = PathFinding::getPathToTile(map, source.m_tileCoordinate, destination.m_tileCoordinate);
+	if (pathToTile.empty())
 	{
 		return;
 	}
+
 	clearPath();
 
-	////Don't interact with path from source.
-	//for (int i = 1; i < path.size(); ++i)
-	//{
-	//	auto tileScreenPosition = map.getTileScreenPos(path[i]);
-	//	m_movementPath[i - 1].first->GetTransformComp().SetPosition({
-	//		static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
-	//		static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
-	//	m_movementPath[i - 1].second = true;
-	//}
-
-	if (path.size() > currentTileSelected.m_entityOnTile->m_movementPoints + 1)
+	if (pathToTile.size() > source.m_entityOnTile->first->m_movementPoints + 1)
 	{
 		//Don't interact with path from source.
-		for (int i = 1; i < currentTileSelected.m_entityOnTile->m_movementPoints + 1; ++i)
+		for (int i = 1; i < source.m_entityOnTile->first->m_movementPoints + 1; ++i)
 		{
-			auto tileScreenPosition = map.getTileScreenPos(path[i]);
+			auto tileScreenPosition = map.getTileScreenPos(pathToTile[i]);
 			m_movementPath[i - 1].first->GetTransformComp().SetPosition({
 				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
 				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
@@ -90,9 +60,9 @@ void BattleUI::MovementPath::generatePath(Map& map, const Tile& currentTileSelec
 	else
 	{
 		//Don't interact with path from source.
-		for (int i = 1; i < path.size(); ++i)
+		for (int i = 1; i < pathToTile.size(); ++i)
 		{
-			auto tileScreenPosition = map.getTileScreenPos(path[i]);
+			auto tileScreenPosition = map.getTileScreenPos(pathToTile[i]);
 			m_movementPath[i - 1].first->GetTransformComp().SetPosition({
 				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
 				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
@@ -128,30 +98,28 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 {
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
-		if (!m_currentTileSelected)
+		Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
+		if (!tile)
 		{
-			auto& map = m_battle.getMap();
-			Tile* tile = map.getTile(map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
-			if (tile)
-			{
-				m_currentTileSelected = tile;
-			}
-
 			return;
 		}
 
-		if (m_currentTileSelected)
+		if (!m_currentTileSelected)
 		{
-			auto& map = m_battle.getMap();
-			Tile* tile = map.getTile(map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
-			if (!tile)
+			m_currentTileSelected = tile;	
+		}
+		else if (m_currentTileSelected)
+		{
+			//Select new Tile if has valid Entity
+			if(tile->m_entityOnTile)
 			{
-				return;
+				m_currentTileSelected = tile;
 			}
-
-			if (tile->m_tileCoordinate != m_currentTileSelected->m_tileCoordinate)
+			//Instruct Entity to move to new location
+			else if (m_currentTileSelected->m_entityOnTile && (tile->m_tileCoordinate != m_currentTileSelected->m_tileCoordinate))
 			{
-				//m_battle.moveEntity(*m_currentTileSelected->m_entityOnTile, tile->m_tileCoordinate);
+				m_battle.moveEntityTo(*m_currentTileSelected->m_entityOnTile, *tile);
+				m_currentTileSelected = nullptr;
 			}
 		}
 	}
@@ -161,6 +129,10 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 {
 	if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile)
 	{
-		m_movementPath.generatePath(m_battle.getMap(), *m_currentTileSelected);
+		Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
+		if (tile && m_currentTileSelected->m_tileCoordinate != tile->m_tileCoordinate)
+		{
+			m_movementPath.generatePath(m_battle.getMap(), *m_currentTileSelected, *tile);
+		}
 	}
 }
