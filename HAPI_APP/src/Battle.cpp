@@ -47,11 +47,12 @@ void Battle::moveEntityTo(std::pair<std::unique_ptr<Entity>, EntityDetails>& ent
 	}
 
 	auto pathToTile = PathFinding::getPathToTile(m_map, entity.second.m_currentPosition, destination.m_tileCoordinate);
-	if (!pathToTile.empty())
+	if (!pathToTile.empty() && pathToTile.size() <= entity.first->m_movementPoints + 1)
 	{
 		entity.second.m_moving = true;
 		entity.second.m_pathToTile = pathToTile;
 	}
+
 
 }
 
