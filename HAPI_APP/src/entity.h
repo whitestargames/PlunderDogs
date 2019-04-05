@@ -38,7 +38,6 @@ struct EntityBattleProperties
 	MovementPath m_movementPath;
 };
 
-
 struct Entity
 {
 	Entity(const std::string& spriteName);
