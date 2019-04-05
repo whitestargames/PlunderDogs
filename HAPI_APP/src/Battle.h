@@ -13,10 +13,10 @@ public:
 
 	void render();
 	void update(float deltaTime);
-	void moveEntityTo(std::pair<std::unique_ptr<Entity>, BattleProperties>& entity, Tile& destination);
+	void moveEntityTo(std::pair<std::unique_ptr<Entity>, EntityBattleProperties>& entity, Tile& destination);
 
 private:
-	std::pair<std::unique_ptr<Entity>, BattleProperties> m_entity;
+	std::pair<std::unique_ptr<Entity>, EntityBattleProperties> m_entity;
 	Map m_map;
 	BattleUI m_battleUI;
 };

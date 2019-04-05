@@ -8,7 +8,7 @@
 
 struct Tile;
 class Map;
-struct BattleProperties
+struct EntityBattleProperties
 {
 	class MovementPath
 	{
@@ -25,7 +25,7 @@ struct BattleProperties
 		std::unique_ptr<Sprite> m_mouseCursor;
 	};
 
-	BattleProperties();
+	EntityBattleProperties();
 
 	void generateMovementGraph(Map& map, const Tile& source, const Tile& destination);
 	void clearMovementPath();
@@ -43,8 +43,8 @@ struct Entity
 {
 	Entity(const std::string& spriteName);
 	
-	void update(float deltaTime, BattleProperties& entityDetails, Map& map);
-	void render(Map& map, const BattleProperties& entityDetails);
+	void update(float deltaTime, EntityBattleProperties& entityDetails, Map& map);
+	void render(Map& map, const EntityBattleProperties& entityDetails);
 
 	std::unique_ptr<HAPISPACE::Sprite> m_sprite;
 	int m_movementPoints;

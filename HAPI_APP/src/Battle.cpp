@@ -31,6 +31,7 @@ void Battle::render()
 {
 	m_map.drawMap();
 	m_entity.first->render(m_map, m_entity.second);
+	m_battleUI.render();
 }
 
 void Battle::update(float deltaTime)
@@ -38,7 +39,7 @@ void Battle::update(float deltaTime)
 	m_entity.first->update(deltaTime, m_entity.second, m_map);
 }
 
-void Battle::moveEntityTo(std::pair<std::unique_ptr<Entity>, BattleProperties>& entity, Tile & destination)
+void Battle::moveEntityTo(std::pair<std::unique_ptr<Entity>, EntityBattleProperties>& entity, Tile & destination)
 {
 	if (!entity.second.m_moving)
 	{

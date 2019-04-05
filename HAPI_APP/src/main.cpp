@@ -1,4 +1,4 @@
-#include "Battle.h"
+#include "OverWorld.h"
 using namespace HAPISPACE;
 
 void HAPI_Sprites_Main()
@@ -10,14 +10,14 @@ void HAPI_Sprites_Main()
 	HAPI_Sprites.LimitFrameRate(200);
 
 	int lastFrameStart = HAPI_Sprites.GetTime();
-	Battle battle;
+	OverWorld overWorld;
 	while (HAPI_Sprites.Update())
 	{
 		int frameStart = HAPI_Sprites.GetTime();
 
 		SCREEN_SURFACE->Clear();
-		battle.update(static_cast<float>(frameStart - lastFrameStart) / 1000.0f);
-		battle.render();
+		overWorld.update(static_cast<float>(frameStart - lastFrameStart) / 1000.0f);
+		overWorld.render();
 
 		lastFrameStart = frameStart;
 	}	
