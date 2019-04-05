@@ -7,9 +7,10 @@
 #include "HAPIWrapper.h"
 
 using namespace HAPISPACE;
-constexpr float DRAW_OFFSET_X{ 12 };
-constexpr float DRAW_OFFSET_Y{ 28 };
+constexpr float DRAW_OFFSET_X{ 16 };
+constexpr float DRAW_OFFSET_Y{ 32 };
 constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
+
 
 Battle::Battle() :
 	m_entity(),
@@ -22,7 +23,7 @@ Battle::Battle() :
 {
 	m_mouseCursor->GetColliderComp().EnablePixelPerfectCollisions(true);
 	initializeEntity("ship.xml", { 5, 5 });
-
+	m_entity.first->m_sprite->GetTransformComp().SetOrigin({13, 25 });
 	m_movementPath.reserve(size_t(MOVEMENT_PATH_SIZE));
 	for (int i = 0; i < MOVEMENT_PATH_SIZE; i++)
 	{
@@ -32,6 +33,7 @@ Battle::Battle() :
 		m_movementPath.push_back(std::move(sprite));
 	}
 }
+
 void Battle::render() const
 {
 	m_map.drawMap();
@@ -57,7 +59,7 @@ void Battle::render() const
 
 void Battle::update(float deltaTime)
 {
-
+	
 }
 //Gabriel--
 unsigned int Battle::getDirectionCost(int currentDirection, int newDirection)
@@ -175,6 +177,7 @@ void Battle::handleEntityMovement()
 	if (m_isEntitySelected)
 	{
 		moveEntity(*currentTile);
+		handleRotation();
 	}
 	//Select new entity for movement
 	else
@@ -277,6 +280,13 @@ void Battle::selectEntity(const Tile& tile)
 	}	
 }
 
+void Battle::handleRotation()
+{
+	int directionToTurn = m_entity.first->m_entityDirection;
+	int rotationAngle = 60;
+	m_entity.first->m_sprite->GetTransformComp().SetRotation(DEGREES_TO_RADIANS(directionToTurn*rotationAngle % 360));
+}
+
 std::vector<std::pair<double, std::pair<int, int>>> Battle::getPathToTile(std::pair<int, int> dest)
 {
 	auto pathToTile = PathFinding::getPathToTile(m_map, m_entity.second, dest);
@@ -294,3 +304,4 @@ std::vector<std::pair<double, std::pair<int, int>>> Battle::getPathToTile(std::p
 
 	return path;
 }
+
