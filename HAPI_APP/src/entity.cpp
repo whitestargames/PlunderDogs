@@ -115,9 +115,9 @@ void Entity::update(float deltaTime, EntityDetails & entityDetails, Map& map)
 
 			entityDetails.m_oldPosition = entityDetails.m_currentPosition;
 			entityDetails.m_currentPosition = entityDetails.m_pathToTile.front();
-			m_movementPath.eraseNode(entityDetails.m_currentPosition, map);
 			entityDetails.m_pathToTile.pop_front();
-		
+			
+			m_movementPath.eraseNode(entityDetails.m_currentPosition, map);
 			map.moveEntity(entityDetails.m_oldPosition, entityDetails.m_currentPosition);
 		}
 
