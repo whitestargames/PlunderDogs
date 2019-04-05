@@ -49,9 +49,10 @@ void Battle::moveEntityTo(BattleEntity* entity, Tile & destination)
 		if (!pathToTile.empty() && pathToTile.size() <= entity->m_entity.m_movementPoints + 1)
 		{
 			entity->m_battleProperties.m_moving = true;
-			entity->m_battleProperties.m_pathToTile = pathToTile;
 			destination.m_destinationOfEntity = true;
+			entity->m_battleProperties.m_pathToTile = pathToTile;
 			entity->m_battleProperties.m_oldPosition = entity->m_battleProperties.m_currentPosition;
+			m_map.moveEntity(entity->m_battleProperties.m_oldPosition, pathToTile.back());
 		}
 		else
 		{

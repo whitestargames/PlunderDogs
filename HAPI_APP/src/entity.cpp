@@ -134,7 +134,6 @@ void Entity::update(float deltaTime, EntityBattleProperties & entityDetails, Map
 		//reached destination
 		if (entityDetails.m_pathToTile.empty())
 		{
-			map.moveEntity(entityDetails.m_oldPosition, entityDetails.m_currentPosition);
 			map.getTile(entityDetails.m_currentPosition)->m_destinationOfEntity = false;
 			entityDetails.m_moving = false;
 		}
