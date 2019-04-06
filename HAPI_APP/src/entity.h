@@ -61,6 +61,8 @@ struct BattleEntity
 {
 	BattleEntity(std::pair<int, int> startingPosition, const std::string& spriteName);
 
+	void setPosition(const Map& map);
+
 	EntityProperties m_entity;
 	EntityBattleProperties m_battleProperties;
 };

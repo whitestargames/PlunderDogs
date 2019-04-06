@@ -20,5 +20,6 @@ private:
 	Map m_map;
 	BattleUI m_battleUI;
 
+
 	void insertEntity(std::pair<int, int> startingPosition);
 };

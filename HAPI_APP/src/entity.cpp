@@ -139,23 +139,19 @@ EntityProperties::EntityProperties(const std::string & spriteName)
 	m_movementPoints(15)
 {}
 
-//void Entity::render(Map & map, const EntityBattleProperties & entityDetails)
-//{
-//	//Move entity sprite
-//	const std::pair<int, int> tileTransform = map.getTileScreenPos(entityDetails.m_currentPosition);
-//	m_sprite->GetTransformComp().SetPosition({
-//		static_cast<float>(tileTransform.first + DRAW_OFFSET_X * map.getDrawScale()),
-//		static_cast<float>(tileTransform.second + DRAW_OFFSET_Y * map.getDrawScale()) });
-//	//Render entity
-//	m_sprite->Render(SCREEN_SURFACE);
-//
-//	entityDetails.m_movementPath.render();
-//}
-
 BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const std::string & spriteName)
 	: m_entity(spriteName),
 	m_battleProperties(startingPosition)
 {}
+
+void BattleEntity::setPosition(const Map & map)
+{
+	//Assign entity sprite position - TODO change this at later date
+	std::pair<int, int> tileScreenPoint = map.getTileScreenPos(m_battleProperties.m_currentPosition);
+	m_entity.m_sprite->GetTransformComp().SetPosition({
+		(float)(tileScreenPoint.first + DRAW_OFFSET_X * map.getDrawScale()),
+		(float)(tileScreenPoint.second + DRAW_OFFSET_Y * map.getDrawScale()) });
+}
 
 void EntityBattleProperties::update(float deltaTime, const Map & map)
 {

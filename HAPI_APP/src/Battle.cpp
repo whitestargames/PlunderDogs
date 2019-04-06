@@ -43,13 +43,8 @@ void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
 void Battle::insertEntity(std::pair<int, int> startingPosition)
 {
 	auto entity = std::make_unique<BattleEntity>(startingPosition, "thingy.xml");
-
-	//Assign entity sprite position - TODO change this at later date
-	std::pair<int, int> tileScreenPoint = m_map.getTileScreenPos(entity->m_battleProperties.m_currentPosition);
-	entity->m_entity.m_sprite->GetTransformComp().SetPosition({
-		(float)(tileScreenPoint.first + DRAW_OFFSET_X * m_map.getDrawScale()),
-		(float)(tileScreenPoint.second + DRAW_OFFSET_Y * m_map.getDrawScale()) });
 	
+	entity->setPosition(m_map);
 	m_entities.push_back(std::move(entity));
 	m_map.insertEntity(*m_entities.back());
 }
