@@ -12,6 +12,13 @@ struct EntityBattleProperties
 {
 	class MovementPath
 	{
+		struct MovementPathNode
+		{
+			MovementPathNode();
+
+			std::unique_ptr<Sprite> sprite;
+			bool render;
+		};
 	public:
 		MovementPath();
 
@@ -21,11 +28,14 @@ struct EntityBattleProperties
 		void clearPath();
 
 	private:
-		std::vector<std::pair<std::unique_ptr<Sprite>, bool>> m_movementPath;
+		std::vector<MovementPathNode> m_movementPath;
 		std::unique_ptr<Sprite> m_mouseCursor;
 	};
 
 	EntityBattleProperties(std::pair<int, int> startingPosition);
+
+	void update(float deltaTime, const Map& map);
+	void render(std::unique_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
 
 	void generateMovementGraph(Map& map, const Tile& source, const Tile& destination);
 	void clearMovementPath();
@@ -39,12 +49,9 @@ struct EntityBattleProperties
 	MovementPath m_movementPath;
 };
 
-struct Entity
+struct EntityProperties
 {
-	Entity(const std::string& spriteName);
-	
-	void update(float deltaTime, EntityBattleProperties& entityDetails, Map& map);
-	void render(Map& map, const EntityBattleProperties& entityDetails);
+	EntityProperties(const std::string& spriteName);
 
 	std::unique_ptr<HAPISPACE::Sprite> m_sprite;
 	int m_movementPoints;
@@ -54,6 +61,6 @@ struct BattleEntity
 {
 	BattleEntity(std::pair<int, int> startingPosition, const std::string& spriteName);
 
-	Entity m_entity;
+	EntityProperties m_entity;
 	EntityBattleProperties m_battleProperties;
 };

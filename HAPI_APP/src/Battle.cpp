@@ -21,7 +21,7 @@ void Battle::render()
 	
 	for (const auto& entity : m_entities)
 	{
-		entity->m_entity.render(m_map, entity->m_battleProperties);
+		entity->m_battleProperties.render(entity->m_entity.m_sprite, m_map);
 	}
 
 	m_battleUI.render();
@@ -31,7 +31,7 @@ void Battle::update(float deltaTime)
 {
 	for (auto& entity : m_entities)
 	{
-		entity->m_entity.update(deltaTime, entity->m_battleProperties, m_map);
+		entity->m_battleProperties.update(deltaTime, m_map);
 	}
 }
 

@@ -13,7 +13,6 @@ public:
 
 	void render();
 	void update(float deltaTime);
-	//TODO: BAD - will change exposure of raw pointer
 	void moveEntityToPosition(BattleEntity& entity, const Tile& destination);
 
 private:

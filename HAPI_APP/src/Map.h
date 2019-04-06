@@ -19,7 +19,7 @@ constexpr float DRAW_OFFSET_Y{ 28 };
 ****
 */
 struct BattleEntity;
-struct Entity;
+struct EntityProperties;
 struct Tile
 {
 	enum eTileType m_type;

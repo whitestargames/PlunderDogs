@@ -16,6 +16,12 @@ EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosit
 	m_movementPath()
 {}
 
+//MOVEMENT PATH NODE
+EntityBattleProperties::MovementPath::MovementPathNode::MovementPathNode()
+	: sprite(),
+	render(false)
+{}
+
 //
 //MOVEMENT PATH
 //
@@ -26,10 +32,8 @@ EntityBattleProperties::MovementPath::MovementPath()
 	m_movementPath.reserve(size_t(MOVEMENT_PATH_SIZE));
 	for (int i = 0; i < MOVEMENT_PATH_SIZE; ++i)
 	{
-		std::pair<std::unique_ptr<Sprite>, bool> sprite;
-		sprite.first = HAPI_Sprites.MakeSprite(m_mouseCursor->GetSpritesheet());
-		sprite.second = false;
-		m_movementPath.push_back(std::move(sprite));
+		m_movementPath.push_back({});
+		m_movementPath.back().sprite = HAPI_Sprites.MakeSprite(m_mouseCursor->GetSpritesheet());
 	}
 }
 
@@ -37,9 +41,9 @@ void EntityBattleProperties::MovementPath::render() const
 {
 	for (const auto& i : m_movementPath)
 	{
-		if (i.second)
+		if (i.render)
 		{
-			i.first->Render(SCREEN_SURFACE);
+			i.sprite->Render(SCREEN_SURFACE);
 		}
 	}
 }
@@ -60,10 +64,10 @@ void EntityBattleProperties::MovementPath::generatePath(Map& map, const Tile& so
 		for (int i = 1; i < source.m_entityOnTile->m_entity.m_movementPoints + 1; ++i)
 		{
 			auto tileScreenPosition = map.getTileScreenPos(pathToTile[i]);
-			m_movementPath[i - 1].first->GetTransformComp().SetPosition({
+			m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
 				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
 				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
-			m_movementPath[i - 1].second = true;
+			m_movementPath[i - 1].render = true;
 		}
 	}
 	else
@@ -72,10 +76,10 @@ void EntityBattleProperties::MovementPath::generatePath(Map& map, const Tile& so
 		for (int i = 1; i < pathToTile.size(); ++i)
 		{
 			auto tileScreenPosition = map.getTileScreenPos(pathToTile[i]);
-			m_movementPath[i - 1].first->GetTransformComp().SetPosition({
+			m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
 				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
 				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
-			m_movementPath[i - 1].second = true;
+			m_movementPath[i - 1].render = true;
 		}
 	}
 }
@@ -84,10 +88,10 @@ void EntityBattleProperties::MovementPath::eraseNode(std::pair<int, int> positio
 {
 	for (auto iter = m_movementPath.begin(); iter != m_movementPath.end(); ++iter)
 	{
-		auto i = map.getMouseClickCoord({ iter->first->GetTransformComp().GetPosition().x, iter->first->GetTransformComp().GetPosition().y });
+		auto i = map.getMouseClickCoord({ iter->sprite->GetTransformComp().GetPosition().x, iter->sprite->GetTransformComp().GetPosition().y });
 		if (i == position)
 		{
-			iter->second = false;
+			iter->render = false;
 		}
 	}
 }
@@ -96,7 +100,7 @@ void EntityBattleProperties::MovementPath::clearPath()
 {
 	for (auto& i : m_movementPath)
 	{
-		i.second = false;
+		i.render = false;
 	}
 }
 
@@ -130,43 +134,55 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, int movement
 }
 
 //ENTITY
-Entity::Entity(const std::string & spriteName)
+EntityProperties::EntityProperties(const std::string & spriteName)
 	: m_sprite(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + spriteName)),
 	m_movementPoints(15)
 {}
 
-void Entity::update(float deltaTime, EntityBattleProperties & entityDetails, Map& map)
-{
-	if (!entityDetails.m_pathToTile.empty())
-	{
-		entityDetails.m_movementTimer.update(deltaTime);
-		if (entityDetails.m_movementTimer.isExpired())
-		{
-			entityDetails.m_movementTimer.reset();
-
-			entityDetails.m_currentPosition = entityDetails.m_pathToTile.front();
-			entityDetails.m_movementPath.eraseNode(entityDetails.m_currentPosition, map);
-			
-			entityDetails.m_pathToTile.pop_front();
-		}
-	}
-}
-
-void Entity::render(Map & map, const EntityBattleProperties & entityDetails)
-{
-	//Move entity sprite
-	const std::pair<int, int> tileTransform = map.getTileScreenPos(entityDetails.m_currentPosition);
-	m_sprite->GetTransformComp().SetPosition({
-		static_cast<float>(tileTransform.first + DRAW_OFFSET_X * map.getDrawScale()),
-		static_cast<float>(tileTransform.second + DRAW_OFFSET_Y * map.getDrawScale()) });
-	//Render entity
-	m_sprite->Render(SCREEN_SURFACE);
-
-	entityDetails.m_movementPath.render();
-}
+//void Entity::render(Map & map, const EntityBattleProperties & entityDetails)
+//{
+//	//Move entity sprite
+//	const std::pair<int, int> tileTransform = map.getTileScreenPos(entityDetails.m_currentPosition);
+//	m_sprite->GetTransformComp().SetPosition({
+//		static_cast<float>(tileTransform.first + DRAW_OFFSET_X * map.getDrawScale()),
+//		static_cast<float>(tileTransform.second + DRAW_OFFSET_Y * map.getDrawScale()) });
+//	//Render entity
+//	m_sprite->Render(SCREEN_SURFACE);
+//
+//	entityDetails.m_movementPath.render();
+//}
 
 BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const std::string & spriteName)
 	: m_entity(spriteName),
 	m_battleProperties(startingPosition)
+{}
+
+void EntityBattleProperties::update(float deltaTime, const Map & map)
 {
+	if (!m_pathToTile.empty())
+	{
+		m_movementTimer.update(deltaTime);
+		if (m_movementTimer.isExpired())
+		{
+			m_movementTimer.reset();
+
+			m_currentPosition = m_pathToTile.front();
+			m_movementPath.eraseNode(m_currentPosition, map);
+
+			m_pathToTile.pop_front();
+		}
+	}
+}
+
+void EntityBattleProperties::render(std::unique_ptr<HAPISPACE::Sprite>& sprite, const Map & map)
+{
+	//Move entity sprite
+	const std::pair<int, int> tileTransform = map.getTileScreenPos(m_currentPosition);
+	sprite->GetTransformComp().SetPosition({
+		static_cast<float>(tileTransform.first + DRAW_OFFSET_X * map.getDrawScale()),
+		static_cast<float>(tileTransform.second + DRAW_OFFSET_Y * map.getDrawScale()) });
+
+	//Render entity
+	sprite->Render(SCREEN_SURFACE);
+	m_movementPath.render();
 }
