@@ -27,7 +27,6 @@ struct Tile
 	BattleEntity* m_entityOnTile;
 	std::unique_ptr<HAPISPACE::Sprite> m_sprite;
 	const std::pair<int, int> m_tileCoordinate;
-	bool m_destinationOfEntity;
 
 	Tile(eTileType type, const std::string& spriteName, std::pair<int, int> coord) :
 		m_type(type), m_tileCoordinate(coord),
@@ -42,8 +41,7 @@ struct Tile
 		m_type(type), 
 		m_entityOnTile(nullptr),
 		m_sprite(),
-		m_tileCoordinate(coord),
-		m_destinationOfEntity(false)
+		m_tileCoordinate(coord)
 	{
 		//HAPI's make sprite takes a pointer to an existing spritesheet
 		m_sprite = HAPI_Sprites.MakeSprite(spriteSheet);

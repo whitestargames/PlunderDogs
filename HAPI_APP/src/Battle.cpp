@@ -1,12 +1,7 @@
 #include "Battle.h"
 #include "Utilities/MapParser.h"
 #include "Utilities/Utilities.h"
-#include "entity.h"
-#include "Pathfinding.h"
-#include "OverWorld.h"
 #include "HAPIWrapper.h"
-#include "Timer.h"
-#include <utility>
 
 using namespace HAPISPACE;
 
@@ -40,26 +35,9 @@ void Battle::update(float deltaTime)
 	}
 }
 
-void Battle::moveEntityTo(BattleEntity* entity, Tile & destination)
+void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
 {
-	if (!entity->m_battleProperties.m_moving && !entity->m_battleProperties.m_movedToDestination)
-	{
-		auto pathToTile = PathFinding::getPathToTile(m_map, entity->m_battleProperties.m_currentPosition, destination.m_tileCoordinate);
-		//Able to move entity to new position
-		if (!pathToTile.empty() && pathToTile.size() <= entity->m_entity.m_movementPoints + 1)
-		{
-			entity->m_battleProperties.m_moving = true;
-			destination.m_destinationOfEntity = true;
-			entity->m_battleProperties.m_movedToDestination = true;
-			entity->m_battleProperties.m_pathToTile = pathToTile;
-			entity->m_battleProperties.m_oldPosition = entity->m_battleProperties.m_currentPosition;
-			m_map.moveEntity(entity->m_battleProperties.m_oldPosition, pathToTile.back());
-		}
-		else
-		{
-			entity->m_battleProperties.clearMovementPath();
-		}
-	}
+	entity.m_battleProperties.moveEntity(m_map, destination, entity.m_entity.m_movementPoints);
 }
 
 void Battle::insertEntity(std::pair<int, int> startingPosition)

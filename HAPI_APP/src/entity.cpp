@@ -12,7 +12,6 @@ EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosit
 	m_oldPosition(startingPosition),
 	m_pathToTile(),
 	m_movementTimer(0.35f),
-	m_moving(false),
 	m_movedToDestination(false),
 	m_movementPath()
 {}
@@ -111,6 +110,25 @@ void EntityBattleProperties::clearMovementPath()
 	m_movementPath.clearPath();
 }
 
+void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, int movementPoints)
+{
+	if (!m_movedToDestination)
+	{
+		auto pathToTile = PathFinding::getPathToTile(map, m_currentPosition, tile.m_tileCoordinate);
+		if (!pathToTile.empty() && pathToTile.size() <= movementPoints + 1)
+		{
+			m_movedToDestination = true;
+			m_pathToTile = pathToTile;
+			m_oldPosition = m_currentPosition;
+			map.moveEntity(m_oldPosition, pathToTile.back());
+		}
+		else
+		{
+			clearMovementPath();
+		}
+	}
+}
+
 //ENTITY
 Entity::Entity(const std::string & spriteName)
 	: m_sprite(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + spriteName)),
@@ -119,7 +137,7 @@ Entity::Entity(const std::string & spriteName)
 
 void Entity::update(float deltaTime, EntityBattleProperties & entityDetails, Map& map)
 {
-	if (entityDetails.m_moving && !entityDetails.m_pathToTile.empty())
+	if (!entityDetails.m_pathToTile.empty())
 	{
 		entityDetails.m_movementTimer.update(deltaTime);
 		if (entityDetails.m_movementTimer.isExpired())
@@ -130,14 +148,6 @@ void Entity::update(float deltaTime, EntityBattleProperties & entityDetails, Map
 			entityDetails.m_movementPath.eraseNode(entityDetails.m_currentPosition, map);
 			
 			entityDetails.m_pathToTile.pop_front();
-		}
-
-		//reached destination
-		if (entityDetails.m_pathToTile.empty())
-		{
-			map.getTile(entityDetails.m_currentPosition)->m_destinationOfEntity = false;
-			entityDetails.m_moving = false;
-			
 		}
 	}
 }

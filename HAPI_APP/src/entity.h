@@ -29,12 +29,12 @@ struct EntityBattleProperties
 
 	void generateMovementGraph(Map& map, const Tile& source, const Tile& destination);
 	void clearMovementPath();
+	void moveEntity(Map& map, const Tile& tile, int movementPoints);
 
 	std::pair<int, int> m_currentPosition;
 	std::pair<int, int> m_oldPosition;
 	std::deque<std::pair<int, int>> m_pathToTile;
 	Timer m_movementTimer;
-	bool m_moving;
 	bool m_movedToDestination;
 	MovementPath m_movementPath;
 };

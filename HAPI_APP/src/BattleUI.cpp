@@ -80,7 +80,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 			//Instruct Entity to move to new location
 			else if (m_currentTileSelected->m_entityOnTile && (m_currentTileSelected->m_tileCoordinate != tile->m_tileCoordinate))
 			{
-				m_battle.moveEntityTo(m_currentTileSelected->m_entityOnTile, *tile);
+				m_battle.moveEntityToPosition(*m_currentTileSelected->m_entityOnTile, *tile);
 				m_currentTileSelected = nullptr;
 			}
 		}

@@ -14,7 +14,7 @@ public:
 	void render();
 	void update(float deltaTime);
 	//TODO: BAD - will change exposure of raw pointer
-	void moveEntityTo(BattleEntity* entity, Tile& destination);
+	void moveEntityToPosition(BattleEntity& entity, const Tile& destination);
 
 private:
 	std::vector<std::unique_ptr<BattleEntity>> m_entities;
