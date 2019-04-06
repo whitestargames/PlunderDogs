@@ -35,6 +35,7 @@ struct EntityBattleProperties
 	std::deque<std::pair<int, int>> m_pathToTile;
 	Timer m_movementTimer;
 	bool m_moving;
+	bool m_movedToDestination;
 	MovementPath m_movementPath;
 };
 

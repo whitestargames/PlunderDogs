@@ -13,6 +13,7 @@ EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosit
 	m_pathToTile(),
 	m_movementTimer(0.35f),
 	m_moving(false),
+	m_movedToDestination(false),
 	m_movementPath()
 {}
 
@@ -136,6 +137,7 @@ void Entity::update(float deltaTime, EntityBattleProperties & entityDetails, Map
 		{
 			map.getTile(entityDetails.m_currentPosition)->m_destinationOfEntity = false;
 			entityDetails.m_moving = false;
+			
 		}
 	}
 }

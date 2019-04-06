@@ -20,5 +20,5 @@ void HAPI_Sprites_Main()
 		overWorld.render();
 
 		lastFrameStart = frameStart;
-	}	
+	}
 }

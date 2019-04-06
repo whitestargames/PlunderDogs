@@ -64,9 +64,6 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 
 			return;
 		}
-		
-		//TODO: DON'T ALLOW TO SELECT ENTITY WHEN MOVING
-		//IT DRAWS THE GRAPH
 
 		if (m_currentTileSelected)
 		{
@@ -110,11 +107,15 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 		return;
 	}
 
-	if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile)
+	if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile && !m_currentTileSelected->m_entityOnTile->m_battleProperties.m_movedToDestination)
 	{
 		Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
+		if (!tile)
+		{
+			return;
+		}
 		
-		if (tile && (m_currentTileSelected->m_tileCoordinate != tile->m_tileCoordinate))
+		if (m_currentTileSelected->m_tileCoordinate != tile->m_tileCoordinate)
 		{
 			if (tile->m_type != eTileType::eSea && tile->m_type != eTileType::eOcean)
 			{
@@ -125,7 +126,7 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 			else
 			{
 				m_currentTileSelected->m_entityOnTile->m_battleProperties.generateMovementGraph(m_battle.getMap(), *m_currentTileSelected, *tile);
-				m_invalidMovementLocationSprite.m_renderSprite = false;
+				m_invalidMovementLocationSprite.m_renderSprite = false;	
 			}
 		}
 	}

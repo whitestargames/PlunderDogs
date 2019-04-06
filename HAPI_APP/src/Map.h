@@ -36,7 +36,6 @@ struct Tile
 		//HAPI's Sprite constructor takes two strings: the name of the file to load (append .xml) 
 		//and the path to that file relative to the program
 		m_sprite = HAPI_Sprites.LoadSprite(spriteName);
-
 	}
 
 	Tile(eTileType type, std::shared_ptr<HAPISPACE::SpriteSheet> spriteSheet, std::pair<int, int> coord) :

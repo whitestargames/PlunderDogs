@@ -42,7 +42,7 @@ void Battle::update(float deltaTime)
 
 void Battle::moveEntityTo(BattleEntity* entity, Tile & destination)
 {
-	if (!entity->m_battleProperties.m_moving)
+	if (!entity->m_battleProperties.m_moving && !entity->m_battleProperties.m_movedToDestination)
 	{
 		auto pathToTile = PathFinding::getPathToTile(m_map, entity->m_battleProperties.m_currentPosition, destination.m_tileCoordinate);
 		//Able to move entity to new position
@@ -50,6 +50,7 @@ void Battle::moveEntityTo(BattleEntity* entity, Tile & destination)
 		{
 			entity->m_battleProperties.m_moving = true;
 			destination.m_destinationOfEntity = true;
+			entity->m_battleProperties.m_movedToDestination = true;
 			entity->m_battleProperties.m_pathToTile = pathToTile;
 			entity->m_battleProperties.m_oldPosition = entity->m_battleProperties.m_currentPosition;
 			m_map.moveEntity(entity->m_battleProperties.m_oldPosition, pathToTile.back());
