@@ -70,11 +70,12 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 			//Select new Tile if has valid Entity
 			if (tile->m_entityOnTile)
 			{
-				m_currentTileSelected = tile;
 				if (m_currentTileSelected->m_entityOnTile)
 				{
 					m_currentTileSelected->m_entityOnTile->m_battleProperties.clearMovementPath();
 				}
+
+				m_currentTileSelected = tile;
 			}
 			//Instruct Entity to move to new location
 			else if (m_currentTileSelected->m_entityOnTile && (m_currentTileSelected->m_tileCoordinate != tile->m_tileCoordinate))
