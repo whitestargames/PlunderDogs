@@ -11,10 +11,6 @@ namespace HAPI_Wrapper
 	std::unique_ptr<Sprite> makeSprite(const std::string& spriteName, int numFrames);
 	std::unique_ptr<Sprite> loadSprite(const std::string& spriteName);
 	
-	std::shared_ptr<SpriteSheet> loadSpriteSheet(const std::string& name);
-	std::shared_ptr<SpriteSheet> makeSpriteSheet(const std::string& name);
-	std::shared_ptr<SpriteSheet> makeSpriteSheet(const std::string& name, int numFrames);
-	
 	bool isTranslated(std::unique_ptr<Sprite>& sprite, const HAPI_TMouseData& mouseData, int frameRect);
 
 	std::pair<int, int> getMouseLocation();

@@ -5,8 +5,6 @@
 #include <HAPISprites_Lib.h>
 //#include <iostream> //Test
 #include "Utilities/Utilities.h"
-#include "entity.h"
-#include "Textures.h"
 
 typedef std::pair<int, int> intPair;
 
@@ -135,11 +133,12 @@ Tile* Map::getTile(intPair coordinate)
 	return nullptr;
 }
 
+//getAdjacentTiles.getSize() == incorrect
+//Refernce Wrapper
 std::vector<Tile*> Map::getAdjacentTiles(intPair coord)
 {
-	const size_t allAdjacentTiles = 6;
 	std::vector<Tile*> result;
-	result.reserve(size_t(allAdjacentTiles));
+	result.reserve(size_t(6));
 	if (coord.first & 1)//Is an odd tile
 	{
 		result.push_back(getTile(intPair(coord.first, coord.second - 1)));		//N
@@ -240,27 +239,22 @@ std::vector<Tile*> Map::getTileCone(intPair coord, int range, eDirection directi
 
 bool Map::moveEntity(intPair originalPos, intPair newPos)
 {
-	Tile* oldTile = getTile(originalPos);
-	Tile* newTile = getTile(newPos);
-	
-	if (!oldTile || !newTile)
-	{
+	if (!getTile(newPos) || !getTile(originalPos))
 		return false;
-	}
 
-	if (newTile->m_entityOnTile != nullptr || oldTile->m_entityOnTile == nullptr)
-	{
+	Entity* tmpOld = getTile(originalPos)->m_entityOnTile;
+
+	if (getTile(newPos)->m_entityOnTile != nullptr || tmpOld == nullptr)
 		return false;
-	}
 
-	newTile->m_entityOnTile = oldTile->m_entityOnTile;
-	oldTile->m_entityOnTile = nullptr;
+	getTile(newPos)->m_entityOnTile = tmpOld;
+	getTile(originalPos)->m_entityOnTile = nullptr;
 	return true;
 }
 
-void Map::insertEntity(BattleEntity& newEntity)
+void Map::insertEntity(Entity& newEntity, intPair coord)
 {
-	Tile* tile = getTile(newEntity.m_battleProperties.m_currentPosition);	
+	Tile* tile = getTile(coord);	
 	if (tile && !tile->m_entityOnTile)
 	{
 		tile->m_entityOnTile = &newEntity;
@@ -319,9 +313,16 @@ Map::Map(intPair size, const std::vector<std::vector<int>>& tileData) :
 	m_drawOffset(intPair(10, 60)),
 	m_windDirection(eNorth),
 	m_windStrength(0.0),
-	m_drawScale(2)
+	m_drawScale(2),
+	motherSprite(nullptr)
 {
 	m_data.reserve(m_mapDimensions.first * m_mapDimensions.second);
+	motherSprite = HAPI_Sprites.LoadSprite("Data\\hexTiles.xml");
+	if (!motherSprite)
+	{
+		HAPI_Sprites.UserMessage("Could not load motherSprite, think of the children!", "Error");
+		return;
+	}
 
 	for (int y = 0; y < m_mapDimensions.second; y++)
 	{
@@ -330,7 +331,7 @@ Map::Map(intPair size, const std::vector<std::vector<int>>& tileData) :
 			const int tileID = tileData[y][x];
 			assert(tileID != -1);
 			m_data.emplace_back(static_cast<eTileType>(tileID), 
-				Textures::m_hexTiles, intPair(x, y));
+				motherSprite->GetSpritesheet(), intPair(x, y));
 
 			if (!m_data[x + y * m_mapDimensions.first].m_sprite)
 			{
@@ -338,52 +339,7 @@ Map::Map(intPair size, const std::vector<std::vector<int>>& tileData) :
 				return;
 			}
 			m_data[x + y * m_mapDimensions.first].m_sprite->SetFrameNumber(tileID);
+			//cubeToOffset(offsetToCube(intPair(x, y)));
 		}
 	}
-}
-
-const Tile * Map::getTile(std::pair<int, int> coordinate) const
-{
-	//Bounds check
-	if (coordinate.first < m_mapDimensions.first &&
-		coordinate.second < m_mapDimensions.second &&
-		coordinate.first >= 0 &&
-		coordinate.second >= 0)
-	{
-		return &m_data[coordinate.first + coordinate.second * m_mapDimensions.first];
-	}
-	/*
-	HAPI_Sprites.UserMessage(
-		std::string("getTile request out of bounds: " + std::to_string(coordinate.first) +
-			", " + std::to_string(coordinate.second) + " map dimensions are: " +
-			std::to_string(m_mapDimensions.first) +", "+ std::to_string(m_mapDimensions.second)),
-		"Map error");
-	*/
-	return nullptr;
-}
-
-std::vector<const Tile*> Map::getAdjacentTiles(std::pair<int, int> coord) const
-{
-	const size_t allAdjacentTiles = 6;
-	std::vector<const Tile*> result;
-	result.reserve(size_t(allAdjacentTiles));
-	if (coord.first & 1)//Is an odd tile
-	{
-		result.push_back(getTile(intPair(coord.first, coord.second - 1)));		//N
-		result.push_back(getTile(intPair(coord.first + 1, coord.second - 1)));	//NE
-		result.push_back(getTile(intPair(coord.first + 1, coord.second)));		//SE
-		result.push_back(getTile(intPair(coord.first, coord.second + 1)));		//S
-		result.push_back(getTile(intPair(coord.first - 1, coord.second)));		//SW
-		result.push_back(getTile(intPair(coord.first - 1, coord.second - 1)));	//NW
-	}
-	else//Is even
-	{
-		result.push_back(getTile(intPair(coord.first, coord.second - 1)));		//N
-		result.push_back(getTile(intPair(coord.first + 1, coord.second)));		//NE
-		result.push_back(getTile(intPair(coord.first + 1, coord.second + 1)));	//SE
-		result.push_back(getTile(intPair(coord.first, coord.second + 1)));		//S
-		result.push_back(getTile(intPair(coord.first - 1, coord.second + 1)));	//SW
-		result.push_back(getTile(intPair(coord.first - 1, coord.second)));		//NW
-	}
-	return result;
 }
