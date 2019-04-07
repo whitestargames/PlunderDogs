@@ -10,6 +10,7 @@ void HAPI_Sprites_Main()
 
 	if (!Textures::loadAllTextures())
 	{
+		HAPI_Sprites.UserMessage("Could not pre-load all textures", "Texture Error");
 		return;
 	}
 
