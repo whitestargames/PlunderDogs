@@ -173,7 +173,7 @@ void EntityBattleProperties::update(float deltaTime, const Map & map)
 	}
 }
 
-void EntityBattleProperties::render(std::unique_ptr<HAPISPACE::Sprite>& sprite, const Map & map)
+void EntityBattleProperties::render(std::unique_ptr<HAPISPACE::Sprite>& sprite, const Map & map) const
 {
 	//Move entity sprite
 	const std::pair<int, int> tileTransform = map.getTileScreenPos(m_currentPosition);

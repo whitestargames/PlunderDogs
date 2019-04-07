@@ -35,7 +35,7 @@ struct EntityBattleProperties
 	EntityBattleProperties(std::pair<int, int> startingPosition);
 
 	void update(float deltaTime, const Map& map);
-	void render(std::unique_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
+	void render(std::unique_ptr<HAPISPACE::Sprite>& sprite, const Map& map) const;
 
 	void generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
 	void clearMovementPath();

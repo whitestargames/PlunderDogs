@@ -16,7 +16,7 @@ Battle::Battle() :
 	insertEntity({ 8, 8 });
 }
 
-void Battle::render()
+void Battle::render() const
 {
 	m_map.drawMap();
 	
