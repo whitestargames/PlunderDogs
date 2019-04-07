@@ -22,6 +22,21 @@ std::unique_ptr<Sprite> HAPI_Wrapper::loadSprite(const std::string & spriteName)
 	return std::unique_ptr<Sprite>(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + spriteName));
 }
 
+std::shared_ptr<SpriteSheet> HAPI_Wrapper::loadSpriteSheet(const std::string & name)
+{
+	return std::shared_ptr<SpriteSheet>(HAPI_Sprites.LoadSpritesheet(Utilities::getDataDirectory() + name));
+}
+
+std::shared_ptr<SpriteSheet> HAPI_Wrapper::makeSpriteSheet(const std::string & name)
+{
+	return std::shared_ptr<SpriteSheet>(HAPI_Sprites.MakeSpritesheet(Utilities::getDataDirectory() + name));
+}
+
+std::shared_ptr<SpriteSheet> HAPI_Wrapper::makeSpriteSheet(const std::string & name, int numFrames)
+{
+	return std::shared_ptr<SpriteSheet>(HAPI_Sprites.MakeSpritesheet(Utilities::getDataDirectory() + name, numFrames));
+}
+
 std::pair<int, int> HAPI_Wrapper::getMouseLocation()
 {
 	return std::pair<int, int>(HAPI_Sprites.GetMouseData().x, HAPI_Sprites.GetMouseData().y);
