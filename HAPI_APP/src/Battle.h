@@ -10,6 +10,7 @@ enum class BattlePhase
 	Attack
 };
 
+int i = 0;
 class Battle
 {
 public:
