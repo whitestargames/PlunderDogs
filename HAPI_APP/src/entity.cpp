@@ -123,6 +123,7 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, int movement
 			m_pathToTile = pathToTile;
 			m_oldPosition = m_currentPosition;
 			map.moveEntity(m_oldPosition, pathToTile.back());
+			m_movedToDestination = false;
 		}
 		else
 		{
@@ -164,11 +165,11 @@ void EntityBattleProperties::update(float deltaTime, const Map & map)
 			m_movementPath.eraseNode(m_currentPosition, map);
 
 			m_pathToTile.pop_front();
+			if (m_pathToTile.empty())
+			{
+				m_movedToDestination = true;
+			}
 		}
-	}
-	else
-	{
-		m_movedToDestination = true;
 	}
 }
 
