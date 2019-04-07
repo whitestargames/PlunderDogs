@@ -134,7 +134,11 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, int movement
 //ENTITY
 EntityProperties::EntityProperties()
 	: m_sprite(std::make_unique<Sprite>(Textures::m_thing)),
-	m_movementPoints(15)
+	m_movementPoints(15),
+	m_healthMax(20),
+	m_currentHealth(20),
+	m_range(4),
+	m_damage(5)
 {}
 
 BattleEntity::BattleEntity(std::pair<int, int> startingPosition)

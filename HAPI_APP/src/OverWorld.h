@@ -1,35 +1,27 @@
 #pragma once
 
 #include <string>
+#include "Global.h"
 #include "Battle.h"
 #include "OverWorldGUI.h"
 
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
 
-enum class OverWorldWindow
-{
-	Battle = 0,
-	PreBattle,
-	LevelSelection
-};
-
-class OverWorld : public IHapiSpritesInputListener
+class OverWorld
 {
 public:
 	OverWorld();
 
-	void render();
+	void render(OverWorldWindow currentWindow);
+	void renderBattle() const { m_battle.render(); }
 	void update(float deltaTime);
-	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
-	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
-	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
-	
+
 	static OverWorldWindow CURRENT_WINDOW;
-	const std::vector<EntityProperties>& getEntityVector() const { return m_entityVector; }
+	std::vector<EntityProperties>& getEntityVector() { return m_entities; }
 
 private:
-	std::vector<EntityProperties> m_entityVector;
+	std::vector<EntityProperties> m_entities;
 	std::unique_ptr<GUIBase> m_overWorldGUI;
 	Battle m_battle;
 };

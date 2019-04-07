@@ -2,30 +2,38 @@
 
 #include <HAPISprites_lib.h>
 #include <HAPISprites_UI.h>
-#include "GUIBase.h"
 #include <memory>
 
+#include "Global.h"
+#include "GUIBase.h"
+
 struct EntityProperties;
+class OverWorld;
 
 class OverWorldGUI : public GUIBase
 {
 public:
-	OverWorldGUI();
+	OverWorldGUI(OverWorld& overWorld);
 
 	void render() override final;
 
-	void onMouseMove(const HAPI_TMouseData& mouseData) override final;
-	void onLeftClick(const HAPI_TMouseData& mouseData) override final;
-	void onRightClick() override final {}
-
 private:
 	std::vector<EntityProperties*> m_selectedEntities;
+	EntityProperties* m_currentlySelected;
+	OverWorldWindow CURRENT_WINDOW;
+	OverWorld& OVER_WORLD;
 
 	std::unique_ptr<Sprite> m_battleMapBackground;
 	std::unique_ptr<Sprite> m_enemyTerritoryHexSheet;
 	std::unique_ptr<Sprite> m_prebattleUIBackground;
 	std::unique_ptr<Sprite> m_playButton;
 	std::unique_ptr<Sprite> m_backButton;
+
+	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
+	void onLeftClick(const HAPI_TMouseData& mouseData) override final;
+	void onRightClick(const HAPI_TMouseData& mouseData);
+	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
+	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 
 	void positionEntity(const std::string& windowName, const std::string& windowSliderName, const std::string& windowObjectName, int objectNumber, size_t vectorSize);
 	float getWindowSliderValue(const std::string &windowName, const std::string &windowSliderName) const;

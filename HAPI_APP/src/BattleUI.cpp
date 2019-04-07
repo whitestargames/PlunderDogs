@@ -1,3 +1,4 @@
+#include "Global.h"
 #include "BattleUI.h"
 #include "HAPIWrapper.h"
 #include "Battle.h"
@@ -47,7 +48,7 @@ void BattleUI::newPhase()
 
 void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
 {
-	if (OverWorld::CURRENT_WINDOW != OverWorldWindow::Battle)
+	if (OverWorld::CURRENT_WINDOW != OverWorldWindow::eBattle)
 	{
 		return;
 	}
@@ -75,7 +76,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 
 void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 {
-	if (OverWorld::CURRENT_WINDOW != OverWorldWindow::Battle)
+	if (OverWorld::CURRENT_WINDOW != OverWorldWindow::eBattle)
 	{
 		return;
 	}

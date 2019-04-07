@@ -1,7 +1,7 @@
 #pragma once
 
 struct HAPISPACE::HAPI_TMouseData;
-class GUIBase
+class GUIBase : public IHapiSpritesInputListener
 {
 public:
 	virtual void render() = 0;

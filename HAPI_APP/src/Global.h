@@ -10,6 +10,13 @@ enum eDirection
 	eNorthWest
 };
 
+enum OverWorldWindow
+{
+	eBattle = 0,
+	ePreBattle,
+	eLevelSelection
+};
+
 enum eTileType
 {
 	eGrass = 0,

@@ -4,15 +4,13 @@
 #include "HAPIWrapper.h"
 #include "Textures.h"
 
-OverWorldWindow OverWorld::CURRENT_WINDOW = OverWorldWindow::LevelSelection;
-
 OverWorld::OverWorld()
-	: m_overWorldGUI(std::make_unique<OverWorldGUI>()),
+	: m_overWorldGUI(std::make_unique<OverWorldGUI>(*this)),
 	m_battle()
 {
 	for(int i = 0; i < 20; ++i)
 	{
-		m_entityVector.push_back({});
+		m_entities.push_back({});
 	}
 	/*for (int i = 0; i < 20; i++)
 	{
@@ -21,11 +19,11 @@ OverWorld::OverWorld()
 	}*/
 }
 
-void OverWorld::render()
+void OverWorld::render(OverWorldWindow currentWindow)
 {
 	m_overWorldGUI->render();
 
-	if (CURRENT_WINDOW == OverWorldWindow::Battle)
+	if (currentWindow == OverWorldWindow::eBattle)
 	{
 		m_battle.render();
 	}
@@ -33,25 +31,8 @@ void OverWorld::render()
 
 void OverWorld::update(float deltaTime)
 {
-	switch (CURRENT_WINDOW)
+	if (CURRENT_WINDOW == OverWorldWindow::eBattle)
 	{
-		case OverWorldWindow::Battle:
-		{
-			m_battle.update(deltaTime);
-			break;
-		}
+		m_battle.update(deltaTime);
 	}
-}
-
-void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData)
-{
-	if (mouseEvent == EMouseEvent::eLeftButtonDown)
-	{
-		m_overWorldGUI->onLeftClick(mouseData);
-	}
-}
-
-void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
-{
-	m_overWorldGUI->onMouseMove(mouseData);
 }

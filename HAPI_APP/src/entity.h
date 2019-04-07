@@ -55,6 +55,10 @@ struct EntityProperties
 
 	std::unique_ptr<HAPISPACE::Sprite> m_sprite;
 	int m_movementPoints;
+	int m_healthMax;
+	int m_currentHealth;
+	int m_range;
+	int m_damage;
 };
 
 struct BattleEntity
