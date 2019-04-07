@@ -26,8 +26,10 @@ public:
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	
 	static OverWorldWindow CURRENT_WINDOW;
+	const std::vector<EntityProperties>& getEntityVector() const { return m_entityVector; }
 
 private:
+	std::vector<EntityProperties> m_entityVector;
 	std::unique_ptr<GUIBase> m_overWorldGUI;
 	Battle m_battle;
 };

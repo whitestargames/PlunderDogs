@@ -1,18 +1,36 @@
 #include "OverWorldGUI.h"
 #include "Textures.h"
 #include "OverWorld.h"
+#include "Utilities/Utilities.h"
+
+constexpr int WINDOW_OBJECTWIDTH = 75;
+constexpr int WINDOW_OBJECTHEIGHT = 150;
+constexpr int WINDOW_WIDTH = 830;
+constexpr int WINDOW_HEIGHT = 200;
 
 OverWorldGUI::OverWorldGUI()
 	: m_battleMapBackground(std::make_unique<Sprite>(Textures::m_battleMapBackground)),
 	m_enemyTerritoryHexSheet(std::make_unique<Sprite>(Textures::m_enemyTerritoryHexSheet)),
 	m_prebattleUIBackground(std::make_unique<Sprite>(Textures::m_prebattleUIBackground)),
 	m_playButton(std::make_unique<Sprite>(Textures::m_preBattleUIPlayButton)),
-	m_backButton(std::make_unique<Sprite>(Textures::m_preBattleUIBackButton))
+	m_backButton(std::make_unique<Sprite>(Textures::m_preBattleUIBackButton)),
+	fleetWindowSkinName(UI.LoadSkin(Utilities::getDataDirectory() + "fleetWindowSkin.xml")),
+	fleetWindowSliderSkinName(UI.LoadSkin(Utilities::getDataDirectory() + "fleetWindowSliderSkin.xml"))
 {
 	HAPI_Wrapper::setPosition(m_enemyTerritoryHexSheet, { 100, 600 });
 	HAPI_Wrapper::setPosition(m_playButton, { 1150, 722 });
 	HAPI_Wrapper::setPosition(m_backButton, { 185, 747 });
+	//adding the windows and sliders, also populates the fleet window with all current entities
+	UI.AddWindow(FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 510, 710), fleetWindowSkinName);
+	/*for (int i = 0; i < Overworld.m_entityVector.size(); i++)
+	{
+		UI.GetWindow(FLEET_WINDOW)->AddCanvas(ENTITY + std::to_string(i), calculateObjectWindowPosition(i), m_entityVector[i].m_sprite);
+	}*/
+	UI.GetWindow(FLEET_WINDOW)->AddSlider(FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
+	UI.AddWindow(BATTLE_FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 220, 420), fleetWindowSkinName);
+	UI.GetWindow(BATTLE_FLEET_WINDOW)->AddSlider(BATTLE_FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
 }
+
 void OverWorldGUI::render()
 {
 	switch (OverWorld::CURRENT_WINDOW)

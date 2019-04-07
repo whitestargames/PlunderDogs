@@ -6,15 +6,20 @@
 
 OverWorldWindow OverWorld::CURRENT_WINDOW = OverWorldWindow::LevelSelection;
 
-constexpr int WINDOW_OBJECTWIDTH = 75;
-constexpr int WINDOW_OBJECTHEIGHT = 150;
-constexpr int WINDOW_WIDTH = 830;
-constexpr int WINDOW_HEIGHT = 200;
-
 OverWorld::OverWorld()
 	: m_overWorldGUI(std::make_unique<OverWorldGUI>()),
 	m_battle()
-{}
+{
+	for(int i = 0; i < 20; ++i)
+	{
+		m_entityVector.push_back({});
+	}
+	/*for (int i = 0; i < 20; i++)
+	{
+		Entity newEntity(Utilities::getDataDirectory() + "thingy.xml", 5, i + 1, i + 2, i + 3);
+		m_entityVector.push_back(newEntity);
+	}*/
+}
 
 void OverWorld::render()
 {
