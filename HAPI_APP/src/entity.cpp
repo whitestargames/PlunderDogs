@@ -120,7 +120,6 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, int movement
 		auto pathToTile = PathFinding::getPathToTile(map, m_currentPosition, tile.m_tileCoordinate);
 		if (!pathToTile.empty() && pathToTile.size() <= movementPoints + 1)
 		{
-			m_movedToDestination = true;
 			m_pathToTile = pathToTile;
 			m_oldPosition = m_currentPosition;
 			map.moveEntity(m_oldPosition, pathToTile.back());
@@ -169,7 +168,7 @@ void EntityBattleProperties::update(float deltaTime, const Map & map)
 	}
 	else
 	{
-		//Inform Battle entity has moved
+		m_movedToDestination = true;
 	}
 }
 
@@ -184,10 +183,4 @@ void EntityBattleProperties::render(std::unique_ptr<HAPISPACE::Sprite>& sprite, 
 	//Render entity
 	sprite->Render(SCREEN_SURFACE);
 	m_movementPath.render();
-}
-
-Weapon::Weapon()
-	: m_range(5),
-	m_damage(1)
-{
 }

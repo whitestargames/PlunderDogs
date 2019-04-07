@@ -1,9 +1,8 @@
 #pragma once
 
-#include <HAPISprites_lib.h>
-#include <HAPISprites_UI.h>
 #include <string>
 #include "Battle.h"
+#include "OverWorldGUI.h"
 
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
@@ -29,10 +28,6 @@ public:
 	static OverWorldWindow CURRENT_WINDOW;
 
 private:
-	std::unique_ptr<Sprite> m_battleMapBackground;
-	std::unique_ptr<Sprite> m_enemyTerritoryHexSheet;
-	std::unique_ptr<Sprite> m_prebattleUIBackground;
-	std::unique_ptr<Sprite> m_playButton;
-	std::unique_ptr<Sprite> m_backButton;
+	std::unique_ptr<GUIBase> m_overWorldGUI;
 	Battle m_battle;
 };

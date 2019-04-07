@@ -6,15 +6,6 @@
 #include <string>
 #include "Timer.h"
 
-struct Weapon
-{
-	Weapon();
-	//2, 5, 9, 15
-	int m_range;
-	int m_damage;
-	
-};
-
 struct Tile;
 class Map;
 struct EntityBattleProperties
@@ -64,7 +55,6 @@ struct EntityProperties
 
 	std::unique_ptr<HAPISPACE::Sprite> m_sprite;
 	int m_movementPoints;
-	Weapon m_weapon;
 };
 
 struct BattleEntity

@@ -177,6 +177,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Map.cpp" />
     <ClCompile Include="src\OverWorld.cpp" />
+    <ClCompile Include="src\OverWorldGUI.cpp" />
     <ClCompile Include="src\Pathfinding.cpp" />
     <ClCompile Include="src\Textures.cpp" />
     <ClCompile Include="src\Timer.cpp" />
@@ -192,9 +193,11 @@
     <ClInclude Include="src\BattleUI.h" />
     <ClInclude Include="src\entity.h" />
     <ClInclude Include="src\Global.h" />
+    <ClInclude Include="src\GUIBase.h" />
     <ClInclude Include="src\HAPIWrapper.h" />
     <ClInclude Include="src\Map.h" />
     <ClInclude Include="src\OverWorld.h" />
+    <ClInclude Include="src\OverWorldGUI.h" />
     <ClInclude Include="src\Pathfinding.h" />
     <ClInclude Include="src\Textures.h" />
     <ClInclude Include="src\Timer.h" />

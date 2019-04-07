@@ -30,20 +30,9 @@ void Battle::render()
 
 void Battle::update(float deltaTime)
 {
-	bool allEntitiesMoved = true;
-	for (auto& entity : m_entities)
+	if (m_currentPhase == BattlePhase::Movement)
 	{
-		if (!entity->m_battleProperties.m_movedToDestination)
-		{
-			allEntitiesMoved = false;
-		}
-
-		entity->m_battleProperties.update(deltaTime, m_map);
-	}
-
-	if (allEntitiesMoved)
-	{
-		
+		updateMovementPhase(deltaTime);
 	}
 }
 
@@ -54,7 +43,7 @@ void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
 
 void Battle::activateEntityWeapon(BattleEntity & entity)
 {
-
+	//TODO: implement attack enemy stuff
 }
 
 void Battle::insertEntity(std::pair<int, int> startingPosition)
@@ -66,15 +55,31 @@ void Battle::insertEntity(std::pair<int, int> startingPosition)
 	m_map.insertEntity(*m_entities.back());
 }
 
-void Battle::changePhase()
+void Battle::changePhase(BattlePhase newPhase)
 {
-	if (m_currentPhase == BattlePhase::Movement)
+	m_currentPhase = newPhase;
+}
+
+void Battle::updateMovementPhase(float deltaTime)
+{
+	bool allEntitiesReachedDestination = true;
+	for (auto& entity : m_entities)
 	{
-		m_currentPhase = BattlePhase::Attack;
+		entity->m_battleProperties.update(deltaTime, m_map);
+
+		allEntitiesReachedDestination = entity->m_battleProperties.m_movedToDestination;
 	}
-	else
+
+	//When all entities have reachd their destination.
+	//For now go back to the movement phase.
+	if (allEntitiesReachedDestination)
 	{
-		m_currentPhase = BattlePhase::Movement;
+		changePhase(BattlePhase::Movement);
+
+		for (auto& entity : m_entities)
+		{
+			entity->m_battleProperties.m_movedToDestination = false;
+		}
 	}
 }
 

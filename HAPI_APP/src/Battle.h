@@ -31,5 +31,8 @@ private:
 	BattlePhase m_currentPhase;
 
 	void insertEntity(std::pair<int, int> startingPosition);
-	void changePhase();
+	void changePhase(BattlePhase newPhase);
+
+	//Movement Phase
+	void updateMovementPhase(float deltaTime);
 };

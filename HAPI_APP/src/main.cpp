@@ -14,7 +14,7 @@ void HAPI_Sprites_Main()
 	}
 
 	HAPI_Sprites.SetShowFPS(true);
-	HAPI_Sprites.LimitFrameRate(200);
+	HAPI_Sprites.LimitFrameRate(150);
 
 	int lastFrameStart = HAPI_Sprites.GetTime();
 	OverWorld overWorld;

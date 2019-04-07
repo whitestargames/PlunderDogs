@@ -186,6 +186,4 @@ void BattleUI::handleOnLeftClickAttackPhase()
 	{
 		m_battle.activateEntityWeapon(*m_currentTileSelected->m_entityOnTile);
 	}
-
-
 }
