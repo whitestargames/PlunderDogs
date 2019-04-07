@@ -8,7 +8,8 @@ using namespace HAPISPACE;
 Battle::Battle() :
 	m_entities(),
 	m_map(MapParser::parseMap("Level1.tmx")),
-	m_battleUI(*this)
+	m_battleUI(*this),
+	m_currentPhase(BattlePhase::Movement)
 {
 	insertEntity({ 5, 5 });
 	insertEntity({ 4, 4 });
@@ -29,21 +30,24 @@ void Battle::render()
 
 void Battle::update(float deltaTime)
 {
-	//ool allEntitiesMoved = true;
+	bool allEntitiesMoved = true;
 	for (auto& entity : m_entities)
 	{
-		//if (!entity->m_battleProperties.m_movedToDestination)
-		//{
-		//	allEntitiesMoved = false;
-		//}
+		if (!entity->m_battleProperties.m_movedToDestination)
+		{
+			allEntitiesMoved = false;
+		}
 
 		entity->m_battleProperties.update(deltaTime, m_map);
 	}
 
-	//if (allEntitiesMoved)
-	//{
-	//	//m_currentPhase = Attack;
-	//}
+	if (allEntitiesMoved)
+	{
+		for (auto& entity : m_entities)
+		{
+			entity->m_battleProperties.m_movedToDestination = false;
+		}
+	}
 }
 
 void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
@@ -63,4 +67,9 @@ void Battle::insertEntity(std::pair<int, int> startingPosition)
 const Map & Battle::getMap() const
 {
 	return m_map;
+}
+
+BattlePhase Battle::getCurrentPhase() const
+{
+	return m_currentPhase;
 }

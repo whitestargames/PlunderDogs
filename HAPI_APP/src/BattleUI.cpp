@@ -46,59 +46,20 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 	{
 		return;
 	}
-
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
-		const Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
-		if (!tile)
+		switch (m_battle.getCurrentPhase())
 		{
-			return;
+		case BattlePhase::Movement:
+		{
+			handleOnLeftClickMovementPhase();
+			break;
 		}
-		
-		//Invalid Location - Collidable tile
-		if (tile->m_type != eTileType::eSea && tile->m_type != eTileType::eOcean)
-		{
-			if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile)
-			{
-				m_currentTileSelected->m_entityOnTile->m_battleProperties.clearMovementPath();
-			}
-
-			return;
-		}
-
-		if (m_currentTileSelected)
-		{
-			//Select new Tile if has valid Entity
-			if (tile->m_entityOnTile)
-			{
-				if (m_currentTileSelected->m_entityOnTile)
-				{
-					m_currentTileSelected->m_entityOnTile->m_battleProperties.clearMovementPath();
-				}
-
-				m_currentTileSelected = tile;
-			}
-			//Instruct Entity to move to new location
-			else if (m_currentTileSelected->m_entityOnTile && (m_currentTileSelected->m_tileCoordinate != tile->m_tileCoordinate))
-			{
-				m_battle.moveEntityToPosition(*m_currentTileSelected->m_entityOnTile, *tile);
-				m_currentTileSelected = nullptr;
-			}
-		}
-		else
-		{
-			m_currentTileSelected = tile;
 		}
 	}
 	else if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
-		//Cancel selected Entity
-		if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile)
-		{
-			m_currentTileSelected->m_entityOnTile->m_battleProperties.clearMovementPath();
-		}
-
-		m_currentTileSelected = nullptr;
+		handleOnRightClickMovementPhase();
 	}
 }
 
@@ -109,6 +70,18 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 		return;
 	}
 
+	switch (m_battle.getCurrentPhase())
+	{
+	case BattlePhase::Movement :
+	{
+		handleOnMouseMoveMovementPhase();
+		break;
+	}
+	}
+}
+
+void BattleUI::handleOnMouseMoveMovementPhase()
+{
 	if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile && !m_currentTileSelected->m_entityOnTile->m_battleProperties.m_movedToDestination)
 	{
 		const Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
@@ -132,18 +105,59 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 			}
 		}
 	}
-
-	//if (m_battle.getCurrentPhase() == BattlePhase::Movement)
-	//{
-	//	handleOnMouseMoveMovementPhase();
-	//}
-	//else if (m_battle.getCurrentPhase() == BattlePhase::Attack)
-	//{
-
-	//}
 }
 
-void BattleUI::handleOnMouseMoveMovementPhase()
+void BattleUI::handleOnLeftClickMovementPhase()
 {
+	const Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
+	if (!tile)
+	{
+		return;
+	}
 
+	//Invalid Location - Collidable tile
+	if (tile->m_type != eTileType::eSea && tile->m_type != eTileType::eOcean)
+	{
+		if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile)
+		{
+			m_currentTileSelected->m_entityOnTile->m_battleProperties.clearMovementPath();
+		}
+
+		return;
+	}
+
+	if (m_currentTileSelected)
+	{
+		//Select new Tile if has valid Entity
+		if (tile->m_entityOnTile)
+		{
+			if (m_currentTileSelected->m_entityOnTile)
+			{
+				m_currentTileSelected->m_entityOnTile->m_battleProperties.clearMovementPath();
+			}
+
+			m_currentTileSelected = tile;
+		}
+		//Instruct Entity to move to new location
+		else if (m_currentTileSelected->m_entityOnTile && (m_currentTileSelected->m_tileCoordinate != tile->m_tileCoordinate))
+		{
+			m_battle.moveEntityToPosition(*m_currentTileSelected->m_entityOnTile, *tile);
+			m_currentTileSelected = nullptr;
+		}
+	}
+	else
+	{
+		m_currentTileSelected = tile;
+	}
+}
+
+void BattleUI::handleOnRightClickMovementPhase()
+{
+	//Cancel selected Entity
+	if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile)
+	{
+		m_currentTileSelected->m_entityOnTile->m_battleProperties.clearMovementPath();
+	}
+
+	m_currentTileSelected = nullptr;
 }

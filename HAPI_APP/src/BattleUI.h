@@ -33,4 +33,6 @@ private:
 	InvalidMovementLocationSprite m_invalidMovementLocationSprite;
 
 	void handleOnMouseMoveMovementPhase();
+	void handleOnLeftClickMovementPhase();
+	void handleOnRightClickMovementPhase();
 };
