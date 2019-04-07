@@ -31,7 +31,7 @@ std::deque<std::pair<int, int>> reversePath(const std::deque<std::pair<int, int>
 std::deque<std::pair<int, int>> reversePath(const std::deque<std::pair<int, int>>& pathToTile)
 {
 	std::deque<std::pair<int, int>> path;
-	for (int i = pathToTile.size() - 1; i >= 0; i--)
+	for (int i = static_cast<int>(pathToTile.size()) - 1; i >= 0; i--)
 	{
 		path.push_back(pathToTile[i]);
 	}
