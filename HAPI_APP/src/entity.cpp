@@ -19,7 +19,7 @@ EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosit
 //MOVEMENT PATH NODE
 EntityBattleProperties::MovementPath::MovementPathNode::MovementPathNode()
 	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),
-	render(false)
+	activate(false)
 {}
 
 //
@@ -39,7 +39,7 @@ void EntityBattleProperties::MovementPath::render() const
 {
 	for (const auto& i : m_movementPath)
 	{
-		if (i.render)
+		if (i.activate)
 		{
 			i.sprite->Render(SCREEN_SURFACE);
 		}
@@ -65,7 +65,7 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 			m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
 				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
 				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
-			m_movementPath[i - 1].render = true;
+			m_movementPath[i - 1].activate = true;
 		}
 	}
 	else
@@ -77,7 +77,7 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 			m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
 				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
 				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
-			m_movementPath[i - 1].render = true;
+			m_movementPath[i - 1].activate = true;
 		}
 	}
 }
@@ -89,7 +89,7 @@ void EntityBattleProperties::MovementPath::eraseNode(std::pair<int, int> positio
 		auto i = map.getMouseClickCoord({ iter->sprite->GetTransformComp().GetPosition().x, iter->sprite->GetTransformComp().GetPosition().y });
 		if (i == position)
 		{
-			iter->render = false;
+			iter->activate = false;
 		}
 	}
 }
@@ -98,7 +98,7 @@ void EntityBattleProperties::MovementPath::clearPath()
 {
 	for (auto& i : m_movementPath)
 	{
-		i.render = false;
+		i.activate = false;
 	}
 }
 

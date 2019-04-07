@@ -17,7 +17,7 @@ struct EntityBattleProperties
 			MovementPathNode();
 
 			std::unique_ptr<Sprite> sprite;
-			bool render;
+			bool activate;
 		};
 
 	public:
