@@ -10,7 +10,6 @@ constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
 //ENTITY DETAILS
 EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosition)
 	: m_currentPosition(startingPosition),
-	m_oldPosition(startingPosition),
 	m_pathToTile(),
 	m_movementTimer(0.35f),
 	m_movedToDestination(false),
@@ -121,8 +120,7 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, int movement
 		if (!pathToTile.empty() && pathToTile.size() <= movementPoints + 1)
 		{
 			m_pathToTile = pathToTile;
-			m_oldPosition = m_currentPosition;
-			map.moveEntity(m_oldPosition, pathToTile.back());
+			map.moveEntity(m_currentPosition, pathToTile.back());
 			m_movedToDestination = false;
 		}
 		else
