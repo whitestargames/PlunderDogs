@@ -1,38 +1,38 @@
 #pragma once
 
-#include <HAPISprites_lib.h>
-#include <vector>
-#include <utility>
 #include "Map.h"
 #include "entity.h"
+#include "BattleUI.h"
 
-struct Tile;
-class Battle : public IHapiSpritesInputListener
+enum class BattlePhase
 {
-private:
-	std::pair<std::unique_ptr<Entity>, std::pair<int, int>> m_entity;
-	Map m_map;
+	Movement = 0,
+	Attack
+};
 
-	void moveEntity(const Tile& tile);
-	void selectEntity(const Tile& tile);
-
-	//UI
-	bool m_entitySelected;
-	bool m_movementAllowed;
-	std::unique_ptr<Sprite> m_mouseCursor;
-	std::vector<std::pair<std::unique_ptr<Sprite>, bool>> m_movementPath;
-	std::pair<int, int> m_previousMousePoint;
-	void resetMovementPath();
-	void setMovementGraphPositions(const std::vector<std::pair<int, int>>& pathToTile, int maxNode);
-	void handleMovementPath();
-
-	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
-	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
-	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
-
+class Battle
+{
 public:
 	Battle();
 
-	void render() const;
-	void update(float deltaTime) {}
+	const Map& getMap() const;
+
+	BattlePhase getCurrentPhase() const;
+
+	void render();
+	void update(float deltaTime);
+	void moveEntityToPosition(BattleEntity& entity, const Tile& destination);
+	void activateEntityWeapon(BattleEntity& entity);
+
+private:
+	std::vector<std::unique_ptr<BattleEntity>> m_entities;
+	Map m_map;
+	BattleUI m_battleUI;
+	BattlePhase m_currentPhase;
+
+	void insertEntity(std::pair<int, int> startingPosition);
+	void changePhase(BattlePhase newPhase);
+
+	//Movement Phase
+	void updateMovementPhase(float deltaTime);
 };

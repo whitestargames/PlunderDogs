@@ -1,7 +1,8 @@
 #include "Pathfinding.h"
 #include "Map.h"
 #include "entity.h"
-
+#include <stack>
+#include <set>
 
 struct Cell
 {
@@ -20,14 +21,25 @@ struct Cell
 	double m_h;
 };
 
-void tracePath(const std::vector<std::vector<Cell> >& cellDetails, std::pair<int, int> dest, std::vector<std::pair<int, int>>& path);
+void tracePath(const std::vector<std::vector<Cell> >& cellDetails, std::pair<int, int> dest, std::deque<std::pair<int, int>>& path);
 bool isValid(int row, int col, int sizeX, int sizeY);
-bool isUnBlocked(Map &map, std::pair<int, int> coord);
+bool isUnBlocked(const Map &map, std::pair<int, int> coord);
 bool isDestination(int row, int col, std::pair<int, int> dest);
 double calculateHeuristicValue(int row, int col, std::pair<int, int> dest);
-void findAvailableTiles(std::pair<int, int> src, Map &map, int depth);
+std::deque<std::pair<int, int>> reversePath(const std::deque<std::pair<int, int>>& pathToTile);
 
-void tracePath(const std::vector<std::vector<Cell>>& cellDetails, std::pair<int, int> dest, std::vector<std::pair<int, int>>& path)
+std::deque<std::pair<int, int>> reversePath(const std::deque<std::pair<int, int>>& pathToTile)
+{
+	std::deque<std::pair<int, int>> path;
+	for (int i = pathToTile.size() - 1; i >= 0; i--)
+	{
+		path.push_back(pathToTile[i]);
+	}
+
+	return path;
+}
+
+void tracePath(const std::vector<std::vector<Cell>>& cellDetails, std::pair<int, int> dest, std::deque<std::pair<int, int>>& path)
 {
 	int row = dest.first;
 	int col = dest.second;
@@ -51,7 +63,7 @@ bool isValid(int row, int col, int sizeX, int sizeY)
 		(col >= 0) && (col < sizeY);
 }
 
-bool isUnBlocked(Map & map, std::pair<int, int> coord)
+bool isUnBlocked(const Map & map, std::pair<int, int> coord)
 {
 	if (map.getTile(coord) != nullptr)
 		if (map.getTile(coord)->m_type == eTileType::eSea ||
@@ -74,26 +86,23 @@ double calculateHeuristicValue(int row, int col, std::pair<int, int> dest)
 	return((double)sqrt((row - dest.first) * (row - dest.first) + (col - dest.second) * (col - dest.second)));
 }
 
-std::vector<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<int, int> src, std::pair<int, int> dest)
+std::deque<std::pair<int, int>> PathFinding::getPathToTile(const Map &map, std::pair<int, int> src, std::pair<int, int> dest)
 {
 	int sizeX = map.getDimensions().first;
 	int sizeY = map.getDimensions().second;
 	if (!isValid(dest.first, dest.second, sizeX, sizeY))//TODO
 	{
-		std::cout << "Destination is invalid" << std::endl;
-		return std::vector<std::pair<int, int>>();
+		return std::deque<std::pair<int, int>>();
 	}
 
 	if (!isUnBlocked(map, src) || !isUnBlocked(map, dest))
 	{
-		std::cout << "Source or Destination blocked" << std::endl;
-		return std::vector<std::pair<int, int>>();
+		return std::deque<std::pair<int, int>>();
 	}
 
 	if (isDestination(src.first, src.second, dest))
 	{
-		std::cout << "Destination Already reached" << std::endl;
-		return std::vector<std::pair<int, int>>();
+		return std::deque<std::pair<int, int>>();
 	}
 
 	std::vector<std::vector<Cell>> cellDetails;
@@ -135,7 +144,7 @@ std::vector<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<
 	openList.insert(std::make_pair(0.0, std::make_pair(i, j)));
 
 	bool destFound = false;
-	std::vector<std::pair<int, int>> path;
+	std::deque<std::pair<int, int>> path;
 	while (!openList.empty())
 	{
 		pPair p = *openList.begin();
@@ -146,7 +155,7 @@ std::vector<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<
 		closedList[i][j] = true;
 		if (isValid(i, j, sizeX, sizeY))//TODO
 		{
-			std::vector<Tile*> adjacentCells = map.getAdjacentTiles(std::pair<int, int>(i, j));
+			std::vector<const Tile*> adjacentCells = map.getAdjacentTiles(std::pair<int, int>(i, j));
 
 			double sucG, sucH, sucF;
 
@@ -168,7 +177,7 @@ std::vector<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<
 						cellDetails[x][y].m_parent_j = j;
 						tracePath(cellDetails, dest, path);
 						destFound = true;
-						return path;
+						return reversePath(path);
 					}
 
 					else if (!closedList[x][y] && isUnBlocked(map, std::pair<int, int>(x, y)))
@@ -191,78 +200,6 @@ std::vector<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<
 			}
 		}
 	}
-	if (!destFound)
-		std::cout << "Failed to find destination" << std::endl;
-	return std::vector<std::pair<int, int>>();	
-}
-
-void findAvailableTiles(std::pair<int, int> src, Map &map, int depth)
-{
-	int sizeX = map.getDimensions().first;
-	int sizeY = map.getDimensions().second;
-	int currentDepth = 0;
-	int i{ 0 };
-	int j{ 0 };
-
-	auto ship = map.getTile(src)->m_entityOnTile;
-
-	//ship->setDirection(eDirection::eNorth);
-	std::vector < std::vector<bool>> closedList;
-	closedList.resize(sizeX);
-	for (int i = 0; i < closedList.size(); i++)
-		closedList[i].resize(sizeY);
-
-	closedList[src.first][src.second] = true;
-
-
-	unsigned int dir;
-	int totalRange;
-	std::set<std::pair<int, int>> openList;
-	openList.insert(src);
-
-	std::pair<int, int> p = *openList.begin();
-	openList.erase(openList.begin());
-
-	i = p.first;
-	j = p.second;
-	std::vector<Tile*> adjacentCells = map.getAdjacentTiles(std::pair<int, int>(i, j));
-	std::vector<std::pair<int, int>> range;
-	for (int cellIndex = 0; cellIndex < adjacentCells.size(); cellIndex++)
-	{
-		int index = cellIndex;
-		////dir = std::abs((int)ship->getDirection() - index);
-		//if ((int)index == 5)
-		//	//dir = std::abs((int)ship->getDirection() - 1);
-		//else if (index == 4)
-		//	//dir = std::abs((int)ship->getDirection() - 2);
-
-		if (adjacentCells[index] != nullptr)
-		{
-			int x = adjacentCells[index]->m_tileCoordinate.first;
-			int y = adjacentCells[index]->m_tileCoordinate.second;
-			totalRange = depth - dir;
-			for (int rangeToSearch = 0; rangeToSearch < totalRange; rangeToSearch++)
-			{
-
-				if (isValid(x, y, sizeX, sizeY))
-				{
-					if (!closedList[x][y] && isUnBlocked(map, std::pair<int, int>(x, y)))
-					{
-						openList.insert(std::pair<int, int>(x, y));
-						closedList[x][y] = true;
-						range.push_back(std::pair<int, int>(x, y));
-						adjacentCells = map.getAdjacentTiles(std::pair<int, int>(x, y));
-
-						x = adjacentCells[index]->m_tileCoordinate.first;
-						y = adjacentCells[index]->m_tileCoordinate.second;
-
-
-					}
-				}
-			}
-
-			adjacentCells = map.getAdjacentTiles(std::pair<int, int>(i, j));
-		}
-	}
-
+	
+	return std::deque<std::pair<int, int>>();	
 }

@@ -6,36 +6,53 @@
 #include <HAPISprites_UI.h>
 #include "global.h"
 
-struct Entity;
+
+constexpr float DRAW_OFFSET_X{ 12 };
+constexpr float DRAW_OFFSET_Y{ 28 };
+
+//Info for HAPI_SPRITES - Leave for now. 
+/*
+//	//m_sprite->GetSpritesheet()->GenerateNormals(true);
+**** HAPI Sprites: ERROR Detected
+** Description: H_INVALID_PARAMETER - passed parameter was not valid
+** System: HAPI Sprites
+** Detail: surface width does not divide equally by numFrames
+****
+*/
+struct BattleEntity;
 struct Tile
 {
-	enum eTileType m_type;
-	Entity* m_entityOnTile;
+	const enum eTileType m_type;
+	//TODO: Dangerous exposure of raw pointer
+	BattleEntity* m_entityOnTile;
 	std::unique_ptr<HAPISPACE::Sprite> m_sprite;
 	const std::pair<int, int> m_tileCoordinate;
 
-	Tile(eTileType type, const std::string& spriteName, std::pair<int, int> coord) :
-		m_type(type), m_tileCoordinate(coord),
-		m_entityOnTile(nullptr)
-	{
-		//HAPI's Sprite constructor takes two strings: the name of the file to load (append .xml) 
-		//and the path to that file relative to the program
-		m_sprite = HAPI_Sprites.LoadSprite(spriteName);
-
-	}
 	Tile(eTileType type, std::shared_ptr<HAPISPACE::SpriteSheet> spriteSheet, std::pair<int, int> coord) :
-		m_type(type), m_tileCoordinate(coord),
-		m_entityOnTile(nullptr)
+		m_type(type),
+		m_entityOnTile(nullptr),
+		m_sprite(),
+		m_tileCoordinate(coord)
 	{
 		//HAPI's make sprite takes a pointer to an existing spritesheet
-		m_sprite = HAPI_Sprites.MakeSprite(spriteSheet);
+		m_sprite = std::make_unique<Sprite>(spriteSheet);
 	}
-	Tile(const Tile &other) : m_tileCoordinate(std::pair<int, int>(other.m_tileCoordinate.first, other.m_tileCoordinate.second))
-	{
-		m_type = other.m_type;
-		m_entityOnTile = other.m_entityOnTile;
-		m_sprite = HAPI_Sprites.MakeSprite(other.m_sprite->GetSpritesheet());
-	}
+
+	//Tile(eTileType type, const std::string& spriteName, std::pair<int, int> coord) :
+	//	m_type(type), m_tileCoordinate(coord),
+	//	m_entityOnTile(nullptr)
+	//{
+	//	//HAPI's Sprite constructor takes two strings: the name of the file to load (append .xml) 
+	//	//and the path to that file relative to the program
+	//	m_sprite = HAPI_Sprites.LoadSprite(spriteName);
+	//}
+
+	//Tile(const Tile &other) : m_tileCoordinate(std::pair<int, int>(other.m_tileCoordinate.first, other.m_tileCoordinate.second))
+	//{
+	//	m_type = other.m_type;
+	//	m_entityOnTile = other.m_entityOnTile;
+	//	m_sprite = HAPI_Sprites.MakeSprite(other.m_sprite->GetSpritesheet());
+	//}
 };
 
 class Map
@@ -46,7 +63,6 @@ private:
 	eDirection m_windDirection;
 	float m_drawScale;
 	std::pair<int, int> m_drawOffset;
-	std::unique_ptr<HAPISPACE::Sprite> motherSprite; //All tiles inherit from this sprite
 	std::vector<Tile> m_data;
 
 	std::pair<int, int> offsetToCube(std::pair<int, int> offset) const;
@@ -58,9 +74,11 @@ private:
 public:
 	//Returns a pointer to a given tile, returns nullptr if there is no tile there
 	Tile *getTile(std::pair<int, int> coordinate);
+	const Tile *getTile(std::pair<int, int> coordinate) const;
 	//An n = 1 version of getTileRadius for use in pathfinding, 
 	//returns nullptr for each tile out of bounds
 	std::vector<Tile*> getAdjacentTiles(std::pair<int, int> coord);
+	std::vector<const Tile*> getAdjacentTiles(std::pair<int, int> coord) const;
 	//TODO:Returns tiles in a radius around a given tile, skipping the tile itself
 	std::vector<Tile*> getTileRadius(std::pair<int, int> coord, int range);
 	//TODO: Returns tiles in a cone emanating from a given tile, skipping the tile itself
@@ -77,7 +95,7 @@ public:
 	//Moves an entitys position on the map, returns false if the position is already taken
 	bool moveEntity(std::pair<int, int> originalPos, std::pair<int, int> newPos);
 	//Places a new entity on the map (no check for duplicates yet so try to avoid creating multiples)
-	void insertEntity(Entity& newEntity, std::pair<int, int> coord);
+	void insertEntity(BattleEntity& newEntity);
 
 	void drawMap() const;
 	std::pair<int, int> getDrawOffset() const { return m_drawOffset; }
