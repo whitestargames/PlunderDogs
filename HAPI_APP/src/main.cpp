@@ -6,6 +6,13 @@ void HAPI_Sprites_Main()
 	std::pair<int, int> windowSize(1600, 900);
 	if (!HAPI_Sprites.Initialise(windowSize.first, windowSize.second, "Plunder Dogs", eHSEnableUI))//it lies
 		return;
+
+	if (!Textures::loadAllTextures())
+	{
+		HAPI_Sprites.UserMessage("Could not pre-load all textures", "Texture Error");
+		return;
+	}
+
 	HAPI_Sprites.SetShowFPS(true);
 	HAPI_Sprites.LimitFrameRate(200);
 

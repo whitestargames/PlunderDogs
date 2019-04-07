@@ -25,7 +25,17 @@ bool isValid(int row, int col, int sizeX, int sizeY);
 bool isUnBlocked(Map &map, std::pair<int, int> coord);
 bool isDestination(int row, int col, std::pair<int, int> dest);
 double calculateHeuristicValue(int row, int col, std::pair<int, int> dest);
-void findAvailableTiles(std::pair<int, int> src, Map &map, int depth);
+
+std::deque<std::pair<int, int>> reversePath(const std::deque<std::pair<int, int>>& pathToTile);
+
+std::deque<std::pair<int, int>> reversePath(const std::deque<std::pair<int, int>>& pathToTile)
+{
+	std::deque<std::pair<int, int>> path;
+	for (int i = static_cast<int>(pathToTile.size()) - 1; i >= 0; i--)
+	{
+		path.push_back(pathToTile[i]);
+	}
+
 
 void tracePath(const std::vector<std::vector<Cell>>& cellDetails, std::pair<int, int> dest, std::vector<std::pair<int, int>>& path)
 {
