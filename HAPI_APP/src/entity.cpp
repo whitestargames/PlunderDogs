@@ -113,11 +113,11 @@ void EntityBattleProperties::clearMovementPath()
 	m_movementPath.clearPath();
 }
 
-void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, int movementPoints)
+void EntityBattleProperties::moveEntity(Map& map, const Tile& destinationTile, int movementPoints)
 {
 	if (!m_movedToDestination)
 	{
-		auto pathToTile = PathFinding::getPathToTile(map, m_currentPosition, tile.m_tileCoordinate);
+		auto pathToTile = PathFinding::getPathToTile(map, m_currentPosition, destinationTile.m_tileCoordinate);
 		if (!pathToTile.empty() && pathToTile.size() <= movementPoints + 1)
 		{
 			m_pathToTile = pathToTile;

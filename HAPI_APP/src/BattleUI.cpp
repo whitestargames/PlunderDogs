@@ -6,6 +6,7 @@
 #include "Utilities/Utilities.h"
 #include "HAPIWrapper.h"
 #include "Textures.h"
+#include "MouseSelection.h"
 
 using namespace HAPISPACE;
 
@@ -71,6 +72,29 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 	{
 		handleOnRightClickMovementPhase();
 	}
+	else if (mouseEvent == EMouseEvent::eLeftButtonUp)
+	{
+		if (m_isMovingEntity)
+		{
+			std::pair<double, eDirection> inputInformation{ calculateDirection(m_leftMouseDownPosition,HAPI_Wrapper::getMouseLocation()) };
+			if (inputInformation.first > 20)
+			{
+				/*
+				This function call will be used if the mouse moved a significant enough distance during inputing a move command to assume it was on purpose, it sends not only the 
+				destination tile but the direction of the aformentioned movement.  In order for this to work the pathfinding must be capable of taking an eDirection as part of the 
+				function used by the battle to move the entity.
+				*/
+				//m_battle.moveEntityToPosition(*m_currentTileSelected->m_entityOnTile, *m_battle.getMap().getTile(m_leftMouseDownPosition), inputInformation.second);
+			}
+			/*
+			This function call is to be used if the movement of the mouse during the move command is small enough to be considered unintended,
+			in this case the ship should not rotate after reaching the destination.
+			*/
+			else m_battle.moveEntityToPosition(*m_currentTileSelected->m_entityOnTile, *m_battle.getMap().getTile(m_leftMouseDownPosition));
+			m_currentTileSelected = nullptr;
+			m_isMovingEntity = false;
+		}
+	}
 }
 
 void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
@@ -115,6 +139,7 @@ void BattleUI::handleOnMouseMoveMovementPhase()
 			}
 		}
 	}
+
 }
 
 void BattleUI::handleOnLeftClickMovementPhase()
@@ -151,8 +176,7 @@ void BattleUI::handleOnLeftClickMovementPhase()
 		//Instruct Entity to move to new location
 		else if (m_currentTileSelected->m_entityOnTile && (m_currentTileSelected->m_tileCoordinate != tile->m_tileCoordinate))
 		{
-			m_battle.moveEntityToPosition(*m_currentTileSelected->m_entityOnTile, *tile);
-			m_currentTileSelected = nullptr;
+			m_leftMouseDownPosition = HAPI_Wrapper::getMouseLocation();
 		}
 	}
 	else

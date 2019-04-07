@@ -39,7 +39,7 @@ struct EntityBattleProperties
 
 	void generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
 	void clearMovementPath();
-	void moveEntity(Map& map, const Tile& tile, int movementPoints);
+	void moveEntity(Map& map, const Tile& destinationTile, int movementPoints);
 
 	std::pair<int, int> m_currentPosition;
 	std::pair<int, int> m_oldPosition;

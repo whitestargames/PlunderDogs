@@ -196,6 +196,7 @@
     <ClInclude Include="src\GUIBase.h" />
     <ClInclude Include="src\HAPIWrapper.h" />
     <ClInclude Include="src\Map.h" />
+    <ClInclude Include="src\MouseSelection.h" />
     <ClInclude Include="src\OverWorld.h" />
     <ClInclude Include="src\OverWorldGUI.h" />
     <ClInclude Include="src\Pathfinding.h" />

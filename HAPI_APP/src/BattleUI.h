@@ -33,6 +33,10 @@ private:
 	Battle& m_battle;
 	const Tile* m_currentTileSelected;
 	InvalidPositionSprite m_invalidPositionSprite;
+	//This stores the position at which the mouse event "eLeftMouseButtonDown" last occured while giving an entity a move command, its used to calculate what direction the mouse moved during that input.
+	std::pair<int, int> m_leftMouseDownPosition{ 0,0 };
+	//This is used to determine if an entity is currently being given a move command, it gets set to true in the "handleOnLeftClickMovementPhase()" and false after "eLeftMouseButtonUp" is detected.
+	bool m_isMovingEntity{ false };
 
 	//Movement Phase
 	void handleOnMouseMoveMovementPhase();
