@@ -80,20 +80,6 @@ void Battle::updateMovementPhase(float deltaTime)
 			changePhase(BattlePhase::Movement);
 		}
 	}
-
-	//if (allEntitiesReachedDestination)
-	//{
-	//	
-	//}
-	//When all entities have reachd their destination.
-	//For now go back to the movement phase.
-	//if (allEntitiesReachedDestination)
-	//{
-	//	for (auto& entity : m_entities)
-	//	{
-	//		entity->m_battleProperties.m_movedToDestination = false;
-	//	}
-	//}
 }
 
 const Map & Battle::getMap() const
