@@ -9,20 +9,20 @@
 
 using namespace HAPISPACE;
 
-BattleUI::InvalidMovementLocationSprite::InvalidMovementLocationSprite()
+BattleUI::InvalidPositionSprite::InvalidPositionSprite()
 	: m_sprite(std::make_unique<Sprite>(Textures::m_thing)),
-	m_renderSprite(false)
+	m_activate(false)
 {}
 
-void BattleUI::InvalidMovementLocationSprite::render() const
+void BattleUI::InvalidPositionSprite::render() const
 {
-	if (m_renderSprite)
+	if (m_activate)
 	{
 		m_sprite->Render(SCREEN_SURFACE);
 	}
 }
 
-void BattleUI::InvalidMovementLocationSprite::setPosition(std::pair<int, int> screenPosition, float mapDrawScale)
+void BattleUI::InvalidPositionSprite::setPosition(std::pair<int, int> screenPosition, float mapDrawScale)
 {
 	m_sprite->GetTransformComp().SetPosition({
 		(float)screenPosition.first + DRAW_OFFSET_X * mapDrawScale,
@@ -32,12 +32,17 @@ void BattleUI::InvalidMovementLocationSprite::setPosition(std::pair<int, int> sc
 BattleUI::BattleUI(Battle & battle)
 	: m_battle(battle),
 	m_currentTileSelected(nullptr),
-	m_invalidMovementLocationSprite()
+	m_invalidPositionSprite()
 {}
 
 void BattleUI::render() const
 {
-	m_invalidMovementLocationSprite.render();
+	m_invalidPositionSprite.render();
+}
+
+void BattleUI::newPhase()
+{
+	m_currentTileSelected = nullptr;
 }
 
 void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
@@ -53,6 +58,11 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 		case BattlePhase::Movement:
 		{
 			handleOnLeftClickMovementPhase();
+			break;
+		}
+		case BattlePhase::Attack :
+		{
+			handleOnLeftClickAttackPhase();
 			break;
 		}
 		}
@@ -94,14 +104,14 @@ void BattleUI::handleOnMouseMoveMovementPhase()
 		{
 			if (tile->m_type != eTileType::eSea && tile->m_type != eTileType::eOcean)
 			{
-				m_invalidMovementLocationSprite.setPosition(m_battle.getMap().getTileScreenPos(tile->m_tileCoordinate), m_battle.getMap().getDrawScale());
-				m_invalidMovementLocationSprite.m_renderSprite = true;
+				m_invalidPositionSprite.setPosition(m_battle.getMap().getTileScreenPos(tile->m_tileCoordinate), m_battle.getMap().getDrawScale());
+				m_invalidPositionSprite.m_activate = true;
 				m_currentTileSelected->m_entityOnTile->m_battleProperties.clearMovementPath();
 			}
 			else
 			{
 				m_currentTileSelected->m_entityOnTile->m_battleProperties.generateMovementGraph(m_battle.getMap(), *m_currentTileSelected, *tile);
-				m_invalidMovementLocationSprite.m_renderSprite = false;
+				m_invalidPositionSprite.m_activate = false;
 			}
 		}
 	}
@@ -157,7 +167,25 @@ void BattleUI::handleOnRightClickMovementPhase()
 	if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile)
 	{
 		m_currentTileSelected->m_entityOnTile->m_battleProperties.clearMovementPath();
+		m_invalidPositionSprite.m_activate = false;
 	}
 
 	m_currentTileSelected = nullptr;
+}
+
+void BattleUI::handleOnLeftClickAttackPhase()
+{
+	const Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
+	if (!tile)
+	{
+		return;
+	}
+
+	m_currentTileSelected = tile;
+	if (m_currentTileSelected->m_entityOnTile)
+	{
+		m_battle.activateEntityWeapon(*m_currentTileSelected->m_entityOnTile);
+	}
+
+
 }

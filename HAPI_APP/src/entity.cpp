@@ -185,3 +185,9 @@ void EntityBattleProperties::render(std::unique_ptr<HAPISPACE::Sprite>& sprite, 
 	sprite->Render(SCREEN_SURFACE);
 	m_movementPath.render();
 }
+
+Weapon::Weapon()
+	: m_range(5),
+	m_damage(1)
+{
+}

@@ -43,16 +43,18 @@ void Battle::update(float deltaTime)
 
 	if (allEntitiesMoved)
 	{
-		for (auto& entity : m_entities)
-		{
-			entity->m_battleProperties.m_movedToDestination = false;
-		}
+		
 	}
 }
 
 void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
 {
 	entity.m_battleProperties.moveEntity(m_map, destination, entity.m_entity.m_movementPoints);
+}
+
+void Battle::activateEntityWeapon(BattleEntity & entity)
+{
+
 }
 
 void Battle::insertEntity(std::pair<int, int> startingPosition)
@@ -62,6 +64,18 @@ void Battle::insertEntity(std::pair<int, int> startingPosition)
 	entity->setPosition(m_map);
 	m_entities.push_back(std::move(entity));
 	m_map.insertEntity(*m_entities.back());
+}
+
+void Battle::changePhase()
+{
+	if (m_currentPhase == BattlePhase::Movement)
+	{
+		m_currentPhase = BattlePhase::Attack;
+	}
+	else
+	{
+		m_currentPhase = BattlePhase::Movement;
+	}
 }
 
 const Map & Battle::getMap() const

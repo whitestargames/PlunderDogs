@@ -7,21 +7,23 @@ struct Tile;
 class Battle;
 class BattleUI : public IHapiSpritesInputListener
 {
-	struct InvalidMovementLocationSprite
+	struct InvalidPositionSprite
 	{
-		InvalidMovementLocationSprite();
+		InvalidPositionSprite();
 
 		void render() const;
 		void setPosition(std::pair<int, int> screenPosition, float mapDrawScale);
 
 		std::unique_ptr<Sprite> m_sprite;
-		bool m_renderSprite;
+		bool m_activate;
 	};
 
 public:
 	BattleUI(Battle& battle);
 
 	void render() const;
+
+	void newPhase();
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
@@ -30,9 +32,13 @@ public:
 private:
 	Battle& m_battle;
 	const Tile* m_currentTileSelected;
-	InvalidMovementLocationSprite m_invalidMovementLocationSprite;
+	InvalidPositionSprite m_invalidPositionSprite;
 
+	//Movement Phase
 	void handleOnMouseMoveMovementPhase();
 	void handleOnLeftClickMovementPhase();
 	void handleOnRightClickMovementPhase();
+
+	//Attack Phase
+	void handleOnLeftClickAttackPhase();
 };

@@ -19,10 +19,9 @@ constexpr float DRAW_OFFSET_Y{ 28 };
 ****
 */
 struct BattleEntity;
-struct EntityProperties;
 struct Tile
 {
-	enum eTileType m_type;
+	const enum eTileType m_type;
 	//TODO: Dangerous exposure of raw pointer
 	BattleEntity* m_entityOnTile;
 	std::unique_ptr<HAPISPACE::Sprite> m_sprite;
