@@ -3,6 +3,7 @@
 #include "HAPIWrapper.h"
 #include "Pathfinding.h"
 #include "Utilities/Utilities.h"
+#include "Textures.h"
 
 constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
 
@@ -18,7 +19,7 @@ EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosit
 
 //MOVEMENT PATH NODE
 EntityBattleProperties::MovementPath::MovementPathNode::MovementPathNode()
-	: sprite(),
+	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),
 	render(false)
 {}
 
@@ -26,14 +27,12 @@ EntityBattleProperties::MovementPath::MovementPathNode::MovementPathNode()
 //MOVEMENT PATH
 //
 EntityBattleProperties::MovementPath::MovementPath()
-	: m_movementPath(),
-	m_mouseCursor(HAPI_Wrapper::loadSprite("mouseCrossHair.xml"))
+	: m_movementPath()
 {
 	m_movementPath.reserve(size_t(MOVEMENT_PATH_SIZE));
 	for (int i = 0; i < MOVEMENT_PATH_SIZE; ++i)
 	{
 		m_movementPath.push_back({});
-		m_movementPath.back().sprite = HAPI_Sprites.MakeSprite(m_mouseCursor->GetSpritesheet());
 	}
 }
 
@@ -48,7 +47,7 @@ void EntityBattleProperties::MovementPath::render() const
 	}
 }
 
-void EntityBattleProperties::MovementPath::generatePath(Map& map, const Tile& source, const Tile& destination)
+void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Tile& source, const Tile& destination)
 {
 	auto pathToTile = PathFinding::getPathToTile(map, source.m_tileCoordinate, destination.m_tileCoordinate);
 	if (pathToTile.empty())
@@ -104,7 +103,7 @@ void EntityBattleProperties::MovementPath::clearPath()
 	}
 }
 
-void EntityBattleProperties::generateMovementGraph(Map & map, const Tile & source, const Tile & destination)
+void EntityBattleProperties::generateMovementGraph(const Map & map, const Tile & source, const Tile & destination)
 {
 	m_movementPath.generatePath(map, source, destination);
 }
@@ -134,13 +133,13 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, int movement
 }
 
 //ENTITY
-EntityProperties::EntityProperties(const std::string & spriteName)
-	: m_sprite(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + spriteName)),
+EntityProperties::EntityProperties()
+	: m_sprite(std::make_unique<Sprite>(Textures::m_thing)),
 	m_movementPoints(15)
 {}
 
-BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const std::string & spriteName)
-	: m_entity(spriteName),
+BattleEntity::BattleEntity(std::pair<int, int> startingPosition)
+	: m_entity(),
 	m_battleProperties(startingPosition)
 {}
 
@@ -167,6 +166,10 @@ void EntityBattleProperties::update(float deltaTime, const Map & map)
 
 			m_pathToTile.pop_front();
 		}
+	}
+	else
+	{
+		//Inform Battle entity has moved
 	}
 }
 

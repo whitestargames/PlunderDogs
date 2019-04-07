@@ -23,7 +23,7 @@ struct Cell
 
 void tracePath(const std::vector<std::vector<Cell> >& cellDetails, std::pair<int, int> dest, std::deque<std::pair<int, int>>& path);
 bool isValid(int row, int col, int sizeX, int sizeY);
-bool isUnBlocked(Map &map, std::pair<int, int> coord);
+bool isUnBlocked(const Map &map, std::pair<int, int> coord);
 bool isDestination(int row, int col, std::pair<int, int> dest);
 double calculateHeuristicValue(int row, int col, std::pair<int, int> dest);
 std::deque<std::pair<int, int>> reversePath(const std::deque<std::pair<int, int>>& pathToTile);
@@ -63,7 +63,7 @@ bool isValid(int row, int col, int sizeX, int sizeY)
 		(col >= 0) && (col < sizeY);
 }
 
-bool isUnBlocked(Map & map, std::pair<int, int> coord)
+bool isUnBlocked(const Map & map, std::pair<int, int> coord)
 {
 	if (map.getTile(coord) != nullptr)
 		if (map.getTile(coord)->m_type == eTileType::eSea ||
@@ -86,7 +86,7 @@ double calculateHeuristicValue(int row, int col, std::pair<int, int> dest)
 	return((double)sqrt((row - dest.first)*(row - dest.first) + (col - dest.second) * (col - dest.second)));
 }
 
-std::deque<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<int, int> src, std::pair<int, int> dest)
+std::deque<std::pair<int, int>> PathFinding::getPathToTile(const Map &map, std::pair<int, int> src, std::pair<int, int> dest)
 {
 	int sizeX = map.getDimensions().first;
 	int sizeY = map.getDimensions().second;
@@ -155,7 +155,7 @@ std::deque<std::pair<int, int>> PathFinding::getPathToTile(Map &map, std::pair<i
 		closedList[i][j] = true;
 		if (isValid(i, j, sizeX, sizeY))//TODO
 		{
-			std::vector<Tile*> adjacentCells = map.getAdjacentTiles(std::pair<int, int>(i, j));
+			std::vector<const Tile*> adjacentCells = map.getAdjacentTiles(std::pair<int, int>(i, j));
 
 			double sucG, sucH, sucF;
 

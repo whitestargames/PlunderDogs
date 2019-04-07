@@ -9,7 +9,7 @@ class BattleUI : public IHapiSpritesInputListener
 {
 	struct InvalidMovementLocationSprite
 	{
-		InvalidMovementLocationSprite(const std::string& spriteName);
+		InvalidMovementLocationSprite();
 
 		void render() const;
 		void setPosition(std::pair<int, int> screenPosition, float mapDrawScale);
@@ -29,6 +29,8 @@ public:
 
 private:
 	Battle& m_battle;
-	Tile* m_currentTileSelected;
+	const Tile* m_currentTileSelected;
 	InvalidMovementLocationSprite m_invalidMovementLocationSprite;
+
+	void handleOnMouseMoveMovementPhase();
 };

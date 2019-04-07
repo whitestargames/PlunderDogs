@@ -2,15 +2,16 @@
 #include "Battle.h"
 #include "Utilities/Utilities.h"
 #include "HAPIWrapper.h"
+#include "Textures.h"
 
 OverWorldWindow OverWorld::CURRENT_WINDOW = OverWorldWindow::LevelSelection;
 
 OverWorld::OverWorld()
-	: m_battleMapBackground(HAPI_Wrapper::makeSprite("TempBattleMapBackground.png")),
-	m_enemyTerritoryHexSheet(HAPI_Wrapper::makeSprite("EnemyTerritoryHexSheet.png", 2)),
-	m_prebattleUIBackground(HAPI_Wrapper::makeSprite("PrebattleUI.png")),
-	m_playButton(HAPI_Wrapper::makeSprite("PrebattleUIPlayButton.png", 2)),
-	m_backButton(HAPI_Wrapper::makeSprite("PrebattleUIBackButton.png", 2))
+	: m_battleMapBackground(std::make_unique<Sprite>(Textures::m_battleMapBackground)),
+	m_enemyTerritoryHexSheet(std::make_unique<Sprite>(Textures::m_enemyTerritoryHexSheet)),
+	m_prebattleUIBackground(std::make_unique<Sprite>(Textures::m_prebattleUIBackground)),
+	m_playButton(std::make_unique<Sprite>(Textures::m_preBattleUIPlayButton)), 
+	m_backButton(std::make_unique<Sprite>(Textures::m_preBattleUIBackButton))
 {
 	HAPI_Wrapper::setPosition(m_enemyTerritoryHexSheet, { 100, 600 });
 	HAPI_Wrapper::setPosition(m_playButton, { 1150, 722 });

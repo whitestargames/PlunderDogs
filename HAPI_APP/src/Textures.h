@@ -71,7 +71,7 @@ struct Textures
 			return false;
 		}
 
-		m_hexTiles = HAPI_Wrapper::makeSpriteSheet("hexTiles.xml");
+		m_hexTiles = HAPI_Wrapper::loadSpriteSheet("hexTiles.xml");
 		if (!m_hexTiles)
 		{
 			HAPI_Sprites.UserMessage("Cannot Load : 'hexTiles.xml'", "Texture Error");

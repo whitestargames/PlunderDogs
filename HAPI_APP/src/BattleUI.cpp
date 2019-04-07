@@ -5,11 +5,12 @@
 #include "OverWorld.h"
 #include "Utilities/Utilities.h"
 #include "HAPIWrapper.h"
+#include "Textures.h"
 
 using namespace HAPISPACE;
 
-BattleUI::InvalidMovementLocationSprite::InvalidMovementLocationSprite(const std::string & spriteName)
-	: m_sprite(HAPI_Wrapper::loadSprite(spriteName)),
+BattleUI::InvalidMovementLocationSprite::InvalidMovementLocationSprite()
+	: m_sprite(std::make_unique<Sprite>(Textures::m_thing)),
 	m_renderSprite(false)
 {}
 
@@ -31,7 +32,7 @@ void BattleUI::InvalidMovementLocationSprite::setPosition(std::pair<int, int> sc
 BattleUI::BattleUI(Battle & battle)
 	: m_battle(battle),
 	m_currentTileSelected(nullptr),
-	m_invalidMovementLocationSprite("thingy.xml")
+	m_invalidMovementLocationSprite()
 {}
 
 void BattleUI::render() const
@@ -48,7 +49,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
-		Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
+		const Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 		if (!tile)
 		{
 			return;
@@ -110,12 +111,12 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 
 	if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile && !m_currentTileSelected->m_entityOnTile->m_battleProperties.m_movedToDestination)
 	{
-		Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
+		const Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 		if (!tile)
 		{
 			return;
 		}
-		
+
 		if (m_currentTileSelected->m_tileCoordinate != tile->m_tileCoordinate)
 		{
 			if (tile->m_type != eTileType::eSea && tile->m_type != eTileType::eOcean)
@@ -127,8 +128,22 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 			else
 			{
 				m_currentTileSelected->m_entityOnTile->m_battleProperties.generateMovementGraph(m_battle.getMap(), *m_currentTileSelected, *tile);
-				m_invalidMovementLocationSprite.m_renderSprite = false;	
+				m_invalidMovementLocationSprite.m_renderSprite = false;
 			}
 		}
 	}
+
+	//if (m_battle.getCurrentPhase() == BattlePhase::Movement)
+	//{
+	//	handleOnMouseMoveMovementPhase();
+	//}
+	//else if (m_battle.getCurrentPhase() == BattlePhase::Attack)
+	//{
+
+	//}
+}
+
+void BattleUI::handleOnMouseMoveMovementPhase()
+{
+
 }

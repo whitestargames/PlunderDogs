@@ -4,12 +4,14 @@
 #include "entity.h"
 #include "BattleUI.h"
 
+
 class Battle
 {
 public:
 	Battle();
 
-	Map& getMap();
+	const Map& getMap() const;
+
 
 	void render();
 	void update(float deltaTime);

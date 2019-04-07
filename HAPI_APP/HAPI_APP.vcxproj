@@ -178,6 +178,7 @@
     <ClCompile Include="src\Map.cpp" />
     <ClCompile Include="src\OverWorld.cpp" />
     <ClCompile Include="src\Pathfinding.cpp" />
+    <ClCompile Include="src\Textures.cpp" />
     <ClCompile Include="src\Timer.cpp" />
     <ClCompile Include="src\Utilities\Base64.cpp" />
     <ClCompile Include="src\Utilities\MapParser.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="src\Map.h" />
     <ClInclude Include="src\OverWorld.h" />
     <ClInclude Include="src\Pathfinding.h" />
+    <ClInclude Include="src\Textures.h" />
     <ClInclude Include="src\Timer.h" />
     <ClInclude Include="src\Utilities\Base64.h" />
     <ClInclude Include="src\Utilities\MapParser.h" />

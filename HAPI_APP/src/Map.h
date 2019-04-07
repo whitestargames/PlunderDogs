@@ -28,31 +28,31 @@ struct Tile
 	std::unique_ptr<HAPISPACE::Sprite> m_sprite;
 	const std::pair<int, int> m_tileCoordinate;
 
-	Tile(eTileType type, const std::string& spriteName, std::pair<int, int> coord) :
-		m_type(type), m_tileCoordinate(coord),
-		m_entityOnTile(nullptr)
-	{
-		//HAPI's Sprite constructor takes two strings: the name of the file to load (append .xml) 
-		//and the path to that file relative to the program
-		m_sprite = HAPI_Sprites.LoadSprite(spriteName);
-	}
-
 	Tile(eTileType type, std::shared_ptr<HAPISPACE::SpriteSheet> spriteSheet, std::pair<int, int> coord) :
-		m_type(type), 
+		m_type(type),
 		m_entityOnTile(nullptr),
 		m_sprite(),
 		m_tileCoordinate(coord)
 	{
 		//HAPI's make sprite takes a pointer to an existing spritesheet
-		m_sprite = HAPI_Sprites.MakeSprite(spriteSheet);
+		m_sprite = std::make_unique<Sprite>(spriteSheet);
 	}
-	
-	Tile(const Tile &other) : m_tileCoordinate(std::pair<int, int>(other.m_tileCoordinate.first, other.m_tileCoordinate.second))
-	{
-		m_type = other.m_type;
-		m_entityOnTile = other.m_entityOnTile;
-		m_sprite = HAPI_Sprites.MakeSprite(other.m_sprite->GetSpritesheet());
-	}
+
+	//Tile(eTileType type, const std::string& spriteName, std::pair<int, int> coord) :
+	//	m_type(type), m_tileCoordinate(coord),
+	//	m_entityOnTile(nullptr)
+	//{
+	//	//HAPI's Sprite constructor takes two strings: the name of the file to load (append .xml) 
+	//	//and the path to that file relative to the program
+	//	m_sprite = HAPI_Sprites.LoadSprite(spriteName);
+	//}
+
+	//Tile(const Tile &other) : m_tileCoordinate(std::pair<int, int>(other.m_tileCoordinate.first, other.m_tileCoordinate.second))
+	//{
+	//	m_type = other.m_type;
+	//	m_entityOnTile = other.m_entityOnTile;
+	//	m_sprite = HAPI_Sprites.MakeSprite(other.m_sprite->GetSpritesheet());
+	//}
 };
 
 class Map
@@ -63,7 +63,6 @@ private:
 	eDirection m_windDirection;
 	float m_drawScale;
 	std::pair<int, int> m_drawOffset;
-	std::unique_ptr<HAPISPACE::Sprite> motherSprite; //All tiles inherit from this sprite
 	std::vector<Tile> m_data;
 
 	std::pair<int, int> offsetToCube(std::pair<int, int> offset) const;
@@ -75,9 +74,11 @@ private:
 public:
 	//Returns a pointer to a given tile, returns nullptr if there is no tile there
 	Tile *getTile(std::pair<int, int> coordinate);
+	const Tile *getTile(std::pair<int, int> coordinate) const;
 	//An n = 1 version of getTileRadius for use in pathfinding, 
 	//returns nullptr for each tile out of bounds
 	std::vector<Tile*> getAdjacentTiles(std::pair<int, int> coord);
+	std::vector<const Tile*> getAdjacentTiles(std::pair<int, int> coord) const;
 	//TODO:Returns tiles in a radius around a given tile, skipping the tile itself
 	std::vector<Tile*> getTileRadius(std::pair<int, int> coord, int range);
 	//TODO: Returns tiles in a cone emanating from a given tile, skipping the tile itself
