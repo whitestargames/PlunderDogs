@@ -8,15 +8,21 @@ OverWorld::OverWorld()
 	: m_overWorldGUI(std::make_unique<OverWorldGUI>(*this)),
 	m_battle()
 {
-	for(int i = 0; i < 20; ++i)
+	//Large movement size because of the fact its easier 
+	//to test with developing movement
+	for (int i = 0; i < 20; i++)
 	{
-		m_entities.push_back({});
+		
+		//15, i + 1, i + 2, i + 3
+		EntityProperties newEntity;
+		newEntity.m_movementPoints = 15;
+		newEntity.m_healthMax = i + 1;
+		newEntity.m_currentHealth = i + 2;
+		newEntity.m_range = i + 3;
+		newEntity.m_damage = 1;
+	
+		m_entities.push_back(newEntity);
 	}
-	/*for (int i = 0; i < 20; i++)
-	{
-		Entity newEntity(Utilities::getDataDirectory() + "thingy.xml", 5, i + 1, i + 2, i + 3);
-		m_entityVector.push_back(newEntity);
-	}*/
 }
 
 void OverWorld::render()
