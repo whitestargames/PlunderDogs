@@ -90,7 +90,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 			This function call is to be used if the movement of the mouse during the move command is small enough to be considered unintended,
 			in this case the ship should not rotate after reaching the destination.
 			*/
-			else m_battle.moveEntityToPosition(*m_currentTileSelected->m_entityOnTile, *m_battle.getMap().getTile(m_leftMouseDownPosition));
+			else m_battle.moveEntityToPosition(*m_currentTileSelected->m_entityOnTile, *m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(m_leftMouseDownPosition)));
 			m_currentTileSelected = nullptr;
 			m_isMovingEntity = false;
 		}
@@ -177,6 +177,7 @@ void BattleUI::handleOnLeftClickMovementPhase()
 		else if (m_currentTileSelected->m_entityOnTile && (m_currentTileSelected->m_tileCoordinate != tile->m_tileCoordinate))
 		{
 			m_leftMouseDownPosition = HAPI_Wrapper::getMouseLocation();
+			m_isMovingEntity = true;
 		}
 	}
 	else
