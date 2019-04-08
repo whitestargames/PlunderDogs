@@ -132,15 +132,14 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, int movement
 }
 
 //ENTITY
-EntityProperties::EntityProperties() :
+EntityProperties::EntityProperties() 
+	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_thing)),
 	m_movementPoints(15),
 	m_healthMax(20),
 	m_currentHealth(20),
 	m_range(4),
 	m_damage(5)
-{
-	HAPI_Sprites.MakeSprite(Textures::m_thing);
-}
+{}
 
 BattleEntity::BattleEntity(std::pair<int, int> startingPosition)
 	: m_entity(),
