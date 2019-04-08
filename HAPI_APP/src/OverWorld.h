@@ -18,8 +18,6 @@ public:
 	void update(float deltaTime);
 
 	std::vector<EntityProperties>& getEntityVector() { return m_entities; }
-
-	OverWorldWindow getCurrentWindow() { return m_overWorldGUI->getCurrentWindow(); }//Temp
 private:
 	std::vector<EntityProperties> m_entities;
 	std::unique_ptr<OverWorldGUI> m_overWorldGUI;

@@ -26,7 +26,7 @@ void OverWorld::render()
 
 void OverWorld::update(float deltaTime)
 {
-	if (m_overWorldGUI->getCurrentWindow() == OverWorldWindow::eBattle)
+	if (OverWorldGUI::CURRENT_WINDOW == OverWorldWindow::eBattle)
 	{
 		m_battle.update(deltaTime);
 	}

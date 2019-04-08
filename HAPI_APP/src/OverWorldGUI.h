@@ -57,6 +57,4 @@ public:
 	OverWorldGUI(OverWorld& overWorld);
 
 	void render() override final;
-
-	OverWorldWindow getCurrentWindow() const { return CURRENT_WINDOW; }
 };

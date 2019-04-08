@@ -216,62 +216,60 @@ void OverWorldGUI::onRightClick(const HAPI_TMouseData& mouseData)
 
 void OverWorldGUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 {
+	switch (CURRENT_WINDOW)
 	{
-		switch (CURRENT_WINDOW)
+	case OverWorldWindow::eLevelSelection:
+	{
+		if (HAPI_Wrapper::isTranslated(m_enemyTerritoryHexSheet, mouseData, 0))//checks if mouse is over button
 		{
-		case OverWorldWindow::eLevelSelection:
-		{
-			if (HAPI_Wrapper::isTranslated(m_enemyTerritoryHexSheet, mouseData, 0))//checks if mouse is over button
-			{
-				m_enemyTerritoryHexSheet->SetFrameNumber(1);//changes the buttons sprite to hover sprite
-			}
-			else if (m_enemyTerritoryHexSheet->GetFrameNumber() != 0)//if mouse is not over the button and the button has the hover sprite
-			{
-				m_enemyTerritoryHexSheet->SetFrameNumber(0);// sets it to the default sprite
-			}
-			break;
+			m_enemyTerritoryHexSheet->SetFrameNumber(1);//changes the buttons sprite to hover sprite
 		}
-		case OverWorldWindow::ePreBattle:
+		else if (m_enemyTerritoryHexSheet->GetFrameNumber() != 0)//if mouse is not over the button and the button has the hover sprite
 		{
-			if (HAPI_Wrapper::isTranslated(m_playButton, mouseData, 0))
-			{
-				m_playButton->SetFrameNumber(1);
-			}
-			else if (m_playButton->GetFrameNumber() != 0)
-			{
-				m_playButton->SetFrameNumber(0);
-			}
+			m_enemyTerritoryHexSheet->SetFrameNumber(0);// sets it to the default sprite
+		}
+		break;
+	}
+	case OverWorldWindow::ePreBattle:
+	{
+		if (HAPI_Wrapper::isTranslated(m_playButton, mouseData, 0))
+		{
+			m_playButton->SetFrameNumber(1);
+		}
+		else if (m_playButton->GetFrameNumber() != 0)
+		{
+			m_playButton->SetFrameNumber(0);
+		}
 
-			if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
-			{
-				m_backButton->SetFrameNumber(1);
-			}
-			else if (m_backButton->GetFrameNumber() != 0)
-			{
-				m_backButton->SetFrameNumber(0);
-			}
+		if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
+		{
+			m_backButton->SetFrameNumber(1);
+		}
+		else if (m_backButton->GetFrameNumber() != 0)
+		{
+			m_backButton->SetFrameNumber(0);
+		}
 
-			//varies the position of objects based on the slder value
-			if (mouseData.leftButtonDown)
+		//varies the position of objects based on the slder value
+		if (mouseData.leftButtonDown)
+		{
+			if (windowScreenRect(FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
-				if (windowScreenRect(FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+				for (int i = 0; i < OVER_WORLD.getEntityVector().size(); i++)
 				{
-					for (int i = 0; i < OVER_WORLD.getEntityVector().size(); i++)
-					{
-						positionEntity(FLEET_WINDOW, FLEET_SLIDER, "entity" + std::to_string(i), i, OVER_WORLD.getEntityVector().size());
-					}
-				}
-				if (windowScreenRect(BATTLE_FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
-				{
-					for (int i = 0; i < m_selectedEntities.size(); i++)
-					{
-						positionEntity(BATTLE_FLEET_WINDOW, BATTLE_FLEET_SLIDER, "entity" + std::to_string(i), i, m_selectedEntities.size());
-					}
+					positionEntity(FLEET_WINDOW, FLEET_SLIDER, "entity" + std::to_string(i), i, OVER_WORLD.getEntityVector().size());
 				}
 			}
-			break;
+			if (windowScreenRect(BATTLE_FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			{
+				for (int i = 0; i < m_selectedEntities.size(); i++)
+				{
+					positionEntity(BATTLE_FLEET_WINDOW, BATTLE_FLEET_SLIDER, "entity" + std::to_string(i), i, m_selectedEntities.size());
+				}
+			}
 		}
-		}
+		break;
+	}
 	}
 }
 
