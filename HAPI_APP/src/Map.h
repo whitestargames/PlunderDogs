@@ -20,6 +20,7 @@ constexpr float DRAW_OFFSET_Y{ 28 };
 ****
 */
 struct BattleEntity;
+
 struct Tile
 {
 	const enum eTileType m_type;
@@ -35,7 +36,7 @@ struct Tile
 		m_tileCoordinate(coord)
 	{
 		//HAPI's make sprite takes a pointer to an existing spritesheet
-		m_sprite = std::make_unique<Sprite>(spriteSheet);
+		m_sprite = HAPI_Sprites.MakeSprite(spriteSheet);
 	}
 
 	//Tile(eTileType type, const std::string& spriteName, std::pair<int, int> coord) :

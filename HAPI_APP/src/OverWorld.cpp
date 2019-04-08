@@ -19,14 +19,9 @@ OverWorld::OverWorld()
 	}*/
 }
 
-void OverWorld::render(OverWorldWindow currentWindow)
+void OverWorld::render()
 {
 	m_overWorldGUI->render();
-
-	if (currentWindow == OverWorldWindow::eBattle)
-	{
-		m_battle.render();
-	}
 }
 
 void OverWorld::update(float deltaTime)

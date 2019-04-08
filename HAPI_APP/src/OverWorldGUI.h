@@ -30,10 +30,11 @@ private:
 	std::unique_ptr<Sprite> m_backButton;
 
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
-	void onLeftClick(const HAPI_TMouseData& mouseData) override final;
-	void onRightClick(const HAPI_TMouseData& mouseData);
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
+
+	void onLeftClick(const HAPI_TMouseData& mouseData) override final;
+	void onRightClick(const HAPI_TMouseData& mouseData) override final;
 
 	void positionEntity(const std::string& windowName, const std::string& windowSliderName, const std::string& windowObjectName, int objectNumber, size_t vectorSize);
 	float getWindowSliderValue(const std::string &windowName, const std::string &windowSliderName) const;

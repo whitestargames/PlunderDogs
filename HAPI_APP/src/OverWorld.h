@@ -13,8 +13,8 @@ class OverWorld
 public:
 	OverWorld();
 
-	void render(OverWorldWindow currentWindow);
-	void renderBattle() const { m_battle.render(); }
+	void render();
+	void renderBattle() { m_battle.render(); }
 	void update(float deltaTime);
 
 	static OverWorldWindow CURRENT_WINDOW;
