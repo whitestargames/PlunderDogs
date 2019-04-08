@@ -67,6 +67,8 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
 			m_movementPath[i - 1].activate = true;
 		}
+
+
 	}
 	else
 	{
@@ -132,7 +134,7 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, int movement
 
 //ENTITY
 EntityProperties::EntityProperties() 
-	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_thing)),
+	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_ship)),
 	m_movementPoints(15),
 	m_healthMax(20),
 	m_currentHealth(20),

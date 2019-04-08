@@ -71,10 +71,18 @@ struct Textures
 			return false;
 		}
 
+
 		m_hexTiles = HAPI_Wrapper::loadSpriteSheet("hexTiles.xml");
 		if (!m_hexTiles)
 		{
 			HAPI_Sprites.UserMessage("Cannot Load : 'hexTiles.xml'", "Texture Error");
+			return false;
+		}
+
+		m_ship = HAPI_Wrapper::loadSpriteSheet("ship.xml");
+		if (!m_ship)
+		{
+			HAPI_Sprites.UserMessage("Connot Load: 'ship.xml'", "Texture Error");
 			return false;
 		}
 
@@ -89,4 +97,6 @@ struct Textures
 	static std::shared_ptr<SpriteSheet> m_preBattleUIBackButton;
 	static std::shared_ptr<SpriteSheet> m_thing;
 	static std::shared_ptr<SpriteSheet> m_hexTiles;
+	static std::shared_ptr<SpriteSheet> m_ship;
+
 };
