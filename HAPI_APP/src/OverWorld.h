@@ -14,12 +14,10 @@ public:
 	OverWorld();
 
 	void render();
-	void renderBattle() { m_battle.render(); }
 	void update(float deltaTime);
 
-	std::vector<EntityProperties>& getEntityVector() { return m_entities; }
 private:
 	std::vector<EntityProperties> m_entities;
-	std::unique_ptr<OverWorldGUI> m_overWorldGUI;
+	OverWorldGUI m_GUI;
 	Battle m_battle;
 };

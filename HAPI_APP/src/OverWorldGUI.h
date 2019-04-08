@@ -10,13 +10,14 @@
 
 struct EntityProperties;
 class OverWorld;
-
-class OverWorldGUI : public GUIBase
+class Battle;
+class OverWorldGUI : public IHapiSpritesInputListener
 {
 private:
+	std::vector<EntityProperties>& m_entities;
 	std::vector<EntityProperties*> m_selectedEntities;
 	EntityProperties* m_currentlySelected;
-	OverWorld& OVER_WORLD;
+
 
 	std::unique_ptr<Sprite> m_battleMapBackground;
 	std::unique_ptr<Sprite> m_enemyTerritoryHexSheet;
@@ -28,8 +29,8 @@ private:
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 
-	void onLeftClick(const HAPI_TMouseData& mouseData) override final;
-	void onRightClick(const HAPI_TMouseData& mouseData) override final;
+	void onLeftClick(const HAPI_TMouseData& mouseData);
+	void onRightClick(const HAPI_TMouseData& mouseData);
 
 	void positionEntity(const std::string& windowName, const std::string& windowSliderName, const std::string& windowObjectName, int objectNumber, size_t vectorSize);
 	float getWindowSliderValue(const std::string &windowName, const std::string &windowSliderName) const;
@@ -54,7 +55,7 @@ private:
 public:
 	static OverWorldWindow CURRENT_WINDOW;
 
-	OverWorldGUI(OverWorld& overWorld);
+	OverWorldGUI(std::vector<EntityProperties>& entities);
 
-	void render() override final;
+	void render(Battle& battle);
 };

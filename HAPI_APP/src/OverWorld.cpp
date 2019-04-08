@@ -4,30 +4,35 @@
 #include "HAPIWrapper.h"
 #include "Textures.h"
 
-OverWorld::OverWorld()
-	: m_overWorldGUI(std::make_unique<OverWorldGUI>(*this)),
-	m_battle()
+std::vector<EntityProperties> assignEntities()
 {
 	//Large movement size because of the fact its easier 
 	//to test with developing movement
+	std::vector<EntityProperties> entities;
 	for (int i = 0; i < 20; i++)
 	{
-		
-		//15, i + 1, i + 2, i + 3
 		EntityProperties newEntity;
 		newEntity.m_movementPoints = 15;
 		newEntity.m_healthMax = i + 1;
 		newEntity.m_currentHealth = i + 2;
 		newEntity.m_range = i + 3;
 		newEntity.m_damage = 1;
-	
-		m_entities.push_back(newEntity);
+
+		entities.push_back(newEntity);
 	}
+	assert(!entities.empty());
+	return entities;
 }
+
+OverWorld::OverWorld()
+	: m_entities(assignEntities()),
+	m_GUI(m_entities),
+	m_battle()
+{}
 
 void OverWorld::render()
 {
-	m_overWorldGUI->render();
+	m_GUI.render(m_battle);
 }
 
 void OverWorld::update(float deltaTime)
