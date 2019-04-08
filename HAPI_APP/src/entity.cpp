@@ -60,13 +60,14 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 
 	clearPath();
 
-	
+	std::cout << "Cost" << m_movementPointsUsed << "\n";
 	if (m_movementPointsUsed > source.m_entityOnTile->m_entityProperties.m_movementPoints + 1)
 	{
-		m_movementPointsUsed = 0;
+		
 		//Don't interact with path from source.
 		for (int i = 1; i < source.m_entityOnTile->m_entityProperties.m_movementPoints + 1; ++i)
 		{
+			
 			auto tileScreenPosition = map.getTileScreenPos(pathToTile[i].second);
 			m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
 				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
@@ -80,7 +81,7 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 			int movementCost = getDirectionCost(entityDir, pathDir);
 
 			source.m_entityOnTile->m_entityProperties.m_direction = (eDirection)pathDir;
-			m_movementPointsUsed += movementCost;
+			m_movementPointsUsed = movementCost;
 
 			int bonusMove = 0;
 
@@ -112,7 +113,7 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 			int movementCost = getDirectionCost(entityDir, pathDir);
 
 			source.m_entityOnTile->m_entityProperties.m_direction = (eDirection)pathDir;
-			m_movementPointsUsed += movementCost;
+			m_movementPointsUsed = movementCost;
 
 			int bonusMove = 0;
 
