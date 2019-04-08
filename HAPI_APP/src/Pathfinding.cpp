@@ -69,8 +69,8 @@ bool isUnBlocked(const Map & map, std::pair<int, int> coord)
 	auto * tile = map.getTile(coord);
 	if (tile != nullptr)
 		if ((tile->m_type == eTileType::eSea ||
-			tile->m_type == eTileType::eOcean )&&
-			tile->m_entityOnTile == nullptr )
+			tile->m_type == eTileType::eOcean) &&
+			map.getTile(coord)->m_entityOnTile == nullptr )
 			return true;
 	return false;
 }

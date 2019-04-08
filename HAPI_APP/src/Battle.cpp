@@ -37,8 +37,6 @@ void Battle::update(float deltaTime)
 	}
 }
 
-
-
 void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
 {
 	entity.m_battleProperties.moveEntity(m_map, destination, entity.m_entity.m_movementPoints);
@@ -95,8 +93,3 @@ BattlePhase Battle::getCurrentPhase() const
 {
 	return m_currentPhase;
 }
-
-
-
-
-
