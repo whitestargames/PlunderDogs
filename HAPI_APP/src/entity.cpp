@@ -28,7 +28,9 @@ EntityBattleProperties::MovementPath::MovementPathNode::MovementPathNode()
 //MOVEMENT PATH
 //
 EntityBattleProperties::MovementPath::MovementPath()
-	: m_movementPath()
+	: m_movementPath(),
+	m_movementPointsUsed(0),
+	m_currentMovementRotation(0)
 {
 	m_movementPath.reserve(size_t(MOVEMENT_PATH_SIZE));
 	for (int i = 0; i < MOVEMENT_PATH_SIZE; ++i)
@@ -58,7 +60,8 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 
 	clearPath();
 
-	if (pathToTile.size() > source.m_entityOnTile->m_entityProperties.m_movementPoints + 1)
+	
+	if (m_movementPointsUsed > source.m_entityOnTile->m_entityProperties.m_movementPoints + 1)
 	{
 		//Don't interact with path from source.
 		for (int i = 1; i < source.m_entityOnTile->m_entityProperties.m_movementPoints + 1; ++i)
@@ -68,6 +71,23 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
 				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
 			m_movementPath[i - 1].activate = true;
+
+			++m_movementPointsUsed;
+			int entityDir = source.m_entityOnTile->m_entityProperties.m_direction;
+			int pathDir = pathToTile[i].first;
+			m_currentMovementRotation = pathToTile[1].first;
+			int movementCost = getDirectionCost(entityDir, pathDir);
+
+			source.m_entityOnTile->m_entityProperties.m_direction = (eDirection)pathDir;
+			m_movementPointsUsed += movementCost;
+
+			int bonusMove = 0;
+
+			if (source.m_entityOnTile->m_entityProperties.m_direction == map.getWindDirection() && bonusMove == 0)
+			{
+				bonusMove = (int)source.m_entityOnTile->m_entityProperties.m_movementPoints * map.getWindStrength());
+				m_movementPointsUsed -= bonusMove;
+			}
 		}
 
 
@@ -141,7 +161,8 @@ EntityProperties::EntityProperties()
 	m_healthMax(20),
 	m_currentHealth(20),
 	m_range(4),
-	m_damage(5)
+	m_damage(5),
+	m_direction(eDirection::eNorth)
 {
 	m_sprite->GetTransformComp().SetOrigin({ 13, 25 });
 }

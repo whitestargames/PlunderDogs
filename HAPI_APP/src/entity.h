@@ -31,6 +31,8 @@ struct EntityBattleProperties
 
 	private:
 		std::vector<MovementPathNode> m_movementPath;
+		int m_movementPointsUsed;
+		int m_currentMovementRotation;
 	};
 
 	EntityBattleProperties(std::pair<int, int> startingPosition);
@@ -60,6 +62,7 @@ struct EntityProperties
 	int m_currentHealth;
 	int m_range;
 	int m_damage;
+	eDirection m_direction;
 };
 
 struct BattleEntity
