@@ -85,7 +85,7 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 
 			if (source.m_entityOnTile->m_entityProperties.m_direction == map.getWindDirection() && bonusMove == 0)
 			{
-				bonusMove = (int)source.m_entityOnTile->m_entityProperties.m_movementPoints * map.getWindStrength());
+				bonusMove = (int)source.m_entityOnTile->m_entityProperties.m_movementPoints * map.getWindStrength();
 				m_movementPointsUsed -= bonusMove;
 			}
 		}
@@ -102,7 +102,26 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
 				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
 			m_movementPath[i - 1].activate = true;
+
+			++m_movementPointsUsed;
+			int entityDir = source.m_entityOnTile->m_entityProperties.m_direction;
+			int pathDir = pathToTile[i].first;
+			m_currentMovementRotation = pathToTile[1].first;
+			int movementCost = getDirectionCost(entityDir, pathDir);
+
+			source.m_entityOnTile->m_entityProperties.m_direction = (eDirection)pathDir;
+			m_movementPointsUsed += movementCost;
+
+			int bonusMove = 0;
+
+			if (source.m_entityOnTile->m_entityProperties.m_direction == map.getWindDirection() && bonusMove == 0)
+			{
+				bonusMove = (int)source.m_entityOnTile->m_entityProperties.m_movementPoints * map.getWindStrength();
+				m_movementPointsUsed -= bonusMove;
+			}
 		}
+
+
 	}
 }
 
@@ -152,6 +171,18 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, int movement
 			clearMovementPath();
 		}
 	}
+}
+
+unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentDirection, int newDirection)
+{
+	unsigned int diff = std::abs(newDirection - currentDirection);
+	if (diff == 0)
+	{
+		return 0;
+	}
+
+	//number of direction % difference between the new and old directions
+	return (static_cast<int>(eDirection::eNorthWest) % diff) + 1;
 }
 
 //ENTITY

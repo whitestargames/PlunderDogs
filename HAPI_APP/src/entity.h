@@ -31,6 +31,7 @@ struct EntityBattleProperties
 
 	private:
 		std::vector<MovementPathNode> m_movementPath;
+		unsigned int getDirectionCost(int currentDirection, int newDirection);
 		int m_movementPointsUsed;
 		int m_currentMovementRotation;
 	};
@@ -44,6 +45,8 @@ struct EntityBattleProperties
 	void generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
 	void clearMovementPath();
 	void moveEntity(Map& map, const Tile& tile, int movementPoints);
+
+	
 
 	std::pair<int, int> m_currentPosition;
 	std::deque<std::pair<eDirection, std::pair<int, int>>> m_pathToTile;
