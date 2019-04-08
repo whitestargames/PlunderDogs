@@ -19,7 +19,7 @@ public:
 
 	BattlePhase getCurrentPhase() const;
 
-	void render();
+	void render() const;
 	void update(float deltaTime);
 	void moveEntityToPosition(BattleEntity& entity, const Tile& destination);
 	void activateEntityWeapon(BattleEntity& entity);

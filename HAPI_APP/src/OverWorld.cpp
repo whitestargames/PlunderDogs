@@ -33,6 +33,11 @@ OverWorld::OverWorld()
 void OverWorld::render()
 {
 	m_GUI.render(m_battle);
+
+	if (CURRENT_WINDOW == OverWorldWindow::Battle)
+	{
+		m_battle.render();
+	}
 }
 
 void OverWorld::update(float deltaTime)
@@ -42,3 +47,5 @@ void OverWorld::update(float deltaTime)
 		m_battle.update(deltaTime);
 	}
 }
+
+

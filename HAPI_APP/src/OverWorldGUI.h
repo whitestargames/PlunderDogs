@@ -17,7 +17,6 @@ private:
 	std::vector<EntityProperties*> m_selectedEntities;
 	EntityProperties* m_currentlySelected;
 
-
 	std::unique_ptr<Sprite> m_battleMapBackground;
 	std::unique_ptr<Sprite> m_enemyTerritoryHexSheet;
 	std::unique_ptr<Sprite> m_prebattleUIBackground;

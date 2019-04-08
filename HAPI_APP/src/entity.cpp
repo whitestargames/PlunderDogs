@@ -10,7 +10,6 @@ constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
 //ENTITY DETAILS
 EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosition)
 	: m_currentPosition(startingPosition),
-	m_oldPosition(startingPosition),
 	m_pathToTile(),
 	m_movementTimer(0.35f),
 	m_movedToDestination(false),
@@ -20,7 +19,7 @@ EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosit
 //MOVEMENT PATH NODE
 EntityBattleProperties::MovementPath::MovementPathNode::MovementPathNode()
 	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),
-	render(false)
+	activate(false)
 {}
 
 //
@@ -40,7 +39,7 @@ void EntityBattleProperties::MovementPath::render() const
 {
 	for (const auto& i : m_movementPath)
 	{
-		if (i.render)
+		if (i.activate)
 		{
 			i.sprite->Render(SCREEN_SURFACE);
 		}
@@ -66,7 +65,7 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 			m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
 				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
 				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
-			m_movementPath[i - 1].render = true;
+			m_movementPath[i - 1].activate = true;
 		}
 	}
 	else
@@ -78,7 +77,7 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 			m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
 				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
 				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
-			m_movementPath[i - 1].render = true;
+			m_movementPath[i - 1].activate = true;
 		}
 	}
 }
@@ -90,7 +89,7 @@ void EntityBattleProperties::MovementPath::eraseNode(std::pair<int, int> positio
 		auto i = map.getMouseClickCoord({ iter->sprite->GetTransformComp().GetPosition().x, iter->sprite->GetTransformComp().GetPosition().y });
 		if (i == position)
 		{
-			iter->render = false;
+			iter->activate = false;
 		}
 	}
 }
@@ -99,7 +98,7 @@ void EntityBattleProperties::MovementPath::clearPath()
 {
 	for (auto& i : m_movementPath)
 	{
-		i.render = false;
+		i.activate = false;
 	}
 }
 
@@ -121,8 +120,8 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, int movement
 		if (!pathToTile.empty() && pathToTile.size() <= movementPoints + 1)
 		{
 			m_pathToTile = pathToTile;
-			m_oldPosition = m_currentPosition;
-			map.moveEntity(m_oldPosition, pathToTile.back());
+			map.moveEntity(m_currentPosition, pathToTile.back());
+			m_movedToDestination = false;
 		}
 		else
 		{
@@ -168,11 +167,11 @@ void EntityBattleProperties::update(float deltaTime, const Map & map)
 			m_movementPath.eraseNode(m_currentPosition, map);
 
 			m_pathToTile.pop_front();
+			if (m_pathToTile.empty())
+			{
+				m_movedToDestination = true;
+			}
 		}
-	}
-	else
-	{
-		m_movedToDestination = true;
 	}
 }
 

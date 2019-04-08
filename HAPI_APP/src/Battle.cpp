@@ -16,7 +16,7 @@ Battle::Battle() :
 	insertEntity({ 8, 8 });
 }
 
-void Battle::render()
+void Battle::render() const
 {
 	m_map.drawMap();
 	
@@ -62,24 +62,24 @@ void Battle::changePhase(BattlePhase newPhase)
 
 void Battle::updateMovementPhase(float deltaTime)
 {
-	bool allEntitiesReachedDestination = true;
+	int entityReachedDestination = 0;
 	for (auto& entity : m_entities)
 	{
 		entity->m_battleProperties.update(deltaTime, m_map);
-
-		allEntitiesReachedDestination = entity->m_battleProperties.m_movedToDestination;
+		if (entity->m_battleProperties.m_movedToDestination)
+		{
+			++entityReachedDestination;
+		}
 	}
 
-	//When all entities have reachd their destination.
-	//For now go back to the movement phase.
-	if (allEntitiesReachedDestination)
+	if (entityReachedDestination == static_cast<int>(m_entities.size()))
 	{
-		changePhase(BattlePhase::Movement);
-
 		for (auto& entity : m_entities)
 		{
 			entity->m_battleProperties.m_movedToDestination = false;
 		}
+
+		changePhase(BattlePhase::Movement);
 	}
 }
 

@@ -17,7 +17,7 @@ struct EntityBattleProperties
 			MovementPathNode();
 
 			std::unique_ptr<Sprite> sprite;
-			bool render;
+			bool activate;
 		};
 
 	public:
@@ -35,6 +35,7 @@ struct EntityBattleProperties
 	EntityBattleProperties(std::pair<int, int> startingPosition);
 
 	void update(float deltaTime, const Map& map);
+
 	void render(std::shared_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
 
 	void generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
@@ -42,7 +43,6 @@ struct EntityBattleProperties
 	void moveEntity(Map& map, const Tile& tile, int movementPoints);
 
 	std::pair<int, int> m_currentPosition;
-	std::pair<int, int> m_oldPosition;
 	std::deque<std::pair<int, int>> m_pathToTile;
 	Timer m_movementTimer;
 	bool m_movedToDestination;
