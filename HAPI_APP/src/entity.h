@@ -32,8 +32,7 @@ struct EntityBattleProperties
 	private:
 		std::vector<MovementPathNode> m_movementPath;
 		unsigned int getDirectionCost(int currentDirection, int newDirection);
-		int m_movementPointsUsed;
-		int m_currentMovementRotation;
+		
 	};
 
 	EntityBattleProperties(std::pair<int, int> startingPosition);
@@ -67,6 +66,8 @@ struct EntityProperties
 	int m_damage;
 	eDirection m_direction;
 	eDirection m_PrevDirection;
+	int m_movementPointsUsed;
+	int m_currentMovementRotation;
 };
 
 struct BattleEntity

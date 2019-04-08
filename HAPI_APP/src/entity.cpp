@@ -28,9 +28,8 @@ EntityBattleProperties::MovementPath::MovementPathNode::MovementPathNode()
 //MOVEMENT PATH
 //
 EntityBattleProperties::MovementPath::MovementPath()
-	: m_movementPath(),
-	m_movementPointsUsed(0),
-	m_currentMovementRotation(0)
+	: m_movementPath()
+	
 {
 	m_movementPath.reserve(size_t(MOVEMENT_PATH_SIZE));
 	for (int i = 0; i < MOVEMENT_PATH_SIZE; ++i)
@@ -60,8 +59,9 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 
 	clearPath();
 
-	std::cout << "Cost" << m_movementPointsUsed << "\n";
-	if (m_movementPointsUsed > source.m_entityOnTile->m_entityProperties.m_movementPoints + 1)
+
+	if (source.m_entityOnTile->m_entityProperties.m_movementPointsUsed > 
+			source.m_entityOnTile->m_entityProperties.m_movementPoints + 1)
 	{
 		
 		//Don't interact with path from source.
@@ -74,25 +74,26 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
 			m_movementPath[i - 1].activate = true;
 
-			++m_movementPointsUsed;
+			++source.m_entityOnTile->m_entityProperties.m_movementPointsUsed;
 			int entityDir = source.m_entityOnTile->m_entityProperties.m_direction;
 			int pathDir = pathToTile[i].first;
-			m_currentMovementRotation = pathToTile[1].first;
+			source.m_entityOnTile->m_entityProperties.m_currentMovementRotation = pathToTile[1].first;
 			int movementCost = getDirectionCost(entityDir, pathDir);
 
 			source.m_entityOnTile->m_entityProperties.m_direction = (eDirection)pathDir;
-			m_movementPointsUsed = movementCost;
+			source.m_entityOnTile->m_entityProperties.m_movementPointsUsed += movementCost;
 
 			int bonusMove = 0;
 
 			if (source.m_entityOnTile->m_entityProperties.m_direction == map.getWindDirection() && bonusMove == 0)
 			{
 				bonusMove = (int)source.m_entityOnTile->m_entityProperties.m_movementPoints * map.getWindStrength();
-				m_movementPointsUsed -= bonusMove;
+				source.m_entityOnTile->m_entityProperties.m_movementPointsUsed -= bonusMove;
 			}
 		}
 
-
+		std::cout<< "movementPointsUsed: " << 
+			source.m_entityOnTile->m_entityProperties.m_movementPointsUsed << "\n";
 	}
 	else
 	{
@@ -106,22 +107,25 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
 			m_movementPath[i - 1].activate = true;
 
-			++m_movementPointsUsed;
+			++source.m_entityOnTile->m_entityProperties.m_movementPointsUsed;
 			int entityDir = source.m_entityOnTile->m_entityProperties.m_direction;
 			int pathDir = pathToTile[i].first;
-			m_currentMovementRotation = pathToTile[1].first;
+			source.m_entityOnTile->m_entityProperties.m_currentMovementRotation = pathToTile[1].first;
 			int movementCost = getDirectionCost(entityDir, pathDir);
 
 			source.m_entityOnTile->m_entityProperties.m_direction = (eDirection)pathDir;
-			m_movementPointsUsed = movementCost;
+			source.m_entityOnTile->m_entityProperties.m_movementPointsUsed += movementCost;
 
 			int bonusMove = 0;
 
 			if (source.m_entityOnTile->m_entityProperties.m_direction == map.getWindDirection() && bonusMove == 0)
 			{
 				bonusMove = (int)source.m_entityOnTile->m_entityProperties.m_movementPoints * map.getWindStrength();
-				m_movementPointsUsed -= bonusMove;
+				source.m_entityOnTile->m_entityProperties.m_movementPointsUsed -= bonusMove;
 			}
+
+			std::cout << "movementPointsUsed: " <<
+				source.m_entityOnTile->m_entityProperties.m_movementPointsUsed << "\n";
 		}
 
 
@@ -150,6 +154,8 @@ void EntityBattleProperties::MovementPath::clearPath()
 
 void EntityBattleProperties::generateMovementGraph(const Map & map, const Tile & source, const Tile & destination)
 {
+	source.m_entityOnTile->m_entityProperties.m_direction = source.m_entityOnTile->m_entityProperties.m_PrevDirection;
+	source.m_entityOnTile->m_entityProperties.m_movementPointsUsed = 0;
 	m_movementPath.generatePath(map, source, destination);
 }
 
@@ -196,7 +202,10 @@ EntityProperties::EntityProperties()
 	m_currentHealth(20),
 	m_range(4),
 	m_damage(5),
-	m_direction(eDirection::eNorth)
+	m_direction(eDirection::eNorth),
+	m_PrevDirection(eDirection::eNorth),
+	m_movementPointsUsed(0),
+	m_currentMovementRotation(0)
 {
 	m_sprite->GetTransformComp().SetOrigin({ 13, 25 });
 }

@@ -97,7 +97,6 @@ void BattleUI::handleOnMouseMoveMovementPhase()
 	if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile && !m_currentTileSelected->m_entityOnTile->m_battleProperties.m_movedToDestination)
 	{
 		const Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
-		tile->m_entityOnTile->m_entityProperties.m_direction = tile->m_entityOnTile->m_entityProperties.m_PrevDirection;
 		if (!tile)
 		{
 			return;
@@ -105,6 +104,8 @@ void BattleUI::handleOnMouseMoveMovementPhase()
 
 		if (m_currentTileSelected->m_tileCoordinate != tile->m_tileCoordinate)
 		{
+			
+			
 			if (tile->m_type != eTileType::eSea && tile->m_type != eTileType::eOcean)
 			{
 				m_invalidPositionSprite.setPosition(m_battle.getMap().getTileScreenPos(tile->m_tileCoordinate), m_battle.getMap().getDrawScale());
@@ -123,7 +124,7 @@ void BattleUI::handleOnMouseMoveMovementPhase()
 void BattleUI::handleOnLeftClickMovementPhase()
 {
 	const Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
-	tile->m_entityOnTile->m_entityProperties.m_PrevDirection = tile->m_entityOnTile->m_entityProperties.m_direction;
+	
 	if (!tile)
 	{
 		return;
@@ -142,6 +143,8 @@ void BattleUI::handleOnLeftClickMovementPhase()
 
 	if (m_currentTileSelected)
 	{
+		tile->m_entityOnTile->m_entityProperties.m_PrevDirection = tile->m_entityOnTile->m_entityProperties.m_direction;
+		tile->m_entityOnTile->m_entityProperties.m_movementPointsUsed = 0;
 		//Select new Tile if has valid Entity
 		if (tile->m_entityOnTile)
 		{

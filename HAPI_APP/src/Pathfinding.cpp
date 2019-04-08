@@ -204,6 +204,7 @@ std::deque<std::pair<eDirection, std::pair<int, int>>> PathFinding::getPathToTil
 							cellDetails[x][y].m_h = successorH;
 							cellDetails[x][y].m_parent_i = i;
 							cellDetails[x][y].m_parent_j = j;
+							cellDetails[x][y].m_direction
 						}
 					}
 				}
