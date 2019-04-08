@@ -73,7 +73,7 @@ void Battle::updateMovementPhase(float deltaTime)
 		}
 	}
 
-	if (entityReachedDestination == static_cast<int>(m_entities.size()))
+	if (entityReachedDestination == static_cast<int>(m_entities.size() + 1))
 	{
 		for (auto& entity : m_entities)
 		{
