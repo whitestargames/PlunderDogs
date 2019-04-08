@@ -23,7 +23,7 @@ void Battle::render() const
 	
 	for (const auto& entity : m_entities)
 	{
-		entity->m_battleProperties.render(entity->m_entity.m_sprite, m_map);
+		entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
 	}
 
 	m_battleUI.render();
@@ -39,7 +39,7 @@ void Battle::update(float deltaTime)
 
 void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
 {
-	entity.m_battleProperties.moveEntity(m_map, destination, entity.m_entity.m_movementPoints);
+	entity.m_battleProperties.moveEntity(m_map, destination, entity.m_entityProperties.m_movementPoints);
 }
 
 void Battle::activateEntityWeapon(BattleEntity & entity)
@@ -73,7 +73,7 @@ void Battle::updateMovementPhase(float deltaTime)
 		}
 	}
 
-	if (entityReachedDestination == static_cast<int>(m_entities.size() + 1))
+	if (entityReachedDestination == static_cast<int>(m_entities.size()))
 	{
 		for (auto& entity : m_entities)
 		{
