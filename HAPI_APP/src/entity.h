@@ -66,6 +66,7 @@ struct EntityProperties
 	int m_range;
 	int m_damage;
 	eDirection m_direction;
+	eDirection m_PrevDirection;
 };
 
 struct BattleEntity
