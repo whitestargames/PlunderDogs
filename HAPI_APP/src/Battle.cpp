@@ -32,20 +32,12 @@ void Battle::render() const
 void Battle::update(float deltaTime)
 {
 	if (m_currentPhase == BattlePhase::Movement)
-	//handleRotation();
-}
-//Gabriel--
-unsigned int Battle::getDirectionCost(int currentDirection, int newDirection)
-{
-	unsigned int diff = std::abs(newDirection - currentDirection);
-	if (diff == 0)
 	{
 		updateMovementPhase(deltaTime);
 	}
-		
-	//number of direction % difference between the new and old directions
-	return (static_cast<int>(eDirection::eNorthWest) % diff) + 1;
 }
+
+
 
 void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
 {
@@ -104,25 +96,7 @@ BattlePhase Battle::getCurrentPhase() const
 	return m_currentPhase;
 }
 
-void Battle::handleRotation()
-{
-	int directionToTurn = 0; 
-	int rotationAngle = 60;
-	if (m_isEntitySelected)
-	{
-		directionToTurn = m_currentUIRotation;
-		m_entity.first->m_sprite->GetTransformComp().SetRotation(
-			DEGREES_TO_RADIANS(directionToTurn*rotationAngle % 360));
-	}
-	else
-	{
-		directionToTurn = m_entity.first->m_entityDirection;
-		m_entity.first->m_sprite->GetTransformComp().SetRotation(
-			DEGREES_TO_RADIANS(directionToTurn*rotationAngle % 360));
-	}
-		
 
-}
 
 
 
