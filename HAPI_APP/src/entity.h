@@ -43,7 +43,7 @@ struct EntityBattleProperties
 
 	void generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
 	void clearMovementPath();
-	void moveEntity(Map& map, const Tile& tile, int movementPoints);
+	void moveEntity(Map& map, const Tile& tile, int movementPointsAvailable);
 
 	
 
@@ -52,6 +52,7 @@ struct EntityBattleProperties
 	Timer m_movementTimer;
 	bool m_movedToDestination;
 	MovementPath m_movementPath;
+	int m_maxPathSize;
 };
 
 struct EntityProperties

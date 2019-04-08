@@ -182,6 +182,7 @@ std::deque<std::pair<eDirection, std::pair<int, int>>> PathFinding::getPathToTil
 					{
 						cellDetails[x][y].m_parent_i = i;
 						cellDetails[x][y].m_parent_j = j;
+						cellDetails[x][y].m_direction = (eDirection)cellIndex;
 						tracePath(cellDetails, dest, path);
 						destFound = true;
 						return reversePath(path);
@@ -204,7 +205,7 @@ std::deque<std::pair<eDirection, std::pair<int, int>>> PathFinding::getPathToTil
 							cellDetails[x][y].m_h = successorH;
 							cellDetails[x][y].m_parent_i = i;
 							cellDetails[x][y].m_parent_j = j;
-							cellDetails[x][y].m_direction
+							cellDetails[x][y].m_direction = (eDirection)cellIndex;
 						}
 					}
 				}

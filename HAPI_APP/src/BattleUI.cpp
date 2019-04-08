@@ -143,8 +143,7 @@ void BattleUI::handleOnLeftClickMovementPhase()
 
 	if (m_currentTileSelected)
 	{
-		tile->m_entityOnTile->m_entityProperties.m_PrevDirection = tile->m_entityOnTile->m_entityProperties.m_direction;
-		tile->m_entityOnTile->m_entityProperties.m_movementPointsUsed = 0;
+		
 		//Select new Tile if has valid Entity
 		if (tile->m_entityOnTile)
 		{
