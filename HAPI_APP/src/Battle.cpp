@@ -72,13 +72,14 @@ void Battle::updateMovementPhase(float deltaTime)
 		}
 	}
 
-	if (entityReachedDestination == m_entities.size())
+	if (entityReachedDestination == static_cast<int>(m_entities.size()))
 	{
 		for (auto& entity : m_entities)
 		{
 			entity->m_battleProperties.m_movedToDestination = false;
-			changePhase(BattlePhase::Movement);
 		}
+
+		changePhase(BattlePhase::Movement);
 	}
 }
 
