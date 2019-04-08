@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include "Timer.h"
+#include "Global.h"
 
 struct Tile;
 class Map;
@@ -43,7 +44,7 @@ struct EntityBattleProperties
 	void moveEntity(Map& map, const Tile& tile, int movementPoints);
 
 	std::pair<int, int> m_currentPosition;
-	std::deque<std::pair<int, int>> m_pathToTile;
+	std::deque<std::pair<eDirection, std::pair<int, int>>> m_pathToTile;
 	Timer m_movementTimer;
 	bool m_movedToDestination;
 	MovementPath m_movementPath;

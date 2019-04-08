@@ -11,7 +11,8 @@ struct Cell
 		m_parent_j(0),
 		m_f(0),
 		m_g(0),
-		m_h(0)
+		m_h(0),
+		m_direction(eDirection::eNorth)
 	{}
 
 	int m_parent_i;
@@ -19,19 +20,20 @@ struct Cell
 	double m_f;
 	double m_g;
 	double m_h;
+	eDirection m_direction;
 };
 
-void tracePath(const std::vector<std::vector<Cell> >& cellDetails, std::pair<int, int> dest, std::deque<std::pair<int, int>>& path);
+void tracePath(const std::vector<std::vector<Cell> >& cellDetails, std::pair<int, int> dest, std::deque<std::pair<eDirection, std::pair<int, int>>>& path);
 bool isValid(int row, int col, int sizeX, int sizeY);
 bool isUnBlocked(const Map &map, std::pair<int, int> coord);
 bool isDestination(int row, int col, std::pair<int, int> dest);
 double calculateHeuristicValue(int row, int col, std::pair<int, int> dest);
 
-std::deque<std::pair<int, int>> reversePath(const std::deque<std::pair<int, int>>& pathToTile);
+std::deque<std::pair<eDirection, std::pair<int, int>>> reversePath(const std::deque<std::pair<eDirection, std::pair<int, int>>>& pathToTile);
 
-std::deque<std::pair<int, int>> reversePath(const std::deque<std::pair<int, int>>& pathToTile)
+std::deque<std::pair<eDirection, std::pair<int, int>>> reversePath(const std::deque<std::pair<eDirection, std::pair<int, int>>>& pathToTile)
 {
-	std::deque<std::pair<int, int>> path;
+	std::deque<std::pair<eDirection, std::pair<int, int>>> path;
 
 	for (int i = static_cast<int>(pathToTile.size()) - 1; i >= 0; i--)
 	{
@@ -40,21 +42,21 @@ std::deque<std::pair<int, int>> reversePath(const std::deque<std::pair<int, int>
 	return path;
 }
 
-void tracePath(const std::vector<std::vector<Cell>>& cellDetails, std::pair<int, int> dest, std::deque<std::pair<int, int>>& path)
+void tracePath(const std::vector<std::vector<Cell>>& cellDetails, std::pair<int, int> dest, std::deque<std::pair<eDirection, std::pair<int, int>>>& path)
 {
 	int row = dest.first;
 	int col = dest.second;
 
 	while (!(cellDetails[row][col].m_parent_i == row && cellDetails[row][col].m_parent_j == col))
 	{
-		path.emplace_back(std::make_pair(row, col));
+		path.emplace_back(std::make_pair(cellDetails[row][col].m_direction, std::make_pair(row, col)));
 		int tempRow = cellDetails[row][col].m_parent_i;
 		int tempCol = cellDetails[row][col].m_parent_j;
 
 		row = tempRow;
 		col = tempCol;
 	}
-	path.emplace_back(std::make_pair(row, col));
+	path.emplace_back(std::make_pair(cellDetails[row][col].m_direction, std::make_pair(row, col)));
 }
 
 bool isValid(int row, int col, int sizeX, int sizeY)
@@ -86,26 +88,27 @@ bool isDestination(int row, int col, std::pair<int, int> dest)
 double calculateHeuristicValue(int row, int col, std::pair<int, int> dest)
 {
 	//calculated using Euclidean Distance
-	return((double)sqrt((row - dest.first) * (row - dest.first) + (col - dest.second) * (col - dest.second)));
+	return((double)sqrt((row - dest.first) * (row - dest.first) 
+				 + (col - dest.second) * (col - dest.second)));
 }
 
-std::deque<std::pair<int, int>> PathFinding::getPathToTile(const Map &map, std::pair<int, int> src, std::pair<int, int> dest)
+std::deque<std::pair<eDirection, std::pair<int, int>>> PathFinding::getPathToTile(const Map &map, std::pair<int, int> src, std::pair<int, int> dest)
 {
 	int sizeX = map.getDimensions().first;
 	int sizeY = map.getDimensions().second;
 	if (!isValid(dest.first, dest.second, sizeX, sizeY))//TODO
 	{
-		return std::deque<std::pair<int, int>>();
+		return std::deque<std::pair<eDirection, std::pair<int, int>>>();
 	}
 
 	if (!isUnBlocked(map, dest))
 	{
-		return std::deque<std::pair<int, int>>();
+		return std::deque<std::pair<eDirection, std::pair<int, int>>>();
 	}
 
 	if (isDestination(src.first, src.second, dest))
 	{
-		return std::deque<std::pair<int, int>>();
+		return std::deque<std::pair<eDirection, std::pair<int, int>>>();
 	}
 
 	
@@ -148,7 +151,7 @@ std::deque<std::pair<int, int>> PathFinding::getPathToTile(const Map &map, std::
 	openList.insert(std::make_pair(0.0, std::make_pair(i, j)));
 
 	bool destFound = false;
-	std::deque<std::pair<int, int>> path;
+	std::deque<std::pair<eDirection, std::pair<int, int>>> path;
 	while (!openList.empty())
 	{
 		std::pair<double, std::pair<int, int>> p = *openList.begin();
@@ -208,5 +211,5 @@ std::deque<std::pair<int, int>> PathFinding::getPathToTile(const Map &map, std::
 		}
 	}
 	
-	return std::deque<std::pair<int, int>>();	
+	return std::deque<std::pair<eDirection, std::pair<int, int>>>();	
 }

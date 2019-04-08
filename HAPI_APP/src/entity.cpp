@@ -63,7 +63,7 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 		//Don't interact with path from source.
 		for (int i = 1; i < source.m_entityOnTile->m_entity.m_movementPoints + 1; ++i)
 		{
-			auto tileScreenPosition = map.getTileScreenPos(pathToTile[i]);
+			auto tileScreenPosition = map.getTileScreenPos(pathToTile[i].second);
 			m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
 				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
 				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
@@ -77,7 +77,7 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 		//Don't interact with path from source.
 		for (int i = 1; i < pathToTile.size(); ++i)
 		{
-			auto tileScreenPosition = map.getTileScreenPos(pathToTile[i]);
+			auto tileScreenPosition = map.getTileScreenPos(pathToTile[i].second);
 			m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
 				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
 				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
@@ -124,7 +124,7 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, int movement
 		if (!pathToTile.empty() && pathToTile.size() <= movementPoints + 1)
 		{
 			m_pathToTile = pathToTile;
-			map.moveEntity(m_currentPosition, pathToTile.back());
+			map.moveEntity(m_currentPosition, pathToTile.back().second);
 			m_movedToDestination = false;
 		}
 		else
@@ -169,7 +169,7 @@ void EntityBattleProperties::update(float deltaTime, const Map & map)
 		{
 			m_movementTimer.reset();
 
-			m_currentPosition = m_pathToTile.front();
+			m_currentPosition = m_pathToTile.front().second;
 			m_movementPath.eraseNode(m_currentPosition, map);
 
 			m_pathToTile.pop_front();
