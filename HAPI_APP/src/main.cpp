@@ -2,6 +2,11 @@
 #include "Textures.h"
 using namespace HAPISPACE;
 
+float getDeltaTime(int frameStart, int lastFrameStart)
+{
+	return static_cast<float>(frameStart - lastFrameStart) / 1000.0f;
+}
+
 void HAPI_Sprites_Main()
 {
 	std::pair<int, int> windowSize(1600, 900);
@@ -25,7 +30,7 @@ void HAPI_Sprites_Main()
 		int frameStart = HAPI_Sprites.GetTime();
 
 		SCREEN_SURFACE->Clear();
-		overWorld.update(static_cast<float>(frameStart - lastFrameStart) / 1000.0f);
+		overWorld.update(getDeltaTime(frameStart, lastFrameStart));
 		overWorld.render();
 
 		lastFrameStart = frameStart;
