@@ -6,6 +6,8 @@
 #include "Textures.h"
 
 constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
+constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
+constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
 
 //ENTITY DETAILS
 EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosition)
@@ -140,7 +142,9 @@ EntityProperties::EntityProperties()
 	m_currentHealth(20),
 	m_range(4),
 	m_damage(5)
-{}
+{
+	m_sprite->GetTransformComp().SetOrigin({ 13, 25 });
+}
 
 BattleEntity::BattleEntity(std::pair<int, int> startingPosition)
 	: m_entity(),
@@ -182,8 +186,8 @@ void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, 
 	//Move entity sprite
 	const std::pair<int, int> tileTransform = map.getTileScreenPos(m_currentPosition);
 	sprite->GetTransformComp().SetPosition({
-		static_cast<float>(tileTransform.first + DRAW_OFFSET_X * map.getDrawScale()),
-		static_cast<float>(tileTransform.second + DRAW_OFFSET_Y * map.getDrawScale()) });
+		static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
+		static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
 
 	//Render entity
 	sprite->Render(SCREEN_SURFACE);
