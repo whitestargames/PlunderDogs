@@ -58,10 +58,10 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 
 	clearPath();
 
-	if (pathToTile.size() > source.m_entityOnTile->m_entity.m_movementPoints + 1)
+	if (pathToTile.size() > source.m_entityOnTile->m_entityProperties.m_movementPoints + 1)
 	{
 		//Don't interact with path from source.
-		for (int i = 1; i < source.m_entityOnTile->m_entity.m_movementPoints + 1; ++i)
+		for (int i = 1; i < source.m_entityOnTile->m_entityProperties.m_movementPoints + 1; ++i)
 		{
 			auto tileScreenPosition = map.getTileScreenPos(pathToTile[i]);
 			m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
@@ -147,7 +147,7 @@ EntityProperties::EntityProperties()
 }
 
 BattleEntity::BattleEntity(std::pair<int, int> startingPosition)
-	: m_entity(),
+	: m_entityProperties(),
 	m_battleProperties(startingPosition)
 {}
 
@@ -155,7 +155,7 @@ void BattleEntity::setPosition(const Map & map)
 {
 	//Assign entity sprite position - TODO change this at later date
 	std::pair<int, int> tileScreenPoint = map.getTileScreenPos(m_battleProperties.m_currentPosition);
-	m_entity.m_sprite->GetTransformComp().SetPosition({
+	m_entityProperties.m_sprite->GetTransformComp().SetPosition({
 		(float)(tileScreenPoint.first + DRAW_OFFSET_X * map.getDrawScale()),
 		(float)(tileScreenPoint.second + DRAW_OFFSET_Y * map.getDrawScale()) });
 }

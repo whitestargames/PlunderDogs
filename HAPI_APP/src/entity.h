@@ -67,6 +67,6 @@ struct BattleEntity
 
 	void setPosition(const Map& map);
 
-	EntityProperties m_entity;
+	EntityProperties m_entityProperties;
 	EntityBattleProperties m_battleProperties;
 };
