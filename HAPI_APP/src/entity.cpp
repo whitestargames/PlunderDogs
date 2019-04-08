@@ -63,6 +63,7 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 	
 	if (m_movementPointsUsed > source.m_entityOnTile->m_entityProperties.m_movementPoints + 1)
 	{
+		m_movementPointsUsed = 0;
 		//Don't interact with path from source.
 		for (int i = 1; i < source.m_entityOnTile->m_entityProperties.m_movementPoints + 1; ++i)
 		{
@@ -94,6 +95,7 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 	}
 	else
 	{
+		
 		//Don't interact with path from source.
 		for (int i = 1; i < pathToTile.size(); ++i)
 		{
@@ -188,7 +190,7 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 //ENTITY
 EntityProperties::EntityProperties() 
 	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_ship)),
-	m_movementPoints(15),
+	m_movementPoints(5),
 	m_healthMax(20),
 	m_currentHealth(20),
 	m_range(4),
