@@ -66,9 +66,11 @@ bool isValid(int row, int col, int sizeX, int sizeY)
 
 bool isUnBlocked(const Map & map, std::pair<int, int> coord)
 {
-	if (map.getTile(coord) != nullptr)
-		if (map.getTile(coord)->m_type == eTileType::eSea ||
-			map.getTile(coord)->m_type == eTileType::eOcean)
+	auto * tile = map.getTile(coord);
+	if (tile != nullptr)
+		if (tile->m_type == eTileType::eSea ||
+			tile->m_type == eTileType::eOcean &&
+			map.getTile(coord)->m_entityOnTile == nullptr )
 			return true;
 	return false;
 }
@@ -96,7 +98,7 @@ std::deque<std::pair<int, int>> PathFinding::getPathToTile(const Map &map, std::
 		return std::deque<std::pair<int, int>>();
 	}
 
-	if (!isUnBlocked(map, src) || !isUnBlocked(map, dest))
+	if (!isUnBlocked(map, dest))
 	{
 		return std::deque<std::pair<int, int>>();
 	}
@@ -106,13 +108,14 @@ std::deque<std::pair<int, int>> PathFinding::getPathToTile(const Map &map, std::
 		return std::deque<std::pair<int, int>>();
 	}
 
+	
 	std::vector<std::vector<Cell>> cellDetails;
 	cellDetails.resize(sizeX);
 	for (int i = 0; i < cellDetails.size(); i++)
 		cellDetails[i].resize(sizeY);
 
+	//sets defualt values for the each cell
 	int i = 0, j = 0;
-
 	for (i = 0; i < sizeX; i++)
 	{
 		for (j = 0; j < sizeY; j++)
@@ -141,24 +144,24 @@ std::deque<std::pair<int, int>> PathFinding::getPathToTile(const Map &map, std::
 	//open list contains std::pair<int, int> <f,<i,j>>
 	//f = h+g
 	//i and j are the rows and cols
-	std::set<pPair> openList;
+	std::set<std::pair<double, std::pair<int, int>>> openList;
 	openList.insert(std::make_pair(0.0, std::make_pair(i, j)));
 
 	bool destFound = false;
 	std::deque<std::pair<int, int>> path;
 	while (!openList.empty())
 	{
-		pPair p = *openList.begin();
+		std::pair<double, std::pair<int, int>> p = *openList.begin();
 		openList.erase(openList.begin());
 
 		i = p.second.first;
 		j = p.second.second;
 		closedList[i][j] = true;
-		if (isValid(i, j, sizeX, sizeY))//TODO
+		if (isValid(i, j, sizeX, sizeY))
 		{
 			std::vector<const Tile*> adjacentCells = map.getAdjacentTiles(std::pair<int, int>(i, j));
 
-			double sucG, sucH, sucF;
+			double successorG, successorH, successorF;
 
 			for (int cellIndex = 0; cellIndex < adjacentCells.size(); cellIndex++)
 			{
@@ -180,19 +183,22 @@ std::deque<std::pair<int, int>> PathFinding::getPathToTile(const Map &map, std::
 						destFound = true;
 						return reversePath(path);
 					}
-
+					//check if the cell has not been check before and is permited 
 					else if (!closedList[x][y] && isUnBlocked(map, std::pair<int, int>(x, y)))
 					{
-						sucG = cellDetails[i][j].m_g + 1.0;
-						sucH = calculateHeuristicValue(x, y, dest);
-						sucF = sucG + sucH;
+						//calculates cost based on G(cost of moving to a tile)
+						//and H(diagonal distance between the tile and the destination)
+						successorG =  1.0;
+						successorH = calculateHeuristicValue(x, y, dest);
+						successorF = successorG + successorH;
 
-						if (cellDetails[x][y].m_f == FLT_MAX || cellDetails[x][y].m_f > sucF)
+						//if a lower cost is found added it to the open list and update cellDetail
+						if (cellDetails[x][y].m_f == FLT_MAX || cellDetails[x][y].m_f > successorF)
 						{
-							openList.insert(std::make_pair(sucF, std::make_pair(x, y)));
-							cellDetails[x][y].m_f = sucF;
-							cellDetails[x][y].m_g = sucG;
-							cellDetails[x][y].m_h = sucH;
+							openList.insert(std::make_pair(successorF, std::make_pair(x, y)));
+							cellDetails[x][y].m_f = successorF;
+							cellDetails[x][y].m_g = successorG;
+							cellDetails[x][y].m_h = successorH;
 							cellDetails[x][y].m_parent_i = i;
 							cellDetails[x][y].m_parent_j = j;
 						}

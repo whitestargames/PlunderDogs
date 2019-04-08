@@ -3,7 +3,7 @@
 
 class Map;
 
-typedef std::pair<double, std::pair<int, int>> pPair;
+
 
 namespace PathFinding
 {
