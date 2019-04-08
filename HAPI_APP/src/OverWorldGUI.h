@@ -5,7 +5,6 @@
 #include <memory>
 
 #include "Global.h"
-#include "GUIBase.h"
 #include <string>
 
 struct EntityProperties;
