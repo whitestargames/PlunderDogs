@@ -2,19 +2,18 @@
 
 #include <HAPISprites_lib.h>
 #include <HAPISprites_UI.h>
-#include "GUIBase.h"
 #include <memory>
 
-class OverWorldGUI : public GUIBase
+class OverWorldGUI : public IHapiSpritesInputListener
 {
 public:
 	OverWorldGUI();
 
-	void render() override final;
+	void render();
 
-	void onMouseMove(const HAPI_TMouseData& mouseData) override final;
-	void onLeftClick(const HAPI_TMouseData& mouseData) override final;
-	void onRightClick() override final {}
+	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
+	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
+	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
 
 private:
 	std::unique_ptr<Sprite> m_battleMapBackground;
@@ -22,5 +21,4 @@ private:
 	std::unique_ptr<Sprite> m_prebattleUIBackground;
 	std::unique_ptr<Sprite> m_playButton;
 	std::unique_ptr<Sprite> m_backButton;
-
 };

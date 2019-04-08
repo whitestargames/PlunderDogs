@@ -36,7 +36,36 @@ void OverWorldGUI::render()
 	}
 	}
 }
-void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData)
+void OverWorldGUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
+{
+	if (mouseEvent == EMouseEvent::eLeftButtonDown)
+	{
+		switch (OverWorld::CURRENT_WINDOW)
+		{
+		case OverWorldWindow::LevelSelection:
+		{
+			if (HAPI_Wrapper::isTranslated(m_enemyTerritoryHexSheet, mouseData, 0))
+			{
+				OverWorld::CURRENT_WINDOW = OverWorldWindow::PreBattle;
+			}
+			break;
+		}
+		case OverWorldWindow::PreBattle:
+		{
+			if (HAPI_Wrapper::isTranslated(m_playButton, mouseData, 0))
+			{
+				OverWorld::CURRENT_WINDOW = OverWorldWindow::Battle;
+			}
+			else if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
+			{
+				OverWorld::CURRENT_WINDOW = OverWorldWindow::LevelSelection;
+			}
+			break;
+		}
+		}
+	}
+}
+void OverWorldGUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 {
 	switch (OverWorld::CURRENT_WINDOW)
 	{
@@ -71,33 +100,6 @@ void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData)
 		else
 		{
 			m_backButton->SetFrameNumber(0);
-		}
-		break;
-	}
-	}
-}
-
-void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData)
-{
-	switch (OverWorld::CURRENT_WINDOW)
-	{
-	case OverWorldWindow::LevelSelection:
-	{
-		if (HAPI_Wrapper::isTranslated(m_enemyTerritoryHexSheet, mouseData, 0))
-		{
-			OverWorld::CURRENT_WINDOW = OverWorldWindow::PreBattle;
-		}
-		break;
-	}
-	case OverWorldWindow::PreBattle:
-	{
-		if (HAPI_Wrapper::isTranslated(m_playButton, mouseData, 0))
-		{
-			OverWorld::CURRENT_WINDOW = OverWorldWindow::Battle;
-		}
-		else if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
-		{
-			OverWorld::CURRENT_WINDOW = OverWorldWindow::LevelSelection;
 		}
 		break;
 	}
