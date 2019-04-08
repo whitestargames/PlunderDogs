@@ -1,9 +1,9 @@
-#include<string>
-
 #include "OverWorldGUI.h"
 #include "Textures.h"
 #include "OverWorld.h"
 #include "Utilities/Utilities.h"
+
+OverWorldWindow OverWorldGUI::CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
 
 constexpr int WINDOW_OBJECTWIDTH = 75;
 constexpr int WINDOW_OBJECTHEIGHT = 150;
@@ -12,7 +12,6 @@ constexpr int WINDOW_HEIGHT = 200;
 
 OverWorldGUI::OverWorldGUI(OverWorld& overWorld)
 	: OVER_WORLD(overWorld),
-	CURRENT_WINDOW(OverWorldWindow::eLevelSelection),
 	m_battleMapBackground(std::make_unique<Sprite>(Textures::m_battleMapBackground)),
 	m_enemyTerritoryHexSheet(std::make_unique<Sprite>(Textures::m_enemyTerritoryHexSheet)),
 	m_prebattleUIBackground(std::make_unique<Sprite>(Textures::m_prebattleUIBackground)),

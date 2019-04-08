@@ -4,6 +4,7 @@
 #include "Battle.h"
 #include "Pathfinding.h"
 #include "OverWorld.h"
+#include "OverWorldGUI.h"
 #include "Utilities/Utilities.h"
 #include "HAPIWrapper.h"
 #include "Textures.h"
@@ -48,7 +49,7 @@ void BattleUI::newPhase()
 
 void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
 {
-	if (OverWorld::CURRENT_WINDOW != OverWorldWindow::eBattle)
+	if (OverWorldGUI::CURRENT_WINDOW != OverWorldWindow::eBattle)
 	{
 		return;
 	}
@@ -76,7 +77,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 
 void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 {
-	if (OverWorld::CURRENT_WINDOW != OverWorldWindow::eBattle)
+	if (OverWorldGUI::CURRENT_WINDOW != OverWorldWindow::eBattle)
 	{
 		return;
 	}

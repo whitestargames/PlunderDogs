@@ -13,15 +13,9 @@ class OverWorld;
 
 class OverWorldGUI : public GUIBase
 {
-public:
-	OverWorldGUI(OverWorld& overWorld);
-
-	void render() override final;
-
 private:
 	std::vector<EntityProperties*> m_selectedEntities;
 	EntityProperties* m_currentlySelected;
-	OverWorldWindow CURRENT_WINDOW;
 	OverWorld& OVER_WORLD;
 
 	std::unique_ptr<Sprite> m_battleMapBackground;
@@ -56,4 +50,13 @@ private:
 	const std::string BATTLE_FLEET_WINDOW = "battleFleetWindow";
 	const std::string FLEET_SLIDER = "fleetSlider";
 	const std::string BATTLE_FLEET_SLIDER = "battleFleetSlider";
+
+public:
+	static OverWorldWindow CURRENT_WINDOW;
+
+	OverWorldGUI(OverWorld& overWorld);
+
+	void render() override final;
+
+	OverWorldWindow getCurrentWindow() const { return CURRENT_WINDOW; }
 };

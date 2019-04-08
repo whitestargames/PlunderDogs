@@ -17,11 +17,11 @@ public:
 	void renderBattle() { m_battle.render(); }
 	void update(float deltaTime);
 
-	static OverWorldWindow CURRENT_WINDOW;
 	std::vector<EntityProperties>& getEntityVector() { return m_entities; }
 
+	OverWorldWindow getCurrentWindow() { return m_overWorldGUI->getCurrentWindow(); }//Temp
 private:
 	std::vector<EntityProperties> m_entities;
-	std::unique_ptr<GUIBase> m_overWorldGUI;
+	std::unique_ptr<OverWorldGUI> m_overWorldGUI;
 	Battle m_battle;
 };
