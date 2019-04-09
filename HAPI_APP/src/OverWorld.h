@@ -33,8 +33,12 @@ private:
 	std::unique_ptr<Sprite> m_playButton;
 	std::unique_ptr<Sprite> m_backButton;
 	std::unique_ptr<Sprite> m_upgradesButton;
-	//upgrade background
 	//upgrade buttons
+	std::unique_ptr<Sprite> m_upgradesScreenBackground;
+	std::unique_ptr<Sprite> m_removeHealthButton;
+	std::unique_ptr<Sprite> m_removeMovementButton;
+	std::unique_ptr<Sprite> m_removeDamageButton;
+	std::unique_ptr<Sprite> m_removeRangeButton;
 	std::unique_ptr<Sprite> m_upgradeBackButton;
 	OverWorldWindow m_currentWindow;
 };
