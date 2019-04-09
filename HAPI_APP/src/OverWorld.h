@@ -39,6 +39,10 @@ private:
 	std::unique_ptr<Sprite> m_removeMovementButton;
 	std::unique_ptr<Sprite> m_removeDamageButton;
 	std::unique_ptr<Sprite> m_removeRangeButton;
+	std::unique_ptr<Sprite> m_addHealthButton;
+	std::unique_ptr<Sprite> m_addMovementButton;
+	std::unique_ptr<Sprite> m_addDamageButton;
+	std::unique_ptr<Sprite> m_addRangeButton;
 	std::unique_ptr<Sprite> m_upgradeBackButton;
 	OverWorldWindow m_currentWindow;
 };

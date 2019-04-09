@@ -16,6 +16,10 @@ OverWorld::OverWorld()
 	m_removeMovementButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "removeButton.png", 2)),
 	m_removeDamageButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "removeButton.png", 2)),
 	m_removeRangeButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "removeButton.png", 2)),
+	m_addHealthButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2)),
+	m_addMovementButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2)),
+	m_addDamageButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2)),
+	m_addRangeButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2)),
 
 	m_currentWindow(OverWorldWindow::LevelSelection)
 {
@@ -32,6 +36,10 @@ OverWorld::OverWorld()
 	m_removeMovementButton->GetTransformComp().SetPosition({ 625, 280 });
 	m_removeDamageButton->GetTransformComp().SetPosition({ 625, 410 });
 	m_removeRangeButton->GetTransformComp().SetPosition({ 625, 540 });
+	m_addHealthButton->GetTransformComp().SetPosition({ 875, 150 });//add buttons
+	m_addMovementButton->GetTransformComp().SetPosition({ 875, 280 });
+	m_addDamageButton->GetTransformComp().SetPosition({ 875, 410 });
+	m_addRangeButton->GetTransformComp().SetPosition({ 875, 540 });
 }
 
 void OverWorld::render()
@@ -82,6 +90,10 @@ void OverWorld::render()
 		m_removeMovementButton->Render(SCREEN_SURFACE);
 		m_removeDamageButton->Render(SCREEN_SURFACE);
 		m_removeRangeButton->Render(SCREEN_SURFACE);
+		m_addHealthButton->Render(SCREEN_SURFACE);
+		m_addMovementButton->Render(SCREEN_SURFACE);
+		m_addDamageButton->Render(SCREEN_SURFACE);
+		m_addRangeButton->Render(SCREEN_SURFACE);
 		break;
 	}
 	}
@@ -126,19 +138,19 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mous
 			{
 				m_currentWindow = OverWorldWindow::LevelSelection;
 			}
-			else if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			else if (m_addHealthButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addHealthButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//health+
 			}
-			else if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			else if (m_addMovementButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addMovementButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//movement+
 			}
-			else if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			else if (m_addDamageButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addDamageButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//damage+
 			}
-			else if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			else if (m_addRangeButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addRangeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//range+
 			}
@@ -211,13 +223,6 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
 		break;
 	}
 
-
-	m_removeHealthButton->Render(SCREEN_SURFACE);
-	m_removeMovementButton->Render(SCREEN_SURFACE);
-	m_removeDamageButton->Render(SCREEN_SURFACE);
-	m_removeRangeButton->Render(SCREEN_SURFACE);
-
-
 	case OverWorldWindow::Upgrade :
 	{
 		if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
@@ -229,37 +234,37 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
 			m_upgradeBackButton->SetFrameNumber(0);
 		}
 
-		if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		if (m_addHealthButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addHealthButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 		{
-			m_upgradeBackButton->SetFrameNumber(1);//health+
+			m_addHealthButton->SetFrameNumber(1);//health+
 		}
-		else if (m_upgradeBackButton->GetFrameNumber() != 0)
+		else if (m_addHealthButton->GetFrameNumber() != 0)
 		{
-			m_upgradeBackButton->SetFrameNumber(0);
+			m_addHealthButton->SetFrameNumber(0);
 		}
-		if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		if (m_addMovementButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addMovementButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 		{
-			m_upgradeBackButton->SetFrameNumber(1);//movement+
+			m_addMovementButton->SetFrameNumber(1);//movement+
 		}
-		else if (m_upgradeBackButton->GetFrameNumber() != 0)
+		else if (m_addMovementButton->GetFrameNumber() != 0)
 		{
-			m_upgradeBackButton->SetFrameNumber(0);
+			m_addMovementButton->SetFrameNumber(0);
 		}
-		if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		if (m_addDamageButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addDamageButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 		{
-			m_upgradeBackButton->SetFrameNumber(1);//damage+
+			m_addDamageButton->SetFrameNumber(1);//damage+
 		}
-		else if (m_upgradeBackButton->GetFrameNumber() != 0)
+		else if (m_addDamageButton->GetFrameNumber() != 0)
 		{
-			m_upgradeBackButton->SetFrameNumber(0);
+			m_addDamageButton->SetFrameNumber(0);
 		}
-		if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		if (m_addRangeButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addRangeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 		{
-			m_upgradeBackButton->SetFrameNumber(1);//range+
+			m_addRangeButton->SetFrameNumber(1);//range+
 		}
-		else if (m_upgradeBackButton->GetFrameNumber() != 0)
+		else if (m_addRangeButton->GetFrameNumber() != 0)
 		{
-			m_upgradeBackButton->SetFrameNumber(0);
+			m_addRangeButton->SetFrameNumber(0);
 		}
 		if (m_removeHealthButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeHealthButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 		{
