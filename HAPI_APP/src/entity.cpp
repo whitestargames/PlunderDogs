@@ -87,12 +87,13 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 
 		std::cout << "movementPointsUsed: " <<
 			source.m_entityOnTile->m_entityProperties.m_movementPointsUsed << "\n";
+		source.m_entityOnTile->m_battleProperties.m_maxPathSize = i;
 
 		if (source.m_entityOnTile->m_entityProperties.m_movementPointsUsed >=
 			source.m_entityOnTile->m_entityProperties.m_movementPoints )
 		{
 			std::cout << "no more moves \n";
-			source.m_entityOnTile->m_battleProperties.m_maxPathSize = i;
+			
 			return;
 		}
 	}
