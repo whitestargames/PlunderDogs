@@ -8,16 +8,20 @@ BattleUI::BattleUI()
 	m_chickenButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "chickenButton.png")),
 	m_pauseMenuBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "pauseMenuBackground.png")),
 	m_resumeButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "resumeButton.png", 2)),
-	m_quitButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "quitButton.png", 2))//,
-	//m_map(MapParser::parseMap(Utilities::getDataDirectory() + "Level1.tmx"))
+	m_quitButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "quitButton.png", 2)),
+	m_postBattleBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PostBattleBackground.png")),
+	m_doneButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "doneButton.png", 2))
 {
+	//battle
 	m_battleIcons->GetTransformComp().SetPosition({ 350, 800 });
 	m_pauseButton->GetTransformComp().SetPosition({ 1450, 50 });
 	m_chickenButton->GetTransformComp().SetPosition({ 1450, 750 });
-
-	//m_pauseMenuBackground->GetTransformComp().SetPosition({ 568, 152 });
+	//pauseMenu
 	m_resumeButton->GetTransformComp().SetPosition({ 658, 297 });
 	m_quitButton->GetTransformComp().SetPosition({ 658, 427 });
+	//postBattle
+	m_postBattleBackground->GetTransformComp().SetPosition({ 200, 100 });
+	m_doneButton->GetTransformComp().SetPosition({ 660, 710 });
 }
 
 void BattleUI::render()
@@ -98,9 +102,20 @@ void BattleUI::render()
 	}
 	case BattleWindow::PostBattle:
 	{
-		//render post battle background
-		//render continue button
-		//if render victory/defeat
+		m_postBattleBackground->Render(SCREEN_SURFACE);
+		m_doneButton->Render(SCREEN_SURFACE);
+		if (victory)
+		{
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(595, 115), HAPISPACE::Colour255::GREEN, "VICTORY", 90);
+		}
+		else
+		{
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(615, 115), HAPISPACE::Colour255::RED, "DEFEAT", 90);
+		}
+		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 330), HAPISPACE::Colour255::BLACK, "KILLS: " "50G", 50);
+		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 415), HAPISPACE::Colour255::BLACK, "WIN BONUS: " "15G", 50);
+		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 500), HAPISPACE::Colour255::BLACK, "HEALTH BONUS: " "35G", 50);
+		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 585), HAPISPACE::Colour255::BLACK, "TOTAL: " "21G", 50);
 		break;
 	}
 	}
@@ -140,13 +155,17 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouse
 			{
 				m_currentWindow = BattleWindow::Battle;//disables the pause menu
 			}
+			else if (m_quitButton->GetSpritesheet()->GetFrameRect(0).Translated(
+				m_quitButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the resume button
+			{
+				m_currentWindow = BattleWindow::PostBattle;//disables the pause menu
+			}
 			break;
 		}
 		case BattleWindow::PostBattle:
 		{
-			//change to continue button
-			if (m_pauseButton->GetSpritesheet()->GetFrameRect(0).Translated(
-				m_pauseButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
+			if (m_doneButton->GetSpritesheet()->GetFrameRect(0).Translated(
+				m_doneButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
 			{
 				//switch to overworld
 			}
@@ -219,14 +238,13 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 	}
 	case BattleWindow::PostBattle:
 	{
-		//continue button
-		if (m_resumeButton->GetSpritesheet()->GetFrameRect(0).Translated(m_resumeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		if (m_doneButton->GetSpritesheet()->GetFrameRect(0).Translated(m_doneButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 		{
-			m_resumeButton->SetFrameNumber(1);
+			m_doneButton->SetFrameNumber(1);
 		}
-		else if (m_resumeButton->GetFrameNumber() != 0)
+		else if (m_doneButton->GetFrameNumber() != 0)
 		{
-			m_resumeButton->SetFrameNumber(0);
+			m_doneButton->SetFrameNumber(0);
 		}
 		break;
 	}

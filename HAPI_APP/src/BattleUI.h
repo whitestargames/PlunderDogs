@@ -35,8 +35,11 @@ private:
 	std::unique_ptr<Sprite> m_pauseMenuBackground;
 	std::unique_ptr<Sprite> m_resumeButton;
 	std::unique_ptr<Sprite> m_quitButton;
+	//postBattleScreen
+	std::unique_ptr<Sprite> m_postBattleBackground;
+	std::unique_ptr<Sprite> m_doneButton;
 
-	BattleWindow m_currentWindow{BattleWindow::Battle};
+	BattleWindow m_currentWindow{ BattleWindow::Battle };
 
 	Battle m_battle;
 	//Map m_map;
@@ -44,4 +47,5 @@ private:
 	bool shipSelected;
 	bool playAnimation;
 	int animationOffset = 100;
+	bool victory = false;
 };
