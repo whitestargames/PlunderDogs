@@ -192,7 +192,7 @@ std::deque<std::pair<eDirection, std::pair<int, int>>> PathFinding::getPathToTil
 					{
 						//calculates cost based on G(cost of moving to a tile)
 						//and H(diagonal distance between the tile and the destination)
-						successorG =  1.0;
+						successorG = 1.0;
 						successorH = calculateHeuristicValue(x, y, dest);
 						successorF = successorG + successorH;
 
