@@ -194,8 +194,17 @@ std::deque<std::pair<eDirection, std::pair<int, int>>> PathFinding::getPathToTil
 						//and H(diagonal distance between the tile and the destination)
 						successorG = cellDetails[i][j].m_g + 1.0;
 						successorH = calculateHeuristicValue(x, y, dest);
-						successorF = successorG + successorH;
+						unsigned int diff = std::abs(cellDetails[i][j].m_direction - (eDirection)cellIndex);
+						int rotationCost = 0;
+						if (diff != 0)
+						{
+							//number of direction % difference between the new and old directions
+							rotationCost = (static_cast<int>(eDirection::eNorthWest) % diff) + 1;
+						}
 
+						successorF = successorG + successorH + rotationCost;
+						
+						
 						//if a lower cost is found added it to the open list and update cellDetail
 						if (cellDetails[x][y].m_f == FLT_MAX || cellDetails[x][y].m_f > successorF)
 						{
