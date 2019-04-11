@@ -83,19 +83,23 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 			source.m_entityOnTile->m_entityProperties.m_movementPointsUsed << "\n";
 		source.m_entityOnTile->m_battleProperties.m_maxPathSize = i;
 
-		if (source.m_entityOnTile->m_entityProperties.m_movementPointsUsed >=
+		if (source.m_entityOnTile->m_entityProperties.m_movementPointsUsed <=
 			source.m_entityOnTile->m_entityProperties.m_movementPoints+1 )
 		{
-			std::cout << "no more moves \n";
+			auto tileScreenPosition = map.getTileScreenPos(pathToTile[i].second);
+			m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
+				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
+				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
+			m_movementPath[i - 1].activate = true;
 			
+			
+		}
+		else
+		{
 			return;
 		}
 
-		auto tileScreenPosition = map.getTileScreenPos(pathToTile[i].second);
-		m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
-			static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
-			static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
-		m_movementPath[i - 1].activate = true;
+		
 	}
 
 
