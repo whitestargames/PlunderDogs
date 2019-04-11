@@ -67,8 +67,7 @@ struct EntityProperties
 	int m_damage;
 	eDirection m_direction;
 	eDirection m_PrevDirection;
-	int m_movementPointsUsed;
-	int m_currentMovementRotation;
+	
 };
 
 struct BattleEntity
