@@ -16,7 +16,8 @@ EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosit
 	m_movementTimer(0.35f),
 	m_movedToDestination(false),
 	m_movementPath(),
-	m_maxPathSize(0)
+	m_maxPathSize(0),
+	m_direction(eDirection::eNorth)
 {}
 
 //MOVEMENT PATH NODE
@@ -61,48 +62,38 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 	clearPath();
 
 	int bonusMove = 0;
+	int movementPointsUsed = 0;
+	int prevDir = source.m_entityOnTile->m_battleProperties.m_direction;
 	//Don't interact with path from source.
 	for (int i = 1; i < pathToTile.size(); ++i)
 	{
-		int bonusMove = 0;
-		int movementPointsUsed = 0;
-		int prevDir = source.m_entityOnTile->m_entityProperties.m_direction;
-		//Don't interact with path from source.
-		for (int i = 1; i < pathToTile.size(); ++i)
+		++movementPointsUsed;
+
+		int pathDir = pathToTile[i].first;
+		int movementCost = getDirectionCost(prevDir, pathDir);
+		prevDir = pathToTile[i - 1].first;
+
+		movementPointsUsed += movementCost;
+
+		//if (source.m_entityOnTile->m_entityProperties.m_direction == map.getWindDirection() && bonusMove == 0)
+		//{
+		//    bonusMove = (int)source.m_entityOnTile->m_entityProperties.m_movementPoints * map.getWindStrength();
+		//    source.m_entityOnTile->m_entityProperties.m_movementPointsUsed -= bonusMove;
+		//}
+
+
+		if (movementPointsUsed >=
+			source.m_entityOnTile->m_entityProperties.m_movementPoints + 1)
 		{
-			++movementPointsUsed;
-
-			
-			int pathDir = pathToTile[i].first;
-			int movementCost = getDirectionCost(prevDir, pathDir);
-
-
-			movementPointsUsed += movementCost;
-
-			//if (source.m_entityOnTile->m_entityProperties.m_direction == map.getWindDirection() && bonusMove == 0)
-			//{
-			//    bonusMove = (int)source.m_entityOnTile->m_entityProperties.m_movementPoints * map.getWindStrength();
-			//    source.m_entityOnTile->m_entityProperties.m_movementPointsUsed -= bonusMove;
-			//}
-
-
-			if (movementPointsUsed <=
-				source.m_entityOnTile->m_entityProperties.m_movementPoints + 1)
-			{
-				auto tileScreenPosition = map.getTileScreenPos(pathToTile[i].second);
-				m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
-					static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
-					static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
-				m_movementPath[i - 1].activate = true;
-			}
-			else
-			{
-				return;
-			}
-
-		
+			//std::cout << "no more moves \n";
+			return;
 		}
-		
+
+		auto tileScreenPosition = map.getTileScreenPos(pathToTile[i].second);
+		m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
+			static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
+			static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
+		m_movementPath[i - 1].activate = true;
 	}
 
 
@@ -178,10 +169,7 @@ EntityProperties::EntityProperties()
 	m_healthMax(20),
 	m_currentHealth(20),
 	m_range(4),
-	m_damage(5),
-	m_direction(eDirection::eNorth),
-	m_PrevDirection(eDirection::eNorth)
-	
+	m_damage(5)
 {
 	m_sprite->GetTransformComp().SetOrigin({ 13, 25 });
 }

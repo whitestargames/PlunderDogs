@@ -53,6 +53,8 @@ struct EntityBattleProperties
 	bool m_movedToDestination;
 	MovementPath m_movementPath;
 	int m_maxPathSize;
+	eDirection m_direction;
+	
 };
 
 struct EntityProperties
@@ -65,8 +67,7 @@ struct EntityProperties
 	int m_currentHealth;
 	int m_range;
 	int m_damage;
-	eDirection m_direction;
-	eDirection m_PrevDirection;
+	
 	
 };
 
