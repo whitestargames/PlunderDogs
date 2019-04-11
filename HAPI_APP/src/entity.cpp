@@ -16,7 +16,7 @@ EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosit
 	m_movementTimer(0.35f),
 	m_movedToDestination(false),
 	m_movementPath(),
-	m_maxPathSize(0),
+	m_movementPathSize(0),
 	m_direction(eDirection::eNorth)
 {}
 
@@ -71,7 +71,7 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 
 		int pathDir = pathToTile[i].first;
 		int movementCost = getDirectionCost(prevDir, pathDir);
-		prevDir = pathToTile[i - 1].first;
+		prevDir = pathDir;
 
 		movementPointsUsed += movementCost;
 
@@ -81,19 +81,24 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 		//    source.m_entityOnTile->m_entityProperties.m_movementPointsUsed -= bonusMove;
 		//}
 
-
-		if (movementPointsUsed >=
-			source.m_entityOnTile->m_entityProperties.m_movementPoints + 1)
+		source.m_entityOnTile->m_battleProperties.m_movementPathSize = i;
+		if (movementPointsUsed <=
+			source.m_entityOnTile->m_entityProperties.m_movementPoints )
 		{
-			//std::cout << "no more moves \n";
+			auto tileScreenPosition = map.getTileScreenPos(pathToTile[i].second);
+			m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
+				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
+				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
+			m_movementPath[i - 1].activate = true;
+
+		}
+		else
+		{
+						//std::cout << "no more moves \n";
 			return;
 		}
 
-		auto tileScreenPosition = map.getTileScreenPos(pathToTile[i].second);
-		m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
-			static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
-			static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
-		m_movementPath[i - 1].activate = true;
+		
 	}
 
 

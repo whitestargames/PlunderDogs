@@ -52,7 +52,7 @@ struct EntityBattleProperties
 	Timer m_movementTimer;
 	bool m_movedToDestination;
 	MovementPath m_movementPath;
-	int m_maxPathSize;
+	int m_movementPathSize;
 	eDirection m_direction;
 	
 };

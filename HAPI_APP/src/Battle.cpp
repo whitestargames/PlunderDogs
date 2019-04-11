@@ -39,7 +39,7 @@ void Battle::update(float deltaTime)
 
 void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
 {
-	entity.m_battleProperties.moveEntity(m_map, destination, entity.m_battleProperties.m_maxPathSize);
+	entity.m_battleProperties.moveEntity(m_map, destination, entity.m_battleProperties.m_movementPathSize);
 	
 }
 
