@@ -137,6 +137,7 @@ std::deque<std::pair<eDirection, std::pair<int, int>>> PathFinding::getPathToTil
 	cellDetails[i][j].m_h = 0.0;
 	cellDetails[i][j].m_parent_i = i;
 	cellDetails[i][j].m_parent_j = j;
+	cellDetails[i][j].m_direction = map.getTile(src)->m_entityOnTile->m_entityProperties.m_direction;
 
 	//bool closedList[size][size];
 	std::vector < std::vector<bool>> closedList;
@@ -151,6 +152,7 @@ std::deque<std::pair<eDirection, std::pair<int, int>>> PathFinding::getPathToTil
 	openList.insert(std::make_pair(0.0, std::make_pair(i, j)));
 
 	bool destFound = false;
+	bool passed = false;
 	std::deque<std::pair<eDirection, std::pair<int, int>>> path;
 	while (!openList.empty())
 	{
@@ -164,8 +166,8 @@ std::deque<std::pair<eDirection, std::pair<int, int>>> PathFinding::getPathToTil
 		{
 			std::vector<const Tile*> adjacentCells = map.getAdjacentTiles(std::pair<int, int>(i, j));
 
-			double successorG, successorH, successorF;
-
+			double successorG = 0.0, successorH = 0.0, successorF = 0.0;
+			
 			for (int cellIndex = 0; cellIndex < adjacentCells.size(); cellIndex++)
 			{
 				 //Cell doesn't exist
@@ -194,17 +196,21 @@ std::deque<std::pair<eDirection, std::pair<int, int>>> PathFinding::getPathToTil
 						//and H(diagonal distance between the tile and the destination)
 						successorG = cellDetails[i][j].m_g + 1.0;
 						successorH = calculateHeuristicValue(x, y, dest);
-						unsigned int diff = std::abs(cellDetails[i][j].m_direction - (eDirection)cellIndex);
+						
 						int rotationCost = 0;
-						if (diff != 0)
+						if (passed)
 						{
-							//number of direction % difference between the new and old directions
-							rotationCost = (static_cast<int>(eDirection::eNorthWest) % diff) + 1;
+							unsigned int diff = std::abs(cellDetails[i][j].m_direction - (eDirection)cellIndex);
+							if (diff != 0)
+							{
+								//number of direction % difference between the new and old directions
+								rotationCost = (static_cast<int>(eDirection::eNorthWest) % diff) + 1;
+							}
 						}
-
+						
+						
 						successorF = successorG + successorH + rotationCost;
-						
-						
+
 						//if a lower cost is found added it to the open list and update cellDetail
 						if (cellDetails[x][y].m_f == FLT_MAX || cellDetails[x][y].m_f > successorF)
 						{
@@ -219,6 +225,7 @@ std::deque<std::pair<eDirection, std::pair<int, int>>> PathFinding::getPathToTil
 					}
 				}
 			}
+			passed = true;
 		}
 	}
 	
