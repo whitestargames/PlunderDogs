@@ -75,11 +75,12 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 
 		movementPointsUsed += movementCost;
 
-		//if (source.m_entityOnTile->m_entityProperties.m_direction == map.getWindDirection() && bonusMove == 0)
-		//{
-		//    bonusMove = (int)source.m_entityOnTile->m_entityProperties.m_movementPoints * map.getWindStrength();
-		//    source.m_entityOnTile->m_entityProperties.m_movementPointsUsed -= bonusMove;
-		//}
+		if (prevDir == map.getWindDirection() && bonusMove == 0)
+		{
+			bonusMove = (int)source.m_entityOnTile->m_entityProperties.m_movementPoints * map.getWindStrength();
+			movementPointsUsed -= bonusMove;
+			std::cout << prevDir << "\n";
+		}
 
 		source.m_entityOnTile->m_battleProperties.m_movementPathSize = i;
 		if (movementPointsUsed <=
@@ -94,7 +95,6 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 		}
 		else
 		{
-						//std::cout << "no more moves \n";
 			return;
 		}
 
@@ -164,7 +164,7 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 	}
 
 	//number of direction % difference between the new and old directions
-	return (static_cast<int>(eDirection::eNorthWest) % diff) + 1;
+	return (static_cast<int>(eDirection::Max) % diff) + 1;
 }
 
 //ENTITY

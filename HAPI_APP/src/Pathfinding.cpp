@@ -204,13 +204,10 @@ std::deque<std::pair<eDirection, std::pair<int, int>>> PathFinding::getPathToTil
 							if (diff != 0)
 							{
 								//number of direction % difference between the new and old directions
-								rotationCost = (static_cast<int>(eDirection::eNorthWest) % diff) + 1;
+								rotationCost = (static_cast<int>(eDirection::Max) % diff) + 1;
 							}
 						}
-						
-						
 						successorF = successorG + successorH + rotationCost;
-
 						//if a lower cost is found added it to the open list and update cellDetail
 						if (cellDetails[x][y].m_f == FLT_MAX || cellDetails[x][y].m_f > successorF)
 						{

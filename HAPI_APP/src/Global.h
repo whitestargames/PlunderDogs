@@ -7,7 +7,8 @@ enum eDirection
 	eSouthEast,
 	eSouth,
 	eSouthWest,
-	eNorthWest
+	eNorthWest, 
+	Max = eNorthWest
 };
 
 enum OverWorldWindow
