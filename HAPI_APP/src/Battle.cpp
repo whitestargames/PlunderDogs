@@ -67,7 +67,7 @@ void Battle::updateMovementPhase(float deltaTime)
 	int entityReachedDestination = 0;
 	for (auto& entity : m_entities)
 	{
-		entity->m_battleProperties.update(deltaTime, m_map);
+		entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties);
 		if (entity->m_battleProperties.m_movedToDestination)
 		{
 			++entityReachedDestination;

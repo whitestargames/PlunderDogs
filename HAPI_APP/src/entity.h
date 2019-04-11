@@ -9,6 +9,19 @@
 
 struct Tile;
 class Map;
+struct EntityProperties
+{
+	EntityProperties();
+
+	std::shared_ptr<HAPISPACE::Sprite> m_sprite;
+	int m_movementPoints;
+	int m_healthMax;
+	int m_currentHealth;
+	int m_range;
+	int m_damage;
+
+
+};
 struct EntityBattleProperties
 {
 	class MovementPath
@@ -37,7 +50,7 @@ struct EntityBattleProperties
 
 	EntityBattleProperties(std::pair<int, int> startingPosition);
 
-	void update(float deltaTime, const Map& map);
+	void update(float deltaTime, const Map& map, EntityProperties& entityProperties);
 
 	void render(std::shared_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
 
@@ -57,19 +70,7 @@ struct EntityBattleProperties
 	
 };
 
-struct EntityProperties
-{
-	EntityProperties();
 
-	std::shared_ptr<HAPISPACE::Sprite> m_sprite;
-	int m_movementPoints;
-	int m_healthMax;
-	int m_currentHealth;
-	int m_range;
-	int m_damage;
-	
-	
-};
 
 struct BattleEntity
 {
