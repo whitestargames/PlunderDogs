@@ -207,7 +207,13 @@ std::deque<std::pair<eDirection, std::pair<int, int>>> PathFinding::getPathToTil
 								rotationCost = (static_cast<int>(eDirection::Max) % diff) + 1;
 							}
 						}
-						successorF = successorG + successorH + rotationCost;
+						eDirection windDirection = map.getWindDirection();
+						float windSpeed = 0;
+						if ((eDirection)cellIndex == windDirection)
+						{
+							windSpeed = map.getWindStrength();
+						}
+						successorF = (successorG + successorH + rotationCost) - windSpeed;
 						//if a lower cost is found added it to the open list and update cellDetail
 						if (cellDetails[x][y].m_f == FLT_MAX || cellDetails[x][y].m_f > successorF)
 						{
