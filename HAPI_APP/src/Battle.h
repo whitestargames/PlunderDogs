@@ -4,19 +4,6 @@
 #include "entity.h"
 #include "BattleUI.h"
 
-struct Weapon
-{
-	// names temp mocking together 
-	// basic cannon uses the cone from the map 
-	void generateWeaponArea();// this will depend on weapon will take an enum corresponds to type of ship enemy has
-	void selectTarget();// will be in the battle phase  checks entity there 
-	void updateDamage();// does an amount of damage determined by weapon type 
-
-};
-
-
-
-
 enum class BattlePhase
 {
 	Movement = 0,
