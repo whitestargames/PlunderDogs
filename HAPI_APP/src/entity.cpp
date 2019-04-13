@@ -231,9 +231,7 @@ void Weapons::generateWeaponArea()
 {
 }
 
-void Weapons::selectTarget()
-{
-}
+
 
 void Weapons::updateDamage()
 {
