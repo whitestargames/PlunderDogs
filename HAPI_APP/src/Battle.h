@@ -4,6 +4,7 @@
 #include "entity.h"
 #include "BattleUI.h"
 
+
 enum class BattlePhase
 {
 	Movement = 0,
