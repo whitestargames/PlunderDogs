@@ -94,3 +94,7 @@ BattlePhase Battle::getCurrentPhase() const
 {
 	return m_currentPhase;
 }
+
+void Weapon::getCannonArea()
+{
+}
