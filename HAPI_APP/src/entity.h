@@ -8,6 +8,7 @@
 #include "Global.h"
 
 struct Tile;
+struct Weapons;
 class Map;
 struct EntityBattleProperties
 {
@@ -54,7 +55,7 @@ struct EntityBattleProperties
 	MovementPath m_movementPath;
 	int m_movementPathSize;
 	eDirection m_direction;
-	
+	std::vector < std::pair<int, int>>m_weaponArea; // going to hold the area available to shoot for each entity
 };
 
 struct EntityProperties
@@ -87,6 +88,8 @@ struct Weapons
 	// basic cannon uses the cone from the map 
 	void generateWeaponArea();// this will depend on weapon will take an enum corresponds to type of ship enemy has
 	void selectTarget();// will be in the battle phase  checks entity there 
-	void updateDamage();// does an amount of damage determined by weapon type 
+	void updateDamage();// does an amount of damage determined by weapon type
+						// so weapons when switched to battle phase all entitys create a vector of applicable weapon locations
+						// only selected is presented .
 
 };

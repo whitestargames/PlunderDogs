@@ -226,3 +226,15 @@ void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, 
 	sprite->Render(SCREEN_SURFACE);
 	m_movementPath.render();
 }
+
+void Weapons::generateWeaponArea()
+{
+}
+
+void Weapons::selectTarget()
+{
+}
+
+void Weapons::updateDamage()
+{
+}
