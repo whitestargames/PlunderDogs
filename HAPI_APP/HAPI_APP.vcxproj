@@ -187,7 +187,6 @@
     <ClCompile Include="src\Utilities\tinyxmlerror.cpp" />
     <ClCompile Include="src\Utilities\tinyxmlparser.cpp" />
     <ClCompile Include="src\Utilities\Utilities.cpp" />
-    <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Battle.h" />
@@ -205,7 +204,6 @@
     <ClInclude Include="src\Utilities\MapParser.h" />
     <ClInclude Include="src\Utilities\tinyxml.h" />
     <ClInclude Include="src\Utilities\Utilities.h" />
-    <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
