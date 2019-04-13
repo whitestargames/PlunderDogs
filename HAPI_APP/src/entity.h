@@ -88,6 +88,11 @@ struct Weapons
 	// basic cannon uses the cone from the map 
 	void generateWeaponArea();// this will depend on weapon will take an enum corresponds to type of ship enemy has
 	void updateDamage();// does an amount of damage determined by weapon type
+
+	
+	//generate weapon currently will use map getcone to generate the vector of applicable tiles  withtin range
+	// update damage will take the current entitys damage and take that from the selected entitys health 
+	// so that will take two entities as variables
 					
 
 };
