@@ -211,7 +211,6 @@ void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProp
 
 			int directionToTurn = 0;
 			int rotationAngle = 60;
-
 			m_currentPosition = m_pathToTile.front().second;
 			m_movementPath.eraseNode(m_currentPosition, map);
 			directionToTurn = m_pathToTile.front().first;
@@ -248,18 +247,18 @@ EntityBattleProperties::Weapon::WeaponHighlightNode::WeaponHighlightNode() //cre
 	activate(false){}
 
 EntityBattleProperties::Weapon::Weapon() //populating vector with inactive nodes
-	: m_WeaponHighlightArea()
+	: m_spriteTargetStorage()
 {
-	m_WeaponHighlightArea.reserve(size_t(WEAPON_HIGHLIGHT_SIZE));
+	m_spriteTargetStorage.reserve(size_t(WEAPON_HIGHLIGHT_SIZE));
 	for (int i = 0; i < WEAPON_HIGHLIGHT_SIZE; ++i)
 	{
-		m_WeaponHighlightArea.push_back({});
+		m_spriteTargetStorage.push_back({});
 	}
 }
 
 void EntityBattleProperties::Weapon::render() const
 {
-	for (const auto& i : m_WeaponHighlightArea)
+	for (const auto& i : m_spriteTargetStorage)
 	{
 		if (i.activate)
 		{
@@ -268,35 +267,30 @@ void EntityBattleProperties::Weapon::render() const
 	}
 }
 
-void EntityBattleProperties::Weapon::generateGunArea(const Map &map, const Tile& source) 
-{
-	auto gunArea = map.getTileCone(source.m_tileCoordinate,source.m_entityOnTile->m_entityProperties.m_range,source.m_entityOnTile->m_battleProperties.m_direction);
-
-	if (gunArea.empty())
+void EntityBattleProperties::Weapon::generateTargetArea(const Map &map, const Tile& source)
+{//variable below stores the tile cones coming from the ship 
+	auto m_tempTargetArea = map.getTileCone(source.m_tileCoordinate,source.m_entityOnTile->m_entityProperties.m_range,source.m_entityOnTile->m_battleProperties.m_direction);
+	if (m_tempTargetArea.empty())
 	{
 		return;
 	}
-	clearHighlight();
-
-	for (int i = 0; i < gunArea.size(); i++)
+	clearGunArea();
+	for (int i = 0; i < m_tempTargetArea.size(); i++)
 	{
-		std::pair<int,int>tilePos = map.getTileScreenPos(gunArea[i]->m_tileCoordinate);
-		m_WeaponHighlightArea[i].sprite->GetTransformComp().SetPosition(
+		std::pair<int,int>tilePos = map.getTileScreenPos(m_tempTargetArea[i]->m_tileCoordinate);
+		m_spriteTargetStorage[i].sprite->GetTransformComp().SetPosition(
 		{
 		 tilePos.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),
 		 tilePos.second + DRAW_ENTITY_OFFSET_X * map.getDrawScale()
 		});
-
-		m_WeaponHighlightArea[i].activate = true;
+		m_spriteTargetStorage[i].activate = true;
 	}
-
 }
 
-void EntityBattleProperties::Weapon::clearHighlight()
+void EntityBattleProperties::Weapon::clearGunArea()
 {
-	for (auto& i : m_WeaponHighlightArea)
+	for (auto& i : m_spriteTargetStorage)
 	{
 		i.activate = false;
 	}
-
 }

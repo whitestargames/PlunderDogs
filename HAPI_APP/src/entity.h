@@ -37,11 +37,10 @@ struct EntityBattleProperties
 	public:
 		Weapon();
 		void render() const;
-		void generateGunArea(const Map& map, const Tile& source);//using same convention as movement // from source should be able to get position
-		void clearHighlight();
-
+		void generateTargetArea(const Map& map, const Tile& source);//using same convention as movement // from source should be able to get position
 	private:
-		std::vector<WeaponHighlightNode> m_WeaponHighlightArea;
+		std::vector<WeaponHighlightNode> m_spriteTargetStorage;
+		void clearGunArea();
 	};
 
 	class MovementPath
