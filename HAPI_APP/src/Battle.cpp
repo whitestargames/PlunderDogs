@@ -51,10 +51,7 @@ void Battle::activateEntityWeapon(BattleEntity & entity)
 
 void Battle::insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties)
 {
-	auto entity = std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map);
-
-
-	m_entities.push_back(std::move(entity));
+	m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map));
 }
 
 void Battle::nextPhase()
