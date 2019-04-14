@@ -260,9 +260,9 @@ void EntityBattleProperties::Weapon::render() const
 	}
 }
 
-void EntityBattleProperties::Weapon::generateGunArea(const Map &map, const Tile& source)
+void EntityBattleProperties::Weapon::generateGunArea(const Map &map, const Tile& source) 
 {
-	auto gunArea = map.getTileCone(source.m_tileCoordinate,source.m_entityOnTile->m_entityProperties.m_range,source.m_entityOnTile->m_battleProperties.m_direction);//bug here because is const doesnt like to run though get tile cone ?
+	auto gunArea = map.getTileCone(source.m_tileCoordinate,source.m_entityOnTile->m_entityProperties.m_range,source.m_entityOnTile->m_battleProperties.m_direction);
 
 	if (gunArea.empty())
 	{
@@ -272,11 +272,7 @@ void EntityBattleProperties::Weapon::generateGunArea(const Map &map, const Tile&
 
 	for (int i = 0; i < gunArea.size(); i++)
 	{
-		//need to talk to designer about other weapons
-		// logic for adding and setting position done here  should work for setting all weapon ranges just needs to be implemented in battlephas
-		// this just generates the spots available to hit player damage is simple then just if there on an applicable tile have a damage function which takes 2 entities and does a set damage to one
 		std::pair<int,int>tilePos = map.getTileScreenPos(gunArea[i]->m_tileCoordinate);
-
 		m_WeaponHighlightArea[i].sprite->GetTransformComp().SetPosition(
 		{
 		 tilePos.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),

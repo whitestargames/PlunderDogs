@@ -115,7 +115,6 @@ void BattleUI::handleOnMouseMoveMovementPhase()
 			else
 			{
 				m_currentTileSelected->m_entityOnTile->m_battleProperties.generateMovementGraph(m_battle.getMap(), *m_currentTileSelected, *tile);
-				m_currentTileSelected->m_entityOnTile->m_battleProperties.generateWeaponArea(m_battle.getMap(), *m_currentTileSelected);
 				m_invalidPositionSprite.m_activate = false;
 			}
 		}
