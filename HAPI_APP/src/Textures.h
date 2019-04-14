@@ -85,6 +85,13 @@ struct Textures
 			HAPI_Sprites.UserMessage("Connot Load: 'ship.xml'", "Texture Error");
 			return false;
 		}
+		
+		m_spawnHex = HAPI_Wrapper::loadSpriteSheet("spawnHex.png");
+		if (!m_spawnHex)
+		{
+			HAPI_Sprites.UserMessage("Connot Load: 'ship.xml'", "Texture Error");
+			return false;
+		}
 
 		return true;
 	}
@@ -98,5 +105,6 @@ struct Textures
 	static std::shared_ptr<SpriteSheet> m_thing;
 	static std::shared_ptr<SpriteSheet> m_hexTiles;
 	static std::shared_ptr<SpriteSheet> m_ship;
+	static std::shared_ptr<SpriteSheet> m_spawnHex;
 
 };
