@@ -228,9 +228,11 @@ void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, 
 	m_movementPath.render();
 	m_weapon.render();
 }
+
 //
 //WEAPON
 //
+
 EntityBattleProperties::Weapon::HighlightNode::HighlightNode() //creating highlight node 
 	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),
 	activate(false)
