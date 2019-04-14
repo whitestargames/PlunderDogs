@@ -16,12 +16,14 @@ private:
 	std::vector<EntityProperties>& m_entities;
 	std::vector<EntityProperties*> m_selectedEntities;
 	EntityProperties* m_currentlySelected;
+	bool m_enitiesAdded;
 
 	std::unique_ptr<Sprite> m_battleMapBackground;
 	std::unique_ptr<Sprite> m_enemyTerritoryHexSheet;
 	std::unique_ptr<Sprite> m_prebattleUIBackground;
 	std::unique_ptr<Sprite> m_playButton;
 	std::unique_ptr<Sprite> m_backButton;
+
 
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;

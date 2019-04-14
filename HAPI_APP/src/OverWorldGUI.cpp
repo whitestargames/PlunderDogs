@@ -19,7 +19,8 @@ OverWorldGUI::OverWorldGUI(std::vector<EntityProperties>& entities)
 	m_backButton(std::make_unique<Sprite>(Textures::m_preBattleUIBackButton)),
 	fleetWindowSkinName(UI.LoadSkin(Utilities::getDataDirectory() + "fleetWindowSkin.xml")),
 	fleetWindowSliderSkinName(UI.LoadSkin(Utilities::getDataDirectory() + "fleetWindowSliderSkin.xml")),
-	m_currentlySelected(nullptr)
+	m_currentlySelected(nullptr),
+	m_enitiesAdded(false)
 {
 	HAPI_Wrapper::setPosition(m_enemyTerritoryHexSheet, { 100, 600 });
 	HAPI_Wrapper::setPosition(m_playButton, { 1150, 722 });
@@ -53,14 +54,20 @@ void OverWorldGUI::render(Battle& battle)
 				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 445), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_movementPoints), 50);
 				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 535), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_range), 50);
 			}
+			
 			break;
 		}
 		case OverWorldWindow::eBattle:
 		{
-			for (auto& se : m_selectedEntities)
+			if (!m_enitiesAdded)
 			{
-				battle.insertEntity({rand()%32, rand()%32}, *se);
+				for (auto& se : m_selectedEntities)
+				{
+					battle.insertEntity({ rand() % 32, rand() % 32 }, *se);
+				}
+				m_enitiesAdded = true;
 			}
+			
 			battle.render();
 			break;
 		}
