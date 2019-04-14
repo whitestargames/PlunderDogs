@@ -31,11 +31,13 @@ void BattleUI::InvalidPositionSprite::setPosition(std::pair<int, int> screenPosi
 		(float)screenPosition.second + DRAW_OFFSET_Y * mapDrawScale });
 }
 
-BattleUI::BattleUI(Battle & battle)
+BattleUI::BattleUI(Battle & battle, std::vector<EntityProperties*>& selectedEntities)
 	: m_battle(battle),
 	m_currentTileSelected(nullptr),
 	m_invalidPositionSprite()
-{}
+{
+	int i = 0;
+}
 
 void BattleUI::render() const
 {

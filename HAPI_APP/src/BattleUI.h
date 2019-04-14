@@ -5,6 +5,8 @@
 
 struct Tile;
 class Battle;
+struct EntityProperties;
+
 class BattleUI : public IHapiSpritesInputListener
 {
 	struct InvalidPositionSprite
@@ -19,7 +21,7 @@ class BattleUI : public IHapiSpritesInputListener
 	};
 
 public:
-	BattleUI(Battle& battle);
+	BattleUI(Battle& battle, std::vector<EntityProperties*>& selectedEntities);
 
 	void render() const;
 

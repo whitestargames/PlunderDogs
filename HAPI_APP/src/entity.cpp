@@ -177,11 +177,11 @@ EntityProperties::EntityProperties()
 	m_range(4),
 	m_damage(5)
 {
-	m_sprite->GetTransformComp().SetOrigin({ 13, 25 });
+
 }
 
-BattleEntity::BattleEntity(std::pair<int, int> startingPosition, Map& map)
-	: m_entityProperties(),
+BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map)
+	: m_entityProperties(entityProperties),
 	m_battleProperties(startingPosition)
 {
 	map.insertEntity(*this);
@@ -197,6 +197,7 @@ void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProp
 			m_movementTimer.reset();
 
 			int directionToTurn = 0;
+			
 			int rotationAngle = 60;
 			m_currentPosition = m_pathToTile.front().second;
 			m_movementPath.eraseNode(m_currentPosition, map);

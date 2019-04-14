@@ -10,12 +10,11 @@
 struct EntityProperties;
 class OverWorld;
 class Battle;
-class OverWorldGUI : public IHapiSpritesInputListener
+class OverWorldGUI 
 {
 private:
-	std::vector<EntityProperties>& m_entities;
-	std::vector<EntityProperties*> m_selectedEntities;
 	EntityProperties* m_currentlySelected;
+	bool m_enitiesAdded;
 
 	std::unique_ptr<Sprite> m_battleMapBackground;
 	std::unique_ptr<Sprite> m_enemyTerritoryHexSheet;
@@ -23,12 +22,7 @@ private:
 	std::unique_ptr<Sprite> m_playButton;
 	std::unique_ptr<Sprite> m_backButton;
 
-	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
-	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
-	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 
-	void onLeftClick(const HAPI_TMouseData& mouseData);
-	void onRightClick(const HAPI_TMouseData& mouseData);
 
 	void positionEntity(const std::string& windowName, const std::string& windowSliderName, const std::string& windowObjectName, int objectNumber, size_t vectorSize);
 	float getWindowSliderValue(const std::string &windowName, const std::string &windowSliderName) const;
@@ -52,8 +46,14 @@ private:
 
 public:
 	static OverWorldWindow CURRENT_WINDOW;
-
 	OverWorldGUI(std::vector<EntityProperties>& entities);
 
-	void render(Battle& battle);
+	void onLeftClick(const HAPI_TMouseData& mouseData, std::vector<EntityProperties>& entities,
+		std::vector<EntityProperties*>& selectedEntities, bool& startBattle);
+	void onRightClick(const HAPI_TMouseData& mouseData, std::vector<EntityProperties>& entities,
+		std::vector<EntityProperties*>& selectedEntities);
+	void onMouseMove(const HAPI_TMouseData& mouseData, std::vector<EntityProperties>& entities,
+		std::vector<EntityProperties*>& selectedEntities);
+
+	void render(std::unique_ptr<Battle>& battle);
 };

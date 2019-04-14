@@ -6,15 +6,15 @@
 using namespace HAPISPACE;
 
 
-Battle::Battle() :
+Battle::Battle(std::vector<EntityProperties*>& selectedEntities) :
 	m_entities(),
 	m_map(MapParser::parseMap("Level1.tmx")),
-	m_battleUI(*this),
-	m_currentPhase(BattlePhase::Movement)
+	m_battleUI(*this, selectedEntities),
+	m_currentPhase(BattlePhase::ShipPlacement)
 {
-	insertEntity({ 5, 15 });
+	/*insertEntity({ 5, 15 });
 	insertEntity({ 4, 4 });
-	insertEntity({ 8, 8 });
+	insertEntity({ 8, 8 });*/
 }
 
 void Battle::render() const
@@ -49,9 +49,12 @@ void Battle::activateEntityWeapon(BattleEntity & entity)
 
 }
 
-void Battle::insertEntity(std::pair<int, int> startingPosition)
+void Battle::insertEntity(std::pair<int, int> startingPosition, EntityProperties entityProperties)
 {
 	auto entity = std::make_unique<BattleEntity>(startingPosition, m_map);
+	entity->m_entityProperties.m_sprite->GetTransformComp().SetOrigin({ 13, 25 });
+	entity->m_entityProperties.m_sprite->GetTransformComp().SetScaling({ 1,1 });
+
 	m_entities.push_back(std::move(entity));
 }
 
@@ -93,3 +96,7 @@ BattlePhase Battle::getCurrentPhase() const
 	return m_currentPhase;
 }
 
+void Battle::start()
+{
+	assert(m_currentPhase == BattlePhase::ShipPlacement);
+}
