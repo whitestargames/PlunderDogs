@@ -61,19 +61,19 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 		{
 		case BattlePhase::Movement:
 		{
-			handleOnLeftClickMovementPhase();
+			onLeftClickMovementPhase();
 			break;
 		}
 		case BattlePhase::Attack :
 		{
-			handleOnLeftClickAttackPhase();
+			onLeftClickAttackPhase();
 			break;
 		}
 		}
 	}
 	else if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
-		handleOnRightClickMovementPhase();
+		onRightClickMovementPhase();
 	}
 }
 
@@ -86,15 +86,25 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 
 	switch (m_battle.getCurrentPhase())
 	{
+	case BattlePhase::ShipPlacement :
+	{
+
+		break;
+	}
 	case BattlePhase::Movement :
 	{
-		handleOnMouseMoveMovementPhase();
+		onMouseMoveMovementPhase();
 		break;
 	}
 	}
 }
 
-void BattleUI::handleOnMouseMoveMovementPhase()
+void BattleUI::onMouseMoveShipPlacementPhase()
+{
+
+}
+
+void BattleUI::onMouseMoveMovementPhase()
 {
 	if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile && !m_currentTileSelected->m_entityOnTile->m_battleProperties.m_movedToDestination)
 	{
@@ -123,7 +133,7 @@ void BattleUI::handleOnMouseMoveMovementPhase()
 	}
 }
 
-void BattleUI::handleOnLeftClickMovementPhase()
+void BattleUI::onLeftClickMovementPhase()
 {
 	const Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 	
@@ -169,7 +179,7 @@ void BattleUI::handleOnLeftClickMovementPhase()
 	}
 }
 
-void BattleUI::handleOnRightClickMovementPhase()
+void BattleUI::onRightClickMovementPhase()
 {
 	//Cancel selected Entity
 	if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile)
@@ -181,7 +191,7 @@ void BattleUI::handleOnRightClickMovementPhase()
 	m_currentTileSelected = nullptr;
 }
 
-void BattleUI::handleOnLeftClickAttackPhase()
+void BattleUI::onLeftClickAttackPhase()
 {
 	const Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 	if (!tile)

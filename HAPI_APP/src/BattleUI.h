@@ -36,11 +36,14 @@ private:
 	const Tile* m_currentTileSelected;
 	InvalidPositionSprite m_invalidPositionSprite;
 
+	//ShipPlacement Phase
+	void onMouseMoveShipPlacementPhase();
+
 	//Movement Phase
-	void handleOnMouseMoveMovementPhase();
-	void handleOnLeftClickMovementPhase();
-	void handleOnRightClickMovementPhase();
+	void onMouseMoveMovementPhase();
+	void onLeftClickMovementPhase();
+	void onRightClickMovementPhase();
 
 	//Attack Phase
-	void handleOnLeftClickAttackPhase();
+	void onLeftClickAttackPhase();
 };
