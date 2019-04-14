@@ -198,7 +198,7 @@ std::vector<Tile*> Map::getTileRadius(intPair coord, int range)
 	return tileStore;
 }
 
-std::vector<Tile*> Map::getTileCone(intPair coord, int range, eDirection direction)
+std::vector< Tile*> Map::getTileCone(intPair coord, int range, eDirection direction)
 {
 	if (range < 1)
 		HAPI_Sprites.UserMessage("getTileCone range less than 1", "Map error");
@@ -209,6 +209,46 @@ std::vector<Tile*> Map::getTileCone(intPair coord, int range, eDirection directi
 		reserveSize += 2 * i;
 	}
 	std::vector<Tile*> tileStore;
+	tileStore.reserve((size_t)reserveSize);
+
+	const intPair cubeCoord(offsetToCube(coord));
+
+	for (int y = std::max(0, coord.second - range - 1);
+		y < std::min(m_mapDimensions.second, coord.second + range + 2);
+		y++)
+	{
+		for (int x = std::max(0, coord.first - range - 1);
+			x < std::min(m_mapDimensions.first, coord.first + range + 2);
+			x++)
+		{
+			if (!(coord.first == x && coord.second == y))//If not the tile at the centre
+			{
+				intPair tempCube(offsetToCube(intPair(x, y)));
+				if (cubeDistance(cubeCoord, tempCube) <= range)
+				{
+					if (inCone(cubeCoord, tempCube, direction))
+					{
+						tileStore.push_back(getTile(intPair(x, y)));
+						//std::cout << "CubeCheck " << x << ", " << y << std::endl;//Test
+					}
+				}
+			}
+		}
+	}
+	return tileStore;
+}
+
+std::vector<const Tile*> Map::getTileCone(intPair coord, int range, eDirection direction) const
+{
+	if (range < 1)
+		HAPI_Sprites.UserMessage("getTileCone range less than 1", "Map error");
+
+	int reserveSize{ 0 };
+	for (int i = 2; i < range + 2; i++)
+	{
+		reserveSize += 2 * i;
+	}
+	std::vector<const Tile*> tileStore;
 	tileStore.reserve((size_t)reserveSize);
 
 	const intPair cubeCoord(offsetToCube(coord));

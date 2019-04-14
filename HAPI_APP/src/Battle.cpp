@@ -46,6 +46,7 @@ void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
 void Battle::activateEntityWeapon(BattleEntity & entity)
 {
 	//TODO: implement attack enemy stuff
+
 }
 
 void Battle::insertEntity(std::pair<int, int> startingPosition)
@@ -94,3 +95,4 @@ BattlePhase Battle::getCurrentPhase() const
 {
 	return m_currentPhase;
 }
+

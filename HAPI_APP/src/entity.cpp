@@ -6,6 +6,7 @@
 #include "Textures.h"
 
 constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
+constexpr size_t WEAPON_HIGHLIGHT_SIZE{ 40 };
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
 
@@ -53,6 +54,7 @@ void EntityBattleProperties::MovementPath::render() const
 
 void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Tile& source, const Tile& destination)
 {
+	
 	auto pathToTile = PathFinding::getPathToTile(map, source.m_tileCoordinate, destination.m_tileCoordinate);
 	if (pathToTile.empty())
 	{
@@ -128,6 +130,11 @@ void EntityBattleProperties::MovementPath::clearPath()
 void EntityBattleProperties::generateMovementGraph(const Map & map, const Tile & source, const Tile & destination)
 {
 	m_movementPath.generatePath(map, source, destination);
+}
+
+void EntityBattleProperties::generateWeaponArea(const Map & map, const Tile & source)
+{
+	WeaponArea.generateGunArea(map, source);
 }
 
 void EntityBattleProperties::clearMovementPath()
@@ -233,4 +240,63 @@ void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, 
 	//Render entity
 	sprite->Render(SCREEN_SURFACE);
 	m_movementPath.render();
+	WeaponArea.render();
+}
+
+EntityBattleProperties::Weapon::WeaponHighlightNode::WeaponHighlightNode() //creating highlight node 
+	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),
+	activate(false){}
+
+EntityBattleProperties::Weapon::Weapon() //populating vector with inactive nodes
+	: m_WeaponHighlightArea()
+{
+	m_WeaponHighlightArea.reserve(size_t(WEAPON_HIGHLIGHT_SIZE));
+	for (int i = 0; i < WEAPON_HIGHLIGHT_SIZE; ++i)
+	{
+		m_WeaponHighlightArea.push_back({});
+	}
+}
+
+void EntityBattleProperties::Weapon::render() const
+{
+	for (const auto& i : m_WeaponHighlightArea)
+	{
+		if (i.activate)
+		{
+			i.sprite->Render(SCREEN_SURFACE);
+		}
+	}
+}
+
+void EntityBattleProperties::Weapon::generateGunArea(const Map &map, const Tile& source) 
+{
+	auto gunArea = map.getTileCone(source.m_tileCoordinate,source.m_entityOnTile->m_entityProperties.m_range,source.m_entityOnTile->m_battleProperties.m_direction);
+
+	if (gunArea.empty())
+	{
+		return;
+	}
+	clearHighlight();
+
+	for (int i = 0; i < gunArea.size(); i++)
+	{
+		std::pair<int,int>tilePos = map.getTileScreenPos(gunArea[i]->m_tileCoordinate);
+		m_WeaponHighlightArea[i].sprite->GetTransformComp().SetPosition(
+		{
+		 tilePos.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),
+		 tilePos.second + DRAW_ENTITY_OFFSET_X * map.getDrawScale()
+		});
+
+		m_WeaponHighlightArea[i].activate = true;
+	}
+
+}
+
+void EntityBattleProperties::Weapon::clearHighlight()
+{
+	for (auto& i : m_WeaponHighlightArea)
+	{
+		i.activate = false;
+	}
+
 }
