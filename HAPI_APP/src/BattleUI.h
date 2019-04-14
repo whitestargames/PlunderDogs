@@ -21,7 +21,7 @@ class BattleUI : public IHapiSpritesInputListener
 	};
 
 public:
-	BattleUI(Battle& battle, std::vector<EntityProperties*>& selectedEntities);
+	BattleUI(Battle& battle, std::deque<EntityProperties*>& selectedEntities);
 
 	void render() const;
 
@@ -38,7 +38,7 @@ private:
 
 
 	//ShipPlacement Phase
-	std::vector<EntityProperties*>* m_selectedEntities;
+	std::deque<EntityProperties*>* m_selectedEntities;
 	EntityProperties* m_currentSelectedEntity;
 	std::vector<const Tile*> m_spawnTiles;
 	std::vector<std::unique_ptr<Sprite>> m_spawnSprites;

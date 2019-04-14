@@ -14,7 +14,7 @@ enum class BattlePhase
 class Battle
 {
 public:
-	Battle(std::vector<EntityProperties*>& selectedEntities);
+	Battle(std::deque<EntityProperties*>& selectedEntities);
 
 	const Map& getMap() const;
 

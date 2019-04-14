@@ -39,7 +39,7 @@ void BattleUI::InvalidPosition::setPosition(std::pair<int, int> screenPosition, 
 //
 //BattleUI
 //
-BattleUI::BattleUI(Battle & battle, std::vector<EntityProperties*>& selectedEntities)
+BattleUI::BattleUI(Battle & battle, std::deque<EntityProperties*>& selectedEntities)
 	: m_battle(battle),
 	m_currentTileSelected(m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()))),
 	m_invalidPosition(),
@@ -67,7 +67,7 @@ BattleUI::BattleUI(Battle & battle, std::vector<EntityProperties*>& selectedEnti
 		(float)screenPosition.second + DRAW_OFFSET_Y * m_battle.getMap().getDrawScale() });
 	}
 
-	m_currentSelectedEntity = m_selectedEntities->back();
+	m_currentSelectedEntity = m_selectedEntities->front();
 }
 
 void BattleUI::render() const
@@ -194,7 +194,7 @@ void BattleUI::onLeftClickShipPlacement()
 		m_battle.insertEntity(m_currentTileSelected->m_tileCoordinate, *m_currentSelectedEntity);
 
 		//Change ordering around to pop front with different container
-		m_selectedEntities->pop_back();
+		m_selectedEntities->pop_front();
 		if (m_selectedEntities->empty())
 		{
 			m_battle.nextPhase();
@@ -202,7 +202,7 @@ void BattleUI::onLeftClickShipPlacement()
 			return;
 		}
 
-		m_currentSelectedEntity = m_selectedEntities->back();
+		m_currentSelectedEntity = m_selectedEntities->front();
 	}
 }
 

@@ -49,11 +49,11 @@ public:
 	OverWorldGUI(std::vector<EntityProperties>& entities);
 
 	void onLeftClick(const HAPI_TMouseData& mouseData, std::vector<EntityProperties>& entities,
-		std::vector<EntityProperties*>& selectedEntities, bool& startBattle);
+		std::deque<EntityProperties*>& selectedEntities, bool& startBattle);
 	void onRightClick(const HAPI_TMouseData& mouseData, std::vector<EntityProperties>& entities,
-		std::vector<EntityProperties*>& selectedEntities);
+		std::deque<EntityProperties*>& selectedEntities);
 	void onMouseMove(const HAPI_TMouseData& mouseData, std::vector<EntityProperties>& entities,
-		std::vector<EntityProperties*>& selectedEntities);
+		std::deque<EntityProperties*>& selectedEntities);
 
 	void render(std::unique_ptr<Battle>& battle);
 };

@@ -4,6 +4,7 @@
 #include "Global.h"
 #include "Battle.h"
 #include "OverWorldGUI.h"
+#include <deque>
 
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
@@ -23,7 +24,7 @@ public:
 
 private:
 	std::vector<EntityProperties> m_entities;
-	std::vector<EntityProperties*> m_selectedEntities;
+	std::deque<EntityProperties*> m_selectedEntities;
 	OverWorldGUI m_GUI;
 	std::unique_ptr<Battle> m_battle;
 	bool m_startBattle;

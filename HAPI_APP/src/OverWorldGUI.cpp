@@ -73,7 +73,7 @@ void OverWorldGUI::render(std::unique_ptr<Battle>& battle)
 }
 
 void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, std::vector<EntityProperties>& entities,
-	std::vector<EntityProperties*>& selectedEntities, bool& startBattle)
+	std::deque<EntityProperties*>& selectedEntities, bool& startBattle)
 {
 	switch (CURRENT_WINDOW)
 	{
@@ -145,7 +145,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, std::vector<Ent
 }
 
 void OverWorldGUI::onRightClick(const HAPI_TMouseData& mouseData, std::vector<EntityProperties>& entities,
-	std::vector<EntityProperties*>& selectedEntities)
+	std::deque<EntityProperties*>& selectedEntities)
 {
 	switch (CURRENT_WINDOW)
 	{
@@ -213,7 +213,7 @@ void OverWorldGUI::onRightClick(const HAPI_TMouseData& mouseData, std::vector<En
 }
 
 void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, std::vector<EntityProperties>& entities,
-	std::vector<EntityProperties*>& selectedEntities)
+	std::deque<EntityProperties*>& selectedEntities)
 {
 	switch (CURRENT_WINDOW)
 	{
