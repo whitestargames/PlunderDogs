@@ -23,6 +23,7 @@ public:
 	void update(float deltaTime);
 	void moveEntityToPosition(BattleEntity& entity, const Tile& destination);
 	void activateEntityWeapon(BattleEntity& entity);
+	void insertEntity(std::pair<int, int> startingPosition, EntityProperties entityProperties);
 
 private:
 	std::vector<std::unique_ptr<BattleEntity>> m_entities;
@@ -30,7 +31,7 @@ private:
 	BattleUI m_battleUI;
 	BattlePhase m_currentPhase;
 
-	void insertEntity(std::pair<int, int> startingPosition);
+	
 	void changePhase(BattlePhase newPhase);
 
 	//Movement Phase

@@ -179,8 +179,8 @@ EntityProperties::EntityProperties()
 	m_sprite->GetTransformComp().SetOrigin({ 13, 25 });
 }
 
-BattleEntity::BattleEntity(std::pair<int, int> startingPosition)
-	: m_entityProperties(),
+BattleEntity::BattleEntity(std::pair<int, int> startingPosition, EntityProperties entityProperties)
+	: m_entityProperties(entityProperties),
 	m_battleProperties(startingPosition)
 {}
 

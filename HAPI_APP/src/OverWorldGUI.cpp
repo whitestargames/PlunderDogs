@@ -57,6 +57,10 @@ void OverWorldGUI::render(Battle& battle)
 		}
 		case OverWorldWindow::eBattle:
 		{
+			for (auto& se : m_selectedEntities)
+			{
+				battle.insertEntity({rand()%32, rand()%32}, *se);
+			}
 			battle.render();
 			break;
 		}

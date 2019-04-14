@@ -12,9 +12,9 @@ Battle::Battle() :
 	m_battleUI(*this),
 	m_currentPhase(BattlePhase::Movement)
 {
-	insertEntity({ 5, 15 });
+	/*insertEntity({ 5, 15 });
 	insertEntity({ 4, 4 });
-	insertEntity({ 8, 8 });
+	insertEntity({ 8, 8 });*/
 }
 
 void Battle::render() const
@@ -48,9 +48,9 @@ void Battle::activateEntityWeapon(BattleEntity & entity)
 	//TODO: implement attack enemy stuff
 }
 
-void Battle::insertEntity(std::pair<int, int> startingPosition)
+void Battle::insertEntity(std::pair<int, int> startingPosition, EntityProperties entityProperties)
 {
-	auto entity = std::make_unique<BattleEntity>(startingPosition);
+	auto entity = std::make_unique<BattleEntity>(startingPosition, entityProperties);
 
 	entity->setPosition(m_map);
 	m_entities.push_back(std::move(entity));

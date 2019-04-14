@@ -74,7 +74,7 @@ struct EntityBattleProperties
 
 struct BattleEntity
 {
-	BattleEntity(std::pair<int, int> startingPosition);
+	BattleEntity(std::pair<int, int> startingPosition, EntityProperties entityProperties);
 
 	void setPosition(const Map& map);
 
