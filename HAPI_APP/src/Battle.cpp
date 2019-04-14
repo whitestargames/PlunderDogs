@@ -94,8 +94,6 @@ void Battle::updateMovementPhase(float deltaTime)
 		{
 			entity->m_battleProperties.m_movedToDestination = false;
 		}
-
-		//nextPhase(BattlePhase::Movement);
 	}
 }
 
