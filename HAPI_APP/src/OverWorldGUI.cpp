@@ -60,6 +60,7 @@ void OverWorldGUI::render(std::unique_ptr<Battle>& battle)
 		case OverWorldWindow::eBattle:
 		{
 			assert(battle.get());
+			
 			battle->render();
 			break;
 		}
@@ -104,14 +105,8 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData)
 			{
 				UI.CloseWindow(FLEET_WINDOW);
 				UI.CloseWindow(BATTLE_FLEET_WINDOW);
-				if (!m_enitiesAdded)
-				{
-					for (auto& se : m_selectedEntities)
-					{
-						//battle.insertEntity({ rand() % 32, rand() % 32 }, *se);
-					}
-					m_enitiesAdded = true;
-				}
+				
+				
 				CURRENT_WINDOW = OverWorldWindow::eBattle;
 			}
 			else if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
