@@ -12,6 +12,25 @@ struct Weapons;
 class Map;
 struct EntityBattleProperties
 {
+	class Weapon
+	{
+		struct WeaponHighlightNode
+		{
+			WeaponHighlightNode();
+			std::unique_ptr<Sprite> sprite;
+			bool activate;
+		};
+
+	public:
+		Weapon();
+		void render() const;
+		void generateGunArea(const Map& map, const Tile& source);//using same convention as movement // from source should be able to get position
+		void clearHighlight();
+
+	private:
+		std::vector<WeaponHighlightNode> m_WeaponHighlightArea;
+	};
+
 	class MovementPath
 	{
 		struct MovementPathNode
@@ -43,6 +62,7 @@ struct EntityBattleProperties
 	void render(std::shared_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
 
 	void generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
+	void generateWeaponArea(const Map& map, const Tile& source);
 	void clearMovementPath();
 	void moveEntity(Map& map, const Tile& tile, int movementPointsAvailable);
 
@@ -53,6 +73,7 @@ struct EntityBattleProperties
 	Timer m_movementTimer;
 	bool m_movedToDestination;
 	MovementPath m_movementPath;
+	Weapon WeaponArea;
 	int m_movementPathSize;
 	eDirection m_direction;
 	std::vector < std::pair<int, int>>m_weaponArea; // going to hold the area available to shoot for each entity
@@ -82,17 +103,3 @@ struct BattleEntity
 	EntityBattleProperties m_battleProperties;
 };
 
-struct Weapons
-{
-	// names temp mocking together 
-	// basic cannon uses the cone from the map 
-	void generateWeaponArea();// this will depend on weapon will take an enum corresponds to type of ship enemy has
-	void updateDamage();// does an amount of damage determined by weapon type
-
-	
-	//generate weapon currently will use map getcone to generate the vector of applicable tiles  withtin range
-	// update damage will take the current entitys damage and take that from the selected entitys health 
-	// so that will take two entities as variables
-					
-
-};
