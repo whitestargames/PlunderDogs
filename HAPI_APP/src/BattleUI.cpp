@@ -72,20 +72,20 @@ BattleUI::BattleUI(Battle & battle, std::vector<EntityProperties*>& selectedEnti
 
 void BattleUI::render() const
 {
-	m_invalidPosition.render();
-
 	if (m_battle.getCurrentPhase() == BattlePhase::ShipPlacement)
 	{
-		if (m_currentSelectedEntity && !m_invalidPosition.m_activate)
-		{
-			m_currentSelectedEntity->m_sprite->Render(SCREEN_SURFACE);
-		}
-
 		for (auto& i : m_spawnSprites)
 		{
 			i->Render(SCREEN_SURFACE);
 		}
+
+		if (m_currentSelectedEntity && !m_invalidPosition.m_activate)
+		{
+			m_currentSelectedEntity->m_sprite->Render(SCREEN_SURFACE);
+		}
 	}
+
+	m_invalidPosition.render();
 }
 
 void BattleUI::newPhase()
@@ -150,20 +150,27 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 
 void BattleUI::onMouseMoveShipPlacementPhase()
 {
-	assert(m_selectedEntities);
-	
 	const Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 	if (!tile)
 	{
 		return;
 	}
 	
+	//If new tile is  in new position than old tile
 	if (tile->m_tileCoordinate != m_currentTileSelected->m_tileCoordinate)
 	{
 		m_currentTileSelected = tile;
+		//Cannot place ship on existing ship
+		if (m_currentTileSelected->m_entityOnTile)
+		{
+			m_invalidPosition.setPosition(m_battle.getMap().getTileScreenPos(m_currentTileSelected->m_tileCoordinate), m_battle.getMap().getDrawScale());
+			m_invalidPosition.m_activate = true;
+			return;
+		}
 
-		std::pair<int, int> tileCoordinate = tile->m_tileCoordinate;
+		std::pair<int, int> tileCoordinate = m_currentTileSelected->m_tileCoordinate;
 		auto iter = std::find_if(m_spawnTiles.begin(), m_spawnTiles.end(), [tileCoordinate](const auto& tile) { return tileCoordinate == tile->m_tileCoordinate; });
+		//
 		if (iter != m_spawnTiles.cend())
 		{
 			const std::pair<int, int> tileTransform = m_battle.getMap().getTileScreenPos(m_currentTileSelected->m_tileCoordinate);
@@ -174,7 +181,7 @@ void BattleUI::onMouseMoveShipPlacementPhase()
 		}
 		else
 		{
-			m_invalidPosition.setPosition(m_battle.getMap().getTileScreenPos(tile->m_tileCoordinate), m_battle.getMap().getDrawScale());
+			m_invalidPosition.setPosition(m_battle.getMap().getTileScreenPos(m_currentTileSelected->m_tileCoordinate), m_battle.getMap().getDrawScale());
 			m_invalidPosition.m_activate = true;
 		}
 	}
@@ -196,7 +203,6 @@ void BattleUI::onLeftClickShipPlacement()
 		}
 
 		m_currentSelectedEntity = m_selectedEntities->back();
-
 	}
 }
 
@@ -212,8 +218,6 @@ void BattleUI::onMouseMoveMovementPhase()
 
 		if (m_currentTileSelected->m_tileCoordinate != tile->m_tileCoordinate)
 		{
-			
-			
 			if (tile->m_type != eTileType::eSea && tile->m_type != eTileType::eOcean)
 			{
 				m_invalidPosition.setPosition(m_battle.getMap().getTileScreenPos(tile->m_tileCoordinate), m_battle.getMap().getDrawScale());

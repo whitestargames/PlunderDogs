@@ -61,8 +61,7 @@ void OverWorld::update(float deltaTime)
 	}
 
 	if (OverWorldGUI::CURRENT_WINDOW == eBattle)
-	{
-		
+	{		
 		assert(m_battle.get());
 		m_battle->update(deltaTime);
 	}
