@@ -134,7 +134,7 @@ void EntityBattleProperties::generateMovementGraph(const Map & map, const Tile &
 
 void EntityBattleProperties::generateWeaponArea(const Map & map, const Tile & source)
 {
-	WeaponArea.generateTargetArea(map, source);
+	m_weapon.generateTargetArea(map, source);
 }
 
 void EntityBattleProperties::clearMovementPath()
@@ -239,7 +239,7 @@ void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, 
 	//Render entity
 	sprite->Render(SCREEN_SURFACE);
 	m_movementPath.render();
-	WeaponArea.render();
+	m_weapon.render();
 }
 
 EntityBattleProperties::Weapon::WeaponHighlightNode::WeaponHighlightNode() //creating highlight node 

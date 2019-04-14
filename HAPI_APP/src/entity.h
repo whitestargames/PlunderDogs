@@ -85,7 +85,7 @@ struct EntityBattleProperties
 	Timer m_movementTimer;
 	bool m_movedToDestination;
 	MovementPath m_movementPath;
-	Weapon WeaponArea;
+	Weapon m_weapon;
 	int m_movementPathSize;
 	eDirection m_direction;
 	std::vector < std::pair<int, int>>m_weaponArea; // going to hold the area available to shoot for each entity
