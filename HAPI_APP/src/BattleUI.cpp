@@ -35,7 +35,9 @@ BattleUI::BattleUI(Battle & battle, std::vector<EntityProperties*>& selectedEnti
 	: m_battle(battle),
 	m_currentTileSelected(nullptr),
 	m_invalidPositionSprite()
-{}
+{
+	int i = 0;
+}
 
 void BattleUI::render() const
 {

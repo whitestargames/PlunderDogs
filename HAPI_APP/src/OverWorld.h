@@ -8,17 +8,23 @@
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
 
-class OverWorld
+class OverWorld : public IHapiSpritesInputListener
 {
 public:
 	OverWorld();
 
+	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
+	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
+	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
+
 	void render();
 	void update(float deltaTime);
-	void startBattle(std::vector<EntityProperties*>& selectedEntities);
+	void startBattle();
 
 private:
 	std::vector<EntityProperties> m_entities;
+	std::vector<EntityProperties*> m_selectedEntities;
 	OverWorldGUI m_GUI;
 	std::unique_ptr<Battle> m_battle;
+	bool m_startBattle;
 };

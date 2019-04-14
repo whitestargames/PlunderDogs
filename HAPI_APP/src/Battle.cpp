@@ -95,3 +95,8 @@ BattlePhase Battle::getCurrentPhase() const
 {
 	return m_currentPhase;
 }
+
+void Battle::start()
+{
+	assert(m_currentPhase == BattlePhase::ShipPlacement);
+}
