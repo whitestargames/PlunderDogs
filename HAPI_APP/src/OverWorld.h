@@ -26,5 +26,8 @@ private:
 	std::vector<EntityProperties*> m_selectedEntities;
 	OverWorldGUI m_GUI;
 	std::unique_ptr<Battle> m_battle;
+
+	//Temporary - will change functionality in next few days
+	//14/04/19
 	bool m_startBattle;
 };
