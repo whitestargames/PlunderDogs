@@ -134,7 +134,7 @@ void EntityBattleProperties::generateMovementGraph(const Map & map, const Tile &
 
 void EntityBattleProperties::generateWeaponArea(const Map & map, const Tile & source)
 {
-	WeaponArea.generateGunArea(map, source);
+	WeaponArea.generateTargetArea(map, source);
 }
 
 void EntityBattleProperties::clearMovementPath()
@@ -268,7 +268,7 @@ void EntityBattleProperties::Weapon::render() const
 }
 
 void EntityBattleProperties::Weapon::generateTargetArea(const Map &map, const Tile& source)
-{//variable below stores the tile cones coming from the ship 
+{   //variable below stores the tile cones coming from the ship 
 	auto m_tempTargetArea = map.getTileCone(source.m_tileCoordinate,source.m_entityOnTile->m_entityProperties.m_range,source.m_entityOnTile->m_battleProperties.m_direction);
 	if (m_tempTargetArea.empty())
 	{
