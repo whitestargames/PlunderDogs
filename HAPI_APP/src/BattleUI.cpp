@@ -45,23 +45,46 @@ BattleUI::BattleUI(Battle & battle, std::vector<EntityProperties*>& selectedEnti
 	m_invalidPosition(),
 	m_selectedEntities(&selectedEntities)
 {
+	//Hack to make sprites position correctly
 	for (auto& i : selectedEntities)
 	{
 		i->m_sprite->GetTransformComp().SetOrigin({ 13, 25 });
 		i->m_sprite->GetTransformComp().SetScaling({ 1,1 });
 	}
 
-	m_spawnTiles = m_battle.getMap().getTileRadius({ 4, 11 }, 3);
-	m_currentSelectedEntity = m_selectedEntities->front();
+	m_spawnTiles = m_battle.getMap().getTileRadius({ 4, 11 }, 6);
+	m_spawnSprites.reserve(m_spawnTiles.size());
+	for (int i = 0; i < m_spawnTiles.size(); ++i)
+	{
+		m_spawnSprites.push_back(std::make_unique<Sprite>(Textures::m_spawnHex));
+	}
+
+	for (int i = 0; i < m_spawnTiles.size(); ++i)
+	{
+		auto screenPosition = m_battle.getMap().getTileScreenPos(m_spawnTiles[i]->m_tileCoordinate);
+		m_spawnSprites[i]->GetTransformComp().SetPosition({
+		(float)screenPosition.first + DRAW_OFFSET_X * m_battle.getMap().getDrawScale() ,
+		(float)screenPosition.second + DRAW_OFFSET_Y * m_battle.getMap().getDrawScale() });
+	}
+
+	m_currentSelectedEntity = m_selectedEntities->back();
 }
 
 void BattleUI::render() const
 {
 	m_invalidPosition.render();
 
-	if (m_currentSelectedEntity && !m_invalidPosition.m_activate)
+	if (m_battle.getCurrentPhase() == BattlePhase::ShipPlacement)
 	{
-		m_currentSelectedEntity->m_sprite->Render(SCREEN_SURFACE);
+		if (m_currentSelectedEntity && !m_invalidPosition.m_activate)
+		{
+			m_currentSelectedEntity->m_sprite->Render(SCREEN_SURFACE);
+		}
+
+		for (auto& i : m_spawnSprites)
+		{
+			i->Render(SCREEN_SURFACE);
+		}
 	}
 }
 
@@ -160,7 +183,7 @@ void BattleUI::onMouseMoveShipPlacementPhase()
 
 void BattleUI::onLeftClickShipPlacement()
 {
-	if (!m_invalidPosition.m_activate)
+	if (!m_invalidPosition.m_activate && m_currentTileSelected && !m_currentTileSelected->m_entityOnTile)
 	{
 		m_battle.insertEntity(m_currentTileSelected->m_tileCoordinate, *m_currentSelectedEntity);
 
@@ -169,6 +192,7 @@ void BattleUI::onLeftClickShipPlacement()
 		if (m_selectedEntities->empty())
 		{
 			m_battle.nextPhase();
+			m_currentTileSelected = nullptr;
 			return;
 		}
 

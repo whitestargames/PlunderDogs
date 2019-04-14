@@ -77,5 +77,3 @@ void OverWorld::startBattle()
 		m_startBattle = false;
 	}
 }
-
-

@@ -86,10 +86,10 @@ struct Textures
 			return false;
 		}
 		
-		m_spawnHex = HAPI_Wrapper::loadSpriteSheet("spawnHex.png");
+		m_spawnHex = HAPI_Wrapper::makeSpriteSheet("spawnHex.png");
 		if (!m_spawnHex)
 		{
-			HAPI_Sprites.UserMessage("Connot Load: 'ship.xml'", "Texture Error");
+			HAPI_Sprites.UserMessage("Connot Load: 'spawnHex.png'", "Texture Error");
 			return false;
 		}
 

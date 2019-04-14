@@ -35,9 +35,6 @@ private:
 	BattleUI m_battleUI;
 	BattlePhase m_currentPhase;
 
-	
-	
-
 	//Movement Phase
 	void updateMovementPhase(float deltaTime);
 };
