@@ -27,9 +27,9 @@ struct EntityBattleProperties
 {
 	class Weapon
 	{
-		struct WeaponHighlightNode
+		struct HighlightNode
 		{
-			WeaponHighlightNode();
+			HighlightNode();
 			std::unique_ptr<Sprite> sprite;
 			bool activate;
 		};
@@ -39,7 +39,7 @@ struct EntityBattleProperties
 		void render() const;
 		void generateTargetArea(const Map& map, const Tile& source);//using same convention as movement // from source should be able to get position
 	private:
-		std::vector<WeaponHighlightNode> m_spriteTargetStorage;
+		std::vector<HighlightNode> m_spriteTargetStorage;
 		void clearGunArea();
 	};
 
