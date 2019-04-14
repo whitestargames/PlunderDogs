@@ -39,8 +39,17 @@ void OverWorld::update(float deltaTime)
 {
 	if (OverWorldGUI::CURRENT_WINDOW == eBattle)
 	{
-		m_battle.update(deltaTime);
+		assert(m_battle.get());
+		m_battle->update(deltaTime);
 	}
+}
+
+void OverWorld::startBattle(std::vector<EntityProperties*>& selectedEntities)
+{
+	OverWorldGUI::CURRENT_WINDOW = eBattle;
+	m_battle = std::make_unique<Battle>(selectedEntities);
+
+	
 }
 
 

@@ -36,7 +36,7 @@ OverWorldGUI::OverWorldGUI(std::vector<EntityProperties>& entities)
 	UI.GetWindow(BATTLE_FLEET_WINDOW)->AddSlider(BATTLE_FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
 }
 
-void OverWorldGUI::render(Battle& battle)
+void OverWorldGUI::render(std::unique_ptr<Battle>& battle)
 {
 	SCREEN_SURFACE->Clear();
 
@@ -59,16 +59,8 @@ void OverWorldGUI::render(Battle& battle)
 		}
 		case OverWorldWindow::eBattle:
 		{
-			if (!m_enitiesAdded)
-			{
-				for (auto& se : m_selectedEntities)
-				{
-					battle.insertEntity({ rand() % 32, rand() % 32 }, *se);
-				}
-				m_enitiesAdded = true;
-			}
-			
-			battle.render();
+			assert(battle.get());
+			battle->render();
 			break;
 		}
 		case OverWorldWindow::eLevelSelection:
@@ -112,6 +104,14 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData)
 			{
 				UI.CloseWindow(FLEET_WINDOW);
 				UI.CloseWindow(BATTLE_FLEET_WINDOW);
+				if (!m_enitiesAdded)
+				{
+					for (auto& se : m_selectedEntities)
+					{
+						//battle.insertEntity({ rand() % 32, rand() % 32 }, *se);
+					}
+					m_enitiesAdded = true;
+				}
 				CURRENT_WINDOW = OverWorldWindow::eBattle;
 			}
 			else if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))

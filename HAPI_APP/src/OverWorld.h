@@ -15,9 +15,10 @@ public:
 
 	void render();
 	void update(float deltaTime);
+	void startBattle(std::vector<EntityProperties*>& selectedEntities);
 
 private:
 	std::vector<EntityProperties> m_entities;
 	OverWorldGUI m_GUI;
-	Battle m_battle;
+	std::unique_ptr<Battle> m_battle;
 };

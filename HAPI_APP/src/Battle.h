@@ -6,6 +6,7 @@
 
 enum class BattlePhase
 {
+	ShipPlacement,
 	Movement = 0,
 	Attack
 };
@@ -13,7 +14,7 @@ enum class BattlePhase
 class Battle
 {
 public:
-	Battle();
+	Battle(std::vector<EntityProperties*>& selectedEntities);
 
 	const Map& getMap() const;
 

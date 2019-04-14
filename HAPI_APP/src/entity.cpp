@@ -176,7 +176,7 @@ EntityProperties::EntityProperties()
 	m_range(4),
 	m_damage(5)
 {
-	m_sprite->GetTransformComp().SetOrigin({ 13, 25 });
+	//m_sprite->GetTransformComp().SetOrigin({ 6, 6 });
 }
 
 BattleEntity::BattleEntity(std::pair<int, int> startingPosition, EntityProperties entityProperties)
@@ -203,6 +203,7 @@ void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProp
 			m_movementTimer.reset();
 
 			int directionToTurn = 0;
+			
 			int rotationAngle = 60;
 
 			m_currentPosition = m_pathToTile.front().second;

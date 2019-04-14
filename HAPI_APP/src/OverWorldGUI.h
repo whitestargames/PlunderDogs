@@ -57,5 +57,5 @@ public:
 
 	OverWorldGUI(std::vector<EntityProperties>& entities);
 
-	void render(Battle& battle);
+	void render(std::unique_ptr<Battle>& battle);
 };
