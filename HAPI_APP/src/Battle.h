@@ -6,8 +6,8 @@
 
 enum class BattlePhase
 {
-	ShipPlacement,
-	Movement = 0,
+	ShipPlacement = 0,
+	Movement,
 	Attack
 };
 
