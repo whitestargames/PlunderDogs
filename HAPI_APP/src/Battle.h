@@ -26,7 +26,7 @@ public:
 	void update(float deltaTime);
 	void moveEntityToPosition(BattleEntity& entity, const Tile& destination);
 	void activateEntityWeapon(BattleEntity& entity);
-	void insertEntity(std::pair<int, int> startingPosition, EntityProperties entityProperties);
+	void insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties);
 
 private:
 	std::vector<std::unique_ptr<BattleEntity>> m_entities;

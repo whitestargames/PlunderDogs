@@ -49,9 +49,9 @@ void Battle::activateEntityWeapon(BattleEntity & entity)
 
 }
 
-void Battle::insertEntity(std::pair<int, int> startingPosition, EntityProperties entityProperties)
+void Battle::insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties)
 {
-	auto entity = std::make_unique<BattleEntity>(startingPosition, m_map);
+	auto entity = std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map);
 	entity->m_entityProperties.m_sprite->GetTransformComp().SetOrigin({ 13, 25 });
 	entity->m_entityProperties.m_sprite->GetTransformComp().SetScaling({ 1,1 });
 
