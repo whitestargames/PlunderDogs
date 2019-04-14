@@ -20,16 +20,15 @@ struct EntityProperties
 	int m_currentHealth;
 	int m_range;
 	int m_damage;
-
-
 };
+
 struct EntityBattleProperties
 {
 	class Weapon
 	{
-		struct WeaponHighlightNode
+		struct HighlightNode
 		{
-			WeaponHighlightNode();
+			HighlightNode();
 			std::unique_ptr<Sprite> sprite;
 			bool activate;
 		};
@@ -37,17 +36,17 @@ struct EntityBattleProperties
 	public:
 		Weapon();
 		void render() const;
-		void generateTargetArea(const Map& map, const Tile& source);//using same convention as movement // from source should be able to get position
+		void generateTargetArea(const Map& map, const Tile& source);
 	private:
-		std::vector<WeaponHighlightNode> m_spriteTargetStorage;
+		std::vector<HighlightNode> m_spriteTargetStorage;
 		void clearGunArea();
 	};
 
 	class MovementPath
 	{
-		struct MovementPathNode
+		struct PathNode
 		{
-			MovementPathNode();
+			PathNode();
 
 			std::unique_ptr<Sprite> sprite;
 			bool activate;
@@ -62,7 +61,7 @@ struct EntityBattleProperties
 		void clearPath();
 
 	private:
-		std::vector<MovementPathNode> m_movementPath;
+		std::vector<PathNode> m_movementPath;
 		unsigned int getDirectionCost(int currentDirection, int newDirection);
 		
 	};
@@ -78,8 +77,6 @@ struct EntityBattleProperties
 	void clearMovementPath();
 	void moveEntity(Map& map, const Tile& tile, int movementPointsAvailable);
 
-	
-
 	std::pair<int, int> m_currentPosition;
 	std::deque<std::pair<eDirection, std::pair<int, int>>> m_pathToTile;
 	Timer m_movementTimer;
@@ -90,15 +87,10 @@ struct EntityBattleProperties
 	eDirection m_direction;
 };
 
-
-
 struct BattleEntity
 {
-	BattleEntity(std::pair<int, int> startingPosition);
-
-	void setPosition(const Map& map);
+	BattleEntity(std::pair<int, int> startingPosition, Map& map);
 
 	EntityProperties m_entityProperties;
 	EntityBattleProperties m_battleProperties;
 };
-

@@ -10,7 +10,7 @@ constexpr size_t WEAPON_HIGHLIGHT_SIZE{ 40 };
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
 
-//ENTITY DETAILS
+//ENTITY BATTLE PROPERTIES
 EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosition)
 	: m_currentPosition(startingPosition),
 	m_pathToTile(),
@@ -22,7 +22,7 @@ EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosit
 {}
 
 //MOVEMENT PATH NODE
-EntityBattleProperties::MovementPath::MovementPathNode::MovementPathNode()
+EntityBattleProperties::MovementPath::PathNode::PathNode()
 	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),
 	activate(false)
 {}
@@ -54,7 +54,6 @@ void EntityBattleProperties::MovementPath::render() const
 
 void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Tile& source, const Tile& destination)
 {
-	
 	auto pathToTile = PathFinding::getPathToTile(map, source.m_tileCoordinate, destination.m_tileCoordinate);
 	if (pathToTile.empty())
 	{
@@ -86,7 +85,7 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 
 		source.m_entityOnTile->m_battleProperties.m_movementPathSize = i;
 		if (movementPointsUsed <=
-			source.m_entityOnTile->m_entityProperties.m_movementPoints )
+			source.m_entityOnTile->m_entityProperties.m_movementPoints)
 		{
 			auto tileScreenPosition = map.getTileScreenPos(pathToTile[i].second);
 			m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
@@ -99,12 +98,7 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 		{
 			return;
 		}
-
-		
 	}
-
-
-	
 }
 
 void EntityBattleProperties::MovementPath::eraseNode(std::pair<int, int> position, const Map& map)
@@ -186,18 +180,11 @@ EntityProperties::EntityProperties()
 	m_sprite->GetTransformComp().SetOrigin({ 13, 25 });
 }
 
-BattleEntity::BattleEntity(std::pair<int, int> startingPosition)
+BattleEntity::BattleEntity(std::pair<int, int> startingPosition, Map& map)
 	: m_entityProperties(),
 	m_battleProperties(startingPosition)
-{}
-
-void BattleEntity::setPosition(const Map & map)
 {
-	//Assign entity sprite position - TODO change this at later date
-	std::pair<int, int> tileScreenPoint = map.getTileScreenPos(m_battleProperties.m_currentPosition);
-	m_entityProperties.m_sprite->GetTransformComp().SetPosition({
-		(float)(tileScreenPoint.first + DRAW_OFFSET_X * map.getDrawScale()),
-		(float)(tileScreenPoint.second + DRAW_OFFSET_Y * map.getDrawScale()) });
+	map.insertEntity(*this);
 }
 
 void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProperties& entityProperties)
@@ -241,10 +228,13 @@ void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, 
 	m_movementPath.render();
 	m_weapon.render();
 }
-
-EntityBattleProperties::Weapon::WeaponHighlightNode::WeaponHighlightNode() //creating highlight node 
+//
+//WEAPON
+//
+EntityBattleProperties::Weapon::HighlightNode::HighlightNode() //creating highlight node 
 	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),
-	activate(false){}
+	activate(false)
+{}
 
 EntityBattleProperties::Weapon::Weapon() //populating vector with inactive nodes
 	: m_spriteTargetStorage()
@@ -269,12 +259,14 @@ void EntityBattleProperties::Weapon::render() const
 
 void EntityBattleProperties::Weapon::generateTargetArea(const Map &map, const Tile& source)
 {   //variable below stores the tile cones coming from the ship 
-	auto m_tempTargetArea = map.getTileCone(source.m_tileCoordinate,source.m_entityOnTile->m_entityProperties.m_range,source.m_entityOnTile->m_battleProperties.m_direction);
+	auto m_tempTargetArea = map.getTileCone(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range, source.m_entityOnTile->m_battleProperties.m_direction);
 	if (m_tempTargetArea.empty())
 	{
 		return;
 	}
 	clearGunArea();
+	assert(!m_spriteTargetStorage.empty());
+	//using same convention as movement // from source should be able to get position
 	for (int i = 0; i < m_tempTargetArea.size(); i++)
 	{
 		std::pair<int,int>tilePos = map.getTileScreenPos(m_tempTargetArea[i]->m_tileCoordinate);
