@@ -82,6 +82,7 @@ public:
 	std::vector<const Tile*> getAdjacentTiles(std::pair<int, int> coord) const;
 	//TODO:Returns tiles in a radius around a given tile, skipping the tile itself
 	std::vector<Tile*> getTileRadius(std::pair<int, int> coord, int range);
+	std::vector<const Tile*> getTileRadius(std::pair<int, int> coord, int range) const;
 	//TODO: Returns tiles in a cone emanating from a given tile, skipping the tile itself
 	std::vector<Tile*> getTileCone(std::pair<int, int> coord, int range, eDirection direction);
 	std::vector<const Tile*> getTileCone(std::pair<int, int> coord, int range, eDirection direction)const;

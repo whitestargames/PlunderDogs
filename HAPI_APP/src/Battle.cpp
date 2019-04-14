@@ -52,15 +52,31 @@ void Battle::activateEntityWeapon(BattleEntity & entity)
 void Battle::insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties)
 {
 	auto entity = std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map);
-	entity->m_entityProperties.m_sprite->GetTransformComp().SetOrigin({ 13, 25 });
-	entity->m_entityProperties.m_sprite->GetTransformComp().SetScaling({ 1,1 });
+
 
 	m_entities.push_back(std::move(entity));
 }
 
-void Battle::changePhase(BattlePhase newPhase)
+void Battle::nextPhase()
 {
-	m_currentPhase = newPhase;
+	switch (m_currentPhase)
+	{
+	case BattlePhase::ShipPlacement :
+	{
+		m_currentPhase = BattlePhase::Movement;
+		break;
+	}
+	case BattlePhase::Movement :
+	{
+		m_currentPhase = BattlePhase::Attack;
+		break;
+	}
+	case BattlePhase::Attack :
+	{
+		m_currentPhase = BattlePhase::Movement;
+		break;
+	}
+	}
 }
 
 void Battle::updateMovementPhase(float deltaTime)
@@ -82,7 +98,7 @@ void Battle::updateMovementPhase(float deltaTime)
 			entity->m_battleProperties.m_movedToDestination = false;
 		}
 
-		changePhase(BattlePhase::Movement);
+		//nextPhase(BattlePhase::Movement);
 	}
 }
 

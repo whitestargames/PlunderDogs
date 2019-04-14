@@ -427,3 +427,40 @@ std::vector<const Tile*> Map::getAdjacentTiles(std::pair<int, int> coord) const
 	}
 	return result;
 }
+
+std::vector<const Tile*> Map::getTileRadius(std::pair<int, int> coord, int range) const
+{
+	if (range < 1)
+		HAPI_Sprites.UserMessage("getTileRadius range less than 1", "Map error");
+
+	int reserveSize{ 0 };
+	for (int i = 1; i <= range; i++)
+	{
+		reserveSize += 6 * i;
+	}
+	std::vector<const Tile*> tileStore;
+
+	tileStore.reserve((size_t)reserveSize);
+
+	intPair cubeCoord(offsetToCube(coord));
+
+	for (int y = std::max(0, coord.second - range);
+		y < std::min(m_mapDimensions.second, coord.second + range + 1);
+		y++)
+	{
+		for (int x = std::max(0, coord.first - range);
+			x < std::min(m_mapDimensions.first, coord.first + range + 1);
+			x++)
+		{
+			if (!(coord.first == x && coord.second == y))//If not the tile at the centre
+			{
+				if (cubeDistance(cubeCoord, offsetToCube(intPair(x, y))) <= range)
+				{
+					tileStore.push_back(getTile(intPair(x, y)));
+					//std::cout << "CubeCheck " << x << ", " << y << std::endl;//Test
+				}
+			}
+		}
+	}
+	return tileStore;
+}

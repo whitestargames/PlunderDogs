@@ -9,9 +9,9 @@ struct EntityProperties;
 
 class BattleUI : public IHapiSpritesInputListener
 {
-	struct InvalidPositionSprite
+	struct InvalidPosition
 	{
-		InvalidPositionSprite();
+		InvalidPosition();
 
 		void render() const;
 		void setPosition(std::pair<int, int> screenPosition, float mapDrawScale);
@@ -34,15 +34,23 @@ public:
 private:
 	Battle& m_battle;
 	const Tile* m_currentTileSelected;
-	InvalidPositionSprite m_invalidPositionSprite;
+	InvalidPosition m_invalidPosition;
+
 
 	//ShipPlacement Phase
+	std::vector<EntityProperties*>* m_selectedEntities;
+	EntityProperties* m_currentSelectedEntity;
+	std::vector<const Tile*> m_spawnTiles;
+
 	void onMouseMoveShipPlacementPhase();
+	void onLeftClickShipPlacement();
+
 
 	//Movement Phase
 	void onMouseMoveMovementPhase();
 	void onLeftClickMovementPhase();
 	void onRightClickMovementPhase();
+
 
 	//Attack Phase
 	void onLeftClickAttackPhase();
