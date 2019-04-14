@@ -9,7 +9,7 @@ using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
 
 
-class BattleUI : public IHapiSpritesInputListener
+class BattleGUI : public IHapiSpritesInputListener
 {
 	enum class BattleWindow
 	{
@@ -18,7 +18,7 @@ class BattleUI : public IHapiSpritesInputListener
 		PostBattle
 	};
 public:
-	BattleUI();
+	BattleGUI();
 	VectorF pendingCameraMovement{ 0 };
 	std::pair<int, int> CameraPositionOffset;//camera offset that will be used by the map
 	float cameraZoom = 1.0f;//variable to multiply scale by

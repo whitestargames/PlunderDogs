@@ -1,5 +1,5 @@
 #include "Overworld.h"
-#include "BattleUI.h"
+#include "BattleGUI.h"
 using namespace HAPISPACE;
 
 void HAPI_Sprites_Main()
@@ -10,7 +10,7 @@ void HAPI_Sprites_Main()
 	HAPI_Sprites.SetShowFPS(true);
 
 	OverWorld overWorld;
-	BattleUI battleUI;
+	BattleGUI battleGUI;
 
 	while (HAPI_Sprites.Update())
 	{
@@ -21,7 +21,7 @@ void HAPI_Sprites_Main()
 		}
 		else
 		{
-			battleUI.render();
+			battleGUI.render();
 		}
 	}	
 }

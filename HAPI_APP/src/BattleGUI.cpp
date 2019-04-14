@@ -1,8 +1,8 @@
-#include "BattleUI.h"
+#include "BattleGUI.h"
 #include "Utilities/Utilities.h"
 #include "Utilities/MapParser.h"
 
-BattleUI::BattleUI()
+BattleGUI::BattleGUI()
 	: m_battleIcons(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "battleIcons.png")),
 	m_pauseButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "pauseButton.png", 2)),
 	m_chickenButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "chickenButton.png")),
@@ -24,7 +24,7 @@ BattleUI::BattleUI()
 	m_doneButton->GetTransformComp().SetPosition({ 660, 710 });
 }
 
-void BattleUI::render()
+void BattleGUI::render()
 {
 	SCREEN_SURFACE->Clear();
 
@@ -121,7 +121,7 @@ void BattleUI::render()
 	}
 }
 
-void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData)
+void BattleGUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData)
 {
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
@@ -175,7 +175,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouse
 	}
 }
 
-void BattleUI::OnMouseMove(const HAPI_TMouseData& mouseData)
+void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 {
 	switch (m_currentWindow)
 	{
