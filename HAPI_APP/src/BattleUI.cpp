@@ -151,7 +151,6 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 void BattleUI::onMouseMoveShipPlacementPhase()
 {
 	assert(m_selectedEntities);
-
 	
 	const Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 	if (!tile)

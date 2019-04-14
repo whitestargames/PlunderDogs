@@ -91,11 +91,14 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, std::vector<Ent
 		{
 			if (HAPI_Wrapper::isTranslated(m_playButton, mouseData, 0))
 			{
-				UI.CloseWindow(FLEET_WINDOW);
-				UI.CloseWindow(BATTLE_FLEET_WINDOW);
-				
-				CURRENT_WINDOW = OverWorldWindow::eBattle;
-				startBattle = true;
+				//TODO: Change at some point
+				if (!selectedEntities.empty())
+				{
+					UI.CloseWindow(FLEET_WINDOW);
+					UI.CloseWindow(BATTLE_FLEET_WINDOW);
+					CURRENT_WINDOW = OverWorldWindow::eBattle;
+					startBattle = true;
+				}
 			}
 			else if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
 			{

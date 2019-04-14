@@ -73,6 +73,7 @@ void OverWorld::startBattle()
 	if (m_startBattle)
 	{
 		OverWorldGUI::CURRENT_WINDOW = eBattle;
+		
 		m_battle = std::make_unique<Battle>(m_selectedEntities);
 		m_startBattle = false;
 	}
