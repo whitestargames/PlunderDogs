@@ -6,9 +6,27 @@
 struct Tile;
 class Battle;
 struct EntityProperties;
-
+struct Map;
 class BattleUI : public IHapiSpritesInputListener
 {
+	struct TargetArea
+	{
+		struct HighlightNode
+		{
+			HighlightNode();
+			std::unique_ptr<Sprite> sprite;
+			bool activate;
+		};
+
+		TargetArea();
+		void render() const;
+		void generateTargetArea(const Map& map, const Tile& source);
+		void clearTargetArea();
+
+		std::vector<HighlightNode> m_targetAreaSprites;
+		std::vector<const Tile*> m_targetArea;
+	};
+
 	struct InvalidPosition
 	{
 		InvalidPosition();
@@ -36,7 +54,6 @@ private:
 	const Tile* m_currentTileSelected;
 	InvalidPosition m_invalidPosition;
 
-
 	//ShipPlacement Phase
 	std::deque<EntityProperties*>* m_selectedEntities;
 	EntityProperties* m_currentSelectedEntity;
@@ -55,4 +72,5 @@ private:
 
 	//Attack Phase
 	void onLeftClickAttackPhase();
+	TargetArea m_targetArea;
 };

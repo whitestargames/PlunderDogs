@@ -5,7 +5,6 @@
 
 using namespace HAPISPACE;
 
-
 Battle::Battle(std::deque<EntityProperties*>& selectedEntities) :
 	m_entities(),
 	m_map(MapParser::parseMap("Level1.tmx")),
@@ -40,12 +39,15 @@ void Battle::update(float deltaTime)
 void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
 {
 	entity.m_battleProperties.moveEntity(m_map, destination, entity.m_battleProperties.m_movementPathSize);
-	
 }
 
-void Battle::activateEntityWeapon(BattleEntity & entity)
+void Battle::activateEntityWeapon(EntityBattleProperties& battleProperties)
 {
-	//TODO: implement attack enemy stuff
+	battleProperties.m_readyToFire = true;
+}
+
+void Battle::fireEntityWeaponAtPosition(std::pair<int, int> coord, const std::vector<const Tile*>& targetArea, BattleEntity& battleEntity)
+{
 
 }
 
@@ -94,6 +96,7 @@ void Battle::updateMovementPhase(float deltaTime)
 		{
 			entity->m_battleProperties.m_movedToDestination = false;
 		}
+		nextPhase();
 	}
 }
 

@@ -24,24 +24,6 @@ struct EntityProperties
 
 struct EntityBattleProperties
 {
-	class Weapon
-	{
-		struct HighlightNode
-		{
-			HighlightNode();
-			std::unique_ptr<Sprite> sprite;
-			bool activate;
-		};
-
-	public:
-		Weapon();
-		void render() const;
-		void generateTargetArea(const Map& map, const Tile& source);
-	private:
-		std::vector<HighlightNode> m_spriteTargetStorage;
-		void clearGunArea();
-	};
-
 	class MovementPath
 	{
 		struct PathNode
@@ -69,11 +51,11 @@ struct EntityBattleProperties
 	EntityBattleProperties(std::pair<int, int> startingPosition);
 
 	void update(float deltaTime, const Map& map, EntityProperties& entityProperties);
-
 	void render(std::shared_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
 
 	void generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
 	void generateWeaponArea(const Map& map, const Tile& source);
+
 	void clearMovementPath();
 	void moveEntity(Map& map, const Tile& tile, int movementPointsAvailable);
 
@@ -82,17 +64,14 @@ struct EntityBattleProperties
 	Timer m_movementTimer;
 	bool m_movedToDestination;
 	MovementPath m_movementPath;
-	Weapon m_weapon;
 	int m_movementPathSize;
 	eDirection m_direction;
+	bool m_readyToFire;
 };
 
 struct BattleEntity
 {
-
 	BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map);
-
-
 
 	EntityProperties m_entityProperties;
 	EntityBattleProperties m_battleProperties;

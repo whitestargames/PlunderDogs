@@ -6,7 +6,7 @@
 #include "Textures.h"
 
 constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
-constexpr size_t WEAPON_HIGHLIGHT_SIZE{ 40 };
+constexpr size_t WEAPON_HIGHLIGHT_SIZE{ 200 };
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
 
@@ -18,7 +18,8 @@ EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosit
 	m_movedToDestination(false),
 	m_movementPath(),
 	m_movementPathSize(0),
-	m_direction(eDirection::eNorth)
+	m_direction(eDirection::eNorth),
+	m_readyToFire(false)
 {}
 
 //MOVEMENT PATH NODE
@@ -31,8 +32,7 @@ EntityBattleProperties::MovementPath::PathNode::PathNode()
 //MOVEMENT PATH
 //
 EntityBattleProperties::MovementPath::MovementPath()
-	: m_movementPath()
-	
+	: m_movementPath()	
 {
 	m_movementPath.reserve(size_t(MOVEMENT_PATH_SIZE));
 	for (int i = 0; i < MOVEMENT_PATH_SIZE; ++i)
@@ -80,7 +80,6 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 		{
 			bonusMove = (int)source.m_entityOnTile->m_entityProperties.m_movementPoints * map.getWindStrength();
 			movementPointsUsed -= bonusMove;
-			std::cout << prevDir << "\n";
 		}
 
 		source.m_entityOnTile->m_battleProperties.m_movementPathSize = i;
@@ -92,7 +91,6 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
 				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
 			m_movementPath[i - 1].activate = true;
-
 		}
 		else
 		{
@@ -128,7 +126,7 @@ void EntityBattleProperties::generateMovementGraph(const Map & map, const Tile &
 
 void EntityBattleProperties::generateWeaponArea(const Map & map, const Tile & source)
 {
-	m_weapon.generateTargetArea(map, source);
+	//m_weapon.generateTargetArea(map, source);
 }
 
 void EntityBattleProperties::clearMovementPath()
@@ -227,65 +225,65 @@ void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, 
 	//Render entity
 	sprite->Render(SCREEN_SURFACE);
 	m_movementPath.render();
-	m_weapon.render();
+	//m_weapon.render();
 }
 
 //
 //WEAPON
 //
-
-EntityBattleProperties::Weapon::HighlightNode::HighlightNode() //creating highlight node 
-	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),
-	activate(false)
-{}
-
-EntityBattleProperties::Weapon::Weapon() //populating vector with inactive nodes
-	: m_spriteTargetStorage()
-{
-	m_spriteTargetStorage.reserve(size_t(WEAPON_HIGHLIGHT_SIZE));
-	for (int i = 0; i < WEAPON_HIGHLIGHT_SIZE; ++i)
-	{
-		m_spriteTargetStorage.push_back({});
-	}
-}
-
-void EntityBattleProperties::Weapon::render() const
-{
-	for (const auto& i : m_spriteTargetStorage)
-	{
-		if (i.activate)
-		{
-			i.sprite->Render(SCREEN_SURFACE);
-		}
-	}
-}
-
-void EntityBattleProperties::Weapon::generateTargetArea(const Map &map, const Tile& source)
-{   //variable below stores the tile cones coming from the ship 
-	auto m_tempTargetArea = map.getTileCone(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range, source.m_entityOnTile->m_battleProperties.m_direction);
-	if (m_tempTargetArea.empty())
-	{
-		return;
-	}
-	clearGunArea();
-	assert(!m_spriteTargetStorage.empty());
-	//using same convention as movement // from source should be able to get position
-	for (int i = 0; i < m_tempTargetArea.size(); i++)
-	{
-		std::pair<int,int>tilePos = map.getTileScreenPos(m_tempTargetArea[i]->m_tileCoordinate);
-		m_spriteTargetStorage[i].sprite->GetTransformComp().SetPosition(
-		{
-		 tilePos.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),
-		 tilePos.second + DRAW_ENTITY_OFFSET_X * map.getDrawScale()
-		});
-		m_spriteTargetStorage[i].activate = true;
-	}
-}
-
-void EntityBattleProperties::Weapon::clearGunArea()
-{
-	for (auto& i : m_spriteTargetStorage)
-	{
-		i.activate = false;
-	}
-}
+//EntityBattleProperties::Weapon::HighlightNode::HighlightNode() //creating highlight node 
+//	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),
+//	activate(false)
+//{}
+//
+//EntityBattleProperties::Weapon::Weapon() //populating vector with inactive nodes
+//	: m_spriteTargetStorage()
+//{
+//	m_spriteTargetStorage.reserve(size_t(WEAPON_HIGHLIGHT_SIZE));
+//	for (int i = 0; i < WEAPON_HIGHLIGHT_SIZE; ++i)
+//	{
+//		m_spriteTargetStorage.push_back({});
+//	}
+//}
+//
+//void EntityBattleProperties::Weapon::render() const
+//{
+//	for (const auto& i : m_spriteTargetStorage)
+//	{
+//		if (i.activate)
+//		{
+//			i.sprite->Render(SCREEN_SURFACE);
+//		}
+//	}
+//}
+//
+//void EntityBattleProperties::Weapon::generateTargetArea(const Map &map, const Tile& source)
+//{   //variable below stores the tile cones coming from the ship 
+//	auto m_tempTargetArea = map.getTileCone(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range, source.m_entityOnTile->m_battleProperties.m_direction);
+//	if (m_tempTargetArea.empty())
+//	{
+//		return;
+//	}
+//	clearGunArea();
+//	assert(!m_spriteTargetStorage.empty());
+//	//using same convention as movement // from source should be able to get position
+//	for (int i = 0; i < m_tempTargetArea.size(); i++)
+//	{
+//		std::pair<int,int>tilePos = map.getTileScreenPos(m_tempTargetArea[i]->m_tileCoordinate);
+//		m_spriteTargetStorage[i].sprite->GetTransformComp().SetPosition(
+//		{
+//			 tilePos.first + 12 * map.getDrawScale(),
+//			 tilePos.second + 28 * map.getDrawScale()
+//		});
+//
+//		m_spriteTargetStorage[i].activate = true;
+//	}
+//}
+//
+//void EntityBattleProperties::Weapon::clearGunArea()
+//{
+//	for (auto& i : m_spriteTargetStorage)
+//	{
+//		i.activate = false;
+//	}
+//}

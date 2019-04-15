@@ -72,7 +72,9 @@ BattleUI::BattleUI(Battle & battle, std::deque<EntityProperties*>& selectedEntit
 
 void BattleUI::render() const
 {
-	if (m_battle.getCurrentPhase() == BattlePhase::ShipPlacement)
+	switch (m_battle.getCurrentPhase())
+	{
+	case BattlePhase::ShipPlacement :
 	{
 		for (auto& i : m_spawnSprites)
 		{
@@ -83,6 +85,17 @@ void BattleUI::render() const
 		{
 			m_currentSelectedEntity->m_sprite->Render(SCREEN_SURFACE);
 		}
+		break;
+	}
+	case BattlePhase::Attack :
+	{
+		m_targetArea.render();
+		break;
+	}
+	}
+	if (m_battle.getCurrentPhase() == BattlePhase::ShipPlacement)
+	{
+
 	}
 
 	m_invalidPosition.render();
@@ -122,7 +135,14 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 	}
 	else if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
-		onRightClickMovementPhase();
+		switch (m_battle.getCurrentPhase())
+		{
+		case BattlePhase::Movement :
+		{
+			onRightClickMovementPhase();
+			break;
+		}
+		}
 	}
 }
 
@@ -157,7 +177,7 @@ void BattleUI::onMouseMoveShipPlacementPhase()
 	}
 	
 	//If new tile is  in new position than old tile
-	if (tile->m_tileCoordinate != m_currentTileSelected->m_tileCoordinate)
+	if ((m_currentTileSelected) && tile->m_tileCoordinate != m_currentTileSelected->m_tileCoordinate)
 	{
 		m_currentTileSelected = tile;
 		//Cannot place ship on existing ship
@@ -300,8 +320,71 @@ void BattleUI::onLeftClickAttackPhase()
 	}
 
 	m_currentTileSelected = tile;
-	if (m_currentTileSelected->m_entityOnTile)
+	if (m_currentTileSelected->m_entityOnTile && !m_currentTileSelected->m_entityOnTile->m_battleProperties.m_readyToFire)
 	{
-		m_battle.activateEntityWeapon(*m_currentTileSelected->m_entityOnTile);
+		m_targetArea.generateTargetArea(m_battle.getMap(), *tile);
+		m_battle.activateEntityWeapon(m_currentTileSelected->m_entityOnTile->m_battleProperties);
+	}
+	else
+	{
+		assert(!m_targetArea.m_targetAreaSprites.empty());
+
 	}
 }
+
+//Weapon Graph
+BattleUI::TargetArea::TargetArea()
+{
+	m_targetAreaSprites.reserve(size_t(300));
+	for (int i = 0; i < 300; ++i)
+	{
+		m_targetAreaSprites.push_back({});
+	}
+}
+
+void BattleUI::TargetArea::render() const
+{
+	for (const auto& i : m_targetAreaSprites)
+	{
+		if (i.activate)
+		{
+			i.sprite->Render(SCREEN_SURFACE);
+		}
+	}
+}
+
+void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & source)
+{
+	m_targetArea = map.getTileCone(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range, source.m_entityOnTile->m_battleProperties.m_direction);
+	if (m_targetArea.empty())
+	{
+		return;
+	}
+	clearTargetArea();
+	assert(!m_targetAreaSprites.empty());
+	//using same convention as movement // from source should be able to get position
+	for (int i = 0; i < m_targetArea.size(); i++)
+	{
+		std::pair<int, int>tilePos = map.getTileScreenPos(m_targetArea[i]->m_tileCoordinate);
+		m_targetAreaSprites[i].sprite->GetTransformComp().SetPosition(
+			{
+				 tilePos.first + 12 * map.getDrawScale(),
+				 tilePos.second + 28 * map.getDrawScale()
+			});
+
+		m_targetAreaSprites[i].activate = true;
+	}
+}
+
+void BattleUI::TargetArea::clearTargetArea()
+{
+	for (auto& i : m_targetAreaSprites)
+	{
+		i.activate = false;
+	}
+}
+
+BattleUI::TargetArea::HighlightNode::HighlightNode()
+	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),
+	activate(false)
+{}

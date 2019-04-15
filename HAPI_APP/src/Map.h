@@ -6,7 +6,6 @@
 #include <HAPISprites_UI.h>
 #include "global.h"
 
-
 constexpr float DRAW_OFFSET_X{ 12 };
 constexpr float DRAW_OFFSET_Y{ 28 };
 
@@ -20,7 +19,6 @@ constexpr float DRAW_OFFSET_Y{ 28 };
 ****
 */
 struct BattleEntity;
-
 struct Tile
 {
 	const enum eTileType m_type;
