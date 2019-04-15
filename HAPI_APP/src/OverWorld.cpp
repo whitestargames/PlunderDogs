@@ -26,26 +26,53 @@ std::vector<EntityProperties> assignEntities()
 
 OverWorld::OverWorld()
 	: m_entities(assignEntities()),
-	m_GUI(m_entities),
+	m_selectedEntities(),
+	m_player1(assignEntities(), PlayerName::Player1),
+	m_player2(assignEntities(), PlayerName::Player2),
+	m_GUI(m_player1),
 	m_battle(),
-	m_startBattle(false)
+	m_startBattle(false),
+	m_selectedNextPlayer(false),
+	m_currentPlayerSelected(PlayerName::Player1)
 {}
 
 void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
 {
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
-		m_GUI.onLeftClick(mouseData, m_entities, m_selectedEntities, m_startBattle);
+		if (m_currentPlayerSelected == PlayerName::Player1)
+		{
+			m_GUI.onLeftClick(mouseData, m_player1, m_startBattle, m_selectedNextPlayer, m_player2);
+		}
+		else
+		{
+			m_GUI.onLeftClick(mouseData, m_player2, m_startBattle, m_selectedNextPlayer, m_player2);
+		}
+		
 	}
 	if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
-		m_GUI.onRightClick(mouseData, m_entities, m_selectedEntities);
+		if (m_currentPlayerSelected == PlayerName::Player1)
+		{
+			m_GUI.onRightClick(mouseData, m_player1);
+		}
+		else
+		{
+			m_GUI.onRightClick(mouseData, m_player2);
+		}
 	}
 }
 
 void OverWorld::OnMouseMove(const HAPI_TMouseData & mouseData)
 {
-	m_GUI.onMouseMove(mouseData, m_entities, m_selectedEntities);
+	if (m_currentPlayerSelected == PlayerName::Player1)
+	{
+		m_GUI.onMouseMove(mouseData, m_player1);
+	}
+	else
+	{
+		m_GUI.onMouseMove(mouseData, m_player2);
+	}
 }
 
 void OverWorld::render()
@@ -55,6 +82,13 @@ void OverWorld::render()
 
 void OverWorld::update(float deltaTime)
 {
+	if (m_selectedNextPlayer)
+	{
+		assert(m_currentPlayerSelected == PlayerName::Player1);
+		m_currentPlayerSelected = PlayerName::Player2;
+		m_selectedNextPlayer = false;
+	}
+
 	if (m_startBattle)
 	{
 		startBattle();
@@ -69,11 +103,17 @@ void OverWorld::update(float deltaTime)
 
 void OverWorld::startBattle()
 {
+	if (m_currentPlayerSelected == PlayerName::Player1)
+	{
+		//m_GUI.reset(m_player2);
+		m_currentPlayerSelected = PlayerName::Player2;
+	}
+
 	if (m_startBattle)
 	{
 		OverWorldGUI::CURRENT_WINDOW = eBattle;
 		
-		m_battle = std::make_unique<Battle>(m_selectedEntities);
+		m_battle = std::make_unique<Battle>(m_player1.m_selectedEntities, m_player2.m_selectedEntities);
 		m_startBattle = false;
 	}
 }

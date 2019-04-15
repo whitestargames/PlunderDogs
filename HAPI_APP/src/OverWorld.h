@@ -3,11 +3,25 @@
 #include <string>
 #include "Global.h"
 #include "Battle.h"
+#include "PlayerName.h"
 #include "OverWorldGUI.h"
 #include <deque>
 
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
+
+struct Player
+{
+	Player(std::vector<EntityProperties> entities, PlayerName name)
+		: m_entities(entities),
+		m_selectedEntities(),
+		m_name(name)
+	{}
+
+	std::vector<EntityProperties> m_entities;
+	std::vector<EntityProperties*> m_selectedEntities;
+	const PlayerName m_name;
+};
 
 class OverWorld : public IHapiSpritesInputListener
 {
@@ -24,8 +38,13 @@ public:
 
 private:
 	std::vector<EntityProperties> m_entities;
-	std::deque<EntityProperties*> m_selectedEntities;
+	std::vector<EntityProperties*> m_selectedEntities;
+	Player m_player1;
+	Player m_player2;
 	OverWorldGUI m_GUI;
 	std::unique_ptr<Battle> m_battle;
 	bool m_startBattle;
+	bool m_selectedNextPlayer;
+
+	PlayerName m_currentPlayerSelected;
 };

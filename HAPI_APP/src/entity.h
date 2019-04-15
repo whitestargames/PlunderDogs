@@ -6,6 +6,7 @@
 #include <string>
 #include "Timer.h"
 #include "Global.h"
+#include "PlayerName.h"
 
 struct Tile;
 struct Weapons;
@@ -45,7 +46,6 @@ struct EntityBattleProperties
 	private:
 		std::vector<PathNode> m_movementPath;
 		unsigned int getDirectionCost(int currentDirection, int newDirection);
-		
 	};
 
 	EntityBattleProperties(std::pair<int, int> startingPosition);
@@ -71,8 +71,9 @@ struct EntityBattleProperties
 
 struct BattleEntity
 {
-	BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map);
+	BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map, PlayerName playerName);
 
 	EntityProperties m_entityProperties;
 	EntityBattleProperties m_battleProperties;
+	const PlayerName m_playerName;
 };

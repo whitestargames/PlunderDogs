@@ -5,22 +5,25 @@
 
 using namespace HAPISPACE;
 
-Battle::Battle(std::deque<EntityProperties*>& selectedEntities) :
-	m_entities(),
+Battle::Battle(std::vector<EntityProperties*>& player1, std::vector<EntityProperties*>& player2) 
+	: m_player1(),
+	m_player2(),
 	m_map(MapParser::parseMap("Level1.tmx")),
-	m_battleUI(*this, selectedEntities),
-	m_currentPhase(BattlePhase::ShipPlacement)
-{
-	/*insertEntity({ 5, 15 });
-	insertEntity({ 4, 4 });
-	insertEntity({ 8, 8 });*/
-}
+	m_battleUI(*this, player1, player2),
+	m_currentPhase(BattlePhase::ShipPlacement),
+	m_currentPlayerTurn(PlayerName::Player1)
+{}
 
 void Battle::render() const
 {
 	m_map.drawMap();
 	
-	for (const auto& entity : m_entities)
+	for (const auto& entity : m_player1)
+	{
+		entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
+	}
+
+	for (const auto& entity : m_player2)
 	{
 		entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
 	}
@@ -32,7 +35,48 @@ void Battle::update(float deltaTime)
 {
 	if (m_currentPhase == BattlePhase::Movement)
 	{
-		updateMovementPhase(deltaTime);
+		if (m_currentPlayerTurn == PlayerName::Player1)
+		{
+			bool allEntitiesReachedDestination = true;
+			for (auto& entity : m_player1)
+			{
+				entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties);
+				if (!entity->m_battleProperties.m_movedToDestination)
+				{
+					allEntitiesReachedDestination = false;
+				}
+			}
+
+			if (allEntitiesReachedDestination)
+			{
+				for (auto& entity : m_player1)
+				{
+					entity->m_battleProperties.m_movedToDestination = false;
+				}
+				nextTurn();
+			}
+		}
+		else
+		{
+			bool allEntitiesReachedDestination = true;
+			for (auto& entity : m_player2)
+			{
+				entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties);
+				if (!entity->m_battleProperties.m_movedToDestination)
+				{
+					allEntitiesReachedDestination = false;
+				}
+			}
+
+			if (allEntitiesReachedDestination)
+			{
+				for (auto& entity : m_player2)
+				{
+					entity->m_battleProperties.m_movedToDestination = false;
+				}
+				nextTurn();
+			}
+		}
 	}
 }
 
@@ -51,52 +95,71 @@ void Battle::fireEntityWeaponAtPosition(std::pair<int, int> coord, const std::ve
 
 }
 
-void Battle::insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties)
+void Battle::insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, PlayerName playerName)
 {
-	m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map));
+	switch (playerName)
+	{
+	case PlayerName::Player1 :
+	{
+		m_player1.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, playerName));
+		break;
+	}
+	case PlayerName::Player2:
+	{
+		m_player2.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, playerName));
+		break;
+	}
+	}
 }
 
-void Battle::nextPhase()
+void Battle::nextTurn()
 {
 	switch (m_currentPhase)
 	{
 	case BattlePhase::ShipPlacement :
 	{
-		m_currentPhase = BattlePhase::Movement;
+		if (m_currentPlayerTurn == PlayerName::Player1)
+		{
+			m_currentPlayerTurn = PlayerName::Player2;
+			m_battleUI.newTurn(m_currentPlayerTurn);
+		}
+		else
+		{
+			m_currentPhase = BattlePhase::Movement;
+			m_battleUI.newPhase();
+		}
+		
 		break;
 	}
 	case BattlePhase::Movement :
 	{
-		m_currentPhase = BattlePhase::Attack;
+		if (m_currentPlayerTurn == PlayerName::Player1)
+		{
+			m_currentPlayerTurn = PlayerName::Player2;
+			m_battleUI.newTurn(m_currentPlayerTurn);
+		}
+		else
+		{
+			m_currentPhase = BattlePhase::Attack;
+			m_battleUI.newPhase();
+		}
+		
 		break;
 	}
 	case BattlePhase::Attack :
 	{
-		m_currentPhase = BattlePhase::Movement;
+		if (m_currentPlayerTurn == PlayerName::Player1)
+		{
+			m_currentPlayerTurn = PlayerName::Player2;
+			m_battleUI.newTurn(m_currentPlayerTurn);
+		}
+		else
+		{
+			m_currentPhase = BattlePhase::Movement;
+			m_battleUI.newPhase();
+		}
 		break;
 	}
-	}
-}
-
-void Battle::updateMovementPhase(float deltaTime)
-{
-	bool allEntitiesReachedDestination = true;
-	for (auto& entity : m_entities)
-	{
-		entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties);
-		if (!entity->m_battleProperties.m_movedToDestination)
-		{
-			allEntitiesReachedDestination = false;
-		}
-	}
-
-	if (allEntitiesReachedDestination)
-	{
-		for (auto& entity : m_entities)
-		{
-			entity->m_battleProperties.m_movedToDestination = false;
-		}
-		nextPhase();
 	}
 }
 
@@ -110,7 +173,7 @@ BattlePhase Battle::getCurrentPhase() const
 	return m_currentPhase;
 }
 
-void Battle::start()
+PlayerName Battle::getCurentPlayer() const
 {
-	assert(m_currentPhase == BattlePhase::ShipPlacement);
+	return m_currentPlayerTurn;
 }

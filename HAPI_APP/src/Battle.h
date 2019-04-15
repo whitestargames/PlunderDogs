@@ -3,6 +3,7 @@
 #include "Map.h"
 #include "entity.h"
 #include "BattleUI.h"
+#include "PlayerName.h"
 
 enum class BattlePhase
 {
@@ -14,13 +15,12 @@ enum class BattlePhase
 class Battle
 {
 public:
-	Battle(std::deque<EntityProperties*>& selectedEntities);
+	Battle(std::vector<EntityProperties*>& player1, std::vector<EntityProperties*>& player2);
 
 	const Map& getMap() const;
 
 	BattlePhase getCurrentPhase() const;
-
-	void start();
+	PlayerName getCurentPlayer() const;
 
 	void render() const;
 	void update(float deltaTime);
@@ -28,15 +28,14 @@ public:
 	void activateEntityWeapon(EntityBattleProperties& battleProperties);
 	void fireEntityWeaponAtPosition(std::pair<int, int> coord, const std::vector<const Tile*>& targetArea, BattleEntity& battleEntity);
 
-	void insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties);
-	void nextPhase();
+	void insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, PlayerName playerName);
+	void nextTurn();
 
 private:
-	std::vector<std::unique_ptr<BattleEntity>> m_entities;
+	std::vector<std::unique_ptr<BattleEntity>> m_player1;
+	std::vector<std::unique_ptr<BattleEntity>> m_player2;
 	Map m_map;
 	BattleUI m_battleUI;
 	BattlePhase m_currentPhase;
-
-	//Movement Phase
-	void updateMovementPhase(float deltaTime);
+	PlayerName m_currentPlayerTurn;
 };

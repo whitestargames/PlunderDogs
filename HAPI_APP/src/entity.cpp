@@ -169,18 +169,17 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 //ENTITY
 EntityProperties::EntityProperties() 
 	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_ship)),
-	m_movementPoints(5),
-	m_healthMax(20),
-	m_currentHealth(20),
-	m_range(4),
-	m_damage(5)
-{
+	m_movementPoints(0),
+	m_healthMax(0),
+	m_currentHealth(0),
+	m_range(0),
+	m_damage(0)
+{}
 
-}
-
-BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map)
+BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map, PlayerName playerName)
 	: m_entityProperties(entityProperties),
-	m_battleProperties(startingPosition)
+	m_battleProperties(startingPosition),
+	m_playerName(playerName)
 {
 	map.insertEntity(*this);
 }
@@ -216,74 +215,12 @@ void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProp
 
 void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, const Map & map)
 {
-	//Move entity sprite
+	//Set sprite position to current position
 	const std::pair<int, int> tileTransform = map.getTileScreenPos(m_currentPosition);
 	sprite->GetTransformComp().SetPosition({
 		static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
 		static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
 
-	//Render entity
 	sprite->Render(SCREEN_SURFACE);
 	m_movementPath.render();
-	//m_weapon.render();
 }
-
-//
-//WEAPON
-//
-//EntityBattleProperties::Weapon::HighlightNode::HighlightNode() //creating highlight node 
-//	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),
-//	activate(false)
-//{}
-//
-//EntityBattleProperties::Weapon::Weapon() //populating vector with inactive nodes
-//	: m_spriteTargetStorage()
-//{
-//	m_spriteTargetStorage.reserve(size_t(WEAPON_HIGHLIGHT_SIZE));
-//	for (int i = 0; i < WEAPON_HIGHLIGHT_SIZE; ++i)
-//	{
-//		m_spriteTargetStorage.push_back({});
-//	}
-//}
-//
-//void EntityBattleProperties::Weapon::render() const
-//{
-//	for (const auto& i : m_spriteTargetStorage)
-//	{
-//		if (i.activate)
-//		{
-//			i.sprite->Render(SCREEN_SURFACE);
-//		}
-//	}
-//}
-//
-//void EntityBattleProperties::Weapon::generateTargetArea(const Map &map, const Tile& source)
-//{   //variable below stores the tile cones coming from the ship 
-//	auto m_tempTargetArea = map.getTileCone(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range, source.m_entityOnTile->m_battleProperties.m_direction);
-//	if (m_tempTargetArea.empty())
-//	{
-//		return;
-//	}
-//	clearGunArea();
-//	assert(!m_spriteTargetStorage.empty());
-//	//using same convention as movement // from source should be able to get position
-//	for (int i = 0; i < m_tempTargetArea.size(); i++)
-//	{
-//		std::pair<int,int>tilePos = map.getTileScreenPos(m_tempTargetArea[i]->m_tileCoordinate);
-//		m_spriteTargetStorage[i].sprite->GetTransformComp().SetPosition(
-//		{
-//			 tilePos.first + 12 * map.getDrawScale(),
-//			 tilePos.second + 28 * map.getDrawScale()
-//		});
-//
-//		m_spriteTargetStorage[i].activate = true;
-//	}
-//}
-//
-//void EntityBattleProperties::Weapon::clearGunArea()
-//{
-//	for (auto& i : m_spriteTargetStorage)
-//	{
-//		i.activate = false;
-//	}
-//}
