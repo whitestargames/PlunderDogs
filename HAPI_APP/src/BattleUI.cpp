@@ -42,16 +42,16 @@ void BattleUI::InvalidPosition::setPosition(std::pair<int, int> screenPosition, 
 //
 BattleUI::BattleUI(Battle & battle, std::vector<EntityProperties*>& player1, std::vector<EntityProperties*>& player2)
 	: m_battle(battle),
-	m_currentTileSelected(m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()))),
+	m_currentTileSelected(nullptr),
 	m_invalidPosition()
 {
-	int i = 0;
-
+	std::cout << "Hiz\n";
+	//m_currentTileSelected(m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()))),
 	//		PlayerShipPlacement(std::vector<EntityProperties*>& player, std::pair<int, int> spawnPosition, int range, Battle& battle, PlayerName playerName);
 	std::pair<int, int> player1SpawnPos{ 4, 11 };
 	m_playerShipPlacement.push_back(std::make_unique<PlayerShipPlacement>(player1, player1SpawnPos, 4, m_battle, PlayerName::Player1));
-	/*std::pair<int, int> player2SpawnPos{ 22, 2 };
-	m_playerShipPlacement.push_back(std::make_unique<PlayerShipPlacement>(player2, player2SpawnPos, 4, m_battle, PlayerName::Player2));*/
+	std::pair<int, int> player2SpawnPos{ 22, 2 };
+	m_playerShipPlacement.push_back(std::make_unique<PlayerShipPlacement>(player2, player2SpawnPos, 4, m_battle, PlayerName::Player2));
 	
 	//Hack to make sprites position correctly
 	//TODO: Will change at some point
@@ -75,6 +75,7 @@ void BattleUI::render() const
 	{
 		assert(!m_playerShipPlacement.empty());
 		m_playerShipPlacement.front()->render(m_invalidPosition);
+		break;
 	}
 	case BattlePhase::Attack :
 	{
@@ -117,6 +118,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 		{
 			assert(!m_playerShipPlacement.empty());
 			m_playerShipPlacement.front()->onLeftClick(m_invalidPosition, m_currentTileSelected);
+
 			break;
 		}
 		case BattlePhase::Movement:
@@ -157,6 +159,9 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 	{
 		assert(!m_playerShipPlacement.empty());
 		m_playerShipPlacement.front()->onMouseMove(m_invalidPosition, m_currentTileSelected);
+		//std::cout << m_currentTileSelected->m_tileCoordinate.first << "\n";
+		//std::cout << m_currentTileSelected->m_tileCoordinate.second << "\n";
+		std::cout << m_invalidPosition.m_activate << "\n";
 		break;
 	}
 	case BattlePhase::Movement:
@@ -393,16 +398,22 @@ void BattleUI::PlayerShipPlacement::render(const InvalidPosition& invalidPositio
 
 void BattleUI::PlayerShipPlacement::onMouseMove(InvalidPosition& invalidPosition, const Tile* currentTileSelected)
 {
-	const Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
-	if (!tile)
+	const Tile* tileOnMouse = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
+	if (!tileOnMouse)
 	{
 		return;
 	}
 
-	//If new tile is  in new position than old tile
-	if ((currentTileSelected) && tile->m_tileCoordinate != currentTileSelected->m_tileCoordinate)
+	if (!currentTileSelected)
 	{
-		currentTileSelected = tile;
+		currentTileSelected = tileOnMouse;
+	}
+
+	//If new tile is  in new position than old tile
+	if (currentTileSelected && currentTileSelected->m_tileCoordinate != tileOnMouse->m_tileCoordinate)
+	{
+		currentTileSelected = tileOnMouse;
+		
 		//Cannot place ship on existing ship
 		if (currentTileSelected->m_entityOnTile)
 		{
@@ -411,9 +422,8 @@ void BattleUI::PlayerShipPlacement::onMouseMove(InvalidPosition& invalidPosition
 			return;
 		}
 
-		std::pair<int, int> tileCoordinate = currentTileSelected->m_tileCoordinate;
+		auto tileCoordinate = currentTileSelected->m_tileCoordinate;
 		auto iter = std::find_if(m_spawnArea.begin(), m_spawnArea.end(), [tileCoordinate](const auto& tile) { return tileCoordinate == tile->m_tileCoordinate; });
-		//
 		if (iter != m_spawnArea.cend())
 		{
 			const std::pair<int, int> tileTransform = m_battle.getMap().getTileScreenPos(currentTileSelected->m_tileCoordinate);
@@ -446,5 +456,9 @@ void BattleUI::PlayerShipPlacement::onLeftClick(const InvalidPosition& invalidPo
 		}
 
 		m_currentSelectedEntity = m_player.back();
+	}
+	else
+	{
+		int i = 0;
 	}
 }
