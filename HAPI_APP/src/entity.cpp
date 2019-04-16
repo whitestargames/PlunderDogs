@@ -6,7 +6,7 @@
 #include "Textures.h"
 
 constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
-constexpr size_t WEAPON_HIGHLIGHT_SIZE{ 40 };
+constexpr size_t WEAPON_HIGHLIGHT_SIZE{ 100 };
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
 
@@ -181,9 +181,10 @@ EntityProperties::EntityProperties()
 	m_healthMax(20),
 	m_currentHealth(20),
 	m_range(4),
-	m_damage(5)
+	m_damage(5),
+	m_weaponType(weaponType::eSideCannons)
 {
-	m_sprite->GetTransformComp().SetOrigin({ 13, 25 });
+	m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 }
 
 BattleEntity::BattleEntity(std::pair<int, int> startingPosition)
@@ -269,7 +270,24 @@ void EntityBattleProperties::Weapon::render() const
 
 void EntityBattleProperties::Weapon::generateTargetArea(const Map &map, const Tile& source)
 {   //variable below stores the tile cones coming from the ship 
-	auto m_tempTargetArea = map.getTileCone(source.m_tileCoordinate,source.m_entityOnTile->m_entityProperties.m_range,source.m_entityOnTile->m_battleProperties.m_direction);
+	std::vector<const Tile*> m_tempTargetArea;
+	if (source.m_entityOnTile->m_entityProperties.m_weaponType == eSideCannons)
+	{
+		m_tempTargetArea = map.getTileCone(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range, source.m_entityOnTile->m_battleProperties.m_direction);
+	}
+
+	else if (source.m_entityOnTile->m_entityProperties.m_weaponType == eStraightShot)
+	{
+
+	}
+
+	else if (source.m_entityOnTile->m_entityProperties.m_weaponType == eStraightShotExplosive)
+	{
+
+	}
+	
+
+	///////////////////everything bellow stay as is
 	if (m_tempTargetArea.empty())
 	{
 		return;

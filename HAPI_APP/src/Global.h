@@ -88,3 +88,10 @@ enum eSpriteFrame
 
 
 };
+
+enum weaponType
+{
+	eSideCannons = 0,
+	eStraightShot,
+	eStraightShotExplosive
+};

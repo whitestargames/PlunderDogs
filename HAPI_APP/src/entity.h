@@ -19,6 +19,7 @@ struct EntityProperties
 	int m_healthMax;
 	int m_currentHealth;
 	int m_range;
+	int m_weaponType;
 	int m_damage;
 
 
