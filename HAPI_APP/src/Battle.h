@@ -27,16 +27,14 @@ public:
 	void moveEntityToPosition(BattleEntity& entity, const Tile& destination);
 	void activateEntityWeapon(BattleEntity& entity);
 	void insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties);
+	void setMapDrawOffset(std::pair<int, int> offset) { m_map.setDrawOffset(offset); }
 
 private:
 	std::vector<std::unique_ptr<BattleEntity>> m_entities;
 	Map m_map;
 	BattleUI m_battleUI;
 	BattlePhase m_currentPhase;
-
-	
 	void changePhase(BattlePhase newPhase);
-
 	//Movement Phase
 	void updateMovementPhase(float deltaTime);
 };

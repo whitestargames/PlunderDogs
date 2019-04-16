@@ -1,5 +1,4 @@
 #include  "Overworld.h"
-#include "Battle.h"
 #include "Utilities/Utilities.h"
 #include "HAPIWrapper.h"
 #include "Textures.h"
@@ -77,5 +76,3 @@ void OverWorld::startBattle()
 		m_startBattle = false;
 	}
 }
-
-

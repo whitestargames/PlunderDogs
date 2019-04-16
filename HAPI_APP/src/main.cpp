@@ -1,5 +1,6 @@
 #include "OverWorld.h"
 #include "Textures.h"
+//#include "BattleGUI.h"
 using namespace HAPISPACE;
 
 float getDeltaTime(int frameStart, int lastFrameStart)
@@ -35,4 +36,5 @@ void HAPI_Sprites_Main()
 
 		lastFrameStart = frameStart;
 	}
+			//battleGUI.render();
 }
