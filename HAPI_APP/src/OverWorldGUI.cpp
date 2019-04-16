@@ -19,11 +19,25 @@ OverWorldGUI::OverWorldGUI(std::vector<EntityProperties>& entities)
 	fleetWindowSkinName(UI.LoadSkin(Utilities::getDataDirectory() + "fleetWindowSkin.xml")),
 	fleetWindowSliderSkinName(UI.LoadSkin(Utilities::getDataDirectory() + "fleetWindowSliderSkin.xml")),
 	m_currentlySelected(nullptr),
-	m_enitiesAdded(false)
+	m_enitiesAdded(false),
+	m_upgradesButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "upgradesButton.png", 2)),
+	//upgrade background
+	//upgrade buttons
+	m_upgradesScreenBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "upgradesScreenBackground.png")),
+	m_upgradeBackButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PrebattleUIBackButton.png", 2)),
+	m_removeHealthButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "removeButton.png", 2)),
+	m_removeMovementButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "removeButton.png", 2)),
+	m_removeDamageButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "removeButton.png", 2)),
+	m_removeRangeButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "removeButton.png", 2)),
+	m_addHealthButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2)),
+	m_addMovementButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2)),
+	m_addDamageButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2)),
+	m_addRangeButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2))
 {
 	HAPI_Wrapper::setPosition(m_enemyTerritoryHexSheet, { 100, 600 });
 	HAPI_Wrapper::setPosition(m_playButton, { 1150, 722 });
 	HAPI_Wrapper::setPosition(m_backButton, { 185, 747 });
+	HAPI_Wrapper::setPosition(m_upgradesButton, { 1300, 25 });
 	//adding the windows and sliders, also populates the fleet window with all current entities
 	UI.AddWindow(FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 510, 710), fleetWindowSkinName);
 	for (int i = 0; i < entities.size(); i++) TODO:
@@ -33,6 +47,18 @@ OverWorldGUI::OverWorldGUI(std::vector<EntityProperties>& entities)
 	UI.GetWindow(FLEET_WINDOW)->AddSlider(FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
 	UI.AddWindow(BATTLE_FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 220, 420), fleetWindowSkinName);
 	UI.GetWindow(BATTLE_FLEET_WINDOW)->AddSlider(BATTLE_FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
+
+	//upgrade buttons positions
+	HAPI_Wrapper::setPosition(m_upgradesScreenBackground, { 185, 50 });
+	HAPI_Wrapper::setPosition(m_upgradeBackButton, { 1190, 785 });
+	HAPI_Wrapper::setPosition(m_removeHealthButton, { 625, 150 });//remove buttons
+	HAPI_Wrapper::setPosition(m_removeMovementButton, { 625, 280 });
+	HAPI_Wrapper::setPosition(m_removeDamageButton, { 625, 410 });
+	HAPI_Wrapper::setPosition(m_removeRangeButton, { 625, 540 });
+	HAPI_Wrapper::setPosition(m_addHealthButton, { 875, 150 });//add buttons
+	HAPI_Wrapper::setPosition(m_addMovementButton, { 875, 280 });
+	HAPI_Wrapper::setPosition(m_addDamageButton, { 875, 410 });
+	HAPI_Wrapper::setPosition(m_addRangeButton, { 875, 540 });
 }
 
 void OverWorldGUI::render(std::unique_ptr<Battle>& battle)
@@ -46,6 +72,7 @@ void OverWorldGUI::render(std::unique_ptr<Battle>& battle)
 			m_prebattleUIBackground->Render(SCREEN_SURFACE);
 			m_playButton->Render(SCREEN_SURFACE);
 			m_backButton->Render(SCREEN_SURFACE);
+			m_upgradesButton->Render(SCREEN_SURFACE);
 			if (m_currentlySelected != nullptr)
 			{
 				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 270), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_currentHealth), 50);
@@ -69,6 +96,30 @@ void OverWorldGUI::render(std::unique_ptr<Battle>& battle)
 			HAPI_Wrapper::render(m_enemyTerritoryHexSheet);
 			break;
 		}
+		case OverWorldWindow::eUpgrade:
+		{
+			m_upgradesScreenBackground->Render(SCREEN_SURFACE);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1170, 150), HAPISPACE::Colour255::BLACK, "36", 50);//draw text gold
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1110, 270), HAPISPACE::Colour255::BLACK, "BUY", 50);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1110, 315), HAPISPACE::Colour255::BLACK, "SHIPS", 50);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(710, 150), HAPISPACE::Colour255::BLACK, "56", 50);//draw stat text*4
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(710, 280), HAPISPACE::Colour255::BLACK, "6", 50);//draw stat text*4
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(710, 410), HAPISPACE::Colour255::BLACK, "4", 50);//draw stat text*4
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(710, 540), HAPISPACE::Colour255::BLACK, "3", 50);//draw stat text*4
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(640, 670), HAPISPACE::Colour255::BLACK, "UPGRADES: " "0" "/" "2", 50);
+			m_upgradeBackButton->Render(SCREEN_SURFACE);
+			//if render "+" button*5
+			//if render "-" button*5
+			m_removeHealthButton->Render(SCREEN_SURFACE);
+			m_removeMovementButton->Render(SCREEN_SURFACE);
+			m_removeDamageButton->Render(SCREEN_SURFACE);
+			m_removeRangeButton->Render(SCREEN_SURFACE);
+			m_addHealthButton->Render(SCREEN_SURFACE);
+			m_addMovementButton->Render(SCREEN_SURFACE);
+			m_addDamageButton->Render(SCREEN_SURFACE);
+			m_addRangeButton->Render(SCREEN_SURFACE);
+			break;
+		}
 	}
 }
 
@@ -85,6 +136,10 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, std::vector<Ent
 				UI.OpenWindow(FLEET_WINDOW);
 				UI.OpenWindow(BATTLE_FLEET_WINDOW);
 			}
+			if (HAPI_Wrapper::isTranslated(m_upgradesButton, mouseData, 0))
+			{
+				CURRENT_WINDOW = OverWorldWindow::eUpgrade;
+			}
 			break;
 		}
 		case OverWorldWindow::ePreBattle:
@@ -96,6 +151,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, std::vector<Ent
 				
 				CURRENT_WINDOW = OverWorldWindow::eBattle;
 				startBattle = true;
+				break;
 			}
 			else if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
 			{
@@ -135,6 +191,46 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, std::vector<Ent
 			if (selection == false)
 			{
 				m_currentlySelected = nullptr;
+			}
+			break;
+		}
+		case OverWorldWindow::eUpgrade:
+		{
+			if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
+			}
+			else if (m_addHealthButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addHealthButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//health+
+			}
+			else if (m_addMovementButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addMovementButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//movement+
+			}
+			else if (m_addDamageButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addDamageButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//damage+
+			}
+			else if (m_addRangeButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addRangeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//range+
+			}
+			else if (m_removeHealthButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeHealthButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//health-
+			}
+			else if (m_removeMovementButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeMovementButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//movement-
+			}
+			else if (m_removeDamageButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeDamageButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//damage-
+			}
+			else if (m_removeRangeButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeRangeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//range-
 			}
 			break;
 		}
@@ -224,6 +320,14 @@ void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, std::vector<Ent
 		{
 			m_enemyTerritoryHexSheet->SetFrameNumber(0);// sets it to the default sprite
 		}
+		if (HAPI_Wrapper::isTranslated(m_upgradesButton, mouseData, 0))
+		{
+			m_upgradesButton->SetFrameNumber(1);
+		}
+		else if (m_upgradesButton->GetFrameNumber() != 0)
+		{
+			m_upgradesButton->SetFrameNumber(0);
+		}
 		break;
 	}
 	case OverWorldWindow::ePreBattle:
@@ -263,6 +367,83 @@ void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, std::vector<Ent
 					positionEntity(BATTLE_FLEET_WINDOW, BATTLE_FLEET_SLIDER, "entity" + std::to_string(i), i, selectedEntities.size());
 				}
 			}
+		}
+		break;
+	}
+	case OverWorldWindow::eUpgrade:
+	{
+		if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_upgradeBackButton->SetFrameNumber(1);
+		}
+		else if (m_upgradeBackButton->GetFrameNumber() != 0)
+		{
+			m_upgradeBackButton->SetFrameNumber(0);
+		}
+
+		if (m_addHealthButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addHealthButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_addHealthButton->SetFrameNumber(1);//health+
+		}
+		else if (m_addHealthButton->GetFrameNumber() != 0)
+		{
+			m_addHealthButton->SetFrameNumber(0);
+		}
+		if (m_addMovementButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addMovementButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_addMovementButton->SetFrameNumber(1);//movement+
+		}
+		else if (m_addMovementButton->GetFrameNumber() != 0)
+		{
+			m_addMovementButton->SetFrameNumber(0);
+		}
+		if (m_addDamageButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addDamageButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_addDamageButton->SetFrameNumber(1);//damage+
+		}
+		else if (m_addDamageButton->GetFrameNumber() != 0)
+		{
+			m_addDamageButton->SetFrameNumber(0);
+		}
+		if (m_addRangeButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addRangeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_addRangeButton->SetFrameNumber(1);//range+
+		}
+		else if (m_addRangeButton->GetFrameNumber() != 0)
+		{
+			m_addRangeButton->SetFrameNumber(0);
+		}
+		if (m_removeHealthButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeHealthButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_removeHealthButton->SetFrameNumber(1);//health-
+		}
+		else if (m_removeHealthButton->GetFrameNumber() != 0)
+		{
+			m_removeHealthButton->SetFrameNumber(0);
+		}
+		if (m_removeMovementButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeMovementButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_removeMovementButton->SetFrameNumber(1);//movement-
+		}
+		else if (m_removeMovementButton->GetFrameNumber() != 0)
+		{
+			m_removeMovementButton->SetFrameNumber(0);
+		}
+		if (m_removeDamageButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeDamageButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_removeDamageButton->SetFrameNumber(1);//damage-
+		}
+		else if (m_removeDamageButton->GetFrameNumber() != 0)
+		{
+			m_removeDamageButton->SetFrameNumber(0);
+		}
+		if (m_removeRangeButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeRangeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_removeRangeButton->SetFrameNumber(1);//range-
+		}
+		else if (m_removeRangeButton->GetFrameNumber() != 0)
+		{
+			m_removeRangeButton->SetFrameNumber(0);
 		}
 		break;
 	}

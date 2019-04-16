@@ -44,6 +44,24 @@ private:
 	const std::string FLEET_SLIDER = "fleetSlider";
 	const std::string BATTLE_FLEET_SLIDER = "battleFleetSlider";
 
+	std::unique_ptr<Sprite> m_battleMapBackground;
+	std::unique_ptr<Sprite> m_enemyTerritoryHexSheet;
+	std::unique_ptr<Sprite> m_prebattleUIBackground;
+	std::unique_ptr<Sprite> m_playButton;
+	std::unique_ptr<Sprite> m_backButton;
+	std::unique_ptr<Sprite> m_upgradesButton;
+	//upgrade buttons
+	std::unique_ptr<Sprite> m_upgradesScreenBackground;
+	std::unique_ptr<Sprite> m_removeHealthButton;
+	std::unique_ptr<Sprite> m_removeMovementButton;
+	std::unique_ptr<Sprite> m_removeDamageButton;
+	std::unique_ptr<Sprite> m_removeRangeButton;
+	std::unique_ptr<Sprite> m_addHealthButton;
+	std::unique_ptr<Sprite> m_addMovementButton;
+	std::unique_ptr<Sprite> m_addDamageButton;
+	std::unique_ptr<Sprite> m_addRangeButton;
+	std::unique_ptr<Sprite> m_upgradeBackButton;
+
 public:
 	static OverWorldWindow CURRENT_WINDOW;
 	OverWorldGUI(std::vector<EntityProperties>& entities);
