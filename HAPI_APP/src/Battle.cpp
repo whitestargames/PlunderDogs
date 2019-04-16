@@ -17,7 +17,8 @@ Battle::Battle(std::vector<EntityProperties*>& player1, std::vector<EntityProper
 void Battle::render() const
 {
 	m_map.drawMap();
-	
+	m_battleUI.render();
+
 	for (const auto& entity : m_player1Entities)
 	{
 		entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
@@ -27,8 +28,6 @@ void Battle::render() const
 	{
 		entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
 	}
-
-	m_battleUI.render();
 }
 
 void Battle::update(float deltaTime)

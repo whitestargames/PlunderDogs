@@ -47,7 +47,7 @@ private:
 
 public:
 	static OverWorldWindow CURRENT_WINDOW;
-	OverWorldGUI(Player& player1);
+	OverWorldGUI(const Player& player1);
 
 	void onLeftClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer, bool& startBattle, bool& selectNextPlayer, Player& player2);
 	void onRightClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer);

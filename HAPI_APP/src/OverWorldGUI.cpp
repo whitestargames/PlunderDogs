@@ -10,7 +10,7 @@ constexpr int WINDOW_OBJECTHEIGHT = 150;
 constexpr int WINDOW_WIDTH = 830;
 constexpr int WINDOW_HEIGHT = 200;
 
-OverWorldGUI::OverWorldGUI(Player& player1)
+OverWorldGUI::OverWorldGUI(const Player& player1)
 	: m_battleMapBackground(std::make_unique<Sprite>(Textures::m_battleMapBackground)),
 	m_enemyTerritoryHexSheet(std::make_unique<Sprite>(Textures::m_enemyTerritoryHexSheet)),
 	m_prebattleUIBackground(std::make_unique<Sprite>(Textures::m_prebattleUIBackground)),

@@ -83,7 +83,6 @@ private:
 	void onLeftClickMovementPhase();
 	void onRightClickMovementPhase();
 
-
 	//Attack Phase
 	void onLeftClickAttackPhase();
 	void onRightClickAttackPhase();
