@@ -154,6 +154,14 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, int movement
 	}
 }
 
+void EntityBattleProperties::takeDamage(EntityProperties & entityProperties)
+{
+	//entityProperties.m_sprite = std::unique_ptr<Sprite>(Textures::m_thing);
+	entityProperties.m_sprite.reset();
+	entityProperties.m_sprite = std::make_shared<Sprite>(Textures::m_thing);
+
+}
+
 unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentDirection, int newDirection)
 {
 	unsigned int diff = std::abs(newDirection - currentDirection);

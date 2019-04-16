@@ -33,6 +33,7 @@ void Battle::render() const
 
 void Battle::update(float deltaTime)
 {
+	//Will simplify at some point
 	if (m_currentPhase == BattlePhase::Movement)
 	{
 		if (m_currentPlayerTurn == PlayerName::Player1)
@@ -82,21 +83,33 @@ void Battle::update(float deltaTime)
 
 void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
 {
+	assert(m_currentPhase == BattlePhase::Movement);
 	entity.m_battleProperties.moveEntity(m_map, destination, entity.m_battleProperties.m_movementPathSize);
 }
 
 void Battle::activateEntityWeapon(EntityBattleProperties& battleProperties)
 {
+	assert(m_currentPhase == BattlePhase::Attack);
 	battleProperties.m_readyToFire = true;
 }
 
-void Battle::fireEntityWeaponAtPosition(std::pair<int, int> coord, const std::vector<const Tile*>& targetArea, BattleEntity& battleEntity)
+void Battle::fireEntityWeaponAtPosition(BattleEntity& player, const BattleEntity& enemy, const std::vector<const Tile*>& targetArea)
 {
+	assert(m_currentPhase == BattlePhase::Attack);
+	assert(player.m_battleProperties.m_readyToFire);
 
+	auto tileCoordinate = enemy.m_battleProperties.m_currentPosition;
+	auto cIter = std::find_if(targetArea.cbegin(), targetArea.cend(), [tileCoordinate](const auto& tile) { return tileCoordinate == tile->m_tileCoordinate; });
+	//Enemy within range of weapon
+	if (cIter != targetArea.cend())
+	{
+		
+	}
 }
 
 void Battle::insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, PlayerName playerName)
 {
+	assert(m_currentPhase == BattlePhase::ShipPlacement);
 	switch (playerName)
 	{
 	case PlayerName::Player1 :
@@ -126,6 +139,7 @@ void Battle::nextTurn()
 		else
 		{
 			m_currentPhase = BattlePhase::Movement;
+			m_currentPlayerTurn = PlayerName::Player1;
 			m_battleUI.newPhase();
 		}
 		
@@ -141,6 +155,7 @@ void Battle::nextTurn()
 		else
 		{
 			m_currentPhase = BattlePhase::Attack;
+			m_currentPlayerTurn = PlayerName::Player1;
 			m_battleUI.newPhase();
 		}
 		
@@ -156,6 +171,7 @@ void Battle::nextTurn()
 		else
 		{
 			m_currentPhase = BattlePhase::Movement;
+			m_currentPlayerTurn = PlayerName::Player1;
 			m_battleUI.newPhase();
 		}
 		break;

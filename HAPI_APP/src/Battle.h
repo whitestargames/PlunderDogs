@@ -26,7 +26,7 @@ public:
 	void update(float deltaTime);
 	void moveEntityToPosition(BattleEntity& entity, const Tile& destination);
 	void activateEntityWeapon(EntityBattleProperties& battleProperties);
-	void fireEntityWeaponAtPosition(std::pair<int, int> coord, const std::vector<const Tile*>& targetArea, BattleEntity& battleEntity);
+	void fireEntityWeaponAtPosition(BattleEntity& player, const BattleEntity& enemy, const std::vector<const Tile*>& targetArea);
 
 	void insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, PlayerName playerName);
 	void nextTurn();

@@ -49,11 +49,10 @@ class BattleUI : public IHapiSpritesInputListener
 		bool isCompleted() const;
 		void render(const InvalidPosition& invalidPosition) const;
 
-		void onMouseMove(InvalidPosition& invalidPosition, const Tile* currentTileSelected, const Tile* i);
+		const Tile* getTileOnMouse(InvalidPosition& invalidPosition, const Tile* currentTileSelected, const Map& map);
 		void onLeftClick(const InvalidPosition& invalidPosition, const Tile* currectTileSelected, Battle& battle);
 
 	private:
-		const Map& m_map;
 		PlayerName m_playerName;
 		std::vector<EntityProperties*>& m_player;
 		EntityProperties* m_currentSelectedEntity;
@@ -95,5 +94,6 @@ private:
 
 	//Attack Phase
 	void onLeftClickAttackPhase();
+	void onMouseMoveAttackPhase();
 	TargetArea m_targetArea;
 };
