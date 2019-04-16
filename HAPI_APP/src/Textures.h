@@ -78,11 +78,12 @@ struct Textures
 			HAPI_Sprites.UserMessage("Cannot Load : 'hexTiles.xml'", "Texture Error");
 			return false;
 		}
-
-		m_ship = HAPI_Wrapper::loadSpriteSheet("straightShotCannonShip.xml");
+		//xml's for the ship sprites is shipSideCannon 
+		// and straightShotCannonShip both have enum built for them
+		m_ship = HAPI_Wrapper::loadSpriteSheet("shipSideCannon.xml");
 		if (!m_ship)
 		{
-			HAPI_Sprites.UserMessage("Connot Load: 'straightShotCannonShip.xml'", "Texture Error");
+			HAPI_Sprites.UserMessage("Connot Load: 'shipSideCannon.xml'", "Texture Error");
 			return false;
 		}
 

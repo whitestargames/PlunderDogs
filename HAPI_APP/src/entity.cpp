@@ -233,9 +233,10 @@ void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, 
 {
 	//Move entity sprite
 	const std::pair<int, int> tileTransform = map.getTileScreenPos(m_currentPosition);
+	sprite->GetTransformComp().SetOriginToCentreOfFrame();
 	sprite->GetTransformComp().SetPosition({
 		static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
-		static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
+		static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y  * map.getDrawScale()) });
 
 	//Render entity
 	sprite->Render(SCREEN_SURFACE);
