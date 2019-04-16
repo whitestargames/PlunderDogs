@@ -136,56 +136,41 @@ void Battle::insertEntity(std::pair<int, int> startingPosition, const EntityProp
 
 void Battle::nextTurn()
 {
-	switch (m_currentPhase)
-	{
-	case BattlePhase::ShipPlacement :
+	if (m_currentPhase == BattlePhase::ShipPlacement)
 	{
 		if (m_currentPlayerTurn == PlayerName::Player1)
 		{
 			m_currentPlayerTurn = PlayerName::Player2;
 			m_battleUI.newTurn(m_currentPlayerTurn);
 		}
-		else if(m_currentPlayerTurn == PlayerName::Player2)
+		else if (m_currentPlayerTurn == PlayerName::Player2)
 		{
 			m_currentPhase = BattlePhase::Movement;
 			m_currentPlayerTurn = PlayerName::Player1;
 			m_battleUI.newPhase();
 		}
-		
-		break;
+		return;
 	}
-	case BattlePhase::Movement :
-	{
-		if (m_currentPlayerTurn == PlayerName::Player1)
-		{
-			m_currentPlayerTurn = PlayerName::Player2;
-			m_battleUI.newTurn(m_currentPlayerTurn);
-		}
-		else if(m_currentPlayerTurn == PlayerName::Player2)
-		{
-			m_currentPhase = BattlePhase::Attack;
-			m_currentPlayerTurn = PlayerName::Player1;
-			m_battleUI.newPhase();
-		}
-		
-		break;
-	}
-	case BattlePhase::Attack :
-	{
-		if (m_currentPlayerTurn == PlayerName::Player1)
-		{
-			m_currentPlayerTurn = PlayerName::Player2;
-			m_battleUI.newTurn(m_currentPlayerTurn);
-		}
-		else if(m_currentPlayerTurn == PlayerName::Player2)
-		{
-			m_currentPhase = BattlePhase::Movement;
-			m_currentPlayerTurn = PlayerName::Player1;
-			m_battleUI.newPhase();
-		}
 
-		break;
+	//Player 1
+	if (m_currentPlayerTurn == PlayerName::Player1 && m_currentPhase == BattlePhase::Movement)
+	{
+		m_currentPhase = BattlePhase::Attack;
 	}
+	else if (m_currentPlayerTurn == PlayerName::Player1 && m_currentPhase == BattlePhase::Attack)
+	{
+		m_currentPlayerTurn = PlayerName::Player2;
+		m_currentPhase = BattlePhase::Movement;
+	}
+	//Player 2
+	else if (m_currentPlayerTurn == PlayerName::Player2 && m_currentPhase == BattlePhase::Movement)
+	{
+		m_currentPhase = BattlePhase::Attack;
+	}
+	else if (m_currentPlayerTurn == PlayerName::Player2 && m_currentPhase == BattlePhase::Attack)
+	{
+		m_currentPlayerTurn = PlayerName::Player1;
+		m_currentPhase = BattlePhase::Movement;
 	}
 }
 
