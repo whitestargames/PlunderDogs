@@ -58,3 +58,33 @@ enum eTileType
 	eGrasslandRuin,
 	eSwampRuins
 };
+
+enum eSpriteFrame
+{
+	eDeadYellow = 0,
+	eDeadBlue,
+	eDeadGreen,
+	eDeadRed,
+	eDeadBlack,
+	eDeadWhite,
+	eHighDamageYellow,
+	eHighDamageBlue,
+	eHighDamageGreen,
+	eHighDamageRed,
+	eHighDamageBlack,
+	eHighDamageWhite,
+	eLowDamageYellow,
+	eLowDamageBlue,
+	eLowDamageGreen,
+	eLowDamageRed,
+	eLowDamageBlack,
+	eLowDamageWhite,
+	eNoDamageYellow,
+	eNoDamageBlue,
+	eNoDamageGreen,
+	eNoDamageRed,
+	eNoDamageBlack,
+	eNoDamageWhite
+
+
+};

@@ -16,8 +16,8 @@ Battle::Battle() :
 	insertEntity({ 4, 4 });
 	insertEntity({ 8, 8 });
 
-	m_entities[0]->m_entityProperties.m_sprite->SetFrameNumber(1);
-	m_entities[1]->m_entityProperties.m_sprite->SetFrameNumber(2);
+	m_entities[0]->m_entityProperties.m_sprite->SetFrameNumber(eSpriteFrame::eNoDamageBlue);
+	m_entities[1]->m_entityProperties.m_sprite->SetFrameNumber(8);
 }
 
 void Battle::render() const
