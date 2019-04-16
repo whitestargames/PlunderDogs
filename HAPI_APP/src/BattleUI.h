@@ -44,16 +44,16 @@ class BattleUI : public IHapiSpritesInputListener
 	{
 	public:
 		PlayerShipPlacement(std::vector<EntityProperties*>& player,
-			std::pair<int, int> spawnPosition, int range, Battle& battle, PlayerName playerName);
+			std::pair<int, int> spawnPosition, int range, const Map& map, PlayerName playerName);
 
 		bool isCompleted() const;
 		void render(const InvalidPosition& invalidPosition) const;
 
-		void onMouseMove(InvalidPosition& invalidPosition, const Tile* currentTileSelected);
-		void onLeftClick(const InvalidPosition& invalidPosition, const Tile* currectTileSelected);
+		void onMouseMove(InvalidPosition& invalidPosition, const Tile* currentTileSelected, const Tile* i);
+		void onLeftClick(const InvalidPosition& invalidPosition, const Tile* currectTileSelected, Battle& battle);
 
 	private:
-		Battle& m_battle;
+		const Map& m_map;
 		PlayerName m_playerName;
 		std::vector<EntityProperties*>& m_player;
 		EntityProperties* m_currentSelectedEntity;
