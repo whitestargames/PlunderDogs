@@ -2,21 +2,14 @@
 
 #include <HAPISprites_lib.h>
 #include <HAPISprites_UI.h>
-#include "Battle.h"
-#include "Map.h"
+#include "Global.h"
 
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
 
 
-class BattleGUI : public IHapiSpritesInputListener
+class BattleGUI
 {
-	enum class BattleWindow
-	{
-		Battle = 0,
-		Pause,
-		PostBattle
-	};
 public:
 	BattleGUI();
 	VectorF pendingCameraMovement{ 0 };
@@ -24,9 +17,10 @@ public:
 	float cameraZoom = 1.0f;//variable to multiply scale by
 
 	void render();
-	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
-	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
-	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
+	void OnMouseLeftClick(const HAPI_TMouseData& mouseData);
+	void OnMouseRightClick(const HAPI_TMouseData& mouseData);
+	//void OnMouseScroll could be added
+	void OnMouseMove(const HAPI_TMouseData& mouseData);
 
 private:
 	std::unique_ptr<Sprite> m_battleIcons;
@@ -39,9 +33,7 @@ private:
 	std::unique_ptr<Sprite> m_postBattleBackground;
 	std::unique_ptr<Sprite> m_doneButton;
 
-	BattleWindow m_currentWindow{ BattleWindow::Battle };
-
-	Battle m_battle;
+	BattleWindow m_currentBattleWindow;
 	//Map m_map;
 	DWORD animationStartTime;
 	bool shipSelected;

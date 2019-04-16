@@ -2,6 +2,7 @@
 
 #include <HAPISprites_lib.h>
 #include <HAPISprites_UI.h>
+#include "BattleGUI.h"
 
 struct Tile;
 class Battle;

@@ -19,6 +19,13 @@ enum OverWorldWindow
 	eUpgrade
 };
 
+enum BattleWindow
+{
+	eBattle = 0,
+	ePause,
+	ePostBattle
+};
+
 enum eTileType
 {
 	eGrass = 0,

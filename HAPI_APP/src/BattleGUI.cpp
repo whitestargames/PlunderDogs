@@ -10,7 +10,8 @@ BattleGUI::BattleGUI()
 	m_resumeButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "resumeButton.png", 2)),
 	m_quitButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "quitButton.png", 2)),
 	m_postBattleBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PostBattleBackground.png")),
-	m_doneButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "doneButton.png", 2))
+	m_doneButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "doneButton.png", 2)),
+	m_currentBattleWindow(BattleWindow::eBattle)
 {
 	//battle
 	m_battleIcons->GetTransformComp().SetPosition({ 350, 800 });
@@ -27,8 +28,6 @@ BattleGUI::BattleGUI()
 void BattleGUI::render()
 {
 	SCREEN_SURFACE->Clear();
-
-	m_battle.render();
 
 	if (shipSelected)
 	{
@@ -54,9 +53,9 @@ void BattleGUI::render()
 	m_pauseButton->Render(SCREEN_SURFACE);
 	m_chickenButton->Render(SCREEN_SURFACE);
 
-	switch (m_currentWindow)
+	switch (m_currentBattleWindow)
 	{
-	case BattleWindow::Battle:
+	case BattleWindow::eBattle:
 	{
 		//camera pan
 		if (!pendingCameraMovement.IsZero())
@@ -89,18 +88,18 @@ void BattleGUI::render()
 				CameraPositionOffset.second += pendingCameraMovement.y;
 			}
 
-			m_battle.setMapDrawOffset(CameraPositionOffset);
+			m_battle.setMapDrawOffset(CameraPositionOffset);//TODO: CREATE A FUNCTION FOR THIS IN BATTLE THAT'S CALLED INSTEAD
 		}
 		break;//the battle should continue to render behind the pause menu so is before the switch case
 	}
-	case BattleWindow::Pause:
+	case BattleWindow::ePause:
 	{
 		m_pauseMenuBackground->Render(SCREEN_SURFACE);
 		m_resumeButton->Render(SCREEN_SURFACE);
 		m_quitButton->Render(SCREEN_SURFACE);
 		break;
 	}
-	case BattleWindow::PostBattle:
+	case BattleWindow::ePostBattle:
 	{
 		m_postBattleBackground->Render(SCREEN_SURFACE);
 		m_doneButton->Render(SCREEN_SURFACE);
@@ -121,65 +120,61 @@ void BattleGUI::render()
 	}
 }
 
-void BattleGUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData)
+void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData)
 {
-	if (mouseEvent == EMouseEvent::eLeftButtonDown)
+	switch (m_currentBattleWindow)
 	{
-		switch (m_currentWindow)
+	case BattleWindow::eBattle:
+	{
+		if (m_pauseButton->GetSpritesheet()->GetFrameRect(0).Translated(
+			m_pauseButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
 		{
-		case BattleWindow::Battle:
+			m_currentBattleWindow = BattleWindow::ePause;//enables the pause menu
+		}
+					if (m_chickenButton->GetSpritesheet()->GetFrameRect(0).Translated(
+			m_chickenButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
 		{
-			if (m_pauseButton->GetSpritesheet()->GetFrameRect(0).Translated(
-				m_pauseButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
-			{
-				m_currentWindow = BattleWindow::Pause;//enables the pause menu
-			}
-
-			if (m_chickenButton->GetSpritesheet()->GetFrameRect(0).Translated(
-				m_chickenButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
-			{
-				animationStartTime = HAPI_Sprites.GetTime();
-				shipSelected = true;
-				playAnimation = true;
-			}
-			else
-			{
-				shipSelected = false;
-			}
-			break;
+			animationStartTime = HAPI_Sprites.GetTime();
+			shipSelected = true;
+			playAnimation = true;
 		}
-		case BattleWindow::Pause:
+		else
 		{
-			if (m_resumeButton->GetSpritesheet()->GetFrameRect(0).Translated(
-				m_resumeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the resume button
-			{
-				m_currentWindow = BattleWindow::Battle;//disables the pause menu
-			}
-			else if (m_quitButton->GetSpritesheet()->GetFrameRect(0).Translated(
-				m_quitButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the resume button
-			{
-				m_currentWindow = BattleWindow::PostBattle;//disables the pause menu
-			}
-			break;
+			shipSelected = false;
 		}
-		case BattleWindow::PostBattle:
+		break;
+	}
+	case BattleWindow::ePause:
+	{
+		if (m_resumeButton->GetSpritesheet()->GetFrameRect(0).Translated(
+			m_resumeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the resume button
 		{
-			if (m_doneButton->GetSpritesheet()->GetFrameRect(0).Translated(
-				m_doneButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
-			{
-				//switch to overworld
-			}
-			break;
+			m_currentBattleWindow = BattleWindow::eBattle;//disables the pause menu
 		}
+		else if (m_quitButton->GetSpritesheet()->GetFrameRect(0).Translated(
+			m_quitButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the resume button
+		{
+			m_currentBattleWindow = BattleWindow::ePostBattle;//disables the pause menu
 		}
+		break;
+	}
+	case BattleWindow::ePostBattle:
+	{
+		if (m_doneButton->GetSpritesheet()->GetFrameRect(0).Translated(
+			m_doneButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
+		{
+			//switch to overworld
+		}
+		break;
+	}
 	}
 }
 
 void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 {
-	switch (m_currentWindow)
+	switch (m_currentBattleWindow)
 	{
-	case BattleWindow::Battle:
+	case BattleWindow::eBattle:
 	{
 		if (m_pauseButton->GetSpritesheet()->GetFrameRect(0).Translated(m_pauseButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//checks if mouse is over button
 		{
@@ -215,7 +210,7 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 
 		break;
 	}
-	case BattleWindow::Pause:
+	case BattleWindow::ePause:
 	{
 		if (m_resumeButton->GetSpritesheet()->GetFrameRect(0).Translated(m_resumeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 		{
@@ -236,7 +231,7 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 		}
 		break;
 	}
-	case BattleWindow::PostBattle:
+	case BattleWindow::ePostBattle:
 	{
 		if (m_doneButton->GetSpritesheet()->GetFrameRect(0).Translated(m_doneButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 		{
