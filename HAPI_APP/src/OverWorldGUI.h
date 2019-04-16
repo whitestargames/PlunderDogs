@@ -44,11 +44,7 @@ private:
 	const std::string FLEET_SLIDER = "fleetSlider";
 	const std::string BATTLE_FLEET_SLIDER = "battleFleetSlider";
 
-	std::unique_ptr<Sprite> m_battleMapBackground;
-	std::unique_ptr<Sprite> m_enemyTerritoryHexSheet;
-	std::unique_ptr<Sprite> m_prebattleUIBackground;
-	std::unique_ptr<Sprite> m_playButton;
-	std::unique_ptr<Sprite> m_backButton;
+
 	std::unique_ptr<Sprite> m_upgradesButton;
 	//upgrade buttons
 	std::unique_ptr<Sprite> m_upgradesScreenBackground;

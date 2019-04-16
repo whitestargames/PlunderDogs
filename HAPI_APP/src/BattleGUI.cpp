@@ -11,7 +11,7 @@ BattleGUI::BattleGUI()
 	m_quitButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "quitButton.png", 2)),
 	m_postBattleBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PostBattleBackground.png")),
 	m_doneButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "doneButton.png", 2)),
-	m_currentBattleWindow(BattleWindow::eBattle)
+	m_currentBattleWindow(BattleWindow::eCombat)
 {
 	//battle
 	m_battleIcons->GetTransformComp().SetPosition({ 350, 800 });
@@ -25,23 +25,15 @@ BattleGUI::BattleGUI()
 	m_doneButton->GetTransformComp().SetPosition({ 660, 710 });
 }
 
-void BattleGUI::render()
+std::pair<int, int> BattleGUI::getCameraPositionOffset() const
 {
-	SCREEN_SURFACE->Clear();
+	return m_cameraPositionOffset;
+}
 
+void BattleGUI::render() const
+{
 	if (shipSelected)
 	{
-		if (playAnimation)
-		{
-			animationOffset = 100 - (HAPI_Sprites.GetTime() - animationStartTime);
-			if (animationOffset<1)
-			{
-				playAnimation = false;
-				animationOffset = 0;
-			}
-
-			m_battleIcons->GetTransformComp().SetPosition({ 350, (800 + static_cast<float>(animationOffset)) });
-		}
 		m_battleIcons->Render(SCREEN_SURFACE);
 
 		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(440, (815 + animationOffset)), HAPISPACE::Colour255::BLACK, "45/55", 44);
@@ -55,7 +47,54 @@ void BattleGUI::render()
 
 	switch (m_currentBattleWindow)
 	{
-	case BattleWindow::eBattle:
+	case BattleWindow::ePause:
+	{
+		m_pauseMenuBackground->Render(SCREEN_SURFACE);
+		m_resumeButton->Render(SCREEN_SURFACE);
+		m_quitButton->Render(SCREEN_SURFACE);
+		break;
+	}
+	case BattleWindow::ePostBattle:
+	{
+		m_postBattleBackground->Render(SCREEN_SURFACE);
+		m_doneButton->Render(SCREEN_SURFACE);
+		if (victory)
+		{
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(595, 115), HAPISPACE::Colour255::GREEN, "VICTORY", 90);
+		}
+		else
+		{
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(615, 115), HAPISPACE::Colour255::RED, "DEFEAT", 90);
+		}
+		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 330), HAPISPACE::Colour255::BLACK, "KILLS: " "50G", 50);
+		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 415), HAPISPACE::Colour255::BLACK, "WIN BONUS: " "15G", 50);
+		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 500), HAPISPACE::Colour255::BLACK, "HEALTH BONUS: " "35G", 50);
+		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 585), HAPISPACE::Colour255::BLACK, "TOTAL: " "21G", 50);
+		break;
+	}
+	}
+}
+
+void BattleGUI::update()
+{
+	if (shipSelected)
+	{
+		if (playAnimation)
+		{
+			animationOffset = 100 - (HAPI_Sprites.GetTime() - animationStartTime);
+			if (animationOffset < 1)
+			{
+				playAnimation = false;
+				animationOffset = 0;
+			}
+
+			m_battleIcons->GetTransformComp().SetPosition({ 350, (800 + static_cast<float>(animationOffset)) });
+		}
+	}
+
+	switch (m_currentBattleWindow)
+	{
+	case BattleWindow::eCombat:
 	{
 		//camera pan
 		if (!pendingCameraMovement.IsZero())
@@ -88,34 +127,10 @@ void BattleGUI::render()
 				CameraPositionOffset.second += pendingCameraMovement.y;
 			}
 
-			m_battle.setMapDrawOffset(CameraPositionOffset);//TODO: CREATE A FUNCTION FOR THIS IN BATTLE THAT'S CALLED INSTEAD
+			m_cameraPositionOffset = CameraPositionOffset;
+			//m_battle.setMapDrawOffset(CameraPositionOffset);//TODO: CREATE A FUNCTION FOR THIS IN BATTLE THAT'S CALLED INSTEAD
 		}
 		break;//the battle should continue to render behind the pause menu so is before the switch case
-	}
-	case BattleWindow::ePause:
-	{
-		m_pauseMenuBackground->Render(SCREEN_SURFACE);
-		m_resumeButton->Render(SCREEN_SURFACE);
-		m_quitButton->Render(SCREEN_SURFACE);
-		break;
-	}
-	case BattleWindow::ePostBattle:
-	{
-		m_postBattleBackground->Render(SCREEN_SURFACE);
-		m_doneButton->Render(SCREEN_SURFACE);
-		if (victory)
-		{
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(595, 115), HAPISPACE::Colour255::GREEN, "VICTORY", 90);
-		}
-		else
-		{
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(615, 115), HAPISPACE::Colour255::RED, "DEFEAT", 90);
-		}
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 330), HAPISPACE::Colour255::BLACK, "KILLS: " "50G", 50);
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 415), HAPISPACE::Colour255::BLACK, "WIN BONUS: " "15G", 50);
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 500), HAPISPACE::Colour255::BLACK, "HEALTH BONUS: " "35G", 50);
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 585), HAPISPACE::Colour255::BLACK, "TOTAL: " "21G", 50);
-		break;
 	}
 	}
 }
@@ -124,7 +139,7 @@ void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData)
 {
 	switch (m_currentBattleWindow)
 	{
-	case BattleWindow::eBattle:
+	case BattleWindow::eCombat:
 	{
 		if (m_pauseButton->GetSpritesheet()->GetFrameRect(0).Translated(
 			m_pauseButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
@@ -149,7 +164,7 @@ void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData)
 		if (m_resumeButton->GetSpritesheet()->GetFrameRect(0).Translated(
 			m_resumeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the resume button
 		{
-			m_currentBattleWindow = BattleWindow::eBattle;//disables the pause menu
+			m_currentBattleWindow = BattleWindow::eCombat;//disables the pause menu
 		}
 		else if (m_quitButton->GetSpritesheet()->GetFrameRect(0).Translated(
 			m_quitButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the resume button
@@ -174,7 +189,7 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 {
 	switch (m_currentBattleWindow)
 	{
-	case BattleWindow::eBattle:
+	case BattleWindow::eCombat:
 	{
 		if (m_pauseButton->GetSpritesheet()->GetFrameRect(0).Translated(m_pauseButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//checks if mouse is over button
 		{

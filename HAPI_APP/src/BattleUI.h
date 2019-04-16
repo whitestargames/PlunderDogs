@@ -1,7 +1,5 @@
 #pragma once
 
-#include <HAPISprites_lib.h>
-#include <HAPISprites_UI.h>
 #include "BattleGUI.h"
 
 struct Tile;
@@ -24,8 +22,10 @@ class BattleUI : public IHapiSpritesInputListener
 public:
 	BattleUI(Battle& battle, std::vector<EntityProperties*>& selectedEntities);
 
-	void render() const;
+	std::pair<int, int> getCameraPositionOffset() const;
 
+	void render() const;
+	void update();
 	void newPhase();
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
@@ -36,6 +36,7 @@ private:
 	Battle& m_battle;
 	const Tile* m_currentTileSelected;
 	InvalidPositionSprite m_invalidPositionSprite;
+	BattleGUI m_gui;
 
 	//Movement Phase
 	void handleOnMouseMoveMovementPhase();

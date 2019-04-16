@@ -31,6 +31,9 @@ void Battle::render() const
 
 void Battle::update(float deltaTime)
 {
+	m_battleUI.update();
+	m_map.setDrawOffset(m_battleUI.getCameraPositionOffset());
+
 	if (m_currentPhase == BattlePhase::Movement)
 	{
 		updateMovementPhase(deltaTime);

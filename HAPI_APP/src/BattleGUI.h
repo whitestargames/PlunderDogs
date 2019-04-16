@@ -2,23 +2,27 @@
 
 #include <HAPISprites_lib.h>
 #include <HAPISprites_UI.h>
-#include "Global.h"
 
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
 
+enum BattleWindow
+{
+	eCombat = 0,
+	ePause,
+	ePostBattle
+};
 
 class BattleGUI
 {
 public:
 	BattleGUI();
-	VectorF pendingCameraMovement{ 0 };
-	std::pair<int, int> CameraPositionOffset;//camera offset that will be used by the map
-	float cameraZoom = 1.0f;//variable to multiply scale by
 
-	void render();
+	std::pair<int, int> getCameraPositionOffset() const;
+
+	void render() const;
+	void update();
 	void OnMouseLeftClick(const HAPI_TMouseData& mouseData);
-	void OnMouseRightClick(const HAPI_TMouseData& mouseData);
 	//void OnMouseScroll could be added
 	void OnMouseMove(const HAPI_TMouseData& mouseData);
 
@@ -40,4 +44,8 @@ private:
 	bool playAnimation;
 	int animationOffset = 100;
 	bool victory = false;
+	VectorF pendingCameraMovement{ 0 };
+	std::pair<int, int> CameraPositionOffset;//camera offset that will be used by the map
+	float cameraZoom = 1.0f;//variable to multiply scale by
+	std::pair<int, int> m_cameraPositionOffset;
 };

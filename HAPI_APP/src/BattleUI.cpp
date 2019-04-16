@@ -36,12 +36,23 @@ BattleUI::BattleUI(Battle & battle, std::vector<EntityProperties*>& selectedEnti
 	m_currentTileSelected(nullptr),
 	m_invalidPositionSprite()
 {
-	int i = 0;
+
+}
+
+std::pair<int, int> BattleUI::getCameraPositionOffset() const
+{
+	return m_gui.getCameraPositionOffset();
 }
 
 void BattleUI::render() const
 {
 	m_invalidPositionSprite.render();
+	m_gui.render();
+}
+
+void BattleUI::update()
+{
+	m_gui.update();
 }
 
 void BattleUI::newPhase()
@@ -55,8 +66,12 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 	{
 		return;
 	}
+
+	
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
+		m_gui.OnMouseLeftClick(mouseData);
+
 		switch (m_battle.getCurrentPhase())
 		{
 		case BattlePhase::Movement:
@@ -83,6 +98,8 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 	{
 		return;
 	}
+
+	m_gui.OnMouseMove(mouseData);
 
 	switch (m_battle.getCurrentPhase())
 	{
