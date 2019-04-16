@@ -79,10 +79,10 @@ struct Textures
 			return false;
 		}
 
-		m_ship = HAPI_Wrapper::loadSpriteSheet("ship.xml");
+		m_ship = HAPI_Wrapper::loadSpriteSheet("ships.xml");
 		if (!m_ship)
 		{
-			HAPI_Sprites.UserMessage("Connot Load: 'ship.xml'", "Texture Error");
+			HAPI_Sprites.UserMessage("Connot Load: 'ships.xml'", "Texture Error");
 			return false;
 		}
 
