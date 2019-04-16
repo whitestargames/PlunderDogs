@@ -6,8 +6,8 @@
 using namespace HAPISPACE;
 
 Battle::Battle(std::vector<EntityProperties*>& player1, std::vector<EntityProperties*>& player2) 
-	: m_player1(),
-	m_player2(),
+	: m_player1Entities(),
+	m_player2Entities(),
 	m_map(MapParser::parseMap("Level1.tmx")),
 	m_currentPhase(BattlePhase::ShipPlacement),
 	m_currentPlayerTurn(PlayerName::Player1),
@@ -18,12 +18,12 @@ void Battle::render() const
 {
 	m_map.drawMap();
 	
-	for (const auto& entity : m_player1)
+	for (const auto& entity : m_player1Entities)
 	{
 		entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
 	}
 
-	for (const auto& entity : m_player2)
+	for (const auto& entity : m_player2Entities)
 	{
 		entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
 	}
@@ -39,44 +39,59 @@ void Battle::update(float deltaTime)
 		if (m_currentPlayerTurn == PlayerName::Player1)
 		{
 			bool allEntitiesReachedDestination = true;
-			for (auto& entity : m_player1)
-			{
-				entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties);
-				if (!entity->m_battleProperties.m_movedToDestination)
-				{
-					allEntitiesReachedDestination = false;
-				}
-			}
-
+			updateMovementPhase(m_player1Entities, allEntitiesReachedDestination, deltaTime);
 			if (allEntitiesReachedDestination)
 			{
-				for (auto& entity : m_player1)
+				for (auto& entity : m_player1Entities)
 				{
 					entity->m_battleProperties.m_movedToDestination = false;
 				}
 				nextTurn();
 			}
 		}
-		else
+		else if(m_currentPlayerTurn == PlayerName::Player2)
 		{
 			bool allEntitiesReachedDestination = true;
-			for (auto& entity : m_player2)
-			{
-				entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties);
-				if (!entity->m_battleProperties.m_movedToDestination)
-				{
-					allEntitiesReachedDestination = false;
-				}
-			}
-
+			updateMovementPhase(m_player2Entities, allEntitiesReachedDestination, deltaTime);
 			if (allEntitiesReachedDestination)
 			{
-				for (auto& entity : m_player2)
+				for (auto& entity : m_player2Entities)
 				{
 					entity->m_battleProperties.m_movedToDestination = false;
 				}
 				nextTurn();
 			}
+		}
+	}
+	else if (m_currentPhase == BattlePhase::Attack)
+	{	
+		if (m_currentPlayerTurn == PlayerName::Player1)
+		{
+			bool allEntitiesAttacked = true;
+			updateAttackPhase(m_player1Entities, allEntitiesAttacked);
+
+			if (allEntitiesAttacked)
+			{
+				for (auto& entity : m_player1Entities)
+				{
+					entity->m_battleProperties.m_weaponFired = false;
+				}
+				nextTurn();
+			}
+		}
+		else if (m_currentPlayerTurn == PlayerName::Player2)
+		{
+			bool allEntitiesAttacked = true;
+			updateAttackPhase(m_player2Entities, allEntitiesAttacked);
+
+			if (allEntitiesAttacked)
+			{
+				for (auto& entity : m_player2Entities)
+				{
+					entity->m_battleProperties.m_weaponFired = false;
+				}
+				nextTurn();
+			}	
 		}
 	}
 }
@@ -87,24 +102,18 @@ void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
 	entity.m_battleProperties.moveEntity(m_map, destination, entity.m_battleProperties.m_movementPathSize);
 }
 
-void Battle::activateEntityWeapon(EntityBattleProperties& battleProperties)
+void Battle::fireEntityWeaponAtPosition(BattleEntity& player, BattleEntity& enemy, const std::vector<const Tile*>& targetArea)
 {
 	assert(m_currentPhase == BattlePhase::Attack);
-	battleProperties.m_readyToFire = true;
-}
+	assert(!player.m_battleProperties.m_weaponFired);
 
-void Battle::fireEntityWeaponAtPosition(const BattleEntity& player, BattleEntity& enemy, const std::vector<const Tile*>& targetArea)
-{
-	assert(m_currentPhase == BattlePhase::Attack);
-	assert(player.m_battleProperties.m_readyToFire);
-
-	//auto tileCoordinate = enemy.m_battleProperties.m_currentPosition;
-	//auto cIter = std::find_if(targetArea.cbegin(), targetArea.cend(), [tileCoordinate](const auto& tile) { return tileCoordinate == tile->m_tileCoordinate; });
-	////Enemy within range of weapon
-	//if (cIter != targetArea.cend())
-	//{
-	//	enemy.m_battleProperties.takeDamage(enemy.m_entityProperties, player.m_entityProperties.m_damage);
-	//}
+	auto tileCoordinate = enemy.m_battleProperties.m_currentPosition;
+	auto cIter = std::find_if(targetArea.cbegin(), targetArea.cend(), [tileCoordinate](const auto& tile) { return tileCoordinate == tile->m_tileCoordinate; });
+	//Enemy within range of weapon
+	if (cIter != targetArea.cend())
+	{
+		enemy.m_battleProperties.takeDamage(enemy.m_entityProperties, player.m_entityProperties.m_damage);
+	}
 }
 
 void Battle::insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, PlayerName playerName)
@@ -114,12 +123,12 @@ void Battle::insertEntity(std::pair<int, int> startingPosition, const EntityProp
 	{
 	case PlayerName::Player1 :
 	{
-		m_player1.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, playerName));
+		m_player1Entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, playerName));
 		break;
 	}
 	case PlayerName::Player2:
 	{
-		m_player2.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, playerName));
+		m_player2Entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, playerName));
 		break;
 	}
 	}
@@ -136,7 +145,7 @@ void Battle::nextTurn()
 			m_currentPlayerTurn = PlayerName::Player2;
 			m_battleUI.newTurn(m_currentPlayerTurn);
 		}
-		else
+		else if(m_currentPlayerTurn == PlayerName::Player2)
 		{
 			m_currentPhase = BattlePhase::Movement;
 			m_currentPlayerTurn = PlayerName::Player1;
@@ -152,7 +161,7 @@ void Battle::nextTurn()
 			m_currentPlayerTurn = PlayerName::Player2;
 			m_battleUI.newTurn(m_currentPlayerTurn);
 		}
-		else
+		else if(m_currentPlayerTurn == PlayerName::Player2)
 		{
 			m_currentPhase = BattlePhase::Attack;
 			m_currentPlayerTurn = PlayerName::Player1;
@@ -168,14 +177,38 @@ void Battle::nextTurn()
 			m_currentPlayerTurn = PlayerName::Player2;
 			m_battleUI.newTurn(m_currentPlayerTurn);
 		}
-		else
+		else if(m_currentPlayerTurn == PlayerName::Player2)
 		{
 			m_currentPhase = BattlePhase::Movement;
 			m_currentPlayerTurn = PlayerName::Player1;
 			m_battleUI.newPhase();
 		}
+
 		break;
 	}
+	}
+}
+
+void Battle::updateMovementPhase(std::vector<std::unique_ptr<BattleEntity>>& playerEntities, bool& allEntitiesReachedDestination, float deltaTime)
+{
+	for (auto& entity : playerEntities)
+	{
+		entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties);
+		if (!entity->m_battleProperties.m_movedToDestination)
+		{
+			allEntitiesReachedDestination = false;
+		}
+	}
+}
+
+void Battle::updateAttackPhase(std::vector<std::unique_ptr<BattleEntity>>& playerEntities, bool& allEntitiesAttacked)
+{
+	for (auto& entity : playerEntities)
+	{
+		if (!entity->m_battleProperties.m_weaponFired)
+		{
+			allEntitiesAttacked = false;
+		}
 	}
 }
 

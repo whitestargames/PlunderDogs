@@ -54,7 +54,6 @@ struct EntityBattleProperties
 	void render(std::shared_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
 
 	void generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
-	void generateWeaponArea(const Map& map, const Tile& source);
 
 	void clearMovementPath();
 	void moveEntity(Map& map, const Tile& tile, int movementPointsAvailable);
@@ -67,7 +66,7 @@ struct EntityBattleProperties
 	MovementPath m_movementPath;
 	int m_movementPathSize;
 	eDirection m_direction;
-	bool m_readyToFire;
+	bool m_weaponFired;
 };
 
 struct BattleEntity

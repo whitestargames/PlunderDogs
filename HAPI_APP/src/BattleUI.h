@@ -78,14 +78,6 @@ private:
 	InvalidPosition m_invalidPosition;
 	std::vector<std::unique_ptr<ShipPlacementPhase>> m_playerShipPlacement;
 	
-	////ShipPlacement Phase
-	//std::deque<EntityProperties*>* m_selectedEntities;
-	//std::deque<EntityProperties*>* m_player1;
-	//std::deque<EntityProperties*>* m_player2;
-	//EntityProperties* m_currentSelectedEntity;
-	//std::vector<const Tile*> m_spawnTiles;
-	//std::vector<std::unique_ptr<Sprite>> m_spawnSprites;
-
 	//Movement Phase
 	void onMouseMoveMovementPhase();
 	void onLeftClickMovementPhase();

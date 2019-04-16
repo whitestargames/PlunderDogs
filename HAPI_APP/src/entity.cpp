@@ -19,7 +19,7 @@ EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosit
 	m_movementPath(),
 	m_movementPathSize(0),
 	m_direction(eDirection::eNorth),
-	m_readyToFire(false)
+	m_weaponFired(false)
 {}
 
 //MOVEMENT PATH NODE
@@ -124,11 +124,6 @@ void EntityBattleProperties::generateMovementGraph(const Map & map, const Tile &
 	m_movementPath.generatePath(map, source, destination);
 }
 
-void EntityBattleProperties::generateWeaponArea(const Map & map, const Tile & source)
-{
-	//m_weapon.generateTargetArea(map, source);
-}
-
 void EntityBattleProperties::clearMovementPath()
 {
 	m_movementPath.clearPath();
@@ -154,13 +149,7 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, int movement
 
 void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int damageAmount)
 {
-	
-	entityProperties.m_currentHealth -= damageAmount;
-	if (entityProperties.m_currentHealth <= 0)
-	{
-		//entityProperties.m_sprite = std::shared_ptr<Sprite>(Textures::m_thing);
-	}
-
+	//TODO: To do.
 }
 
 unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentDirection, int newDirection)

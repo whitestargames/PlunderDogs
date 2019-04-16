@@ -46,6 +46,8 @@ BattleUI::BattleUI(Battle & battle, std::vector<EntityProperties*>& player1, std
 	m_invalidPosition()
 {
 	assert(m_battle.getCurrentPhase() == BattlePhase::ShipPlacement);
+	//Player Spawn Positions
+	//TODO: Get them parsed with map instead of hardcoded
 	std::pair<int, int> player1SpawnPos{ 4, 11 };
 	m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>(player1, player1SpawnPos, 4, m_battle.getMap(), PlayerName::Player1));
 	std::pair<int, int> player2SpawnPos{ 22, 2 };
@@ -92,12 +94,15 @@ void BattleUI::newPhase()
 
 void BattleUI::newTurn(PlayerName playersTurn)
 {
-	for (auto iter = m_playerShipPlacement.begin(); iter != m_playerShipPlacement.end(); ++iter)
+	if (m_battle.getCurrentPhase() == BattlePhase::ShipPlacement)
 	{
-		if((*iter)->isCompleted())
+		for (auto iter = m_playerShipPlacement.begin(); iter != m_playerShipPlacement.end(); ++iter)
 		{
-			m_playerShipPlacement.erase(iter);
-			break;
+			if ((*iter)->isCompleted())
+			{
+				m_playerShipPlacement.erase(iter);
+				break;
+			}
 		}
 	}
 }
@@ -143,6 +148,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 		case BattlePhase::Attack :
 		{
 			onRightClickAttackPhase();
+			break;
 		}
 		}
 	}
@@ -295,30 +301,35 @@ void BattleUI::onLeftClickAttackPhase()
 
 	//Entity already selected
 	//Fire weapon at position
-	if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile && m_currentTileSelected->m_entityOnTile->m_battleProperties.m_readyToFire)
+	if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile && !m_currentTileSelected->m_entityOnTile->m_battleProperties.m_weaponFired)
 	{
-		int entityWeaponDamage = m_currentTileSelected->m_entityOnTile->m_entityProperties.m_damage;
+		//Make sure entity on tile to attack is on the other team
+		if (tileOnMouse->m_entityOnTile  && tileOnMouse->m_entityOnTile->m_playerName != m_battle.getCurentPlayer())
+		{
+			int entityWeaponDamage = m_currentTileSelected->m_entityOnTile->m_entityProperties.m_damage;
+			m_battle.fireEntityWeaponAtPosition(*m_currentTileSelected->m_entityOnTile, *tileOnMouse->m_entityOnTile, m_targetArea.m_targetArea);
+		}
+
+		//TODO: Might change this
+		m_currentTileSelected->m_entityOnTile->m_battleProperties.m_weaponFired = true;
 		m_targetArea.clearTargetArea();
+		m_currentTileSelected = nullptr;
 		m_invalidPosition.m_activate = false;
-		//TODO: Change readyToFire boolean
-		m_battle.activateEntityWeapon(m_currentTileSelected->m_entityOnTile->m_battleProperties);
-		m_battle.fireEntityWeaponAtPosition(*m_currentTileSelected->m_entityOnTile, *tileOnMouse->m_entityOnTile, m_targetArea.m_targetArea);
 		return;
 	}
 
 	//Entity Already Selected whilst showing where to fire
-	//Change to different Entity before firing
-	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_playerName == m_battle.getCurentPlayer()
-		&& m_currentTileSelected && m_currentTileSelected && m_targetArea.m_targetArea.size() > 0)
-	{
-		m_targetArea.clearTargetArea();
-		m_targetArea.generateTargetArea(m_battle.getMap(), *tileOnMouse);
-		m_currentTileSelected = tileOnMouse;
-		return;
-	}
+	////Change to different Entity before firing
+	//if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_playerName == m_battle.getCurentPlayer()
+	//	&& m_currentTileSelected && m_currentTileSelected && m_targetArea.m_targetArea.size() > 0)
+	//{
+	//	m_targetArea.clearTargetArea();
+	//	m_targetArea.generateTargetArea(m_battle.getMap(), *tileOnMouse);
+	//	m_currentTileSelected = tileOnMouse;
+	//	return;
+	//}
 
-	//Click on same 
-
+	//Click on same
 	//Select new Entity to fire at something
 	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_playerName != m_battle.getCurentPlayer())
 	{
@@ -326,13 +337,9 @@ void BattleUI::onLeftClickAttackPhase()
 	}
 
 	m_currentTileSelected = tileOnMouse;
-	if (m_currentTileSelected->m_entityOnTile && !m_currentTileSelected->m_entityOnTile->m_battleProperties.m_readyToFire)
+	if (m_currentTileSelected->m_entityOnTile && !m_currentTileSelected->m_entityOnTile->m_battleProperties.m_weaponFired)
 	{
 		m_targetArea.generateTargetArea(m_battle.getMap(), *tileOnMouse);
-	}
-	else
-	{
-		assert(!m_targetArea.m_targetAreaSprites.empty());
 	}
 }
 
