@@ -148,17 +148,18 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, int movement
 		else
 		{
 			clearMovementPath();
-			
-
 		}
 	}
 }
 
-void EntityBattleProperties::takeDamage(EntityProperties & entityProperties)
+void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int damageAmount)
 {
-	//entityProperties.m_sprite = std::unique_ptr<Sprite>(Textures::m_thing);
-	entityProperties.m_sprite.reset();
-	entityProperties.m_sprite = std::make_shared<Sprite>(Textures::m_thing);
+	
+	entityProperties.m_currentHealth -= damageAmount;
+	if (entityProperties.m_currentHealth <= 0)
+	{
+		//entityProperties.m_sprite = std::shared_ptr<Sprite>(Textures::m_thing);
+	}
 
 }
 

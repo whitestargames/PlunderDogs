@@ -47,9 +47,9 @@ BattleUI::BattleUI(Battle & battle, std::vector<EntityProperties*>& player1, std
 {
 	assert(m_battle.getCurrentPhase() == BattlePhase::ShipPlacement);
 	std::pair<int, int> player1SpawnPos{ 4, 11 };
-	m_playerShipPlacement.push_back(std::make_unique<PlayerShipPlacement>(player1, player1SpawnPos, 4, m_battle.getMap(), PlayerName::Player1));
+	m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>(player1, player1SpawnPos, 4, m_battle.getMap(), PlayerName::Player1));
 	std::pair<int, int> player2SpawnPos{ 22, 2 };
-	m_playerShipPlacement.push_back(std::make_unique<PlayerShipPlacement>(player2, player2SpawnPos, 4, m_battle.getMap(), PlayerName::Player2));
+	m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>(player2, player2SpawnPos, 4, m_battle.getMap(), PlayerName::Player2));
 	
 	//Hack to make sprites position correctly
 	//TODO: Will change at some point
@@ -139,6 +139,10 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 		{
 			onRightClickMovementPhase();
 			break;
+		}
+		case BattlePhase::Attack :
+		{
+			onRightClickAttackPhase();
 		}
 		}
 	}
@@ -296,9 +300,24 @@ void BattleUI::onLeftClickAttackPhase()
 		int entityWeaponDamage = m_currentTileSelected->m_entityOnTile->m_entityProperties.m_damage;
 		m_targetArea.clearTargetArea();
 		m_invalidPosition.m_activate = false;
-		m_battle.fireEntityWeaponAtPosition(tileOnMouse->m_tileCoordinate, m_targetArea.m_targetArea, entityWeaponDamage);
+		//TODO: Change readyToFire boolean
+		m_battle.activateEntityWeapon(m_currentTileSelected->m_entityOnTile->m_battleProperties);
+		m_battle.fireEntityWeaponAtPosition(*m_currentTileSelected->m_entityOnTile, *tileOnMouse->m_entityOnTile, m_targetArea.m_targetArea);
 		return;
 	}
+
+	//Entity Already Selected whilst showing where to fire
+	//Change to different Entity before firing
+	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_playerName == m_battle.getCurentPlayer()
+		&& m_currentTileSelected && m_currentTileSelected && m_targetArea.m_targetArea.size() > 0)
+	{
+		m_targetArea.clearTargetArea();
+		m_targetArea.generateTargetArea(m_battle.getMap(), *tileOnMouse);
+		m_currentTileSelected = tileOnMouse;
+		return;
+	}
+
+	//Click on same 
 
 	//Select new Entity to fire at something
 	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_playerName != m_battle.getCurentPlayer())
@@ -310,12 +329,18 @@ void BattleUI::onLeftClickAttackPhase()
 	if (m_currentTileSelected->m_entityOnTile && !m_currentTileSelected->m_entityOnTile->m_battleProperties.m_readyToFire)
 	{
 		m_targetArea.generateTargetArea(m_battle.getMap(), *tileOnMouse);
-		m_battle.activateEntityWeapon(m_currentTileSelected->m_entityOnTile->m_battleProperties);
 	}
 	else
 	{
 		assert(!m_targetArea.m_targetAreaSprites.empty());
 	}
+}
+
+void BattleUI::onRightClickAttackPhase()
+{
+	m_currentTileSelected = nullptr;
+	m_invalidPosition.m_activate = false;
+	m_targetArea.clearTargetArea();
 }
 
 void BattleUI::onMouseMoveAttackPhase()
@@ -404,7 +429,7 @@ BattleUI::TargetArea::HighlightNode::HighlightNode()
 	activate(false)
 {}
 
-BattleUI::PlayerShipPlacement::PlayerShipPlacement(std::vector<EntityProperties*>& player, 
+BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*>& player, 
 	std::pair<int, int> spawnPosition, int range, const Map& map, PlayerName playerName)
 	: m_playerName(playerName),
 	m_player(player),
@@ -431,12 +456,12 @@ BattleUI::PlayerShipPlacement::PlayerShipPlacement(std::vector<EntityProperties*
 	m_currentSelectedEntity = m_player.back();
 }
 
-bool BattleUI::PlayerShipPlacement::isCompleted() const
+bool BattleUI::ShipPlacementPhase::isCompleted() const
 {
 	return m_player.empty();
 }
 
-void BattleUI::PlayerShipPlacement::render(const InvalidPosition& invalidPosition) const
+void BattleUI::ShipPlacementPhase::render(const InvalidPosition& invalidPosition) const
 {
 	for (auto& i : m_spawnArea)
 	{
@@ -449,7 +474,7 @@ void BattleUI::PlayerShipPlacement::render(const InvalidPosition& invalidPositio
 	}
 }
 
-const Tile* BattleUI::PlayerShipPlacement::getTileOnMouse(InvalidPosition& invalidPosition, const Tile* currentTileSelected, const Map& map)
+const Tile* BattleUI::ShipPlacementPhase::getTileOnMouse(InvalidPosition& invalidPosition, const Tile* currentTileSelected, const Map& map)
 {
 	const Tile* tileOnMouse = map.getTile(map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 	if (!tileOnMouse)
@@ -495,7 +520,7 @@ const Tile* BattleUI::PlayerShipPlacement::getTileOnMouse(InvalidPosition& inval
 	return tileOnMouse;
 }
 
-void BattleUI::PlayerShipPlacement::onLeftClick(const InvalidPosition& invalidPosition, const Tile* currentTileSelected, Battle& battle)
+void BattleUI::ShipPlacementPhase::onLeftClick(const InvalidPosition& invalidPosition, const Tile* currentTileSelected, Battle& battle)
 {
 	if (!invalidPosition.m_activate && currentTileSelected && !currentTileSelected->m_entityOnTile)
 	{

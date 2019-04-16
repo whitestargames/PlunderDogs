@@ -58,7 +58,7 @@ struct EntityBattleProperties
 
 	void clearMovementPath();
 	void moveEntity(Map& map, const Tile& tile, int movementPointsAvailable);
-	void takeDamage(EntityProperties& entityProperties);
+	void takeDamage(EntityProperties& entityProperties, int damageAmount);
 
 	std::pair<int, int> m_currentPosition;
 	std::deque<std::pair<eDirection, std::pair<int, int>>> m_pathToTile;

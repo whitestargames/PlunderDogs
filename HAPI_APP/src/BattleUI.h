@@ -40,10 +40,10 @@ class BattleUI : public IHapiSpritesInputListener
 		bool m_activate;
 	};
 
-	class PlayerShipPlacement
+	class ShipPlacementPhase
 	{
 	public:
-		PlayerShipPlacement(std::vector<EntityProperties*>& player,
+		ShipPlacementPhase(std::vector<EntityProperties*>& player,
 			std::pair<int, int> spawnPosition, int range, const Map& map, PlayerName playerName);
 
 		bool isCompleted() const;
@@ -76,7 +76,7 @@ private:
 	Battle& m_battle;
 	const Tile* m_currentTileSelected;
 	InvalidPosition m_invalidPosition;
-	std::vector<std::unique_ptr<PlayerShipPlacement>> m_playerShipPlacement;
+	std::vector<std::unique_ptr<ShipPlacementPhase>> m_playerShipPlacement;
 	
 	////ShipPlacement Phase
 	//std::deque<EntityProperties*>* m_selectedEntities;
@@ -94,6 +94,7 @@ private:
 
 	//Attack Phase
 	void onLeftClickAttackPhase();
+	void onRightClickAttackPhase();
 	void onMouseMoveAttackPhase();
 	TargetArea m_targetArea;
 };

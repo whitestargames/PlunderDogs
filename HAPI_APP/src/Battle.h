@@ -26,7 +26,7 @@ public:
 	void update(float deltaTime);
 	void moveEntityToPosition(BattleEntity& entity, const Tile& destination);
 	void activateEntityWeapon(EntityBattleProperties& battleProperties);
-	void fireEntityWeaponAtPosition(BattleEntity& player, const BattleEntity& enemy, const std::vector<const Tile*>& targetArea);
+	void fireEntityWeaponAtPosition(const BattleEntity& player, BattleEntity& enemy, const std::vector<const Tile*>& targetArea);
 
 	void insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, PlayerName playerName);
 	void nextTurn();
@@ -35,7 +35,8 @@ private:
 	std::vector<std::unique_ptr<BattleEntity>> m_player1;
 	std::vector<std::unique_ptr<BattleEntity>> m_player2;
 	Map m_map;
-	BattleUI m_battleUI;
 	BattlePhase m_currentPhase;
 	PlayerName m_currentPlayerTurn;
+	BattleUI m_battleUI;
+
 };

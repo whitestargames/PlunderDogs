@@ -9,9 +9,9 @@ Battle::Battle(std::vector<EntityProperties*>& player1, std::vector<EntityProper
 	: m_player1(),
 	m_player2(),
 	m_map(MapParser::parseMap("Level1.tmx")),
-	m_battleUI(*this, player1, player2),
 	m_currentPhase(BattlePhase::ShipPlacement),
-	m_currentPlayerTurn(PlayerName::Player1)
+	m_currentPlayerTurn(PlayerName::Player1),
+	m_battleUI(*this, player1, player2)
 {}
 
 void Battle::render() const
@@ -93,18 +93,18 @@ void Battle::activateEntityWeapon(EntityBattleProperties& battleProperties)
 	battleProperties.m_readyToFire = true;
 }
 
-void Battle::fireEntityWeaponAtPosition(BattleEntity& player, const BattleEntity& enemy, const std::vector<const Tile*>& targetArea)
+void Battle::fireEntityWeaponAtPosition(const BattleEntity& player, BattleEntity& enemy, const std::vector<const Tile*>& targetArea)
 {
 	assert(m_currentPhase == BattlePhase::Attack);
 	assert(player.m_battleProperties.m_readyToFire);
 
-	auto tileCoordinate = enemy.m_battleProperties.m_currentPosition;
-	auto cIter = std::find_if(targetArea.cbegin(), targetArea.cend(), [tileCoordinate](const auto& tile) { return tileCoordinate == tile->m_tileCoordinate; });
-	//Enemy within range of weapon
-	if (cIter != targetArea.cend())
-	{
-		
-	}
+	//auto tileCoordinate = enemy.m_battleProperties.m_currentPosition;
+	//auto cIter = std::find_if(targetArea.cbegin(), targetArea.cend(), [tileCoordinate](const auto& tile) { return tileCoordinate == tile->m_tileCoordinate; });
+	////Enemy within range of weapon
+	//if (cIter != targetArea.cend())
+	//{
+	//	enemy.m_battleProperties.takeDamage(enemy.m_entityProperties, player.m_entityProperties.m_damage);
+	//}
 }
 
 void Battle::insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, PlayerName playerName)
