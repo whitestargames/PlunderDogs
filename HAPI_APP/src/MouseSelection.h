@@ -32,7 +32,6 @@ std::pair<double, eDirection> calculateDirection(std::pair<int, int> startLocati
 		double angle;
 		if (distance.first > 0)	                                                                               // Calculating the angle between the verticle and the distance vector.
 		{
-			double Bitch{ radsToDeg(atan(distance.second / distance.first))};
 			angle = 90 + radsToDeg(atan(distance.second / distance.first)) ;
 		}
 		else
