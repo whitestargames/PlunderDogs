@@ -222,14 +222,14 @@ void BattleUI::onLeftClickMovementPhase()
 {
 	assert(m_battle.getCurrentPhase() == BattlePhase::Movement);
 
-	const Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
-	if (!tile)
+	const Tile* tileOnMouse = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
+	if (!tileOnMouse)
 	{
 		return;
 	}
 
 	//Invalid Location - Collidable tile
-	if (tile->m_type != eTileType::eSea && tile->m_type != eTileType::eOcean)
+	if (tileOnMouse->m_type != eTileType::eSea && tileOnMouse->m_type != eTileType::eOcean)
 	{
 		if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile)
 		{
@@ -241,37 +241,40 @@ void BattleUI::onLeftClickMovementPhase()
 
 	if (m_currentTileSelected)
 	{
-		//Select new Tile if has valid Entity
-		//And is the same player
-		if (tile->m_entityOnTile && tile->m_entityOnTile->m_playerName != m_battle.getCurentPlayer())
+		//Cancel movement if clicked on same entity
+		if (m_currentTileSelected->m_tileCoordinate == tileOnMouse->m_tileCoordinate)
 		{
-			//if (m_currentTileSelected->m_entityOnTile && m_currentTileSelected->m_entityOnTile->m_playerName == tile->m_entityOnTile->m_playerName)
-			//{
-			//	m_currentTileSelected->m_entityOnTile->m_battleProperties.clearMovementPath();
-			//}
-			//Select new Entity
-			m_currentTileSelected = tile;
+			m_currentTileSelected->m_entityOnTile->m_battleProperties.clearMovementPath();
+			m_currentTileSelected = nullptr;
 		}
+
+		//Disallow movement to tile occupied by other player
+		else if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_playerName != m_battle.getCurentPlayer())
+		{
+			m_currentTileSelected->m_entityOnTile->m_battleProperties.clearMovementPath();
+			m_currentTileSelected = nullptr;
+		}
+
 		//Instruct Entity to move to new location
-		else if (m_currentTileSelected->m_entityOnTile && (m_currentTileSelected->m_tileCoordinate != tile->m_tileCoordinate))
+		else if (m_currentTileSelected->m_entityOnTile && (m_currentTileSelected->m_tileCoordinate != tileOnMouse->m_tileCoordinate))
 		{
 			assert(m_currentTileSelected->m_entityOnTile->m_playerName == m_battle.getCurentPlayer());
-			m_battle.moveEntityToPosition(*m_currentTileSelected->m_entityOnTile, *tile);
+			m_battle.moveEntityToPosition(*m_currentTileSelected->m_entityOnTile, *tileOnMouse);
 			m_currentTileSelected = nullptr;
 		}
 	}
 	else
 	{
 		//Do not select tile that contains wrong players entity
-		if (tile->m_entityOnTile)
+		if (tileOnMouse->m_entityOnTile)
 		{
-			if (tile->m_entityOnTile->m_playerName != m_battle.getCurentPlayer())
+			if (tileOnMouse->m_entityOnTile->m_playerName != m_battle.getCurentPlayer())
 			{
 				m_currentTileSelected = nullptr;
 			}
 			else
 			{
-				m_currentTileSelected = tile;
+				m_currentTileSelected = tileOnMouse;
 			}
 		}
 	}
@@ -319,15 +322,15 @@ void BattleUI::onLeftClickAttackPhase()
 	}
 
 	//Entity Already Selected whilst showing where to fire
-	////Change to different Entity before firing
-	//if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_playerName == m_battle.getCurentPlayer()
-	//	&& m_currentTileSelected && m_currentTileSelected && m_targetArea.m_targetArea.size() > 0)
-	//{
-	//	m_targetArea.clearTargetArea();
-	//	m_targetArea.generateTargetArea(m_battle.getMap(), *tileOnMouse);
-	//	m_currentTileSelected = tileOnMouse;
-	//	return;
-	//}
+	//Change to different Entity before firing
+	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_playerName == m_battle.getCurentPlayer()
+		&& m_currentTileSelected && m_currentTileSelected && m_targetArea.m_targetArea.size() > 0)
+	{
+		m_targetArea.clearTargetArea();
+		m_targetArea.generateTargetArea(m_battle.getMap(), *tileOnMouse);
+		m_currentTileSelected = tileOnMouse;
+		return;
+	}
 
 	//Click on same
 	//Select new Entity to fire at something
