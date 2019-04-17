@@ -10,12 +10,12 @@ std::vector<EntityProperties> assignEntities()
 	std::vector<EntityProperties> entities;
 	for (int i = 0; i < 20; i++)
 	{
-		EntityProperties newEntity;
-		newEntity.m_movementPoints = 15;
+		EntityProperties newEntity((EntityProperties::EntityType)(rand() % (int)EntityProperties::EntityType::MAX));
+		/*newEntity.m_movementPoints = 15;
 		newEntity.m_healthMax = i + 1;
 		newEntity.m_currentHealth = i + 2;
 		newEntity.m_range = i + 3;
-		newEntity.m_damage = 1;
+		newEntity.m_damage = 1;*/
 
 		entities.push_back(newEntity);
 	}

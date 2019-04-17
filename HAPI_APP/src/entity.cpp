@@ -171,7 +171,7 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 
 //ENTITY
 EntityProperties::EntityProperties() 
-	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_ship)),
+	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_ship_red)),
 	m_movementPoints(5),
 	m_healthMax(20),
 	m_currentHealth(20),
@@ -192,7 +192,7 @@ EntityProperties::EntityProperties(EntityType entityType)
 		m_currentHealth = 7;
 		m_range = 3;
 		m_damage = 2;
-		m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_ship));
+		m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_ship_green));
 		break;
 	case EntityProperties::EntityType::eBattleShip:
 		m_movementPoints = 3;
@@ -200,6 +200,7 @@ EntityProperties::EntityProperties(EntityType entityType)
 		m_currentHealth = 10;
 		m_range = 2;
 		m_damage = 5;
+		m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_ship_blue));
 		break;
 	case EntityProperties::EntityType::eDestroyer:
 		m_movementPoints = 12;
@@ -207,6 +208,7 @@ EntityProperties::EntityProperties(EntityType entityType)
 		m_currentHealth = 5;
 		m_range = 3;
 		m_damage = 4;
+		m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_ship_red));
 		break;
 	case EntityProperties::EntityType::eGunBoat:
 		m_movementPoints = 3;
@@ -214,6 +216,7 @@ EntityProperties::EntityProperties(EntityType entityType)
 		m_currentHealth = 2;
 		m_range = 10;
 		m_damage = 6;
+		m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_ship_yellow));
 		break;
 	default:
 		break;

@@ -79,8 +79,29 @@ struct Textures
 			return false;
 		}
 
-		m_ship_red = HAPI_Wrapper::loadSpriteSheet("ship.xml");
+		m_ship_red = HAPI_Wrapper::loadSpriteSheet("ship_red.xml");
 		if (!m_ship_red)
+		{
+			HAPI_Sprites.UserMessage("Connot Load: 'ship.xml'", "Texture Error");
+			return false;
+		}
+
+		m_ship_green = HAPI_Wrapper::loadSpriteSheet("ship_green.xml");
+		if (!m_ship_green)
+		{
+			HAPI_Sprites.UserMessage("Connot Load: 'ship.xml'", "Texture Error");
+			return false;
+		}
+
+		m_ship_blue = HAPI_Wrapper::loadSpriteSheet("ship_blue.xml");
+		if (!m_ship_blue)
+		{
+			HAPI_Sprites.UserMessage("Connot Load: 'ship.xml'", "Texture Error");
+			return false;
+		}
+
+		m_ship_yellow = HAPI_Wrapper::loadSpriteSheet("ship_yellow.xml");
+		if (!m_ship_yellow)
 		{
 			HAPI_Sprites.UserMessage("Connot Load: 'ship.xml'", "Texture Error");
 			return false;
