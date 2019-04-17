@@ -8,7 +8,4 @@ std::shared_ptr<SpriteSheet> Textures::m_preBattleUIPlayButton;
 std::shared_ptr<SpriteSheet> Textures::m_preBattleUIBackButton;
 std::shared_ptr<SpriteSheet> Textures::m_thing;
 std::shared_ptr<SpriteSheet> Textures::m_hexTiles;
-std::shared_ptr<SpriteSheet> Textures::m_ship_red;
-std::shared_ptr<SpriteSheet> Textures::m_ship_green;
-std::shared_ptr<SpriteSheet> Textures::m_ship_blue;
-std::shared_ptr<SpriteSheet> Textures::m_ship_yellow;
+std::shared_ptr<SpriteSheet> Textures::m_ship;

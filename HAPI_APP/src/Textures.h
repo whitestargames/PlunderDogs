@@ -79,33 +79,14 @@ struct Textures
 			return false;
 		}
 
-		m_ship_red = HAPI_Wrapper::loadSpriteSheet("ship_red.xml");
-		if (!m_ship_red)
+		m_ship = HAPI_Wrapper::loadSpriteSheet("shipSideCannon.xml");
+		if (!m_ship)
 		{
 			HAPI_Sprites.UserMessage("Connot Load: 'ship.xml'", "Texture Error");
 			return false;
 		}
 
-		m_ship_green = HAPI_Wrapper::loadSpriteSheet("ship_green.xml");
-		if (!m_ship_green)
-		{
-			HAPI_Sprites.UserMessage("Connot Load: 'ship.xml'", "Texture Error");
-			return false;
-		}
-
-		m_ship_blue = HAPI_Wrapper::loadSpriteSheet("ship_blue.xml");
-		if (!m_ship_blue)
-		{
-			HAPI_Sprites.UserMessage("Connot Load: 'ship.xml'", "Texture Error");
-			return false;
-		}
-
-		m_ship_yellow = HAPI_Wrapper::loadSpriteSheet("ship_yellow.xml");
-		if (!m_ship_yellow)
-		{
-			HAPI_Sprites.UserMessage("Connot Load: 'ship.xml'", "Texture Error");
-			return false;
-		}
+		
 
 		return true;
 	}
@@ -118,9 +99,7 @@ struct Textures
 	static std::shared_ptr<SpriteSheet> m_preBattleUIBackButton;
 	static std::shared_ptr<SpriteSheet> m_thing;
 	static std::shared_ptr<SpriteSheet> m_hexTiles;
-	static std::shared_ptr<SpriteSheet> m_ship_red;
-	static std::shared_ptr<SpriteSheet> m_ship_green;
-	static std::shared_ptr<SpriteSheet> m_ship_blue;
-	static std::shared_ptr<SpriteSheet> m_ship_yellow;
+	static std::shared_ptr<SpriteSheet> m_ship;
+
 
 };
