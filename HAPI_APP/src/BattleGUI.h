@@ -16,7 +16,7 @@ enum BattleWindow
 class BattleGUI
 {
 public:
-	BattleGUI();
+	BattleGUI(std::pair<int, int> maxCameraOffset);
 
 	std::pair<int, int> getCameraPositionOffset() const;
 
@@ -38,6 +38,7 @@ private:
 	std::unique_ptr<Sprite> m_doneButton;
 
 	BattleWindow m_currentBattleWindow;
+	std::pair<int, int> m_maxCameraOffset;
 	//Map m_map;
 	DWORD animationStartTime;
 	bool shipSelected;

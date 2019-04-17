@@ -2,7 +2,7 @@
 #include "Utilities/Utilities.h"
 #include "Utilities/MapParser.h"
 
-BattleGUI::BattleGUI()
+BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
 	: m_battleIcons(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "battleIcons.png")),
 	m_pauseButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "pauseButton.png", 2)),
 	m_chickenButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "chickenButton.png")),
@@ -11,7 +11,8 @@ BattleGUI::BattleGUI()
 	m_quitButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "quitButton.png", 2)),
 	m_postBattleBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PostBattleBackground.png")),
 	m_doneButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "doneButton.png", 2)),
-	m_currentBattleWindow(BattleWindow::eCombat)
+	m_currentBattleWindow(BattleWindow::eCombat),
+	m_maxCameraOffset(maxCameraOffset)
 {
 	//battle
 	m_battleIcons->GetTransformComp().SetPosition({ 350, 800 });
@@ -102,25 +103,26 @@ void BattleGUI::update()
 			CameraPositionOffset.first += pendingCameraMovement.x;//translates the camera position
 			CameraPositionOffset.second += pendingCameraMovement.y;
 
-			if (CameraPositionOffset.first < -500)//checks for if its reached any of the 4 boundries, need to change it to a width variable
+			if (CameraPositionOffset.first < -150)//checks for if its reached any of the 4 boundries, need to change it to a width variable
 			{
-				CameraPositionOffset.first = -500;
+				CameraPositionOffset.first = -150;
 			}
-			else if (CameraPositionOffset.first > 500)
+			else if (CameraPositionOffset.first > m_maxCameraOffset.first)
 			{
-				CameraPositionOffset.first = 500;
+				CameraPositionOffset.first = m_maxCameraOffset.first;
 			}
 			else
 			{
 				CameraPositionOffset.first += pendingCameraMovement.x;
 			}
-			if (CameraPositionOffset.second < -400)
+
+			if (CameraPositionOffset.second < -200)
 			{
-				CameraPositionOffset.second = -400;
+				CameraPositionOffset.second = -200;
 			}
-			else if (CameraPositionOffset.second > 400)
+			else if (CameraPositionOffset.second > m_maxCameraOffset.second)
 			{
-				CameraPositionOffset.second = 400;
+				CameraPositionOffset.second = m_maxCameraOffset.second;
 			}
 			else
 			{

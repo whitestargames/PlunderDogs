@@ -31,8 +31,8 @@ void Map::drawMap() const
 			const float xPos = (float)x * textureDimensions.first * 3 / 4;
 			//Is Odd
 			m_data[access + x].m_sprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
-				xPos * m_drawScale - m_drawOffset.first,
-				yPosOdd * m_drawScale - m_drawOffset.second));
+				(xPos - m_drawOffset.first)*m_drawScale,
+				(yPosOdd - m_drawOffset.second)*m_drawScale));
 			m_data[access + x].m_sprite->GetTransformComp().SetScaling(
 				HAPISPACE::VectorF(m_drawScale, m_drawScale));
 			m_data[access + x].m_sprite->Render(SCREEN_SURFACE);
@@ -42,8 +42,8 @@ void Map::drawMap() const
 			const float xPos = (float)x * textureDimensions.first * 3 / 4;
 			//Is even
 			m_data[access + x].m_sprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
-				xPos * m_drawScale - m_drawOffset.first,
-				yPosEven * m_drawScale - m_drawOffset.second));
+				(xPos - m_drawOffset.first)*m_drawScale,
+				(yPosEven - m_drawOffset.second)*m_drawScale));
 			m_data[access + x].m_sprite->GetTransformComp().SetScaling(
 				HAPISPACE::VectorF(m_drawScale, m_drawScale));
 			m_data[access + x].m_sprite->Render(SCREEN_SURFACE);
@@ -318,8 +318,8 @@ intPair Map::getTileScreenPos(intPair coord) const
 		* textureDimensions.second) / 2;
 
 	return intPair(
-		xPos * m_drawScale - m_drawOffset.first,
-		yPos * m_drawScale - m_drawOffset.second);
+		(xPos - m_drawOffset.first)* m_drawScale,
+		(yPos - m_drawOffset.second)* m_drawScale);
 }
 
 intPair Map::getMouseClickCoord(intPair mouseCoord) const
@@ -328,8 +328,8 @@ intPair Map::getMouseClickCoord(intPair mouseCoord) const
 		m_data[0].m_sprite->FrameWidth(),
 		FRAME_HEIGHT);
 	
-	const float translatedX = (mouseCoord.first + m_drawOffset.first - FRAME_CENTRE_X) / m_drawScale;
-	const float translatedY = (mouseCoord.second + m_drawOffset.second - FRAME_CENTRE_Y) / m_drawScale;
+	const float translatedX = (static_cast<float>(mouseCoord.first - FRAME_CENTRE_X) / m_drawScale) + static_cast<float>(m_drawOffset.first);
+	const float translatedY = (static_cast<float>(mouseCoord.second - FRAME_CENTRE_Y) / m_drawScale) + static_cast<float>(m_drawOffset.second);
 	const int predictedTileX = static_cast<const int>(translatedX * 4 / (3 * textureDimensions.first));
 	const int predictedTileY = static_cast<const int>(translatedY / textureDimensions.second);
 	

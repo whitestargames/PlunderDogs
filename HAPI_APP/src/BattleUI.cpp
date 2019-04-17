@@ -33,6 +33,7 @@ void BattleUI::InvalidPositionSprite::setPosition(std::pair<int, int> screenPosi
 
 BattleUI::BattleUI(Battle & battle, std::vector<EntityProperties*>& selectedEntities)
 	: m_battle(battle),
+	m_gui({ battle.getMap().getDimensions().first * 28 - 150, battle.getMap().getDimensions().second * 32 - 150}),
 	m_currentTileSelected(nullptr),
 	m_invalidPositionSprite()
 {
