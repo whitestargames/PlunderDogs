@@ -60,7 +60,7 @@ private:
 
 public:
 	static OverWorldWindow CURRENT_WINDOW;
-	OverWorldGUI(std::vector<EntityProperties>& entities);
+	OverWorldGUI(const std::vector<EntityProperties>& entities);
 
 	void onLeftClick(const HAPI_TMouseData& mouseData, std::vector<EntityProperties>& entities,
 		std::vector<EntityProperties*>& selectedEntities, bool& startBattle);

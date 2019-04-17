@@ -10,7 +10,7 @@ constexpr int WINDOW_OBJECTHEIGHT = 150;
 constexpr int WINDOW_WIDTH = 830;
 constexpr int WINDOW_HEIGHT = 200;
 
-OverWorldGUI::OverWorldGUI(std::vector<EntityProperties>& entities)
+OverWorldGUI::OverWorldGUI(const std::vector<EntityProperties>& entities)
 	: m_battleMapBackground(std::make_unique<Sprite>(Textures::m_battleMapBackground)),
 	m_enemyTerritoryHexSheet(std::make_unique<Sprite>(Textures::m_enemyTerritoryHexSheet)),
 	m_prebattleUIBackground(std::make_unique<Sprite>(Textures::m_prebattleUIBackground)),
@@ -40,9 +40,11 @@ OverWorldGUI::OverWorldGUI(std::vector<EntityProperties>& entities)
 	HAPI_Wrapper::setPosition(m_upgradesButton, { 1300, 25 });
 	//adding the windows and sliders, also populates the fleet window with all current entities
 	UI.AddWindow(FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 510, 710), fleetWindowSkinName);
-	for (int i = 0; i < entities.size(); i++) TODO:
+	for (int i = 0; i < entities.size(); i++) 
 	{
+		
 		UI.GetWindow(FLEET_WINDOW)->AddCanvas(ENTITY + std::to_string(i), calculateObjectWindowPosition(i), entities[i].m_sprite);
+		entities[i];
 	}
 	UI.GetWindow(FLEET_WINDOW)->AddSlider(FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
 	UI.AddWindow(BATTLE_FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 220, 420), fleetWindowSkinName);

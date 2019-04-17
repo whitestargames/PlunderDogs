@@ -170,16 +170,16 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 }
 
 //ENTITY
-EntityProperties::EntityProperties() 
-	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_ship)),
-	m_movementPoints(5),
-	m_healthMax(20),
-	m_currentHealth(20),
-	m_range(4),
-	m_damage(5)
-{
-	
-}
+//EntityProperties::EntityProperties() 
+//	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_ship)),
+//	m_movementPoints(5),
+//	m_healthMax(20),
+//	m_currentHealth(20),
+//	m_range(4),
+//	m_damage(5)
+//{
+//	
+//}
 
 EntityProperties::EntityProperties(EntityType entityType) 
 	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_ship))
