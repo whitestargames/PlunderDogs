@@ -307,6 +307,8 @@ EntityProperties::EntityProperties(FactionName factionName)
 	m_damage(0),
 	m_weaponType(eWeaponType::eSideCannons)
 {
+	//TODO: Currently not working as intended
+	//UI seems to be resetting the frameNumber somewhere in OverWorldGUI. 
 	switch (factionName)
 	{
 	case FactionName::Yellow :
