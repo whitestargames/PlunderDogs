@@ -172,6 +172,17 @@ void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int
 	//TODO: To do.
 }
 
+void EntityBattleProperties::fireWeapon()
+{
+	m_weaponFired = true;
+}
+
+void EntityBattleProperties::onNewTurn()
+{
+	m_movedToDestination = false;
+	m_weaponFired = false;
+}
+
 void EntityBattleProperties::handleRotation(EntityProperties& entityProperties, const Map& map)
 {
 	int rotationAngle = 60;
@@ -211,17 +222,8 @@ BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const EntityPro
 	map.insertEntity(*this);
 }
 
-void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProperties& entityProperties, bool& allEntitiesMoved)
-{
-	if (m_movedToDestination && m_pathToTile.empty())
-	{
-		allEntitiesMoved = true;
-	}
-	else
-	{
-		allEntitiesMoved = false;
-	}
-
+void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProperties& entityProperties, MoveCounter& moveCounter)
+{	
 	if (!m_pathToTile.empty())
 	{
 		m_movementTimer.update(deltaTime);
@@ -237,6 +239,7 @@ void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProp
 			if (m_pathToTile.empty())
 			{
 				m_movedToDestination = true;
+				++moveCounter.m_counter;
 			}
 		}
 	}

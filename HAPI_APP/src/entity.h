@@ -8,6 +8,15 @@
 #include "Global.h"
 #include "PlayerName.h"
 
+struct MoveCounter
+{
+	MoveCounter()
+		: m_counter(0)
+	{}
+
+	int m_counter;
+};
+
 struct Tile;
 struct Weapons;
 class Map;
@@ -56,27 +65,25 @@ public:
 	std::pair<int, int> getCurrentPosition() const;
 	bool isWeaponFired() const;
 
-	void update(float deltaTime, const Map& map, EntityProperties& entityProperties, bool& allEntitiesMoved);
+	void update(float deltaTime, const Map& map, EntityProperties& entityProperties, MoveCounter& gameCounter);
 	void render(std::shared_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
 
 	void generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
 	void clearMovementPath();
 	void moveEntity(Map& map, const Tile& tile);
 	void takeDamage(EntityProperties& entityProperties, int damageAmount);
-
-	//TODO: Temporary
-	bool m_weaponFired;
-	bool m_movedToDestination;
+	void fireWeapon();
+	void onNewTurn();
 
 private:
 	std::pair<int, int> m_currentPosition;
 	std::deque<std::pair<eDirection, std::pair<int, int>>> m_pathToTile;
 	Timer m_movementTimer;
-
 	MovementPath m_movementPath;
 	int m_movementPathSize;
 	eDirection m_currentDirection;
-
+	bool m_weaponFired;
+	bool m_movedToDestination;
 
 	void handleRotation(EntityProperties& entityProperties, const Map& map);
 };

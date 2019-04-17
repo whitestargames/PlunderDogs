@@ -306,15 +306,9 @@ void BattleUI::onLeftClickAttackPhase()
 	//Fire weapon at position
 	if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile && !m_currentTileSelected->m_entityOnTile->m_battleProperties.isWeaponFired())
 	{
-		//Make sure entity on tile to attack is on the other team
-		if (tileOnMouse->m_entityOnTile  && tileOnMouse->m_entityOnTile->m_playerName != m_battle.getCurentPlayer())
-		{
-			int entityWeaponDamage = m_currentTileSelected->m_entityOnTile->m_entityProperties.m_damage;
-			m_battle.fireEntityWeaponAtPosition(*m_currentTileSelected->m_entityOnTile, *tileOnMouse->m_entityOnTile, m_targetArea.m_targetArea);
-		}
+		m_battle.fireEntityWeaponAtPosition(*m_currentTileSelected->m_entityOnTile, *tileOnMouse, m_targetArea.m_targetArea);
 
 		//TODO: Might change this
-		//m_currentTileSelected->m_entityOnTile->m_battleProperties.m_weaponFired = true;
 		m_targetArea.clearTargetArea();
 		m_currentTileSelected = nullptr;
 		m_invalidPosition.m_activate = false;

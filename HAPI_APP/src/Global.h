@@ -18,17 +18,6 @@ enum OverWorldWindow
 	eLevelSelection
 };
 
-struct EntityCounter
-{
-	EntityCounter()
-		: m_counter(0)
-	{
-
-	}
-
-	int m_counter;
-};
-
 enum eTileType
 {
 	eGrass = 0,
