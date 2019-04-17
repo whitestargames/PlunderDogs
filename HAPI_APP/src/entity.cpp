@@ -17,7 +17,8 @@ EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosit
 	m_movementPath(),
 	m_movementPathSize(0),
 	m_currentDirection(eDirection::eNorth),
-	m_weaponFired(false)
+	m_weaponFired(false),
+	m_isDead(false)
 {}
 
 eDirection EntityBattleProperties::getCurrentDirection() const
@@ -38,6 +39,11 @@ std::pair<int, int> EntityBattleProperties::getCurrentPosition() const
 bool EntityBattleProperties::isWeaponFired() const
 {
 	return m_weaponFired;
+}
+
+bool EntityBattleProperties::isDead() const
+{
+	return m_isDead;
 }
 
 //MOVEMENT PATH NODE
@@ -174,9 +180,89 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 	}
 }
 
-void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int damageAmount)
+//TODO: Will change.
+//Not sure how damage/health is going to be implemented yet. 
+void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int damageAmount, FactionName entityFaction)
 {
-	//TODO:
+	entityProperties.m_currentHealth -= damageAmount;
+	int currentHealth = entityProperties.m_currentHealth;
+	auto& entitySprite = entityProperties.m_sprite;
+	switch (entityFaction)
+	{
+	case FactionName::Blue :
+		if (currentHealth == 2)
+		{
+			entitySprite->SetFrameNumber(eShipSpriteFrame::eMediumHealthBlue);
+			entitySprite->GetTransformComp().SetOriginToCentreOfFrame(); 
+		}
+		else if (currentHealth == 1)
+		{
+			entitySprite->SetFrameNumber(eShipSpriteFrame::eLowHealthBlue);
+			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
+		}
+		else if (currentHealth <= 0)
+		{
+			entitySprite->SetFrameNumber(eShipSpriteFrame::eDeadBlue);
+			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
+			m_isDead = true;
+		}
+		
+		break;
+	case FactionName::Yellow :
+		if (currentHealth == 2)
+		{
+			entitySprite->SetFrameNumber(eShipSpriteFrame::eMediumHealthYellow);
+			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
+		}
+		else if (currentHealth == 1)
+		{
+			entitySprite->SetFrameNumber(eShipSpriteFrame::eLowHealthYellow);
+			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
+		}
+		else if (currentHealth <= 0)
+		{
+			entitySprite->SetFrameNumber(eShipSpriteFrame::eDeadYellow);
+			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
+			m_isDead = true;
+		}
+		break;
+	case FactionName::Red :
+		if (currentHealth == 2)
+		{
+			entitySprite->SetFrameNumber(eShipSpriteFrame::eMediumHealthRed);
+			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
+		}
+		else if (currentHealth == 1)
+		{
+			entitySprite->SetFrameNumber(eShipSpriteFrame::eLowHealthRed);
+			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
+		}
+		else if (currentHealth <= 0)
+		{
+			entitySprite->SetFrameNumber(eShipSpriteFrame::eDeadRed);
+			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
+			m_isDead = true;
+		}
+		break;
+	case FactionName::Green :
+		if (currentHealth == 2)
+		{
+			entitySprite->SetFrameNumber(eShipSpriteFrame::eMediumHealthGreen);
+			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
+		}
+		else if (currentHealth == 1)
+		{
+			entitySprite->SetFrameNumber(eShipSpriteFrame::eLowHealthGreen);
+			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
+		}
+		else if (currentHealth <= 0)
+		{
+			entitySprite->SetFrameNumber(eShipSpriteFrame::eDeadGreen);
+			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
+			m_isDead = true;
+		}
+		break;
+	}
 }
 
 void EntityBattleProperties::fireWeapon()
@@ -225,15 +311,19 @@ EntityProperties::EntityProperties(FactionName factionName)
 	{
 	case FactionName::Yellow :
 		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthYellow);
+		m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 		break;
 	case FactionName::Blue :
 		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthBlue);
+		m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 		break;
 	case FactionName::Red :
 		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthRed);
+		m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 		break;
 	case FactionName::Green :
 		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthGreen);
+		m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 		break;
 	}
 }

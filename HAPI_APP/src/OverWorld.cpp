@@ -11,8 +11,8 @@ std::vector<EntityProperties> assignEntities(FactionName name)
 	{
 		EntityProperties newEntity(name);
 		newEntity.m_movementPoints = 15;
-		newEntity.m_healthMax = i + 1;
-		newEntity.m_currentHealth = i + 2;
+		newEntity.m_healthMax = 3;
+		newEntity.m_currentHealth = 3;
 		newEntity.m_range = i + 3;
 		newEntity.m_damage = 1;
 

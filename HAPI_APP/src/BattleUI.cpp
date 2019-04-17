@@ -306,6 +306,13 @@ void BattleUI::onLeftClickMovementPhase()
 
 	if (m_currentTileSelected)
 	{
+		//Do not select killed entity
+		if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_battleProperties.isDead())
+		{
+			m_currentTileSelected = nullptr;
+			return;
+		}
+
 		//Cancel movement if clicked on same entity
 		if (m_currentTileSelected->m_tileCoordinate == tileOnMouse->m_tileCoordinate)
 		{
@@ -330,6 +337,10 @@ void BattleUI::onLeftClickMovementPhase()
 	}
 	else
 	{
+		if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_battleProperties.isDead())
+		{
+			m_currentTileSelected = nullptr;
+		}
 		//Do not select tile that contains wrong players entity
 		if (tileOnMouse->m_entityOnTile)
 		{

@@ -65,6 +65,7 @@ public:
 	bool isMovedToDestination() const;
 	std::pair<int, int> getCurrentPosition() const;
 	bool isWeaponFired() const;
+	bool isDead() const;
 
 	void update(float deltaTime, const Map& map, EntityProperties& entityProperties, MoveCounter& gameCounter);
 	void render(std::shared_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
@@ -73,7 +74,7 @@ public:
 	void clearMovementPath();
 
 	void moveEntity(Map& map, const Tile& tile);
-	void takeDamage(EntityProperties& entityProperties, int damageAmount);
+	void takeDamage(EntityProperties& entityProperties, int damageAmount, FactionName entityFaction);
 	void fireWeapon();
 	void onNewTurn();
 
@@ -86,6 +87,7 @@ private:
 	eDirection m_currentDirection;
 	bool m_weaponFired;
 	bool m_movedToDestination;
+	bool m_isDead;
 
 	void handleRotation(EntityProperties& entityProperties, const Map& map);
 };
