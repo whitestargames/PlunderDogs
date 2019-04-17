@@ -3,7 +3,6 @@
 #include <HAPISprites_lib.h>
 #include <HAPISprites_UI.h>
 #include <memory>
-#include <string>
 #include "Timer.h"
 #include "Global.h"
 #include "PlayerName.h"

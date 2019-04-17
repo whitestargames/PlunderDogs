@@ -2,8 +2,6 @@
 
 
 #include "BattleGUI.h"
-#include <HAPISprites_lib.h>
-#include <HAPISprites_UI.h>
 #include "PlayerName.h"
 #include <vector>
 
@@ -70,7 +68,6 @@ class BattleUI : public IHapiSpritesInputListener
 		PlayerName m_playerName;
 		std::vector<EntityProperties*>& m_player;
 		CurrentSelectedEntity m_currentSelectedEntity;
-		//EntityProperties* m_currentSelectedEntity;
 		std::vector<const Tile*> m_spawnArea;
 		std::vector<std::unique_ptr<Sprite>> m_spawnSprites;
 	};

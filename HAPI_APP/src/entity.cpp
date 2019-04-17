@@ -1,8 +1,6 @@
 #include "entity.h"
 #include "Map.h"
-#include "HAPIWrapper.h"
 #include "Pathfinding.h"
-#include "Utilities/Utilities.h"
 #include "Textures.h"
 
 constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
