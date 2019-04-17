@@ -19,7 +19,6 @@ void Battle::render() const
 {
 	m_map.drawMap();
 	
-
 	for (const auto& entity : m_player1Entities)
 	{
 		entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);

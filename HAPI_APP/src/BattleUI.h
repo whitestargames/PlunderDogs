@@ -20,10 +20,11 @@ class BattleUI : public IHapiSpritesInputListener
 			HighlightNode();
 			std::unique_ptr<Sprite> sprite;
 			bool activate;
+			std::pair<int, int> position;
 		};
 
 		TargetArea();
-		void render() const;
+		void render(const Map& map) const;
 		void generateTargetArea(const Map& map, const Tile& source);
 		void clearTargetArea();
 

@@ -95,7 +95,7 @@ void BattleUI::render() const
 	}
 	case BattlePhase::Attack:
 	{
-		m_targetArea.render();
+		m_targetArea.render(m_battle.getMap());
 		break;
 	}
 	}
@@ -444,12 +444,18 @@ BattleUI::TargetArea::TargetArea()
 	}
 }
 
-void BattleUI::TargetArea::render() const
+void BattleUI::TargetArea::render(const Map& map) const
 {
 	for (const auto& i : m_targetAreaSprites)
 	{
 		if (i.activate)
 		{
+			const std::pair<int, int> tileTransform = map.getTileScreenPos(i.position);
+
+			i.sprite->GetTransformComp().SetPosition({
+			static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
+			static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
+
 			i.sprite->Render(SCREEN_SURFACE);
 		}
 	}
@@ -476,6 +482,7 @@ void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & sour
 			});
 
 		m_targetAreaSprites[i].activate = true;
+		m_targetAreaSprites[i].position = m_targetArea[i]->m_tileCoordinate;
 	}
 }
 
@@ -490,7 +497,9 @@ void BattleUI::TargetArea::clearTargetArea()
 BattleUI::TargetArea::HighlightNode::HighlightNode()
 	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),
 	activate(false)
-{}
+{
+	sprite->GetTransformComp().SetOriginToCentreOfFrame();
+}
 
 BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*>& player, 
 	std::pair<int, int> spawnPosition, int range, const Map& map, PlayerName playerName)
