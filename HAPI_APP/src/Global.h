@@ -61,7 +61,7 @@ enum eTileType
 };
 
 
-enum eSpriteFrame
+enum eShipSpriteFrame
 {
 	eDeadYellow = 0,
 	eDeadBlue,
@@ -69,24 +69,24 @@ enum eSpriteFrame
 	eDeadRed,
 	eDeadBlack,
 	eDeadWhite,
-	eHighDamageYellow,
-	eHighDamageBlue,
-	eHighDamageGreen,
-	eHighDamageRed,
-	eHighDamageBlack,
-	eHighDamageWhite,
-	eLowDamageYellow,
-	eLowDamageBlue,
-	eLowDamageGreen,
-	eLowDamageRed,
-	eLowDamageBlack,
-	eLowDamageWhite,
-	eNoDamageYellow,
-	eNoDamageBlue,
-	eNoDamageGreen,
-	eNoDamageRed,
-	eNoDamageBlack,
-	eNoDamageWhite
+	eLowHealthYellow,
+	eLowHealthBlue,
+	eLowHealthGreen,
+	eLowHealthRed,
+	eLowHealthBlack,
+	eLowHealthWhite,
+	eMediumHealthYellow,
+	eMediumHealthBlue,
+	eMediumHealthGreen,
+	eMediumHealthRed,
+	eMediumHealthBlack,
+	eMediumHealthWhite,
+	eMaxHealthYellow,
+	eMaxHealthBlue,
+	eMaxHealthGreen,
+	eMaxHealthRed,
+	eMaxHealthBlack,
+	eMaxHealthWhite
 
 
 };

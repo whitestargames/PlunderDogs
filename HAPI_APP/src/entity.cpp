@@ -222,7 +222,10 @@ EntityProperties::EntityProperties()
 	m_range(0),
 	m_damage(0),
 	m_weaponType(eWeaponType::eSideCannons)
-{}
+
+{
+	
+}
 
 BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map, PlayerName playerName)
 	: m_entityProperties(entityProperties),
