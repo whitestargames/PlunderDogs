@@ -17,7 +17,7 @@ std::vector<EntityProperties> assignEntities()
 		newEntity.m_range = i + 3;
 		newEntity.m_damage = 1;*/
 
-		entities.push_back(newEntity);
+		entities.emplace_back(newEntity);
 	}
 	assert(!entities.empty());
 	return entities;

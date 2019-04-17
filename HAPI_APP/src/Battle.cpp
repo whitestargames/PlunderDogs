@@ -12,9 +12,9 @@ Battle::Battle(std::vector<EntityProperties*>& selectedEntities) :
 	m_battleUI(*this, selectedEntities),
 	m_currentPhase(BattlePhase::ShipPlacement)
 {
-	/*insertEntity({ 5, 15 });
-	insertEntity({ 4, 4 });
-	insertEntity({ 8, 8 });*/
+	insertEntity({ 5, 15 }, *selectedEntities[0]);
+	insertEntity({ 4, 4 }, *selectedEntities[1]);
+	insertEntity({ 8, 8 }, *selectedEntities[2]);
 }
 
 void Battle::render() const
