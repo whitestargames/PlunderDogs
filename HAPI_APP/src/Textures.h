@@ -64,11 +64,11 @@ struct Textures
 			HAPI_Sprites.UserMessage("Cannot Load : 'hexTiles.xml'", "Texture Error");
 			return false;
 		}
-
-		m_ship = HAPI_Wrapper::loadSpriteSheet("ship.xml");
+		// xml names for ships shipSideCannon and straightShotCannonShip
+		m_ship = HAPI_Wrapper::loadSpriteSheet("shipSideCannon.xml");
 		if (!m_ship)
 		{
-			HAPI_Sprites.UserMessage("Connot Load: 'ship.xml'", "Texture Error");
+			HAPI_Sprites.UserMessage("Connot Load: 'shipSideCannon.xml'", "Texture Error");
 			return false;
 		}
 		

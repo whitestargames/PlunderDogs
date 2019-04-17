@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<TextureAtlas imagePath="straightShotCannonShip_surface.png">
+	<SubTexture name="Frame0" x="3" y="1" width="29" height="49">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="49" />
+			<Circle name="BoundingCircle" type="0" radius="28.469282" y="24.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame1" x="42" y="1" width="29" height="49">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="49" />
+			<Circle name="BoundingCircle" type="0" radius="28.469282" y="24.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame2" x="81" y="1" width="28" height="49">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="28" top="0" bottom="49" />
+			<Circle name="BoundingCircle" type="0" radius="28.217901" y="24.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame3" x="120" y="1" width="28" height="49">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="28" top="0" bottom="49" />
+			<Circle name="BoundingCircle" type="0" radius="28.217901" y="24.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame4" x="158" y="1" width="29" height="49">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="49" />
+			<Circle name="BoundingCircle" type="0" radius="28.469282" y="24.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame5" x="197" y="1" width="29" height="49">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="49" />
+			<Circle name="BoundingCircle" type="0" radius="28.469282" y="24.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame6" x="3" y="65" width="29" height="54">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="54" />
+			<Circle name="BoundingCircle" type="0" radius="30.647186" y="27.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame7" x="42" y="65" width="29" height="54">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="54" />
+			<Circle name="BoundingCircle" type="0" radius="30.647186" y="27.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame8" x="81" y="65" width="28" height="54">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="28" top="0" bottom="54" />
+			<Circle name="BoundingCircle" type="0" radius="30.413813" y="27.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame9" x="119" y="65" width="29" height="54">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="54" />
+			<Circle name="BoundingCircle" type="0" radius="30.647186" y="27.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame10" x="158" y="67" width="29" height="52">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="52" />
+			<Circle name="BoundingCircle" type="0" radius="29.769951" y="26.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame11" x="197" y="67" width="29" height="52">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="52" />
+			<Circle name="BoundingCircle" type="0" radius="29.769951" y="26.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame12" x="3" y="135" width="29" height="53">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="53" />
+			<Circle name="BoundingCircle" type="0" radius="30.207615" y="26.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame13" x="42" y="135" width="29" height="53">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="53" />
+			<Circle name="BoundingCircle" type="0" radius="30.207615" y="26.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame14" x="81" y="135" width="28" height="53">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="28" top="0" bottom="53" />
+			<Circle name="BoundingCircle" type="0" radius="29.970819" y="26.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame15" x="119" y="135" width="29" height="53">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="53" />
+			<Circle name="BoundingCircle" type="0" radius="30.207615" y="26.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame16" x="158" y="135" width="29" height="53">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="53" />
+			<Circle name="BoundingCircle" type="0" radius="30.207615" y="26.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame17" x="197" y="135" width="29" height="53">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="53" />
+			<Circle name="BoundingCircle" type="0" radius="30.207615" y="26.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame18" x="3" y="203" width="29" height="54">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="54" />
+			<Circle name="BoundingCircle" type="0" radius="30.647186" y="27.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame19" x="42" y="203" width="29" height="54">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="54" />
+			<Circle name="BoundingCircle" type="0" radius="30.647186" y="27.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame20" x="81" y="203" width="28" height="54">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="28" top="0" bottom="54" />
+			<Circle name="BoundingCircle" type="0" radius="30.413813" y="27.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame21" x="119" y="203" width="29" height="54">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="54" />
+			<Circle name="BoundingCircle" type="0" radius="30.647186" y="27.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame22" x="158" y="204" width="29" height="53">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="53" />
+			<Circle name="BoundingCircle" type="0" radius="30.207615" y="26.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame23" x="197" y="204" width="29" height="53">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="53" />
+			<Circle name="BoundingCircle" type="0" radius="30.207615" y="26.000000" x="14.000000" />
+		</Collider>
+	</SubTexture>
+</TextureAtlas>

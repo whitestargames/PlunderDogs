@@ -64,15 +64,18 @@ BattleUI::BattleUI(Battle & battle, std::vector<EntityProperties*>& player1, std
 	std::pair<int, int> player2SpawnPos{ 22, 2 };
 	m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>(player2, player2SpawnPos, 4, m_battle.getMap(), PlayerName::Player2));
 
+
 	//Hack to make sprites position correctly
 	//TODO: Will change at some point
 	for (auto& i : player1)
 	{
+		i->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthYellow);//temp test
 		i->m_sprite->GetTransformComp().SetOriginToCentreOfFrame(); //.SetOrigin({ 13, 25 });
 		i->m_sprite->GetTransformComp().SetScaling({ 1,1 });
 	}
 	for (auto& i : player2)
 	{
+		i->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthBlue);//temp test
 		i->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();//.SetOrigin({ 13, 25 });
 		i->m_sprite->GetTransformComp().SetScaling({ 1,1 });
 	}
@@ -463,8 +466,21 @@ void BattleUI::TargetArea::render(const Map& map) const
 
 void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & source)
 {
-	m_targetArea = map.getTileCone(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range, 
-		source.m_entityOnTile->m_battleProperties.getCurrentDirection());
+	
+	if (source.m_entityOnTile->m_entityProperties.m_weaponType == eSideCannons)
+	{
+		m_targetArea = map.getTileCone(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range, source.m_entityOnTile->m_battleProperties.getCurrentDirection());
+	}
+
+	else if (source.m_entityOnTile->m_entityProperties.m_weaponType == eStraightShot)
+	{
+
+	}
+
+	else if (source.m_entityOnTile->m_entityProperties.m_weaponType == eStraightShotExplosive)
+	{
+	}
+	
 	if (m_targetArea.empty())
 	{
 		return;

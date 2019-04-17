@@ -29,6 +29,7 @@ struct EntityProperties
 	int m_currentHealth;
 	int m_range;
 	int m_damage;
+	int m_weaponType;
 };
 
 class EntityBattleProperties
