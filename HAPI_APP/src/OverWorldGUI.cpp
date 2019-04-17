@@ -145,7 +145,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 		{
 			if (HAPI_Wrapper::isTranslated(m_playButton, mouseData, 0))
 			{
-				if (!currentSelectedPlayer.m_selectedEntities.empty() && currentSelectedPlayer.m_name == PlayerName::Player1)
+				if (!currentSelectedPlayer.m_selectedEntities.empty() && currentSelectedPlayer.m_factionName == FactionName::Yellow)
 				{
 					CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
 					UI.DeleteWindow(FLEET_WINDOW);

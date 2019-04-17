@@ -3,7 +3,7 @@
 #include "Map.h"
 #include "entity.h"
 #include "BattleUI.h"
-#include "PlayerName.h"
+#include "FactionName.h"
 
 enum class BattlePhase
 {
@@ -21,7 +21,7 @@ public:
 	const Map& getMap() const;
 	
 	BattlePhase getCurrentPhase() const;
-	PlayerName getCurentPlayer() const;
+	FactionName getCurentFaction() const;
 
 	void render() const;
 	void update(float deltaTime);
@@ -30,7 +30,7 @@ public:
 
 	void fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea);
 
-	void insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, PlayerName playerName);
+	void insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, FactionName playerName);
 	void nextTurn();
 
 private:
@@ -38,12 +38,9 @@ private:
 	std::vector<std::unique_ptr<BattleEntity>> m_player2Entities;
 	Map m_map;
 	BattlePhase m_currentPhase;
-
-
-	PlayerName m_currentPlayerTurn;
+	FactionName m_currentFaction;
 	BattleUI m_battleUI;
 	MoveCounter m_moveCounter;
-
 
 	void updateMovementPhase(float deltaTime);
 	void updateAttackPhase();

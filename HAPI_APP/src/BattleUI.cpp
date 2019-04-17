@@ -60,9 +60,9 @@ BattleUI::BattleUI(Battle & battle, std::vector<EntityProperties*>& player1, std
 	//Player Spawn Positions
 	//TODO: Get them parsed with map instead of hardcoded
 	std::pair<int, int> player1SpawnPos{ 4, 11 };
-	m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>(player1, player1SpawnPos, 4, m_battle.getMap(), PlayerName::Player1));
+	m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>(player1, player1SpawnPos, 4, m_battle.getMap(), FactionName::Yellow));
 	std::pair<int, int> player2SpawnPos{ 22, 2 };
-	m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>(player2, player2SpawnPos, 4, m_battle.getMap(), PlayerName::Player2));
+	m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>(player2, player2SpawnPos, 4, m_battle.getMap(), FactionName::Blue));
 
 
 	//Hack to make sprites position correctly
@@ -117,7 +117,7 @@ void BattleUI::newPhase()
 	m_currentTileSelected = nullptr;
 }
 
-void BattleUI::newTurn(PlayerName playersTurn)
+void BattleUI::newTurn(FactionName playersTurn)
 {
 	if (m_battle.getCurrentPhase() == BattlePhase::ShipPlacement)
 	{
@@ -242,7 +242,7 @@ void BattleUI::onMouseMoveMovementPhase()
 
 	//Current tile selected does not match the current player in play
 	if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile 
-		&& m_currentTileSelected->m_entityOnTile->m_playerName != m_battle.getCurentPlayer())
+		&& m_currentTileSelected->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
 	{
 		return;
 	}
@@ -310,7 +310,7 @@ void BattleUI::onLeftClickMovementPhase()
 		}
 
 		//Disallow movement to tile occupied by other player
-		else if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_playerName != m_battle.getCurentPlayer())
+		else if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
 		{
 			m_currentTileSelected->m_entityOnTile->m_battleProperties.clearMovementPath();
 			m_currentTileSelected = nullptr;
@@ -319,7 +319,7 @@ void BattleUI::onLeftClickMovementPhase()
 		//Instruct Entity to move to new location
 		else if (m_currentTileSelected->m_entityOnTile && (m_currentTileSelected->m_tileCoordinate != tileOnMouse->m_tileCoordinate))
 		{
-			assert(m_currentTileSelected->m_entityOnTile->m_playerName == m_battle.getCurentPlayer());
+			assert(m_currentTileSelected->m_entityOnTile->m_factionName == m_battle.getCurentFaction());
 			m_battle.moveEntityToPosition(*m_currentTileSelected->m_entityOnTile, *tileOnMouse);
 			m_currentTileSelected = nullptr;
 		}
@@ -329,7 +329,7 @@ void BattleUI::onLeftClickMovementPhase()
 		//Do not select tile that contains wrong players entity
 		if (tileOnMouse->m_entityOnTile)
 		{
-			if (tileOnMouse->m_entityOnTile->m_playerName != m_battle.getCurentPlayer())
+			if (tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
 			{
 				m_currentTileSelected = nullptr;
 			}
@@ -378,7 +378,7 @@ void BattleUI::onLeftClickAttackPhase()
 
 	//Entity Already Selected whilst showing where to fire
 	//Change to different Entity before firing
-	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_playerName == m_battle.getCurentPlayer()
+	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName == m_battle.getCurentFaction()
 		&& m_currentTileSelected && m_currentTileSelected && m_targetArea.m_targetArea.size() > 0)
 	{
 		m_targetArea.clearTargetArea();
@@ -389,7 +389,7 @@ void BattleUI::onLeftClickAttackPhase()
 
 	//Click on same
 	//Select new Entity to fire at something
-	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_playerName != m_battle.getCurentPlayer())
+	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
 	{
 		return;
 	}
@@ -518,8 +518,8 @@ BattleUI::TargetArea::HighlightNode::HighlightNode()
 }
 
 BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*>& player, 
-	std::pair<int, int> spawnPosition, int range, const Map& map, PlayerName playerName)
-	: m_playerName(playerName),
+	std::pair<int, int> spawnPosition, int range, const Map& map, FactionName factionName)
+	: m_factionName(factionName),
 	m_player(player),
 	m_currentSelectedEntity(),
 	m_spawnArea(),
@@ -622,7 +622,7 @@ void BattleUI::ShipPlacementPhase::onLeftClick(const InvalidPosition& invalidPos
 {
 	if (!invalidPosition.m_activate && currentTileSelected && !currentTileSelected->m_entityOnTile)
 	{
-		battle.insertEntity(currentTileSelected->m_tileCoordinate, *m_currentSelectedEntity.m_currentSelectedEntity, m_playerName);
+		battle.insertEntity(currentTileSelected->m_tileCoordinate, *m_currentSelectedEntity.m_currentSelectedEntity, m_factionName);
 
 		//Change ordering around to pop front with different container
 		m_player.pop_back();

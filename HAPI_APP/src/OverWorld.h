@@ -3,7 +3,7 @@
 #include <string>
 #include "Global.h"
 #include "Battle.h"
-#include "PlayerName.h"
+#include "FactionName.h"
 #include "OverWorldGUI.h"
 #include <deque>
 
@@ -12,15 +12,15 @@ using namespace HAPISPACE;
 
 struct Player
 {
-	Player(std::vector<EntityProperties> entities, PlayerName name)
+	Player(std::vector<EntityProperties> entities, FactionName name)
 		: m_entities(entities),
 		m_selectedEntities(),
-		m_name(name)
+		m_factionName(name)
 	{}
 
 	std::vector<EntityProperties> m_entities;
 	std::vector<EntityProperties*> m_selectedEntities;
-	const PlayerName m_name;
+	const FactionName m_factionName;
 };
 
 class OverWorld : public IHapiSpritesInputListener
@@ -49,5 +49,5 @@ private:
 	bool m_startBattle;
 	bool m_selectedNextPlayer;
 
-	PlayerName m_currentPlayerSelected;
+	FactionName m_currentFactionSelected;
 };

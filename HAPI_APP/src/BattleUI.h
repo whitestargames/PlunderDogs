@@ -2,7 +2,7 @@
 
 
 #include "BattleGUI.h"
-#include "PlayerName.h"
+#include "FactionName.h"
 #include <vector>
 
 struct EntityProperties;
@@ -56,7 +56,7 @@ class BattleUI : public IHapiSpritesInputListener
 		};
 	public:
 		ShipPlacementPhase(std::vector<EntityProperties*>& player,
-			std::pair<int, int> spawnPosition, int range, const Map& map, PlayerName playerName);
+			std::pair<int, int> spawnPosition, int range, const Map& map, FactionName factionName);
 
 		bool isCompleted() const;
 		void render(const InvalidPosition& invalidPosition, const Map& map) const;
@@ -65,7 +65,7 @@ class BattleUI : public IHapiSpritesInputListener
 		void onLeftClick(const InvalidPosition& invalidPosition, const Tile* currectTileSelected, Battle& battle);
 
 	private:
-		PlayerName m_playerName;
+		FactionName m_factionName;
 		std::vector<EntityProperties*>& m_player;
 		CurrentSelectedEntity m_currentSelectedEntity;
 		std::vector<const Tile*> m_spawnArea;
@@ -80,7 +80,7 @@ public:
 	void render() const;
 	void update();
 	void newPhase();
-	void newTurn(PlayerName playersTurn);
+	void newTurn(FactionName playersTurn);
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
@@ -94,8 +94,6 @@ private:
 	//This is used to determine if an entity is currently being given a move command, it gets set to true in the "handleOnLeftClickMovementPhase()" and false after "eLeftMouseButtonUp" is detected.
 	bool m_isMovingEntity{ false };
 	BattleGUI m_gui;
-
-
 	InvalidPosition m_invalidPosition;
 	std::vector<std::unique_ptr<ShipPlacementPhase>> m_playerShipPlacement;
 	

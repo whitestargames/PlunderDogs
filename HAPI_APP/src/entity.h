@@ -5,7 +5,7 @@
 #include <memory>
 #include "Timer.h"
 #include "Global.h"
-#include "PlayerName.h"
+#include "FactionName.h"
 
 struct MoveCounter
 {
@@ -21,7 +21,7 @@ struct Weapons;
 class Map;
 struct EntityProperties
 {
-	EntityProperties();
+	EntityProperties(FactionName factionName);
 
 	std::shared_ptr<HAPISPACE::Sprite> m_sprite;
 	int m_movementPoints;
@@ -92,9 +92,10 @@ private:
 
 struct BattleEntity
 {
-	BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map, PlayerName playerName);
+	BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map, FactionName playerName);
 
 	EntityProperties m_entityProperties;
 	EntityBattleProperties m_battleProperties;
-	const PlayerName m_playerName;
+	//TODO: Might change location of this value
+	const FactionName m_factionName;
 };

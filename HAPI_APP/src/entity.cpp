@@ -212,7 +212,7 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 }
 
 //ENTITY
-EntityProperties::EntityProperties() 
+EntityProperties::EntityProperties(FactionName factionName)
 	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_ship)),
 	m_movementPoints(0),
 	m_healthMax(0),
@@ -220,15 +220,28 @@ EntityProperties::EntityProperties()
 	m_range(0),
 	m_damage(0),
 	m_weaponType(eWeaponType::eSideCannons)
-
 {
-	
+	switch (factionName)
+	{
+	case FactionName::Yellow :
+		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthYellow);
+		break;
+	case FactionName::Blue :
+		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthBlue);
+		break;
+	case FactionName::Red :
+		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthRed);
+		break;
+	case FactionName::Green :
+		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthGreen);
+		break;
+	}
 }
 
-BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map, PlayerName playerName)
+BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map, FactionName playerName)
 	: m_entityProperties(entityProperties),
 	m_battleProperties(startingPosition),
-	m_playerName(playerName)
+	m_factionName(playerName)
 {
 	map.insertEntity(*this);
 }

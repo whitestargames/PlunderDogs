@@ -11,7 +11,7 @@ Battle::Battle(std::vector<EntityProperties*>& player1, std::vector<EntityProper
 	m_player2Entities(),
 	m_map(MapParser::parseMap("Level1.tmx")),
 	m_currentPhase(BattlePhase::ShipPlacement),
-	m_currentPlayerTurn(PlayerName::Player1),
+	m_currentFaction(FactionName::Yellow),
 	m_battleUI(*this, player1, player2)
 {}
 
@@ -19,6 +19,7 @@ void Battle::render() const
 {
 	m_map.drawMap();
 	
+	m_battleUI.render();
 	for (const auto& entity : m_player1Entities)
 	{
 		entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
@@ -28,8 +29,6 @@ void Battle::render() const
 	{
 		entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
 	}
-
-	m_battleUI.render();
 }
 
 void Battle::update(float deltaTime)
@@ -60,7 +59,7 @@ void Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 	player.m_battleProperties.fireWeapon();
 
 	//Disallow attacking same team
-	if (tileOnAttackPosition.m_entityOnTile && tileOnAttackPosition.m_entityOnTile->m_playerName != m_currentPlayerTurn)
+	if (tileOnAttackPosition.m_entityOnTile && tileOnAttackPosition.m_entityOnTile->m_factionName != m_currentFaction)
 	{
 		//Find entity 
 		auto tileCoordinate = tileOnAttackPosition.m_entityOnTile->m_battleProperties.getCurrentPosition();
@@ -74,17 +73,17 @@ void Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 	}
 }
 
-void Battle::insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, PlayerName playerName)
+void Battle::insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, FactionName playerName)
 {
 	assert(m_currentPhase == BattlePhase::ShipPlacement);
 	switch (playerName)
 	{
-	case PlayerName::Player1 :
+	case FactionName::Yellow :
 	{
 		m_player1Entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, playerName));
 		break;
 	}
-	case PlayerName::Player2:
+	case FactionName::Blue:
 	{
 		m_player2Entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, playerName));
 		break;
@@ -107,45 +106,45 @@ void Battle::nextTurn()
 
 	if (m_currentPhase == BattlePhase::ShipPlacement)
 	{
-		if (m_currentPlayerTurn == PlayerName::Player1)
+		if (m_currentFaction == FactionName::Yellow)
 		{
-			m_currentPlayerTurn = PlayerName::Player2;
-			m_battleUI.newTurn(m_currentPlayerTurn);
+			m_currentFaction = FactionName::Blue;
+			m_battleUI.newTurn(m_currentFaction);
 		}
-		else if (m_currentPlayerTurn == PlayerName::Player2)
+		else if (m_currentFaction == FactionName::Blue)
 		{
 			m_currentPhase = BattlePhase::Movement;
-			m_currentPlayerTurn = PlayerName::Player1;
+			m_currentFaction = FactionName::Yellow;
 			m_battleUI.newPhase();
 		}
 		return;
 	}
 
 	//Player 1
-	if (m_currentPlayerTurn == PlayerName::Player1 && m_currentPhase == BattlePhase::Movement)
+	if (m_currentFaction == FactionName::Yellow && m_currentPhase == BattlePhase::Movement)
 	{
 		m_currentPhase = BattlePhase::Attack;
 	}
-	else if (m_currentPlayerTurn == PlayerName::Player1 && m_currentPhase == BattlePhase::Attack)
+	else if (m_currentFaction == FactionName::Yellow && m_currentPhase == BattlePhase::Attack)
 	{
-		m_currentPlayerTurn = PlayerName::Player2;
+		m_currentFaction = FactionName::Blue;
 		m_currentPhase = BattlePhase::Movement;
 	}
 	//Player 2
-	else if (m_currentPlayerTurn == PlayerName::Player2 && m_currentPhase == BattlePhase::Movement)
+	else if (m_currentFaction == FactionName::Blue && m_currentPhase == BattlePhase::Movement)
 	{
 		m_currentPhase = BattlePhase::Attack;
 	}
-	else if (m_currentPlayerTurn == PlayerName::Player2 && m_currentPhase == BattlePhase::Attack)
+	else if (m_currentFaction == FactionName::Blue && m_currentPhase == BattlePhase::Attack)
 	{
-		m_currentPlayerTurn = PlayerName::Player1;
+		m_currentFaction = FactionName::Yellow;
 		m_currentPhase = BattlePhase::Movement;
 	}
 }
 
 void Battle::updateMovementPhase(float deltaTime)
 {
-	if (m_currentPlayerTurn == PlayerName::Player1)
+	if (m_currentFaction == FactionName::Yellow)
 	{
 		for (auto& entity : m_player1Entities)
 		{
@@ -157,7 +156,7 @@ void Battle::updateMovementPhase(float deltaTime)
 			nextTurn();
 		}
 	}
-	else if(m_currentPlayerTurn == PlayerName::Player2)
+	else if(m_currentFaction == FactionName::Blue)
 	{
 		for (auto& entity : m_player2Entities)
 		{
@@ -173,14 +172,14 @@ void Battle::updateMovementPhase(float deltaTime)
 
 void Battle::updateAttackPhase()
 {
-	if (m_currentPlayerTurn == PlayerName::Player1)
+	if (m_currentFaction == FactionName::Yellow)
 	{
 		if (allEntitiesAttacked(m_player1Entities))
 		{
 			nextTurn();
 		}
 	}
-	else if (m_currentPlayerTurn == PlayerName::Player2)
+	else if (m_currentFaction == FactionName::Blue)
 	{
 		if (allEntitiesAttacked(m_player2Entities))
 		{
@@ -213,7 +212,7 @@ BattlePhase Battle::getCurrentPhase() const
 	return m_currentPhase;
 }
 
-PlayerName Battle::getCurentPlayer() const
+FactionName Battle::getCurentFaction() const
 {
-	return m_currentPlayerTurn;
+	return m_currentFaction;
 }

@@ -3,14 +3,13 @@
 #include "HAPIWrapper.h"
 #include "Textures.h"
 
-std::vector<EntityProperties> assignEntities()
+//TODO: Will change
+std::vector<EntityProperties> assignEntities(FactionName name)
 {
-	//Large movement size because of the fact its easier 
-	//to test with developing movement
 	std::vector<EntityProperties> entities;
 	for (int i = 0; i < 20; i++)
 	{
-		EntityProperties newEntity;
+		EntityProperties newEntity(name);
 		newEntity.m_movementPoints = 15;
 		newEntity.m_healthMax = i + 1;
 		newEntity.m_currentHealth = i + 2;
@@ -25,20 +24,20 @@ std::vector<EntityProperties> assignEntities()
 
 OverWorld::OverWorld()
 	: m_selectedEntities(),
-	m_player1(assignEntities(), PlayerName::Player1),
-	m_player2(assignEntities(), PlayerName::Player2),
+	m_player1(assignEntities(FactionName::Yellow), FactionName::Yellow),
+	m_player2(assignEntities(FactionName::Blue), FactionName::Blue),
 	m_GUI(m_player1),
 	m_battle(),
 	m_startBattle(false),
 	m_selectedNextPlayer(false),
-	m_currentPlayerSelected(PlayerName::Player1)
+	m_currentFactionSelected(FactionName::Yellow)
 {}
 
 void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
 {
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
-		if (m_currentPlayerSelected == PlayerName::Player1)
+		if (m_currentFactionSelected == FactionName::Yellow)
 		{
 			m_GUI.onLeftClick(mouseData, m_player1, m_startBattle, m_selectedNextPlayer, m_player2);
 		}
@@ -50,7 +49,7 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 	}
 	if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
-		if (m_currentPlayerSelected == PlayerName::Player1)
+		if (m_currentFactionSelected == FactionName::Yellow)
 		{
 			m_GUI.onRightClick(mouseData, m_player1);
 		}
@@ -63,7 +62,7 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 
 void OverWorld::OnMouseMove(const HAPI_TMouseData & mouseData)
 {
-	if (m_currentPlayerSelected == PlayerName::Player1)
+	if (m_currentFactionSelected == FactionName::Yellow)
 	{
 		m_GUI.onMouseMove(mouseData, m_player1);
 	}
@@ -82,8 +81,8 @@ void OverWorld::update(float deltaTime)
 {
 	if (m_selectedNextPlayer)
 	{
-		assert(m_currentPlayerSelected == PlayerName::Player1);
-		m_currentPlayerSelected = PlayerName::Player2;
+		assert(m_currentFactionSelected == FactionName::Yellow);
+		m_currentFactionSelected = FactionName::Blue;
 		m_selectedNextPlayer = false;
 	}
 
@@ -101,10 +100,10 @@ void OverWorld::update(float deltaTime)
 
 void OverWorld::startBattle()
 {
-	if (m_currentPlayerSelected == PlayerName::Player1)
+	if (m_currentFactionSelected == FactionName::Yellow)
 	{
 		//m_GUI.reset(m_player2);
-		m_currentPlayerSelected = PlayerName::Player2;
+		m_currentFactionSelected = FactionName::Blue;
 	}
 
 	if (m_startBattle)

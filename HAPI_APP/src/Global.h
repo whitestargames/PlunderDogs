@@ -87,8 +87,6 @@ enum eShipSpriteFrame
 	eMaxHealthRed,
 	eMaxHealthBlack,
 	eMaxHealthWhite
-
-
 };
 
 enum eWeaponType
