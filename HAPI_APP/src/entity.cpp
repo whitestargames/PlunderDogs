@@ -152,6 +152,17 @@ void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int
 	//TODO: To do.
 }
 
+void EntityBattleProperties::handleRotation(EntityProperties& entityProperties, const Map& map)
+{
+	m_currentPosition = m_pathToTile.front().second;
+	m_movementPath.eraseNode(m_currentPosition, map);
+	int rotationAngle = 60;
+	int directionToTurn = m_pathToTile.front().first;
+	entityProperties.m_sprite->GetTransformComp().SetRotation(
+		DEGREES_TO_RADIANS(directionToTurn*rotationAngle % 360));
+	m_direction = (eDirection)directionToTurn;
+}
+
 unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentDirection, int newDirection)
 {
 	unsigned int diff = std::abs(newDirection - currentDirection);
@@ -191,16 +202,7 @@ void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProp
 		{
 			m_movementTimer.reset();
 
-			int directionToTurn = 0;
-			
-			int rotationAngle = 60;
-			m_currentPosition = m_pathToTile.front().second;
-			m_movementPath.eraseNode(m_currentPosition, map);
-			directionToTurn = m_pathToTile.front().first;
-			entityProperties.m_sprite->GetTransformComp().SetRotation(
-				DEGREES_TO_RADIANS(directionToTurn*rotationAngle % 360));
-			m_direction = (eDirection)directionToTurn;
-
+			handleRotation(entityProperties, map);
 			m_pathToTile.pop_front();
 
 			if (m_pathToTile.empty())

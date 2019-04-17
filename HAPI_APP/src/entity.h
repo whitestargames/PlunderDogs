@@ -48,13 +48,13 @@ struct EntityBattleProperties
 		unsigned int getDirectionCost(int currentDirection, int newDirection);
 	};
 
+
 	EntityBattleProperties(std::pair<int, int> startingPosition);
 
 	void update(float deltaTime, const Map& map, EntityProperties& entityProperties);
 	void render(std::shared_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
 
 	void generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
-
 	void clearMovementPath();
 	void moveEntity(Map& map, const Tile& tile, int movementPointsAvailable);
 	void takeDamage(EntityProperties& entityProperties, int damageAmount);
@@ -67,6 +67,8 @@ struct EntityBattleProperties
 	int m_movementPathSize;
 	eDirection m_direction;
 	bool m_weaponFired;
+
+	void handleRotation(EntityProperties& entityProperties, const Map& map);
 };
 
 struct BattleEntity
