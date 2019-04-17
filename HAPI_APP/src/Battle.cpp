@@ -59,11 +59,7 @@ void Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 	player.m_battleProperties.fireWeapon();
 
 	//Disallow attacking same team
-	if (tileOnAttackPosition.m_entityOnTile && tileOnAttackPosition.m_entityOnTile->m_playerName == m_currentPlayerTurn)
-	{
-		
-	}
-	else if (tileOnAttackPosition.m_entityOnTile && tileOnAttackPosition.m_entityOnTile->m_playerName != m_currentPlayerTurn)
+	if (tileOnAttackPosition.m_entityOnTile && tileOnAttackPosition.m_entityOnTile->m_playerName != m_currentPlayerTurn)
 	{
 		//Find entity 
 		auto tileCoordinate = tileOnAttackPosition.m_entityOnTile->m_battleProperties.getCurrentPosition();
