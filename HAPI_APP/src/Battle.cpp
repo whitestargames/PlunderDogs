@@ -19,7 +19,7 @@ void Battle::render() const
 {
 	m_map.drawMap();
 	
-	m_battleUI.render();
+	m_battleUI.renderUI();
 	for (const auto& entity : m_player1Entities)
 	{
 		entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
@@ -29,6 +29,8 @@ void Battle::render() const
 	{
 		entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
 	}
+
+	m_battleUI.renderGUI();
 }
 
 void Battle::update(float deltaTime)

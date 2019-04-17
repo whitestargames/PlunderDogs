@@ -77,7 +77,8 @@ public:
 
 	std::pair<int, int> getCameraPositionOffset() const;
 
-	void render() const;
+	void renderUI() const;
+	void renderGUI() const;
 	void update();
 	void newPhase();
 	void newTurn(FactionName playersTurn);

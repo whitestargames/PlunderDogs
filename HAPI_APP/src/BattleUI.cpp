@@ -86,7 +86,7 @@ std::pair<int, int> BattleUI::getCameraPositionOffset() const
 	return m_gui.getCameraPositionOffset();
 }
 
-void BattleUI::render() const
+void BattleUI::renderUI() const
 {
 	switch (m_battle.getCurrentPhase())
 	{
@@ -104,6 +104,10 @@ void BattleUI::render() const
 	}
 
 	m_invalidPosition.render(m_battle.getMap());
+}
+
+void BattleUI::renderGUI() const
+{
 	m_gui.render();
 }
 
