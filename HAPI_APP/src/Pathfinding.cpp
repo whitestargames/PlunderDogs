@@ -137,8 +137,8 @@ std::deque<std::pair<eDirection, std::pair<int, int>>> PathFinding::getPathToTil
 	cellDetails[i][j].m_h = 0.0;
 	cellDetails[i][j].m_parent_i = i;
 	cellDetails[i][j].m_parent_j = j;
-	if(map.getTile(src)->m_entityOnTile!= nullptr)
-		cellDetails[i][j].m_direction = map.getTile(src)->m_entityOnTile->m_battleProperties.m_direction;
+	if (map.getTile(src)->m_entityOnTile != nullptr)
+		cellDetails[i][j].m_direction = map.getTile(src)->m_entityOnTile->m_battleProperties.getCurrentDirection();
 
 	//bool closedList[size][size];
 	std::vector < std::vector<bool>> closedList;

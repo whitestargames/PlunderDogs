@@ -18,9 +18,29 @@ EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosit
 	m_movedToDestination(false),
 	m_movementPath(),
 	m_movementPathSize(0),
-	m_direction(eDirection::eNorth),
+	m_currentDirection(eDirection::eNorth),
 	m_weaponFired(false)
 {}
+
+eDirection EntityBattleProperties::getCurrentDirection() const
+{
+	return m_currentDirection;
+}
+
+bool EntityBattleProperties::isMovedToDestination() const
+{
+	return m_movedToDestination;
+}
+
+std::pair<int, int> EntityBattleProperties::getCurrentPosition() const
+{
+	return m_currentPosition;
+}
+
+bool EntityBattleProperties::isWeaponFired() const
+{
+	return m_weaponFired;
+}
 
 //MOVEMENT PATH NODE
 EntityBattleProperties::MovementPath::PathNode::PathNode()
@@ -64,7 +84,7 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 
 	int bonusMove = 0;
 	int movementPointsUsed = 0;
-	int prevDir = source.m_entityOnTile->m_battleProperties.m_direction;
+	int prevDir = source.m_entityOnTile->m_battleProperties.m_currentDirection;
 	//Don't interact with path from source.
 	for (int i = 1; i < pathToTile.size(); ++i)
 	{
@@ -160,7 +180,7 @@ void EntityBattleProperties::handleRotation(EntityProperties& entityProperties, 
 	int directionToTurn = m_pathToTile.front().first;
 	entityProperties.m_sprite->GetTransformComp().SetRotation(
 		DEGREES_TO_RADIANS(directionToTurn*rotationAngle % 360));
-	m_direction = (eDirection)directionToTurn;
+	m_currentDirection = (eDirection)directionToTurn;
 }
 
 unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentDirection, int newDirection)

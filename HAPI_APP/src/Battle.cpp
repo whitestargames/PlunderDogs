@@ -178,10 +178,10 @@ void Battle::updateMovementPhase(std::vector<std::unique_ptr<BattleEntity>>& pla
 	for (auto& entity : playerEntities)
 	{
 		entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties);
-		if (!entity->m_battleProperties.m_movedToDestination)
-		{
-			allEntitiesReachedDestination = false;
-		}
+		//if (!entity->m_battleProperties.m_movedToDestination)
+		//{
+		//	allEntitiesReachedDestination = false;
+		//}
 	}
 }
 
@@ -189,7 +189,7 @@ void Battle::updateAttackPhase(std::vector<std::unique_ptr<BattleEntity>>& playe
 {
 	for (auto& entity : playerEntities)
 	{
-		if (!entity->m_battleProperties.m_weaponFired)
+		if (!entity->m_battleProperties.isWeaponFired())
 		{
 			allEntitiesAttacked = false;
 		}

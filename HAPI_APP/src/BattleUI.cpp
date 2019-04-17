@@ -193,7 +193,7 @@ void BattleUI::onMouseMoveMovementPhase()
 		return;
 	}
 
-	if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile && !m_currentTileSelected->m_entityOnTile->m_battleProperties.m_movedToDestination)
+	if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile && !m_currentTileSelected->m_entityOnTile->m_battleProperties.isMovedToDestination())
 	{
 		const Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 		if (!tile)
@@ -304,7 +304,7 @@ void BattleUI::onLeftClickAttackPhase()
 
 	//Entity already selected
 	//Fire weapon at position
-	if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile && !m_currentTileSelected->m_entityOnTile->m_battleProperties.m_weaponFired)
+	if (m_currentTileSelected && m_currentTileSelected->m_entityOnTile && !m_currentTileSelected->m_entityOnTile->m_battleProperties.isWeaponFired())
 	{
 		//Make sure entity on tile to attack is on the other team
 		if (tileOnMouse->m_entityOnTile  && tileOnMouse->m_entityOnTile->m_playerName != m_battle.getCurentPlayer())
@@ -314,7 +314,7 @@ void BattleUI::onLeftClickAttackPhase()
 		}
 
 		//TODO: Might change this
-		m_currentTileSelected->m_entityOnTile->m_battleProperties.m_weaponFired = true;
+		//m_currentTileSelected->m_entityOnTile->m_battleProperties.m_weaponFired = true;
 		m_targetArea.clearTargetArea();
 		m_currentTileSelected = nullptr;
 		m_invalidPosition.m_activate = false;
@@ -340,7 +340,7 @@ void BattleUI::onLeftClickAttackPhase()
 	}
 
 	m_currentTileSelected = tileOnMouse;
-	if (m_currentTileSelected->m_entityOnTile && !m_currentTileSelected->m_entityOnTile->m_battleProperties.m_weaponFired)
+	if (m_currentTileSelected->m_entityOnTile && !m_currentTileSelected->m_entityOnTile->m_battleProperties.isWeaponFired())
 	{
 		m_targetArea.generateTargetArea(m_battle.getMap(), *tileOnMouse);
 	}
@@ -405,7 +405,8 @@ void BattleUI::TargetArea::render() const
 
 void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & source)
 {
-	m_targetArea = map.getTileCone(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range, source.m_entityOnTile->m_battleProperties.m_direction);
+	m_targetArea = map.getTileCone(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range, 
+		source.m_entityOnTile->m_battleProperties.getCurrentDirection());
 	if (m_targetArea.empty())
 	{
 		return;

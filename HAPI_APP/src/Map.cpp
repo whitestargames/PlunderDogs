@@ -300,7 +300,7 @@ bool Map::moveEntity(intPair originalPos, intPair newPos)
 
 void Map::insertEntity(BattleEntity& newEntity)
 {
-	Tile* tile = getTile(newEntity.m_battleProperties.m_currentPosition);	
+	Tile* tile = getTile(newEntity.m_battleProperties.getCurrentPosition());	
 	if (tile && !tile->m_entityOnTile)
 	{
 		tile->m_entityOnTile = &newEntity;

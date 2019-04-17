@@ -23,7 +23,7 @@ struct EntityProperties
 	int m_damage;
 };
 
-struct EntityBattleProperties
+class EntityBattleProperties
 {
 	class MovementPath
 	{
@@ -48,8 +48,13 @@ struct EntityBattleProperties
 		unsigned int getDirectionCost(int currentDirection, int newDirection);
 	};
 
-
+public:
 	EntityBattleProperties(std::pair<int, int> startingPosition);
+
+	eDirection getCurrentDirection() const;
+	bool isMovedToDestination() const;
+	std::pair<int, int> getCurrentPosition() const;
+	bool isWeaponFired() const;
 
 	void update(float deltaTime, const Map& map, EntityProperties& entityProperties);
 	void render(std::shared_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
@@ -59,13 +64,14 @@ struct EntityBattleProperties
 	void moveEntity(Map& map, const Tile& tile, int movementPointsAvailable);
 	void takeDamage(EntityProperties& entityProperties, int damageAmount);
 
+private:
 	std::pair<int, int> m_currentPosition;
 	std::deque<std::pair<eDirection, std::pair<int, int>>> m_pathToTile;
 	Timer m_movementTimer;
 	bool m_movedToDestination;
 	MovementPath m_movementPath;
 	int m_movementPathSize;
-	eDirection m_direction;
+	eDirection m_currentDirection;
 	bool m_weaponFired;
 
 	void handleRotation(EntityProperties& entityProperties, const Map& map);
