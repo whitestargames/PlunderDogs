@@ -24,8 +24,7 @@ std::vector<EntityProperties> assignEntities()
 }
 
 OverWorld::OverWorld()
-	: m_entities(assignEntities()),
-	m_selectedEntities(),
+	: m_selectedEntities(),
 	m_player1(assignEntities(), PlayerName::Player1),
 	m_player2(assignEntities(), PlayerName::Player2),
 	m_GUI(m_player1),

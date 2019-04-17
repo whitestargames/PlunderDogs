@@ -38,7 +38,6 @@ public:
 	void startBattle();
 
 private:
-	std::vector<EntityProperties> m_entities;
 	std::vector<EntityProperties*> m_selectedEntities;
 	Player m_player1;
 	Player m_player2;
