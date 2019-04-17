@@ -5,19 +5,51 @@
 #include <memory>
 #include <string>
 #include "Timer.h"
+#include "Global.h"
 
 struct Tile;
+struct Weapons;
 class Map;
+struct EntityProperties
+{
+	EntityProperties();
+
+	std::shared_ptr<HAPISPACE::Sprite> m_sprite;
+	int m_movementPoints;
+	int m_healthMax;
+	int m_currentHealth;
+	int m_range;
+	int m_damage;
+};
+
 struct EntityBattleProperties
 {
+	class Weapon
+	{
+		struct HighlightNode
+		{
+			HighlightNode();
+			std::unique_ptr<Sprite> sprite;
+			bool activate;
+		};
+
+	public:
+		Weapon();
+		void render() const;
+		void generateTargetArea(const Map& map, const Tile& source);
+	private:
+		std::vector<HighlightNode> m_spriteTargetStorage;
+		void clearGunArea();
+	};
+
 	class MovementPath
 	{
-		struct MovementPathNode
+		struct PathNode
 		{
-			MovementPathNode();
+			PathNode();
 
 			std::unique_ptr<Sprite> sprite;
-			bool render;
+			bool activate;
 		};
 
 	public:
@@ -29,40 +61,40 @@ struct EntityBattleProperties
 		void clearPath();
 
 	private:
-		std::vector<MovementPathNode> m_movementPath;
+		std::vector<PathNode> m_movementPath;
+		unsigned int getDirectionCost(int currentDirection, int newDirection);
+		
 	};
 
 	EntityBattleProperties(std::pair<int, int> startingPosition);
 
-	void update(float deltaTime, const Map& map);
-	void render(std::unique_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
+	void update(float deltaTime, const Map& map, EntityProperties& entityProperties);
+
+	void render(std::shared_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
 
 	void generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
+	void generateWeaponArea(const Map& map, const Tile& source);
 	void clearMovementPath();
-	void moveEntity(Map& map, const Tile& destinationTile, int movementPoints);
+
+	void moveEntity(Map& map, const Tile& tile, int movementPointsAvailable);
 
 	std::pair<int, int> m_currentPosition;
-	std::pair<int, int> m_oldPosition;
-	std::deque<std::pair<int, int>> m_pathToTile;
+	std::deque<std::pair<eDirection, std::pair<int, int>>> m_pathToTile;
 	Timer m_movementTimer;
 	bool m_movedToDestination;
 	MovementPath m_movementPath;
-};
-
-struct EntityProperties
-{
-	EntityProperties();
-
-	std::unique_ptr<HAPISPACE::Sprite> m_sprite;
-	int m_movementPoints;
+	Weapon m_weapon;
+	int m_movementPathSize;
+	eDirection m_direction;
 };
 
 struct BattleEntity
 {
-	BattleEntity(std::pair<int, int> startingPosition);
 
-	void setPosition(const Map& map);
+	BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map);
 
-	EntityProperties m_entity;
+
+
+	EntityProperties m_entityProperties;
 	EntityBattleProperties m_battleProperties;
 };

@@ -1,8 +1,10 @@
+#include "Global.h"
 #include "BattleUI.h"
 #include "HAPIWrapper.h"
 #include "Battle.h"
 #include "Pathfinding.h"
 #include "OverWorld.h"
+#include "OverWorldGUI.h"
 #include "Utilities/Utilities.h"
 #include "HAPIWrapper.h"
 #include "Textures.h"
@@ -30,15 +32,29 @@ void BattleUI::InvalidPositionSprite::setPosition(std::pair<int, int> screenPosi
 		(float)screenPosition.second + DRAW_OFFSET_Y * mapDrawScale });
 }
 
-BattleUI::BattleUI(Battle & battle)
+BattleUI::BattleUI(Battle & battle, std::vector<EntityProperties*>& selectedEntities)
 	: m_battle(battle),
+	m_gui({ battle.getMap().getDimensions().first * 28 - 150, battle.getMap().getDimensions().second * 32 - 150}),
 	m_currentTileSelected(nullptr),
 	m_invalidPositionSprite()
-{}
+{
+
+}
+
+std::pair<int, int> BattleUI::getCameraPositionOffset() const
+{
+	return m_gui.getCameraPositionOffset();
+}
 
 void BattleUI::render() const
 {
 	m_invalidPositionSprite.render();
+	m_gui.render();
+}
+
+void BattleUI::update()
+{
+	m_gui.update();
 }
 
 void BattleUI::newPhase()
@@ -48,12 +64,16 @@ void BattleUI::newPhase()
 
 void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
 {
-	if (OverWorld::CURRENT_WINDOW != OverWorldWindow::Battle)
+	if (OverWorldGUI::CURRENT_WINDOW != OverWorldWindow::eBattle)
 	{
 		return;
 	}
+
+	
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
+		m_gui.OnMouseLeftClick(mouseData);
+
 		switch (m_battle.getCurrentPhase())
 		{
 		case BattlePhase::Movement:
@@ -99,10 +119,12 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 
 void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 {
-	if (OverWorld::CURRENT_WINDOW != OverWorldWindow::Battle)
+	if (OverWorldGUI::CURRENT_WINDOW != OverWorldWindow::eBattle)
 	{
 		return;
 	}
+
+	m_gui.OnMouseMove(mouseData);
 
 	switch (m_battle.getCurrentPhase())
 	{
@@ -126,6 +148,8 @@ void BattleUI::handleOnMouseMoveMovementPhase()
 
 		if (m_currentTileSelected->m_tileCoordinate != tile->m_tileCoordinate)
 		{
+			
+			
 			if (tile->m_type != eTileType::eSea && tile->m_type != eTileType::eOcean)
 			{
 				m_invalidPositionSprite.setPosition(m_battle.getMap().getTileScreenPos(tile->m_tileCoordinate), m_battle.getMap().getDrawScale());
@@ -145,6 +169,7 @@ void BattleUI::handleOnMouseMoveMovementPhase()
 void BattleUI::handleOnLeftClickMovementPhase()
 {
 	const Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
+	
 	if (!tile)
 	{
 		return;
@@ -163,6 +188,7 @@ void BattleUI::handleOnLeftClickMovementPhase()
 
 	if (m_currentTileSelected)
 	{
+		
 		//Select new Tile if has valid Entity
 		if (tile->m_entityOnTile)
 		{

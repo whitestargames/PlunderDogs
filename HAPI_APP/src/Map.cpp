@@ -31,8 +31,8 @@ void Map::drawMap() const
 			const float xPos = (float)x * textureDimensions.first * 3 / 4;
 			//Is Odd
 			m_data[access + x].m_sprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
-				xPos * m_drawScale - m_drawOffset.first,
-				yPosOdd * m_drawScale - m_drawOffset.second));
+				(xPos - m_drawOffset.first)*m_drawScale,
+				(yPosOdd - m_drawOffset.second)*m_drawScale));
 			m_data[access + x].m_sprite->GetTransformComp().SetScaling(
 				HAPISPACE::VectorF(m_drawScale, m_drawScale));
 			m_data[access + x].m_sprite->Render(SCREEN_SURFACE);
@@ -42,8 +42,8 @@ void Map::drawMap() const
 			const float xPos = (float)x * textureDimensions.first * 3 / 4;
 			//Is even
 			m_data[access + x].m_sprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
-				xPos * m_drawScale - m_drawOffset.first,
-				yPosEven * m_drawScale - m_drawOffset.second));
+				(xPos - m_drawOffset.first)*m_drawScale,
+				(yPosEven - m_drawOffset.second)*m_drawScale));
 			m_data[access + x].m_sprite->GetTransformComp().SetScaling(
 				HAPISPACE::VectorF(m_drawScale, m_drawScale));
 			m_data[access + x].m_sprite->Render(SCREEN_SURFACE);
@@ -198,7 +198,7 @@ std::vector<Tile*> Map::getTileRadius(intPair coord, int range)
 	return tileStore;
 }
 
-std::vector<Tile*> Map::getTileCone(intPair coord, int range, eDirection direction)
+std::vector< Tile*> Map::getTileCone(intPair coord, int range, eDirection direction)
 {
 	if (range < 1)
 		HAPI_Sprites.UserMessage("getTileCone range less than 1", "Map error");
@@ -209,6 +209,46 @@ std::vector<Tile*> Map::getTileCone(intPair coord, int range, eDirection directi
 		reserveSize += 2 * i;
 	}
 	std::vector<Tile*> tileStore;
+	tileStore.reserve((size_t)reserveSize);
+
+	const intPair cubeCoord(offsetToCube(coord));
+
+	for (int y = std::max(0, coord.second - range - 1);
+		y < std::min(m_mapDimensions.second, coord.second + range + 2);
+		y++)
+	{
+		for (int x = std::max(0, coord.first - range - 1);
+			x < std::min(m_mapDimensions.first, coord.first + range + 2);
+			x++)
+		{
+			if (!(coord.first == x && coord.second == y))//If not the tile at the centre
+			{
+				intPair tempCube(offsetToCube(intPair(x, y)));
+				if (cubeDistance(cubeCoord, tempCube) <= range)
+				{
+					if (inCone(cubeCoord, tempCube, direction))
+					{
+						tileStore.push_back(getTile(intPair(x, y)));
+						//std::cout << "CubeCheck " << x << ", " << y << std::endl;//Test
+					}
+				}
+			}
+		}
+	}
+	return tileStore;
+}
+
+std::vector<const Tile*> Map::getTileCone(intPair coord, int range, eDirection direction) const
+{
+	if (range < 1)
+		HAPI_Sprites.UserMessage("getTileCone range less than 1", "Map error");
+
+	int reserveSize{ 0 };
+	for (int i = 2; i < range + 2; i++)
+	{
+		reserveSize += 2 * i;
+	}
+	std::vector<const Tile*> tileStore;
 	tileStore.reserve((size_t)reserveSize);
 
 	const intPair cubeCoord(offsetToCube(coord));
@@ -278,8 +318,8 @@ intPair Map::getTileScreenPos(intPair coord) const
 		* textureDimensions.second) / 2;
 
 	return intPair(
-		xPos * m_drawScale - m_drawOffset.first,
-		yPos * m_drawScale - m_drawOffset.second);
+		(xPos - m_drawOffset.first)* m_drawScale,
+		(yPos - m_drawOffset.second)* m_drawScale);
 }
 
 intPair Map::getMouseClickCoord(intPair mouseCoord) const
@@ -288,8 +328,8 @@ intPair Map::getMouseClickCoord(intPair mouseCoord) const
 		m_data[0].m_sprite->FrameWidth(),
 		FRAME_HEIGHT);
 	
-	const float translatedX = (mouseCoord.first + m_drawOffset.first - FRAME_CENTRE_X) / m_drawScale;
-	const float translatedY = (mouseCoord.second + m_drawOffset.second - FRAME_CENTRE_Y) / m_drawScale;
+	const float translatedX = (static_cast<float>(mouseCoord.first - FRAME_CENTRE_X) / m_drawScale) + static_cast<float>(m_drawOffset.first);
+	const float translatedY = (static_cast<float>(mouseCoord.second - FRAME_CENTRE_Y) / m_drawScale) + static_cast<float>(m_drawOffset.second);
 	const int predictedTileX = static_cast<const int>(translatedX * 4 / (3 * textureDimensions.first));
 	const int predictedTileY = static_cast<const int>(translatedY / textureDimensions.second);
 	
@@ -318,7 +358,7 @@ Map::Map(intPair size, const std::vector<std::vector<int>>& tileData) :
 	m_data(),
 	m_drawOffset(intPair(10, 60)),
 	m_windDirection(eNorth),
-	m_windStrength(0.0),
+	m_windStrength(0.4),
 	m_drawScale(2)
 {
 	m_data.reserve(m_mapDimensions.first * m_mapDimensions.second);

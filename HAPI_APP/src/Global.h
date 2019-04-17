@@ -7,7 +7,16 @@ enum eDirection
 	eSouthEast,
 	eSouth,
 	eSouthWest,
-	eNorthWest
+	eNorthWest, 
+	Max = eNorthWest
+};
+
+enum OverWorldWindow
+{
+	eBattle = 0,
+	ePreBattle,
+	eLevelSelection,
+	eUpgrade
 };
 
 enum eTileType

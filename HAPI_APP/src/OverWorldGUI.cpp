@@ -3,64 +3,316 @@
 #include "OverWorld.h"
 #include "Utilities/Utilities.h"
 
+OverWorldWindow OverWorldGUI::CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
+
 constexpr int WINDOW_OBJECTWIDTH = 75;
 constexpr int WINDOW_OBJECTHEIGHT = 150;
 constexpr int WINDOW_WIDTH = 830;
 constexpr int WINDOW_HEIGHT = 200;
 
-OverWorldGUI::OverWorldGUI()
+OverWorldGUI::OverWorldGUI(std::vector<EntityProperties>& entities)
 	: m_battleMapBackground(std::make_unique<Sprite>(Textures::m_battleMapBackground)),
 	m_enemyTerritoryHexSheet(std::make_unique<Sprite>(Textures::m_enemyTerritoryHexSheet)),
 	m_prebattleUIBackground(std::make_unique<Sprite>(Textures::m_prebattleUIBackground)),
 	m_playButton(std::make_unique<Sprite>(Textures::m_preBattleUIPlayButton)),
 	m_backButton(std::make_unique<Sprite>(Textures::m_preBattleUIBackButton)),
 	fleetWindowSkinName(UI.LoadSkin(Utilities::getDataDirectory() + "fleetWindowSkin.xml")),
-	fleetWindowSliderSkinName(UI.LoadSkin(Utilities::getDataDirectory() + "fleetWindowSliderSkin.xml"))
+	fleetWindowSliderSkinName(UI.LoadSkin(Utilities::getDataDirectory() + "fleetWindowSliderSkin.xml")),
+	m_currentlySelected(nullptr),
+	m_enitiesAdded(false),
+	m_upgradesButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "upgradesButton.png", 2)),
+	//upgrade background
+	//upgrade buttons
+	m_upgradesScreenBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "upgradesScreenBackground.png")),
+	m_upgradeBackButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PrebattleUIBackButton.png", 2)),
+	m_removeHealthButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "removeButton.png", 2)),
+	m_removeMovementButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "removeButton.png", 2)),
+	m_removeDamageButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "removeButton.png", 2)),
+	m_removeRangeButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "removeButton.png", 2)),
+	m_addHealthButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2)),
+	m_addMovementButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2)),
+	m_addDamageButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2)),
+	m_addRangeButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2))
 {
 	HAPI_Wrapper::setPosition(m_enemyTerritoryHexSheet, { 100, 600 });
 	HAPI_Wrapper::setPosition(m_playButton, { 1150, 722 });
 	HAPI_Wrapper::setPosition(m_backButton, { 185, 747 });
+	HAPI_Wrapper::setPosition(m_upgradesButton, { 1300, 25 });
 	//adding the windows and sliders, also populates the fleet window with all current entities
 	UI.AddWindow(FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 510, 710), fleetWindowSkinName);
-	/*for (int i = 0; i < Overworld.m_entityVector.size(); i++)
+	for (int i = 0; i < entities.size(); i++) TODO:
 	{
-		UI.GetWindow(FLEET_WINDOW)->AddCanvas(ENTITY + std::to_string(i), calculateObjectWindowPosition(i), m_entityVector[i].m_sprite);
-	}*/
+		UI.GetWindow(FLEET_WINDOW)->AddCanvas(ENTITY + std::to_string(i), calculateObjectWindowPosition(i), entities[i].m_sprite);
+	}
 	UI.GetWindow(FLEET_WINDOW)->AddSlider(FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
 	UI.AddWindow(BATTLE_FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 220, 420), fleetWindowSkinName);
 	UI.GetWindow(BATTLE_FLEET_WINDOW)->AddSlider(BATTLE_FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
+
+	//upgrade buttons positions
+	HAPI_Wrapper::setPosition(m_upgradesScreenBackground, { 185, 50 });
+	HAPI_Wrapper::setPosition(m_upgradeBackButton, { 1190, 785 });
+	HAPI_Wrapper::setPosition(m_removeHealthButton, { 625, 150 });//remove buttons
+	HAPI_Wrapper::setPosition(m_removeMovementButton, { 625, 280 });
+	HAPI_Wrapper::setPosition(m_removeDamageButton, { 625, 410 });
+	HAPI_Wrapper::setPosition(m_removeRangeButton, { 625, 540 });
+	HAPI_Wrapper::setPosition(m_addHealthButton, { 875, 150 });//add buttons
+	HAPI_Wrapper::setPosition(m_addMovementButton, { 875, 280 });
+	HAPI_Wrapper::setPosition(m_addDamageButton, { 875, 410 });
+	HAPI_Wrapper::setPosition(m_addRangeButton, { 875, 540 });
 }
 
-void OverWorldGUI::render()
+void OverWorldGUI::render(std::unique_ptr<Battle>& battle)
 {
-	switch (OverWorld::CURRENT_WINDOW)
+	SCREEN_SURFACE->Clear();
+
+	switch (CURRENT_WINDOW)
 	{
-	case OverWorldWindow::PreBattle:
-	{
-		HAPI_Wrapper::render(m_prebattleUIBackground);
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 270), HAPISPACE::Colour255::BLACK, "45/55", 50);
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 355), HAPISPACE::Colour255::BLACK, "3", 50);
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 445), HAPISPACE::Colour255::BLACK, "4", 50);
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 535), HAPISPACE::Colour255::BLACK, "5", 50);
-		HAPI_Wrapper::render(m_playButton);
-		HAPI_Wrapper::render(m_backButton);
-		break;
+		case OverWorldWindow::ePreBattle:
+		{
+			m_prebattleUIBackground->Render(SCREEN_SURFACE);
+			m_playButton->Render(SCREEN_SURFACE);
+			m_backButton->Render(SCREEN_SURFACE);
+			m_upgradesButton->Render(SCREEN_SURFACE);
+			if (m_currentlySelected != nullptr)
+			{
+				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 270), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_currentHealth), 50);
+				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 355), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_damage), 50);
+				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 445), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_movementPoints), 50);
+				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 535), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_range), 50);
+			}
+			
+			break;
+		}
+		case OverWorldWindow::eBattle:
+		{
+			assert(battle.get());
+			
+			battle->render();
+			break;
+		}
+		case OverWorldWindow::eLevelSelection:
+		{
+			HAPI_Wrapper::render(m_battleMapBackground);
+			HAPI_Wrapper::render(m_enemyTerritoryHexSheet);
+			break;
+		}
+		case OverWorldWindow::eUpgrade:
+		{
+			m_upgradesScreenBackground->Render(SCREEN_SURFACE);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1170, 150), HAPISPACE::Colour255::BLACK, "36", 50);//draw text gold
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1110, 270), HAPISPACE::Colour255::BLACK, "BUY", 50);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1110, 315), HAPISPACE::Colour255::BLACK, "SHIPS", 50);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(710, 150), HAPISPACE::Colour255::BLACK, "56", 50);//draw stat text*4
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(710, 280), HAPISPACE::Colour255::BLACK, "6", 50);//draw stat text*4
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(710, 410), HAPISPACE::Colour255::BLACK, "4", 50);//draw stat text*4
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(710, 540), HAPISPACE::Colour255::BLACK, "3", 50);//draw stat text*4
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(640, 670), HAPISPACE::Colour255::BLACK, "UPGRADES: " "0" "/" "2", 50);
+			m_upgradeBackButton->Render(SCREEN_SURFACE);
+			//if render "+" button*5
+			//if render "-" button*5
+			m_removeHealthButton->Render(SCREEN_SURFACE);
+			m_removeMovementButton->Render(SCREEN_SURFACE);
+			m_removeDamageButton->Render(SCREEN_SURFACE);
+			m_removeRangeButton->Render(SCREEN_SURFACE);
+			m_addHealthButton->Render(SCREEN_SURFACE);
+			m_addMovementButton->Render(SCREEN_SURFACE);
+			m_addDamageButton->Render(SCREEN_SURFACE);
+			m_addRangeButton->Render(SCREEN_SURFACE);
+			break;
+		}
 	}
-	case OverWorldWindow::LevelSelection:
+}
+
+void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, std::vector<EntityProperties>& entities,
+	std::vector<EntityProperties*>& selectedEntities, bool& startBattle)
+{
+	switch (CURRENT_WINDOW)
 	{
-		HAPI_Wrapper::render(m_battleMapBackground);
-		HAPI_Wrapper::render(m_enemyTerritoryHexSheet);
+		case OverWorldWindow::eLevelSelection:
+		{
+			if (HAPI_Wrapper::isTranslated(m_enemyTerritoryHexSheet, mouseData, 0))
+			{
+				CURRENT_WINDOW = OverWorldWindow::ePreBattle;
+				UI.OpenWindow(FLEET_WINDOW);
+				UI.OpenWindow(BATTLE_FLEET_WINDOW);
+			}
+			if (HAPI_Wrapper::isTranslated(m_upgradesButton, mouseData, 0))
+			{
+				CURRENT_WINDOW = OverWorldWindow::eUpgrade;
+			}
+			break;
+		}
+		case OverWorldWindow::ePreBattle:
+		{
+			if (HAPI_Wrapper::isTranslated(m_playButton, mouseData, 0))
+			{
+				UI.CloseWindow(FLEET_WINDOW);
+				UI.CloseWindow(BATTLE_FLEET_WINDOW);
+				
+				CURRENT_WINDOW = OverWorldWindow::eBattle;
+				startBattle = true;
+				break;
+			}
+			else if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
+			{
+				CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
+				UI.CloseWindow(FLEET_WINDOW);
+				UI.CloseWindow(BATTLE_FLEET_WINDOW);
+			}
+			bool selection = false;
+
+			//loops through the entity vector to make sure the object is positioned correctly and tests to see if the mouse is on one of the objects.
+			//selects a ship to display the stats of
+			if (windowScreenRect(FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			{
+				for (int i = 0; i < entities.size(); i++)
+				{
+					positionEntity(FLEET_WINDOW, FLEET_SLIDER, ENTITY + std::to_string(i), i, entities.size());
+					if (entityContainsMouse(FLEET_WINDOW, ENTITY + std::to_string(i), m_fleetWindowTopLeft, HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+					{
+						m_currentlySelected = &entities[i];
+						selection = true;
+					}
+				}
+			}
+			//same for the battlefleet window
+			if (windowScreenRect(BATTLE_FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			{
+				for (int i = 0; i < selectedEntities.size(); i++)
+				{
+					positionEntity(BATTLE_FLEET_WINDOW, BATTLE_FLEET_SLIDER, ENTITY + std::to_string(i), i, selectedEntities.size());
+					if (entityContainsMouse(BATTLE_FLEET_WINDOW, ENTITY + std::to_string(i), m_battleFleetWindowTopLeft, HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+					{
+						m_currentlySelected = selectedEntities[i];
+						selection = true;
+					}
+				}
+			}
+			if (selection == false)
+			{
+				m_currentlySelected = nullptr;
+			}
+			break;
+		}
+		case OverWorldWindow::eUpgrade:
+		{
+			if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
+			}
+			else if (m_addHealthButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addHealthButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//health+
+			}
+			else if (m_addMovementButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addMovementButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//movement+
+			}
+			else if (m_addDamageButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addDamageButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//damage+
+			}
+			else if (m_addRangeButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addRangeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//range+
+			}
+			else if (m_removeHealthButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeHealthButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//health-
+			}
+			else if (m_removeMovementButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeMovementButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//movement-
+			}
+			else if (m_removeDamageButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeDamageButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//damage-
+			}
+			else if (m_removeRangeButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeRangeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+			{
+				//range-
+			}
+			break;
+		}
+	}
+}
+
+void OverWorldGUI::onRightClick(const HAPI_TMouseData& mouseData, std::vector<EntityProperties>& entities,
+	std::vector<EntityProperties*>& selectedEntities)
+{
+	switch (CURRENT_WINDOW)
+	{
+	case OverWorldWindow::ePreBattle:
+	{
+		//loops through the entity vector to make sure the object is positioned correctly and tests to see if the mouse is on one of the objects.
+		//selects a ship to go into battle
+		if (windowScreenRect(FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+		{
+			for (int i = 0; i < entities.size(); i++)
+			{
+				positionEntity(FLEET_WINDOW, FLEET_SLIDER, (ENTITY + std::to_string(i)), i, entities.size());
+				if (entityContainsMouse(FLEET_WINDOW, ENTITY + std::to_string(i), m_fleetWindowTopLeft, HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+				{
+					bool isSelected{ false };
+					for (int it = 0; it < selectedEntities.size(); it++)
+					{
+						if (selectedEntities[it] == &entities[i])
+						{
+							isSelected = true;
+						}
+					}
+					if (!isSelected)
+					{
+						selectedEntities.push_back(&entities[i]);
+						for (int j = 0; j < selectedEntities.size(); j++)
+						{
+							if (!windowObjectExists(BATTLE_FLEET_WINDOW, ENTITY + std::to_string(j)))
+							{
+								UI.GetWindow(BATTLE_FLEET_WINDOW)->AddCanvas(ENTITY + std::to_string(j), calculateObjectWindowPosition(j), selectedEntities[j]->m_sprite);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		//same for the battlefleet window but deselects ships
+		if (windowScreenRect(BATTLE_FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+		{
+			for (int i = 0; i < selectedEntities.size(); i++)
+			{
+				positionEntity(BATTLE_FLEET_WINDOW, BATTLE_FLEET_SLIDER, ENTITY + std::to_string(i), i, selectedEntities.size());
+				if (entityContainsMouse(BATTLE_FLEET_WINDOW, ENTITY + std::to_string(i), m_battleFleetWindowTopLeft, HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+				{
+					for (int j = 0; j < selectedEntities.size(); j++)
+					{
+						UI.GetWindow(BATTLE_FLEET_WINDOW)->DeleteObject(ENTITY + std::to_string(j));
+					}
+					selectedEntities.erase(selectedEntities.begin() + i);
+					for (int j = 0; j < selectedEntities.size(); j++)
+					{
+
+						if (!windowObjectExists(BATTLE_FLEET_WINDOW, ENTITY + std::to_string(j)))
+						{
+							UI.GetWindow(BATTLE_FLEET_WINDOW)->AddCanvas(ENTITY + std::to_string(j), calculateObjectWindowPosition(j), selectedEntities[j]->m_sprite);
+						}
+					}
+				}
+			}
+		}
 		break;
 	}
 	}
 }
-void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData)
+
+void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, std::vector<EntityProperties>& entities,
+	std::vector<EntityProperties*>& selectedEntities)
 {
-	switch (OverWorld::CURRENT_WINDOW)
+	switch (CURRENT_WINDOW)
 	{
-	case OverWorldWindow::LevelSelection:
+	case OverWorldWindow::eLevelSelection:
 	{
-		if (HAPI_Wrapper::isTranslated(m_enemyTerritoryHexSheet, mouseData, 0))
+		if (HAPI_Wrapper::isTranslated(m_enemyTerritoryHexSheet, mouseData, 0))//checks if mouse is over button
 		{
 			m_enemyTerritoryHexSheet->SetFrameNumber(1);//changes the buttons sprite to hover sprite
 		}
@@ -68,11 +320,18 @@ void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData)
 		{
 			m_enemyTerritoryHexSheet->SetFrameNumber(0);// sets it to the default sprite
 		}
+		if (HAPI_Wrapper::isTranslated(m_upgradesButton, mouseData, 0))
+		{
+			m_upgradesButton->SetFrameNumber(1);
+		}
+		else if (m_upgradesButton->GetFrameNumber() != 0)
+		{
+			m_upgradesButton->SetFrameNumber(0);
+		}
 		break;
 	}
-	case OverWorldWindow::PreBattle:
+	case OverWorldWindow::ePreBattle:
 	{
-		//Play Button
 		if (HAPI_Wrapper::isTranslated(m_playButton, mouseData, 0))
 		{
 			m_playButton->SetFrameNumber(1);
@@ -81,43 +340,155 @@ void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData)
 		{
 			m_playButton->SetFrameNumber(0);
 		}
-		//Back Button
+
 		if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
 		{
 			m_backButton->SetFrameNumber(1);
 		}
-		else
+		else if (m_backButton->GetFrameNumber() != 0)
 		{
 			m_backButton->SetFrameNumber(0);
+		}
+
+		//varies the position of objects based on the slder value
+		if (mouseData.leftButtonDown)
+		{
+			if (windowScreenRect(FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			{
+				for (int i = 0; i < entities.size(); i++)
+				{
+					positionEntity(FLEET_WINDOW, FLEET_SLIDER, "entity" + std::to_string(i), i, entities.size());
+				}
+			}
+			if (windowScreenRect(BATTLE_FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			{
+				for (int i = 0; i < selectedEntities.size(); i++)
+				{
+					positionEntity(BATTLE_FLEET_WINDOW, BATTLE_FLEET_SLIDER, "entity" + std::to_string(i), i, selectedEntities.size());
+				}
+			}
+		}
+		break;
+	}
+	case OverWorldWindow::eUpgrade:
+	{
+		if (m_upgradeBackButton->GetSpritesheet()->GetFrameRect(0).Translated(m_upgradeBackButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_upgradeBackButton->SetFrameNumber(1);
+		}
+		else if (m_upgradeBackButton->GetFrameNumber() != 0)
+		{
+			m_upgradeBackButton->SetFrameNumber(0);
+		}
+
+		if (m_addHealthButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addHealthButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_addHealthButton->SetFrameNumber(1);//health+
+		}
+		else if (m_addHealthButton->GetFrameNumber() != 0)
+		{
+			m_addHealthButton->SetFrameNumber(0);
+		}
+		if (m_addMovementButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addMovementButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_addMovementButton->SetFrameNumber(1);//movement+
+		}
+		else if (m_addMovementButton->GetFrameNumber() != 0)
+		{
+			m_addMovementButton->SetFrameNumber(0);
+		}
+		if (m_addDamageButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addDamageButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_addDamageButton->SetFrameNumber(1);//damage+
+		}
+		else if (m_addDamageButton->GetFrameNumber() != 0)
+		{
+			m_addDamageButton->SetFrameNumber(0);
+		}
+		if (m_addRangeButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addRangeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_addRangeButton->SetFrameNumber(1);//range+
+		}
+		else if (m_addRangeButton->GetFrameNumber() != 0)
+		{
+			m_addRangeButton->SetFrameNumber(0);
+		}
+		if (m_removeHealthButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeHealthButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_removeHealthButton->SetFrameNumber(1);//health-
+		}
+		else if (m_removeHealthButton->GetFrameNumber() != 0)
+		{
+			m_removeHealthButton->SetFrameNumber(0);
+		}
+		if (m_removeMovementButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeMovementButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_removeMovementButton->SetFrameNumber(1);//movement-
+		}
+		else if (m_removeMovementButton->GetFrameNumber() != 0)
+		{
+			m_removeMovementButton->SetFrameNumber(0);
+		}
+		if (m_removeDamageButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeDamageButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_removeDamageButton->SetFrameNumber(1);//damage-
+		}
+		else if (m_removeDamageButton->GetFrameNumber() != 0)
+		{
+			m_removeDamageButton->SetFrameNumber(0);
+		}
+		if (m_removeRangeButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeRangeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			m_removeRangeButton->SetFrameNumber(1);//range-
+		}
+		else if (m_removeRangeButton->GetFrameNumber() != 0)
+		{
+			m_removeRangeButton->SetFrameNumber(0);
 		}
 		break;
 	}
 	}
 }
 
-void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData)
+void OverWorldGUI::positionEntity(const std::string & windowName, const std::string& windowSliderName, const std::string& windowObjectName, int objectNumber, size_t vectorSize)
 {
-	switch (OverWorld::CURRENT_WINDOW)
+	UI.GetWindow(windowName)->PositionObject(windowObjectName, calculateObjectScrolledPosition(windowName, windowSliderName, objectNumber, vectorSize));
+}
+
+float OverWorldGUI::getWindowSliderValue(const std::string & windowName, const std::string & windowSliderName) const
+{
+	return UI.GetWindow(windowName)->GetObject(windowSliderName)->GetValue();
+}
+
+HAPISPACE::RectangleI OverWorldGUI::calculateObjectWindowPosition(int objectNumber) const
+{
+	return HAPISPACE::RectangleI(WINDOW_OBJECTWIDTH * objectNumber, (WINDOW_OBJECTWIDTH * objectNumber) + WINDOW_OBJECTWIDTH, 0, WINDOW_OBJECTHEIGHT);
+}
+
+HAPISPACE::RectangleI OverWorldGUI::windowScreenRect(const std::string & windowName) const
+{
+	return UI.GetWindow(windowName)->GetScreenRect();
+}
+
+HAPISPACE::VectorI OverWorldGUI::calculateObjectScrolledPosition(const std::string & windowName, const std::string & windowSliderName, int objectNumber, size_t vectorSize)
+{
+	return HAPISPACE::VectorI((WINDOW_OBJECTWIDTH * objectNumber) - ((WINDOW_OBJECTWIDTH * vectorSize) * getWindowSliderValue(windowName, windowSliderName)), 0 );
+}
+
+bool OverWorldGUI::entityContainsMouse(const std::string & windowName, const std::string& windowObjectName, HAPISPACE::VectorI windowTopLeft, HAPISPACE::VectorI mousePosition) const
+{
+	if (UI.GetWindow(windowName)->GetObject(windowObjectName)->GetBoundingRectangleScreenSpace(windowTopLeft).Contains(mousePosition))
 	{
-	case OverWorldWindow::LevelSelection:
+		return true;
+	}
+	return false;
+}
+
+bool OverWorldGUI::windowObjectExists(const std::string & windowName, const std::string& windowObjectName) const
+{
+	if (UI.GetWindow(windowName)->GetObject(windowObjectName) != nullptr)
 	{
-		if (HAPI_Wrapper::isTranslated(m_enemyTerritoryHexSheet, mouseData, 0))
-		{
-			OverWorld::CURRENT_WINDOW = OverWorldWindow::PreBattle;
-		}
-		break;
+		return true;
 	}
-	case OverWorldWindow::PreBattle:
-	{
-		if (HAPI_Wrapper::isTranslated(m_playButton, mouseData, 0))
-		{
-			OverWorld::CURRENT_WINDOW = OverWorldWindow::Battle;
-		}
-		else if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
-		{
-			OverWorld::CURRENT_WINDOW = OverWorldWindow::LevelSelection;
-		}
-		break;
-	}
-	}
+	return false;
 }

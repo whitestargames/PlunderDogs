@@ -1,10 +1,11 @@
 #pragma once
 
-#include <HAPISprites_lib.h>
-#include <HAPISprites_UI.h>
+#include "BattleGUI.h"
 
 struct Tile;
 class Battle;
+struct EntityProperties;
+
 class BattleUI : public IHapiSpritesInputListener
 {
 	struct InvalidPositionSprite
@@ -19,10 +20,12 @@ class BattleUI : public IHapiSpritesInputListener
 	};
 
 public:
-	BattleUI(Battle& battle);
+	BattleUI(Battle& battle, std::vector<EntityProperties*>& selectedEntities);
+
+	std::pair<int, int> getCameraPositionOffset() const;
 
 	void render() const;
-
+	void update();
 	void newPhase();
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
@@ -37,6 +40,8 @@ private:
 	std::pair<int, int> m_leftMouseDownPosition{ 0,0 };
 	//This is used to determine if an entity is currently being given a move command, it gets set to true in the "handleOnLeftClickMovementPhase()" and false after "eLeftMouseButtonUp" is detected.
 	bool m_isMovingEntity{ false };
+	BattleGUI m_gui;
+
 
 	//Movement Phase
 	void handleOnMouseMoveMovementPhase();

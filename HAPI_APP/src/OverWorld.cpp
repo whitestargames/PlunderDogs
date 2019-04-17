@@ -1,57 +1,78 @@
 #include  "Overworld.h"
-#include "Battle.h"
 #include "Utilities/Utilities.h"
 #include "HAPIWrapper.h"
 #include "Textures.h"
 
-OverWorldWindow OverWorld::CURRENT_WINDOW = OverWorldWindow::LevelSelection;
+std::vector<EntityProperties> assignEntities()
+{
+	//Large movement size because of the fact its easier 
+	//to test with developing movement
+	std::vector<EntityProperties> entities;
+	for (int i = 0; i < 20; i++)
+	{
+		EntityProperties newEntity;
+		newEntity.m_movementPoints = 15;
+		newEntity.m_healthMax = i + 1;
+		newEntity.m_currentHealth = i + 2;
+		newEntity.m_range = i + 3;
+		newEntity.m_damage = 1;
+
+		entities.push_back(newEntity);
+	}
+	assert(!entities.empty());
+	return entities;
+}
 
 OverWorld::OverWorld()
-	: m_overWorldGUI(std::make_unique<OverWorldGUI>()),
-	m_battle()
+	: m_entities(assignEntities()),
+	m_GUI(m_entities),
+	m_battle(),
+	m_startBattle(false)
+{}
+
+void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
 {
-	for(int i = 0; i < 20; ++i)
+	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
-		m_entityVector.push_back({});
+		m_GUI.onLeftClick(mouseData, m_entities, m_selectedEntities, m_startBattle);
 	}
-	/*for (int i = 0; i < 20; i++)
+	if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
-		Entity newEntity(Utilities::getDataDirectory() + "thingy.xml", 5, i + 1, i + 2, i + 3);
-		m_entityVector.push_back(newEntity);
-	}*/
+		m_GUI.onRightClick(mouseData, m_entities, m_selectedEntities);
+	}
+}
+
+void OverWorld::OnMouseMove(const HAPI_TMouseData & mouseData)
+{
+	m_GUI.onMouseMove(mouseData, m_entities, m_selectedEntities);
 }
 
 void OverWorld::render()
 {
-	m_overWorldGUI->render();
-
-	if (CURRENT_WINDOW == OverWorldWindow::Battle)
-	{
-		m_battle.render();
-	}
+	m_GUI.render(m_battle);
 }
 
 void OverWorld::update(float deltaTime)
 {
-	switch (CURRENT_WINDOW)
+	if (m_startBattle)
 	{
-		case OverWorldWindow::Battle:
-		{
-			m_battle.update(deltaTime);
-			break;
-		}
+		startBattle();
+	}
+
+	if (OverWorldGUI::CURRENT_WINDOW == eBattle)
+	{
+		
+		assert(m_battle.get());
+		m_battle->update(deltaTime);
 	}
 }
 
-void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData)
+void OverWorld::startBattle()
 {
-	if (mouseEvent == EMouseEvent::eLeftButtonDown)
+	if (m_startBattle)
 	{
-		m_overWorldGUI->onLeftClick(mouseData);
+		OverWorldGUI::CURRENT_WINDOW = eBattle;
+		m_battle = std::make_unique<Battle>(m_selectedEntities);
+		m_startBattle = false;
 	}
-}
-
-void OverWorld::OnMouseMove(const HAPI_TMouseData& mouseData)
-{
-	m_overWorldGUI->onMouseMove(mouseData);
 }

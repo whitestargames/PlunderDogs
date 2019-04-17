@@ -20,6 +20,7 @@ constexpr float DRAW_OFFSET_Y{ 28 };
 ****
 */
 struct BattleEntity;
+
 struct Tile
 {
 	const enum eTileType m_type;
@@ -35,7 +36,7 @@ struct Tile
 		m_tileCoordinate(coord)
 	{
 		//HAPI's make sprite takes a pointer to an existing spritesheet
-		m_sprite = std::make_unique<Sprite>(spriteSheet);
+		m_sprite = HAPI_Sprites.MakeSprite(spriteSheet);
 	}
 
 	//Tile(eTileType type, const std::string& spriteName, std::pair<int, int> coord) :
@@ -83,6 +84,7 @@ public:
 	std::vector<Tile*> getTileRadius(std::pair<int, int> coord, int range);
 	//TODO: Returns tiles in a cone emanating from a given tile, skipping the tile itself
 	std::vector<Tile*> getTileCone(std::pair<int, int> coord, int range, eDirection direction);
+	std::vector<const Tile*> getTileCone(std::pair<int, int> coord, int range, eDirection direction)const;
 
 	//For finding the location on the screen a given tile is being drawn
 	std::pair<int, int> getTileScreenPos(std::pair<int, int> coord) const;

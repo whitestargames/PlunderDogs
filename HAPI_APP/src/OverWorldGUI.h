@@ -2,30 +2,27 @@
 
 #include <HAPISprites_lib.h>
 #include <HAPISprites_UI.h>
-#include "GUIBase.h"
 #include <memory>
 
+#include "Global.h"
+#include <string>
+
 struct EntityProperties;
-
-class OverWorldGUI : public GUIBase
+class OverWorld;
+class Battle;
+class OverWorldGUI 
 {
-public:
-	OverWorldGUI();
-
-	void render() override final;
-
-	void onMouseMove(const HAPI_TMouseData& mouseData) override final;
-	void onLeftClick(const HAPI_TMouseData& mouseData) override final;
-	void onRightClick() override final {}
-
 private:
-	std::vector<EntityProperties*> m_selectedEntities;
+	EntityProperties* m_currentlySelected;
+	bool m_enitiesAdded;
 
 	std::unique_ptr<Sprite> m_battleMapBackground;
 	std::unique_ptr<Sprite> m_enemyTerritoryHexSheet;
 	std::unique_ptr<Sprite> m_prebattleUIBackground;
 	std::unique_ptr<Sprite> m_playButton;
 	std::unique_ptr<Sprite> m_backButton;
+
+
 
 	void positionEntity(const std::string& windowName, const std::string& windowSliderName, const std::string& windowObjectName, int objectNumber, size_t vectorSize);
 	float getWindowSliderValue(const std::string &windowName, const std::string &windowSliderName) const;
@@ -46,4 +43,31 @@ private:
 	const std::string BATTLE_FLEET_WINDOW = "battleFleetWindow";
 	const std::string FLEET_SLIDER = "fleetSlider";
 	const std::string BATTLE_FLEET_SLIDER = "battleFleetSlider";
+
+
+	std::unique_ptr<Sprite> m_upgradesButton;
+	//upgrade buttons
+	std::unique_ptr<Sprite> m_upgradesScreenBackground;
+	std::unique_ptr<Sprite> m_removeHealthButton;
+	std::unique_ptr<Sprite> m_removeMovementButton;
+	std::unique_ptr<Sprite> m_removeDamageButton;
+	std::unique_ptr<Sprite> m_removeRangeButton;
+	std::unique_ptr<Sprite> m_addHealthButton;
+	std::unique_ptr<Sprite> m_addMovementButton;
+	std::unique_ptr<Sprite> m_addDamageButton;
+	std::unique_ptr<Sprite> m_addRangeButton;
+	std::unique_ptr<Sprite> m_upgradeBackButton;
+
+public:
+	static OverWorldWindow CURRENT_WINDOW;
+	OverWorldGUI(std::vector<EntityProperties>& entities);
+
+	void onLeftClick(const HAPI_TMouseData& mouseData, std::vector<EntityProperties>& entities,
+		std::vector<EntityProperties*>& selectedEntities, bool& startBattle);
+	void onRightClick(const HAPI_TMouseData& mouseData, std::vector<EntityProperties>& entities,
+		std::vector<EntityProperties*>& selectedEntities);
+	void onMouseMove(const HAPI_TMouseData& mouseData, std::vector<EntityProperties>& entities,
+		std::vector<EntityProperties*>& selectedEntities);
+
+	void render(std::unique_ptr<Battle>& battle);
 };
