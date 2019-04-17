@@ -35,11 +35,12 @@ class BattleUI : public IHapiSpritesInputListener
 	{
 		InvalidPosition();
 
-		void render() const;
-		void setPosition(std::pair<int, int> screenPosition, float mapDrawScale);
+		void render(const Map& map) const;
+		void setPosition(std::pair<int, int> screenPosition, const Map& map);
 
 		std::unique_ptr<Sprite> m_sprite;
 		bool m_activate;
+		std::pair<int, int> m_position;
 	};
 
 	class ShipPlacementPhase

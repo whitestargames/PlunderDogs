@@ -33,7 +33,6 @@ public:
 	void insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, PlayerName playerName);
 	void nextTurn();
 
-
 private:
 	std::vector<std::unique_ptr<BattleEntity>> m_player1Entities;
 	std::vector<std::unique_ptr<BattleEntity>> m_player2Entities;

@@ -21,21 +21,29 @@ constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
 BattleUI::InvalidPosition::InvalidPosition()
 	: m_sprite(std::make_unique<Sprite>(Textures::m_thing)),
 	m_activate(false)
-{}
+{
+	m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
+}
 
-void BattleUI::InvalidPosition::render() const
+void BattleUI::InvalidPosition::render(const Map& map) const
 {
 	if (m_activate)
 	{
+		m_sprite->GetTransformComp().SetPosition({
+		static_cast<float>(m_position.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
+		static_cast<float>(m_position.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
+
 		m_sprite->Render(SCREEN_SURFACE);
 	}
 }
 
-void BattleUI::InvalidPosition::setPosition(std::pair<int, int> screenPosition, float mapDrawScale)
+void BattleUI::InvalidPosition::setPosition(std::pair<int, int> screenPosition, const Map& map)
 {
 	m_sprite->GetTransformComp().SetPosition({
-		(float)screenPosition.first + DRAW_OFFSET_X * mapDrawScale,
-		(float)screenPosition.second + DRAW_OFFSET_Y * mapDrawScale });
+		(float)screenPosition.first + DRAW_OFFSET_X * map.getDrawScale(),
+		(float)screenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()});
+
+	m_position = screenPosition;
 }
 
 //
@@ -92,7 +100,7 @@ void BattleUI::render() const
 	}
 	}
 
-	m_invalidPosition.render();
+	m_invalidPosition.render(m_battle.getMap());
 	m_gui.render();
 }
 
@@ -248,7 +256,7 @@ void BattleUI::onMouseMoveMovementPhase()
 		{
 			if (tile->m_type != eTileType::eSea && tile->m_type != eTileType::eOcean)
 			{
-				m_invalidPosition.setPosition(m_battle.getMap().getTileScreenPos(tile->m_tileCoordinate), m_battle.getMap().getDrawScale());
+				m_invalidPosition.setPosition(m_battle.getMap().getTileScreenPos(tile->m_tileCoordinate), m_battle.getMap());
 				m_invalidPosition.m_activate = true;
 				m_currentTileSelected->m_entityOnTile->m_battleProperties.clearMovementPath();
 			}
@@ -281,6 +289,12 @@ void BattleUI::onLeftClickMovementPhase()
 		}
 
 		return;
+	}
+
+	//Clicking to where entity is moving to
+	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_battleProperties.isMovedToDestination())
+	{
+		m_currentTileSelected = nullptr;
 	}
 
 	if (m_currentTileSelected)
@@ -409,7 +423,7 @@ void BattleUI::onMouseMoveAttackPhase()
 		//tileOnMouse within weapon range
 		if (cIter != m_targetArea.m_targetArea.cend())
 		{
-			m_invalidPosition.setPosition(m_battle.getMap().getTileScreenPos(tileOnMouse->m_tileCoordinate), m_battle.getMap().getDrawScale());
+			m_invalidPosition.setPosition(m_battle.getMap().getTileScreenPos(tileOnMouse->m_tileCoordinate), m_battle.getMap());
 			m_invalidPosition.m_activate = true;
 		}
 		//outside weapon range
@@ -550,7 +564,7 @@ const Tile* BattleUI::ShipPlacementPhase::getTileOnMouse(InvalidPosition& invali
 		//Cannot place ship on existing ship
 		if (tileOnMouse->m_entityOnTile)
 		{
-			invalidPosition.setPosition(map.getTileScreenPos(tileOnMouse->m_tileCoordinate), map.getDrawScale());
+			invalidPosition.setPosition(map.getTileScreenPos(tileOnMouse->m_tileCoordinate), map);
 			invalidPosition.m_activate = true;
 			return tileOnMouse;
 		}
@@ -571,7 +585,7 @@ const Tile* BattleUI::ShipPlacementPhase::getTileOnMouse(InvalidPosition& invali
 		}
 		else
 		{
-			invalidPosition.setPosition(map.getTileScreenPos(tileOnMouse->m_tileCoordinate), map.getDrawScale());
+			invalidPosition.setPosition(map.getTileScreenPos(tileOnMouse->m_tileCoordinate), map);
 			invalidPosition.m_activate = true;
 		}
 	}

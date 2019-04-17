@@ -167,7 +167,7 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 		{
 			m_pathToTile = pathToTile;
 			map.moveEntity(m_currentPosition, pathToTile.back().second);
-			m_movedToDestination = false;
+			m_movedToDestination = true;
 		}
 		else
 		{
@@ -178,7 +178,7 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 
 void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int damageAmount)
 {
-	//TODO: To do.
+	//TODO:
 }
 
 void EntityBattleProperties::fireWeapon()
@@ -247,7 +247,7 @@ void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProp
 
 			if (m_pathToTile.empty())
 			{
-				m_movedToDestination = true;
+				//m_movedToDestination = true;
 				++moveCounter.m_counter;
 			}
 		}
