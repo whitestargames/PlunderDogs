@@ -60,12 +60,12 @@ BattleUI::BattleUI(Battle & battle, std::vector<EntityProperties*>& player1, std
 	//TODO: Will change at some point
 	for (auto& i : player1)
 	{
-		i->m_sprite->GetTransformComp().SetOrigin({ 13, 25 });
+		i->m_sprite->GetTransformComp().SetOriginToCentreOfFrame(); //.SetOrigin({ 13, 25 });
 		i->m_sprite->GetTransformComp().SetScaling({ 1,1 });
 	}
 	for (auto& i : player2)
 	{
-		i->m_sprite->GetTransformComp().SetOrigin({ 13, 25 });
+		i->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();//.SetOrigin({ 13, 25 });
 		i->m_sprite->GetTransformComp().SetScaling({ 1,1 });
 	}
 }
@@ -77,8 +77,6 @@ std::pair<int, int> BattleUI::getCameraPositionOffset() const
 
 void BattleUI::render() const
 {
-	m_gui.render();
-
 	switch (m_battle.getCurrentPhase())
 	{
 	case BattlePhase::ShipPlacement:
@@ -95,6 +93,7 @@ void BattleUI::render() const
 	}
 
 	m_invalidPosition.render();
+	m_gui.render();
 }
 
 void BattleUI::update()
