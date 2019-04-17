@@ -2,6 +2,7 @@
 #include "Utilities/MapParser.h"
 #include "Utilities/Utilities.h"
 #include "HAPIWrapper.h"
+#include "Global.h"
 
 using namespace HAPISPACE;
 
@@ -37,9 +38,9 @@ void Battle::update(float deltaTime)
 	{
 		if (m_currentPlayerTurn == PlayerName::Player1)
 		{
-			bool allEntitiesReachedDestination = true;
-			updateMovementPhase(m_player1Entities, allEntitiesReachedDestination, deltaTime);
-			if (allEntitiesReachedDestination)
+			EntityCounter entityCounter;
+			updateMovementPhase(m_player1Entities, entityCounter, deltaTime);
+			if (entityCounter.m_counter >= static_cast<int>(m_player1Entities.size() - 1))
 			{
 				for (auto& entity : m_player1Entities)
 				{
@@ -50,9 +51,9 @@ void Battle::update(float deltaTime)
 		}
 		else if(m_currentPlayerTurn == PlayerName::Player2)
 		{
-			bool allEntitiesReachedDestination = true;
-			updateMovementPhase(m_player2Entities, allEntitiesReachedDestination, deltaTime);
-			if (allEntitiesReachedDestination)
+			EntityCounter entityCounter;
+			updateMovementPhase(m_player2Entities, entityCounter, deltaTime);
+			if (entityCounter.m_counter >= static_cast<int>(m_player2Entities.size()))
 			{
 				for (auto& entity : m_player2Entities)
 				{
@@ -66,31 +67,31 @@ void Battle::update(float deltaTime)
 	{	
 		if (m_currentPlayerTurn == PlayerName::Player1)
 		{
-			bool allEntitiesAttacked = true;
-			updateAttackPhase(m_player1Entities, allEntitiesAttacked);
+			//bool allEntitiesAttacked = false;
+			//updateAttackPhase(m_player1Entities, allEntitiesAttacked);
 
-			if (allEntitiesAttacked)
-			{
-				for (auto& entity : m_player1Entities)
-				{
-					entity->m_battleProperties.m_weaponFired = false;
-				}
-				nextTurn();
-			}
+			//if (allEntitiesAttacked)
+			//{
+			//	for (auto& entity : m_player1Entities)
+			//	{
+			//		entity->m_battleProperties.m_weaponFired = false;
+			//	}
+			//	nextTurn();
+			//}
 		}
 		else if (m_currentPlayerTurn == PlayerName::Player2)
 		{
-			bool allEntitiesAttacked = true;
-			updateAttackPhase(m_player2Entities, allEntitiesAttacked);
+			//bool allEntitiesAttacked = true;
+			//updateAttackPhase(m_player2Entities, allEntitiesAttacked);
 
-			if (allEntitiesAttacked)
-			{
-				for (auto& entity : m_player2Entities)
-				{
-					entity->m_battleProperties.m_weaponFired = false;
-				}
-				nextTurn();
-			}	
+			//if (allEntitiesAttacked)
+			//{
+			//	for (auto& entity : m_player2Entities)
+			//	{
+			//		entity->m_battleProperties.m_weaponFired = false;
+			//	}
+			//	nextTurn();
+			//}	
 		}
 	}
 }
@@ -98,7 +99,7 @@ void Battle::update(float deltaTime)
 void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
 {
 	assert(m_currentPhase == BattlePhase::Movement);
-	entity.m_battleProperties.moveEntity(m_map, destination, entity.m_battleProperties.m_movementPathSize);
+	entity.m_battleProperties.moveEntity(m_map, destination);
 }
 
 void Battle::fireEntityWeaponAtPosition(BattleEntity& player, BattleEntity& enemy, const std::vector<const Tile*>& targetArea)
@@ -106,7 +107,7 @@ void Battle::fireEntityWeaponAtPosition(BattleEntity& player, BattleEntity& enem
 	assert(m_currentPhase == BattlePhase::Attack);
 	assert(!player.m_battleProperties.m_weaponFired);
 
-	auto tileCoordinate = enemy.m_battleProperties.m_currentPosition;
+	auto tileCoordinate = enemy.m_battleProperties.getCurrentPosition();
 	auto cIter = std::find_if(targetArea.cbegin(), targetArea.cend(), [tileCoordinate](const auto& tile) { return tileCoordinate == tile->m_tileCoordinate; });
 	//Enemy within range of weapon
 	if (cIter != targetArea.cend())
@@ -173,15 +174,11 @@ void Battle::nextTurn()
 	}
 }
 
-void Battle::updateMovementPhase(std::vector<std::unique_ptr<BattleEntity>>& playerEntities, bool& allEntitiesReachedDestination, float deltaTime)
+void Battle::updateMovementPhase(std::vector<std::unique_ptr<BattleEntity>>& playerEntities, EntityCounter& entityCounter, float deltaTime)
 {
 	for (auto& entity : playerEntities)
 	{
-		entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties);
-		//if (!entity->m_battleProperties.m_movedToDestination)
-		//{
-		//	allEntitiesReachedDestination = false;
-		//}
+		entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties, entityCounter);
 	}
 }
 

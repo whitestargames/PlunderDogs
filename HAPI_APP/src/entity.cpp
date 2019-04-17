@@ -149,12 +149,12 @@ void EntityBattleProperties::clearMovementPath()
 	m_movementPath.clearPath();
 }
 
-void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, int movementPointsAvailable)
+void EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 {
 	if (!m_movedToDestination)
 	{
 		auto pathToTile = PathFinding::getPathToTile(map, m_currentPosition, tile.m_tileCoordinate);
-		if (!pathToTile.empty() && pathToTile.size() <= movementPointsAvailable+1)
+		if (!pathToTile.empty() && pathToTile.size() <= m_movementPathSize + 1)
 		{
 			m_pathToTile = pathToTile;
 			map.moveEntity(m_currentPosition, pathToTile.back().second);
@@ -174,8 +174,6 @@ void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int
 
 void EntityBattleProperties::handleRotation(EntityProperties& entityProperties, const Map& map)
 {
-	m_currentPosition = m_pathToTile.front().second;
-	m_movementPath.eraseNode(m_currentPosition, map);
 	int rotationAngle = 60;
 	int directionToTurn = m_pathToTile.front().first;
 	entityProperties.m_sprite->GetTransformComp().SetRotation(
@@ -213,7 +211,7 @@ BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const EntityPro
 	map.insertEntity(*this);
 }
 
-void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProperties& entityProperties)
+void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProperties& entityProperties, EntityCounter& entityCounter)
 {
 	if (!m_pathToTile.empty())
 	{
@@ -221,6 +219,8 @@ void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProp
 		if (m_movementTimer.isExpired())
 		{
 			m_movementTimer.reset();
+			m_currentPosition = m_pathToTile.front().second;
+			m_movementPath.eraseNode(m_currentPosition, map);
 
 			handleRotation(entityProperties, map);
 			m_pathToTile.pop_front();
@@ -228,6 +228,8 @@ void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProp
 			if (m_pathToTile.empty())
 			{
 				m_movedToDestination = true;
+				entityCounter.m_counter += 1;
+				std::cout << entityCounter.m_counter << "\n";
 			}
 		}
 	}

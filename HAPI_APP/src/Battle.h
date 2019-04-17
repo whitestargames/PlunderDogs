@@ -12,6 +12,7 @@ enum class BattlePhase
 	Attack
 };
 
+struct EntityCounter;
 class Battle
 {
 public:
@@ -38,6 +39,6 @@ private:
 	PlayerName m_currentPlayerTurn;
 	BattleUI m_battleUI;
 
-	void updateMovementPhase(std::vector<std::unique_ptr<BattleEntity>>& playerEntities, bool& allEntitiesReachedDestination, float deltaTime);
+	void updateMovementPhase(std::vector<std::unique_ptr<BattleEntity>>& playerEntities, EntityCounter& entityCounter, float deltaTime);
 	void updateAttackPhase(std::vector<std::unique_ptr<BattleEntity>>& playerEntities, bool& allEntitiesAttacked);
 };
