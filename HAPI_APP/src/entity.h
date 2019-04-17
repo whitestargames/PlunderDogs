@@ -42,12 +42,13 @@ class EntityBattleProperties
 
 			std::unique_ptr<Sprite> sprite;
 			bool activate;
+			std::pair<int, int> m_position;
 		};
 
 	public:
 		MovementPath();
 
-		void render() const;
+		void render(const Map& map) const;
 		void generatePath(const Map& map, const Tile& source, const Tile& destination);
 		void eraseNode(std::pair<int, int> position, const Map& map);
 		void clearPath();

@@ -46,7 +46,9 @@ bool EntityBattleProperties::isWeaponFired() const
 EntityBattleProperties::MovementPath::PathNode::PathNode()
 	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),
 	activate(false)
-{}
+{
+	sprite->GetTransformComp().SetOriginToCentreOfFrame();
+}
 
 //
 //MOVEMENT PATH
@@ -61,14 +63,20 @@ EntityBattleProperties::MovementPath::MovementPath()
 	}
 }
 
-void EntityBattleProperties::MovementPath::render() const
+void EntityBattleProperties::MovementPath::render(const Map& map) const
 {
 	for (const auto& i : m_movementPath)
 	{
 		if (i.activate)
 		{
+			const std::pair<int, int> tileTransform = map.getTileScreenPos(i.m_position);
+
+			i.sprite->GetTransformComp().SetPosition({
+			static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
+			static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
+
 			i.sprite->Render(SCREEN_SURFACE);
-		}
+		}	
 	}
 }
 
@@ -111,6 +119,7 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
 				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
 			m_movementPath[i - 1].activate = true;
+			m_movementPath[i - 1].m_position = pathToTile[i].second;
 		}
 		else
 		{
@@ -254,5 +263,6 @@ void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, 
 		static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
 
 	sprite->Render(SCREEN_SURFACE);
-	m_movementPath.render();
+
+	m_movementPath.render(map);
 }
