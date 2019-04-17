@@ -7,6 +7,7 @@
 #include "Global.h"
 #include <string>
 
+struct Player;
 struct EntityProperties;
 class OverWorld;
 class Battle;
@@ -60,14 +61,13 @@ private:
 
 public:
 	static OverWorldWindow CURRENT_WINDOW;
-	OverWorldGUI(std::vector<EntityProperties>& entities);
+	OverWorldGUI(const Player& player1);
 
-	void onLeftClick(const HAPI_TMouseData& mouseData, std::vector<EntityProperties>& entities,
-		std::vector<EntityProperties*>& selectedEntities, bool& startBattle);
-	void onRightClick(const HAPI_TMouseData& mouseData, std::vector<EntityProperties>& entities,
-		std::vector<EntityProperties*>& selectedEntities);
-	void onMouseMove(const HAPI_TMouseData& mouseData, std::vector<EntityProperties>& entities,
-		std::vector<EntityProperties*>& selectedEntities);
+	void onLeftClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer, bool& startBattle, bool& selectNextPlayer, Player& player2);
+	void onRightClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer);
+	void onMouseMove(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer);
+
+	void reset(Player& currentSelectedPlayer);
 
 	void render(std::unique_ptr<Battle>& battle);
 };

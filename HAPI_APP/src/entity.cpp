@@ -6,7 +6,7 @@
 #include "Textures.h"
 
 constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
-constexpr size_t WEAPON_HIGHLIGHT_SIZE{ 40 };
+constexpr size_t WEAPON_HIGHLIGHT_SIZE{ 200 };
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
 
@@ -18,8 +18,29 @@ EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosit
 	m_movedToDestination(false),
 	m_movementPath(),
 	m_movementPathSize(0),
-	m_direction(eDirection::eNorth)
+	m_currentDirection(eDirection::eNorth),
+	m_weaponFired(false)
 {}
+
+eDirection EntityBattleProperties::getCurrentDirection() const
+{
+	return m_currentDirection;
+}
+
+bool EntityBattleProperties::isMovedToDestination() const
+{
+	return m_movedToDestination;
+}
+
+std::pair<int, int> EntityBattleProperties::getCurrentPosition() const
+{
+	return m_currentPosition;
+}
+
+bool EntityBattleProperties::isWeaponFired() const
+{
+	return m_weaponFired;
+}
 
 //MOVEMENT PATH NODE
 EntityBattleProperties::MovementPath::PathNode::PathNode()
@@ -31,8 +52,7 @@ EntityBattleProperties::MovementPath::PathNode::PathNode()
 //MOVEMENT PATH
 //
 EntityBattleProperties::MovementPath::MovementPath()
-	: m_movementPath()
-	
+	: m_movementPath()	
 {
 	m_movementPath.reserve(size_t(MOVEMENT_PATH_SIZE));
 	for (int i = 0; i < MOVEMENT_PATH_SIZE; ++i)
@@ -64,7 +84,7 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 
 	int bonusMove = 0;
 	int movementPointsUsed = 0;
-	int prevDir = source.m_entityOnTile->m_battleProperties.m_direction;
+	int prevDir = source.m_entityOnTile->m_battleProperties.m_currentDirection;
 	//Don't interact with path from source.
 	for (int i = 1; i < pathToTile.size(); ++i)
 	{
@@ -80,7 +100,6 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 		{
 			bonusMove = (int)source.m_entityOnTile->m_entityProperties.m_movementPoints * map.getWindStrength();
 			movementPointsUsed -= bonusMove;
-			std::cout << prevDir << "\n";
 		}
 
 		source.m_entityOnTile->m_battleProperties.m_movementPathSize = i;
@@ -92,7 +111,6 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
 				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
 			m_movementPath[i - 1].activate = true;
-
 		}
 		else
 		{
@@ -126,23 +144,17 @@ void EntityBattleProperties::generateMovementGraph(const Map & map, const Tile &
 	m_movementPath.generatePath(map, source, destination);
 }
 
-void EntityBattleProperties::generateWeaponArea(const Map & map, const Tile & source)
-{
-	m_weapon.generateTargetArea(map, source);
-}
-
 void EntityBattleProperties::clearMovementPath()
 {
 	m_movementPath.clearPath();
 }
 
-
-void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, int movementPointsAvailable)
+void EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 {
 	if (!m_movedToDestination)
 	{
 		auto pathToTile = PathFinding::getPathToTile(map, m_currentPosition, tile.m_tileCoordinate);
-		if (!pathToTile.empty() && pathToTile.size() <= movementPointsAvailable+1)
+		if (!pathToTile.empty() && pathToTile.size() <= m_movementPathSize + 1)
 		{
 			m_pathToTile = pathToTile;
 			map.moveEntity(m_currentPosition, pathToTile.back().second);
@@ -151,10 +163,33 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, int movement
 		else
 		{
 			clearMovementPath();
-			
-
 		}
 	}
+}
+
+void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int damageAmount)
+{
+	//TODO: To do.
+}
+
+void EntityBattleProperties::fireWeapon()
+{
+	m_weaponFired = true;
+}
+
+void EntityBattleProperties::onNewTurn()
+{
+	m_movedToDestination = false;
+	m_weaponFired = false;
+}
+
+void EntityBattleProperties::handleRotation(EntityProperties& entityProperties, const Map& map)
+{
+	int rotationAngle = 60;
+	int directionToTurn = m_pathToTile.front().first;
+	entityProperties.m_sprite->GetTransformComp().SetRotation(
+		DEGREES_TO_RADIANS(directionToTurn*rotationAngle % 360));
+	m_currentDirection = (eDirection)directionToTurn;
 }
 
 unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentDirection, int newDirection)
@@ -172,46 +207,39 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 //ENTITY
 EntityProperties::EntityProperties() 
 	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_ship)),
-	m_movementPoints(5),
-	m_healthMax(20),
-	m_currentHealth(20),
-	m_range(4),
-	m_damage(5)
-{
+	m_movementPoints(0),
+	m_healthMax(0),
+	m_currentHealth(0),
+	m_range(0),
+	m_damage(0)
+{}
 
-}
-
-BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map)
+BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map, PlayerName playerName)
 	: m_entityProperties(entityProperties),
-	m_battleProperties(startingPosition)
+	m_battleProperties(startingPosition),
+	m_playerName(playerName)
 {
 	map.insertEntity(*this);
 }
 
-void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProperties& entityProperties)
-{
+void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProperties& entityProperties, MoveCounter& moveCounter)
+{	
 	if (!m_pathToTile.empty())
 	{
 		m_movementTimer.update(deltaTime);
 		if (m_movementTimer.isExpired())
 		{
 			m_movementTimer.reset();
-
-			int directionToTurn = 0;
-			
-			int rotationAngle = 60;
 			m_currentPosition = m_pathToTile.front().second;
 			m_movementPath.eraseNode(m_currentPosition, map);
-			directionToTurn = m_pathToTile.front().first;
-			entityProperties.m_sprite->GetTransformComp().SetRotation(
-				DEGREES_TO_RADIANS(directionToTurn*rotationAngle % 360));
-			m_direction = (eDirection)directionToTurn;
 
+			handleRotation(entityProperties, map);
 			m_pathToTile.pop_front();
 
 			if (m_pathToTile.empty())
 			{
 				m_movedToDestination = true;
+				++moveCounter.m_counter;
 			}
 		}
 	}
@@ -219,74 +247,12 @@ void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProp
 
 void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, const Map & map)
 {
-	//Move entity sprite
+	//Set sprite position to current position
 	const std::pair<int, int> tileTransform = map.getTileScreenPos(m_currentPosition);
 	sprite->GetTransformComp().SetPosition({
 		static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
 		static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
 
-	//Render entity
 	sprite->Render(SCREEN_SURFACE);
 	m_movementPath.render();
-	m_weapon.render();
-}
-
-//
-//WEAPON
-//
-
-EntityBattleProperties::Weapon::HighlightNode::HighlightNode() //creating highlight node 
-	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),
-	activate(false)
-{}
-
-EntityBattleProperties::Weapon::Weapon() //populating vector with inactive nodes
-	: m_spriteTargetStorage()
-{
-	m_spriteTargetStorage.reserve(size_t(WEAPON_HIGHLIGHT_SIZE));
-	for (int i = 0; i < WEAPON_HIGHLIGHT_SIZE; ++i)
-	{
-		m_spriteTargetStorage.push_back({});
-	}
-}
-
-void EntityBattleProperties::Weapon::render() const
-{
-	for (const auto& i : m_spriteTargetStorage)
-	{
-		if (i.activate)
-		{
-			i.sprite->Render(SCREEN_SURFACE);
-		}
-	}
-}
-
-void EntityBattleProperties::Weapon::generateTargetArea(const Map &map, const Tile& source)
-{   //variable below stores the tile cones coming from the ship 
-	auto m_tempTargetArea = map.getTileCone(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range, source.m_entityOnTile->m_battleProperties.m_direction);
-	if (m_tempTargetArea.empty())
-	{
-		return;
-	}
-	clearGunArea();
-	assert(!m_spriteTargetStorage.empty());
-	//using same convention as movement // from source should be able to get position
-	for (int i = 0; i < m_tempTargetArea.size(); i++)
-	{
-		std::pair<int,int>tilePos = map.getTileScreenPos(m_tempTargetArea[i]->m_tileCoordinate);
-		m_spriteTargetStorage[i].sprite->GetTransformComp().SetPosition(
-		{
-		 tilePos.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),
-		 tilePos.second + DRAW_ENTITY_OFFSET_X * map.getDrawScale()
-		});
-		m_spriteTargetStorage[i].activate = true;
-	}
-}
-
-void EntityBattleProperties::Weapon::clearGunArea()
-{
-	for (auto& i : m_spriteTargetStorage)
-	{
-		i.activate = false;
-	}
 }

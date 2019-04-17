@@ -6,6 +6,16 @@
 #include <string>
 #include "Timer.h"
 #include "Global.h"
+#include "PlayerName.h"
+
+struct MoveCounter
+{
+	MoveCounter()
+		: m_counter(0)
+	{}
+
+	int m_counter;
+};
 
 struct Tile;
 struct Weapons;
@@ -22,26 +32,8 @@ struct EntityProperties
 	int m_damage;
 };
 
-struct EntityBattleProperties
+class EntityBattleProperties
 {
-	class Weapon
-	{
-		struct HighlightNode
-		{
-			HighlightNode();
-			std::unique_ptr<Sprite> sprite;
-			bool activate;
-		};
-
-	public:
-		Weapon();
-		void render() const;
-		void generateTargetArea(const Map& map, const Tile& source);
-	private:
-		std::vector<HighlightNode> m_spriteTargetStorage;
-		void clearGunArea();
-	};
-
 	class MovementPath
 	{
 		struct PathNode
@@ -63,38 +55,45 @@ struct EntityBattleProperties
 	private:
 		std::vector<PathNode> m_movementPath;
 		unsigned int getDirectionCost(int currentDirection, int newDirection);
-		
 	};
 
+public:
 	EntityBattleProperties(std::pair<int, int> startingPosition);
 
-	void update(float deltaTime, const Map& map, EntityProperties& entityProperties);
+	eDirection getCurrentDirection() const;
+	bool isMovedToDestination() const;
+	std::pair<int, int> getCurrentPosition() const;
+	bool isWeaponFired() const;
 
+	void update(float deltaTime, const Map& map, EntityProperties& entityProperties, MoveCounter& gameCounter);
 	void render(std::shared_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
 
 	void generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
-	void generateWeaponArea(const Map& map, const Tile& source);
 	void clearMovementPath();
 
-	void moveEntity(Map& map, const Tile& tile, int movementPointsAvailable);
+	void moveEntity(Map& map, const Tile& tile);
+	void takeDamage(EntityProperties& entityProperties, int damageAmount);
+	void fireWeapon();
+	void onNewTurn();
 
+private:
 	std::pair<int, int> m_currentPosition;
 	std::deque<std::pair<eDirection, std::pair<int, int>>> m_pathToTile;
 	Timer m_movementTimer;
-	bool m_movedToDestination;
 	MovementPath m_movementPath;
-	Weapon m_weapon;
 	int m_movementPathSize;
-	eDirection m_direction;
+	eDirection m_currentDirection;
+	bool m_weaponFired;
+	bool m_movedToDestination;
+
+	void handleRotation(EntityProperties& entityProperties, const Map& map);
 };
 
 struct BattleEntity
 {
-
-	BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map);
-
-
+	BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map, PlayerName playerName);
 
 	EntityProperties m_entityProperties;
 	EntityBattleProperties m_battleProperties;
+	const PlayerName m_playerName;
 };

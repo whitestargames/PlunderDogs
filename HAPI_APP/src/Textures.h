@@ -5,20 +5,6 @@
 #include <memory>
 #include "HAPIWrapper.h"
 
-//
-//Reasons for this change.
-//
-//Currently the data file is a singular megabyte in size
-//The simplest option for texture handling is to load all of the textures immediately even before the game starts.
-//Doing so allows all of the textures to be loaded in one place and not throughout the project which causes confusion.
-//It also allows for error checking to be handled within one location too. 
-
-//An example of when not to do this would be when all of your textures take up a large number of megabytes 
-//Whjen loading the texture - the data is stored on the GPU.
-//At the moment we're storing a megabyte on it. Nothing at all. 
-//If it was taking up say 500mb of GPU memory, then you'd change the textures to load on certain states.
-//Implementing that sort of functionality here would be a good example of over engineering
-//Thus making the code harder to understand 
 struct Textures
 {
 	static bool loadAllTextures()
@@ -85,6 +71,13 @@ struct Textures
 			HAPI_Sprites.UserMessage("Connot Load: 'ship.xml'", "Texture Error");
 			return false;
 		}
+		
+		m_spawnHex = HAPI_Wrapper::makeSpriteSheet("spawnHex.png");
+		if (!m_spawnHex)
+		{
+			HAPI_Sprites.UserMessage("Connot Load: 'spawnHex.png'", "Texture Error");
+			return false;
+		}
 
 		return true;
 	}
@@ -98,5 +91,6 @@ struct Textures
 	static std::shared_ptr<SpriteSheet> m_thing;
 	static std::shared_ptr<SpriteSheet> m_hexTiles;
 	static std::shared_ptr<SpriteSheet> m_ship;
+	static std::shared_ptr<SpriteSheet> m_spawnHex;
 
 };

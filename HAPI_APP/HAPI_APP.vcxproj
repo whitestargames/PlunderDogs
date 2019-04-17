@@ -201,6 +201,7 @@
     <ClInclude Include="src\OverWorld.h" />
     <ClInclude Include="src\OverWorldGUI.h" />
     <ClInclude Include="src\Pathfinding.h" />
+    <ClInclude Include="src\PlayerName.h" />
     <ClInclude Include="src\Textures.h" />
     <ClInclude Include="src\Timer.h" />
     <ClInclude Include="src\Utilities\Base64.h" />
