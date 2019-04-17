@@ -443,8 +443,21 @@ void BattleUI::TargetArea::render() const
 
 void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & source)
 {
-	m_targetArea = map.getTileCone(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range, 
-		source.m_entityOnTile->m_battleProperties.getCurrentDirection());
+	std::vector<const Tile*> m_tempTargetArea;
+	if (source.m_entityOnTile->m_entityProperties.m_weaponType == eSideCannons)
+	{
+		m_tempTargetArea = map.getTileCone(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range, source.m_entityOnTile->m_battleProperties.getCurrentDirection());
+	}
+
+	else if (source.m_entityOnTile->m_entityProperties.m_weaponType == eStraightShot)
+	{
+
+	}
+
+	else if (source.m_entityOnTile->m_entityProperties.m_weaponType == eStraightShotExplosive)
+	{
+	}
+	
 	if (m_targetArea.empty())
 	{
 		return;
