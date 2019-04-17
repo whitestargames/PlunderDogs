@@ -44,12 +44,22 @@ class BattleUI : public IHapiSpritesInputListener
 
 	class ShipPlacementPhase
 	{
+		struct CurrentSelectedEntity
+		{
+			CurrentSelectedEntity()
+				: m_currentSelectedEntity(nullptr),
+				m_position()
+			{}
+
+			EntityProperties* m_currentSelectedEntity;
+			std::pair<int, int> m_position;
+		};
 	public:
 		ShipPlacementPhase(std::vector<EntityProperties*>& player,
 			std::pair<int, int> spawnPosition, int range, const Map& map, PlayerName playerName);
 
 		bool isCompleted() const;
-		void render(const InvalidPosition& invalidPosition) const;
+		void render(const InvalidPosition& invalidPosition, const Map& map) const;
 
 		const Tile* getTileOnMouse(InvalidPosition& invalidPosition, const Tile* currentTileSelected, const Map& map);
 		void onLeftClick(const InvalidPosition& invalidPosition, const Tile* currectTileSelected, Battle& battle);
@@ -57,7 +67,8 @@ class BattleUI : public IHapiSpritesInputListener
 	private:
 		PlayerName m_playerName;
 		std::vector<EntityProperties*>& m_player;
-		EntityProperties* m_currentSelectedEntity;
+		CurrentSelectedEntity m_currentSelectedEntity;
+		//EntityProperties* m_currentSelectedEntity;
 		std::vector<const Tile*> m_spawnArea;
 		std::vector<std::unique_ptr<Sprite>> m_spawnSprites;
 	};

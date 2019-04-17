@@ -82,7 +82,7 @@ void BattleUI::render() const
 	case BattlePhase::ShipPlacement:
 	{
 		assert(!m_playerShipPlacement.empty());
-		m_playerShipPlacement.front()->render(m_invalidPosition);
+		m_playerShipPlacement.front()->render(m_invalidPosition, m_battle.getMap());
 		break;
 	}
 	case BattlePhase::Attack:
@@ -482,7 +482,7 @@ BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*>&
 	std::pair<int, int> spawnPosition, int range, const Map& map, PlayerName playerName)
 	: m_playerName(playerName),
 	m_player(player),
-	m_currentSelectedEntity(nullptr),
+	m_currentSelectedEntity(),
 	m_spawnArea(),
 	m_spawnSprites()
 {
@@ -502,7 +502,7 @@ BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*>&
 		(float)screenPosition.second + DRAW_OFFSET_Y * map.getDrawScale() });
 	}
 
-	m_currentSelectedEntity = m_player.back();
+	m_currentSelectedEntity.m_currentSelectedEntity = m_player.back();
 }
 
 bool BattleUI::ShipPlacementPhase::isCompleted() const
@@ -510,16 +510,22 @@ bool BattleUI::ShipPlacementPhase::isCompleted() const
 	return m_player.empty();
 }
 
-void BattleUI::ShipPlacementPhase::render(const InvalidPosition& invalidPosition) const
+void BattleUI::ShipPlacementPhase::render(const InvalidPosition& invalidPosition, const Map& map) const
 {
 	for (auto& i : m_spawnArea)
 	{
 		i->m_sprite->Render(SCREEN_SURFACE);
 	}
 
-	if (m_currentSelectedEntity && !invalidPosition.m_activate)
+	if (m_currentSelectedEntity.m_currentSelectedEntity && !invalidPosition.m_activate)
 	{
-		m_currentSelectedEntity->m_sprite->Render(SCREEN_SURFACE);
+		const std::pair<int, int> tileTransform = map.getTileScreenPos(m_currentSelectedEntity.m_position);
+
+		m_currentSelectedEntity.m_currentSelectedEntity->m_sprite->GetTransformComp().SetPosition({
+		static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
+		static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
+
+		m_currentSelectedEntity.m_currentSelectedEntity->m_sprite->Render(SCREEN_SURFACE);
 	}
 }
 
@@ -554,10 +560,14 @@ const Tile* BattleUI::ShipPlacementPhase::getTileOnMouse(InvalidPosition& invali
 		if (iter != m_spawnArea.cend())
 		{
 			const std::pair<int, int> tileTransform = map.getTileScreenPos(tileOnMouse->m_tileCoordinate);
-			m_currentSelectedEntity->m_sprite->GetTransformComp().SetPosition({
+			
+			m_currentSelectedEntity.m_currentSelectedEntity->m_sprite->GetTransformComp().SetPosition({
 				static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
 				static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
+			m_currentSelectedEntity.m_position = tileOnMouse->m_tileCoordinate;
+
 			invalidPosition.m_activate = false;
+			
 		}
 		else
 		{
@@ -573,7 +583,7 @@ void BattleUI::ShipPlacementPhase::onLeftClick(const InvalidPosition& invalidPos
 {
 	if (!invalidPosition.m_activate && currentTileSelected && !currentTileSelected->m_entityOnTile)
 	{
-		battle.insertEntity(currentTileSelected->m_tileCoordinate, *m_currentSelectedEntity, m_playerName);
+		battle.insertEntity(currentTileSelected->m_tileCoordinate, *m_currentSelectedEntity.m_currentSelectedEntity, m_playerName);
 
 		//Change ordering around to pop front with different container
 		m_player.pop_back();
@@ -583,6 +593,6 @@ void BattleUI::ShipPlacementPhase::onLeftClick(const InvalidPosition& invalidPos
 			return;
 		}
 
-		m_currentSelectedEntity = m_player.back();
+		m_currentSelectedEntity.m_currentSelectedEntity = m_player.back();
 	}
 }
