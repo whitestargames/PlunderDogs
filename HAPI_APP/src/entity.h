@@ -56,7 +56,7 @@ public:
 	std::pair<int, int> getCurrentPosition() const;
 	bool isWeaponFired() const;
 
-	void update(float deltaTime, const Map& map, EntityProperties& entityProperties, EntityCounter& entityCounter);
+	void update(float deltaTime, const Map& map, EntityProperties& entityProperties, bool& allEntitiesMoved);
 	void render(std::shared_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
 
 	void generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);

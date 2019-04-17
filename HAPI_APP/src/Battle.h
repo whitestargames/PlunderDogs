@@ -19,7 +19,7 @@ public:
 	Battle(std::vector<EntityProperties*>& player1, std::vector<EntityProperties*>& player2);
 
 	const Map& getMap() const;
-
+	
 	BattlePhase getCurrentPhase() const;
 	PlayerName getCurentPlayer() const;
 
@@ -39,6 +39,6 @@ private:
 	PlayerName m_currentPlayerTurn;
 	BattleUI m_battleUI;
 
-	void updateMovementPhase(std::vector<std::unique_ptr<BattleEntity>>& playerEntities, EntityCounter& entityCounter, float deltaTime);
+	void updateMovementPhase(std::vector<std::unique_ptr<BattleEntity>>& playerEntities, bool& allEntitiesMoved, float deltaTime);
 	void updateAttackPhase(std::vector<std::unique_ptr<BattleEntity>>& playerEntities, bool& allEntitiesAttacked);
 };

@@ -211,8 +211,17 @@ BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const EntityPro
 	map.insertEntity(*this);
 }
 
-void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProperties& entityProperties, EntityCounter& entityCounter)
+void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProperties& entityProperties, bool& allEntitiesMoved)
 {
+	if (m_movedToDestination && m_pathToTile.empty())
+	{
+		allEntitiesMoved = true;
+	}
+	else
+	{
+		allEntitiesMoved = false;
+	}
+
 	if (!m_pathToTile.empty())
 	{
 		m_movementTimer.update(deltaTime);
@@ -228,8 +237,6 @@ void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProp
 			if (m_pathToTile.empty())
 			{
 				m_movedToDestination = true;
-				entityCounter.m_counter += 1;
-				std::cout << entityCounter.m_counter << "\n";
 			}
 		}
 	}

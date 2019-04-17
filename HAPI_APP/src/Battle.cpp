@@ -38,9 +38,9 @@ void Battle::update(float deltaTime)
 	{
 		if (m_currentPlayerTurn == PlayerName::Player1)
 		{
-			EntityCounter entityCounter;
-			updateMovementPhase(m_player1Entities, entityCounter, deltaTime);
-			if (entityCounter.m_counter >= static_cast<int>(m_player1Entities.size() - 1))
+			bool allEntitiesMoved = true;
+			updateMovementPhase(m_player1Entities, allEntitiesMoved, deltaTime);
+			if (allEntitiesMoved)
 			{
 				for (auto& entity : m_player1Entities)
 				{
@@ -51,8 +51,8 @@ void Battle::update(float deltaTime)
 		}
 		else if(m_currentPlayerTurn == PlayerName::Player2)
 		{
-			EntityCounter entityCounter;
-			updateMovementPhase(m_player2Entities, entityCounter, deltaTime);
+			/*EntityCounter entityCounter;
+			updateMovementPhase(m_player2Entities, allEntitiesMove, deltaTime);
 			if (entityCounter.m_counter >= static_cast<int>(m_player2Entities.size()))
 			{
 				for (auto& entity : m_player2Entities)
@@ -60,7 +60,7 @@ void Battle::update(float deltaTime)
 					entity->m_battleProperties.m_movedToDestination = false;
 				}
 				nextTurn();
-			}
+			}*/
 		}
 	}
 	else if (m_currentPhase == BattlePhase::Attack)
@@ -174,11 +174,11 @@ void Battle::nextTurn()
 	}
 }
 
-void Battle::updateMovementPhase(std::vector<std::unique_ptr<BattleEntity>>& playerEntities, EntityCounter& entityCounter, float deltaTime)
+void Battle::updateMovementPhase(std::vector<std::unique_ptr<BattleEntity>>& playerEntities, bool& allEntitiesMoved, float deltaTime)
 {
 	for (auto& entity : playerEntities)
 	{
-		entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties, entityCounter);
+		entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties, allEntitiesMoved);
 	}
 }
 
