@@ -8,7 +8,7 @@ using namespace HAPISPACE;
 
 Battle::Battle(std::vector<EntityProperties*>& selectedEntities) :
 	m_entities(),
-	m_map(MapParser::parseMap("Level1.tmx")),
+	m_map(MapParser::parseMap("TropicalIslands.tmx")),
 	m_battleUI(*this, selectedEntities),
 	m_currentPhase(BattlePhase::ShipPlacement)
 {

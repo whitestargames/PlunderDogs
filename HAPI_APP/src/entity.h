@@ -10,16 +10,25 @@
 struct Tile;
 struct Weapons;
 class Map;
+
 struct EntityProperties
 {
+	enum class EntityType
+	{
+		eCruiser,
+		eBattleShip,
+		eDestroyer,
+		eGunBoat
+	};
 	EntityProperties();
-
+	EntityProperties(EntityType entityType);
 	std::shared_ptr<HAPISPACE::Sprite> m_sprite;
 	int m_movementPoints;
 	int m_healthMax;
 	int m_currentHealth;
 	int m_range;
 	int m_damage;
+	EntityType m_entityType;
 };
 
 struct EntityBattleProperties
