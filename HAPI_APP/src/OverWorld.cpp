@@ -56,6 +56,7 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 	}
 	if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
+		m_GUI.onRightClick(mouseData, m_players[m_currentPlayer])
 		if (m_currentFactionSelected == FactionName::Yellow)
 		{
 			m_GUI.onRightClick(mouseData, m_player1);
