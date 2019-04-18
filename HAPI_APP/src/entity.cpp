@@ -210,7 +210,11 @@ EntityProperties::EntityProperties(EntityType entityType)
 		m_range = 3;
 		m_damage = 2;
 <<<<<<< HEAD
+<<<<<<< HEAD
 		m_sprite->SetFrameNumber(eSpriteFrame::eNoDamageGreen);
+=======
+		m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_ship));
+>>>>>>> parent of 89d775f... multiple entity types
 =======
 		m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_ship));
 >>>>>>> parent of 89d775f... multiple entity types
@@ -222,7 +226,10 @@ EntityProperties::EntityProperties(EntityType entityType)
 		m_range = 2;
 		m_damage = 5;
 <<<<<<< HEAD
+<<<<<<< HEAD
 		m_sprite->SetFrameNumber(eSpriteFrame::eNoDamageBlue);
+=======
+>>>>>>> parent of 89d775f... multiple entity types
 =======
 >>>>>>> parent of 89d775f... multiple entity types
 		break;
@@ -233,7 +240,10 @@ EntityProperties::EntityProperties(EntityType entityType)
 		m_range = 3;
 		m_damage = 4;
 <<<<<<< HEAD
+<<<<<<< HEAD
 		m_sprite->SetFrameNumber(eSpriteFrame::eNoDamageRed);
+=======
+>>>>>>> parent of 89d775f... multiple entity types
 =======
 >>>>>>> parent of 89d775f... multiple entity types
 		break;
@@ -244,7 +254,10 @@ EntityProperties::EntityProperties(EntityType entityType)
 		m_range = 10;
 		m_damage = 6;
 <<<<<<< HEAD
+<<<<<<< HEAD
 		m_sprite->SetFrameNumber(eSpriteFrame::eNoDamageYellow);
+=======
+>>>>>>> parent of 89d775f... multiple entity types
 =======
 >>>>>>> parent of 89d775f... multiple entity types
 		break;

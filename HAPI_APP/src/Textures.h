@@ -80,9 +80,12 @@ struct Textures
 		}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 		m_ship = HAPI_Wrapper::loadSpriteSheet("shipSideCannon.xml");
 		if (!m_ship)
 =======
+=======
+>>>>>>> parent of 89d775f... multiple entity types
 		m_ship_red = HAPI_Wrapper::loadSpriteSheet("ship.xml");
 		if (!m_ship_red)
 >>>>>>> parent of 89d775f... multiple entity types
@@ -92,8 +95,11 @@ struct Textures
 		}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 		
 
+=======
+>>>>>>> parent of 89d775f... multiple entity types
 =======
 >>>>>>> parent of 89d775f... multiple entity types
 		return true;

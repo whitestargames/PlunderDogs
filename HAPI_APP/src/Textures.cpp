@@ -9,7 +9,11 @@ std::shared_ptr<SpriteSheet> Textures::m_preBattleUIBackButton;
 std::shared_ptr<SpriteSheet> Textures::m_thing;
 std::shared_ptr<SpriteSheet> Textures::m_hexTiles;
 <<<<<<< HEAD
+<<<<<<< HEAD
 std::shared_ptr<SpriteSheet> Textures::m_ship;
+=======
+std::shared_ptr<SpriteSheet> Textures::m_ship;
+>>>>>>> parent of 89d775f... multiple entity types
 =======
 std::shared_ptr<SpriteSheet> Textures::m_ship;
 >>>>>>> parent of 89d775f... multiple entity types
