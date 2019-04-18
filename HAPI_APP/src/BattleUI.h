@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "BattleGUI.h"
 #include "FactionName.h"
 #include <vector>

@@ -40,7 +40,7 @@ OverWorldGUI::OverWorldGUI(const Player& player1)
 	HAPI_Wrapper::setPosition(m_upgradesButton, { 1300, 25 });
 	//adding the windows and sliders, also populates the fleet window with all current entities
 	UI.AddWindow(FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 510, 710), fleetWindowSkinName);
-	for (int i = 0; i < player1.m_entities.size(); i++) TODO:
+	for (int i = 0; i < player1.m_entities.size(); i++)
 	{
 		UI.GetWindow(FLEET_WINDOW)->AddCanvas(ENTITY + std::to_string(i), calculateObjectWindowPosition(i), player1.m_entities[i].m_sprite);
 	}

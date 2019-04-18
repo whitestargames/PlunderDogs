@@ -61,7 +61,8 @@ void Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 	player.m_battleProperties.fireWeapon();
 
 	//Disallow attacking same team
-	if (tileOnAttackPosition.m_entityOnTile && tileOnAttackPosition.m_entityOnTile->m_factionName != m_currentFaction)
+	if (tileOnAttackPosition.m_entityOnTile && tileOnAttackPosition.m_entityOnTile->m_factionName != m_currentFaction
+			&& !tileOnAttackPosition.m_entityOnTile->m_battleProperties.isDead())
 	{
 		//Find entity 
 		auto tileCoordinate = tileOnAttackPosition.m_entityOnTile->m_battleProperties.getCurrentPosition();
@@ -70,7 +71,7 @@ void Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 		if (cIter != targetArea.cend())
 		{
 			auto& enemy = tileOnAttackPosition.m_entityOnTile;
-			enemy->m_battleProperties.takeDamage(enemy->m_entityProperties, player.m_entityProperties.m_damage);
+			enemy->m_battleProperties.takeDamage(enemy->m_entityProperties, player.m_entityProperties.m_damage, enemy->m_factionName);
 		}
 	}
 }
