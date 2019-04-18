@@ -464,3 +464,31 @@ std::vector<const Tile*> Map::getTileRadius(std::pair<int, int> coord, int range
 	}
 	return tileStore;
 }
+
+std::vector<Tile*> Map::getTileLine(
+	std::pair<int, int> coord, int range, eDirection direction)
+{
+	std::vector<Tile*> tileStore;
+	tileStore.reserve(range);
+	Tile* pushBackTile{ getTile(coord) };
+	for (int i = 0; i < range; i++)
+	{
+		pushBackTile = getAdjacentTiles(pushBackTile->m_tileCoordinate)[direction];
+		tileStore.emplace_back(pushBackTile);
+	}
+	return tileStore;
+}
+
+std::vector<const Tile*> Map::getTileLine(
+	std::pair<int, int> coord, int range, eDirection direction)const
+{
+	std::vector<const Tile*> tileStore;
+	tileStore.reserve(range);
+	const Tile* pushBackTile{ getTile(coord) };
+	for (int i = 0; i < range; i++)
+	{
+		pushBackTile = getAdjacentTiles(pushBackTile->m_tileCoordinate)[direction];
+		tileStore.emplace_back(pushBackTile);
+	}
+	return tileStore;
+}
