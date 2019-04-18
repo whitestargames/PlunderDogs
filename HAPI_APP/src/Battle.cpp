@@ -6,14 +6,20 @@
 
 using namespace HAPISPACE;
 
-Battle::Battle(std::vector<EntityProperties*>& player1, std::vector<EntityProperties*>& player2) 
-	: m_player1Entities(),
-	m_player2Entities(),
+Battle::Battle(std::vector<Player>& players) 
+	: m_players(),
 	m_map(MapParser::parseMap("Level1.tmx")),
 	m_currentPhase(BattlePhase::ShipPlacement),
 	m_currentFaction(FactionName::Yellow),
-	m_battleUI(*this, player1, player2)
-{}
+	m_battleUI(*this)
+{
+	for (auto& player : players)
+	{
+		m_players.emplace_back(player.m_factionName);
+	}
+
+	m_battleUI.startShipPlacement(players);
+}
 
 void Battle::render() const
 {

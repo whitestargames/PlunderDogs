@@ -127,14 +127,14 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 					return;
 				}
 
-				//TODO: Change at some point
-				if (!currentSelectedPlayer.m_selectedEntities.empty())
-				{
-					UI.CloseWindow(FLEET_WINDOW);
-					UI.CloseWindow(BATTLE_FLEET_WINDOW);
-					CURRENT_WINDOW = OverWorldWindow::eBattle;
-					startBattle = true;
-				}
+				////TODO: Change at some point
+				//if (!currentSelectedPlayer.m_selectedEntities.empty())
+				//{
+				//	UI.CloseWindow(FLEET_WINDOW);
+				//	UI.CloseWindow(BATTLE_FLEET_WINDOW);
+				//	CURRENT_WINDOW = OverWorldWindow::eBattle;
+				//	startBattle = true;
+				//}
 			}
 			else if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
 			{

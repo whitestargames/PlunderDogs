@@ -52,19 +52,30 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 {
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
-		m_GUI.onLeftClick(mouseData, m_players[m_currentPlayer], m_selectNextPlayer);		
-	}
-	if (mouseEvent == EMouseEvent::eRightButtonDown)
-	{
-		m_GUI.onRightClick(mouseData, m_players[m_currentPlayer])
-		if (m_currentFactionSelected == FactionName::Yellow)
+		bool selectNextPlayer = false;
+		m_GUI.onLeftClick(mouseData, m_players[m_currentPlayer], selectNextPlayer);
+		if (selectNextPlayer && m_currentPlayer < m_players.size() - 1)
 		{
-			m_GUI.onRightClick(mouseData, m_player1);
+			++m_currentPlayer;
+			m_GUI.reset(m_players[m_currentPlayer].m_entities);
 		}
 		else
 		{
-			m_GUI.onRightClick(mouseData, m_player2);
+			m_startBattle = true;
 		}
+		
+	}
+	if (mouseEvent == EMouseEvent::eRightButtonDown)
+	{
+		m_GUI.onRightClick(mouseData, m_players[m_currentPlayer]);
+		//if (m_currentFactionSelected == FactionName::Yellow)
+		//{
+		//	m_GUI.onRightClick(mouseData, m_player1);
+		//}
+		//else
+		//{
+		//	m_GUI.onRightClick(mouseData, m_player2);
+		//}
 	}
 }
 
@@ -72,11 +83,11 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData & mouseData)
 {
 	if (m_currentFactionSelected == FactionName::Yellow)
 	{
-		m_GUI.onMouseMove(mouseData, m_player1);
+		m_GUI.onMouseMove(mouseData, m_players[m_currentPlayer]);
 	}
 	else
 	{
-		m_GUI.onMouseMove(mouseData, m_player2);
+		m_GUI.onMouseMove(mouseData, m_players[m_currentPlayer]);
 	}
 }
 
@@ -87,13 +98,6 @@ void OverWorld::render()
 
 void OverWorld::update(float deltaTime)
 {
-	if (m_selectedNextPlayer)
-	{
-		assert(m_currentFactionSelected == FactionName::Yellow);
-		m_currentFactionSelected = FactionName::Blue;
-		m_selectedNextPlayer = false;
-	}
-
 	if (m_startBattle)
 	{
 		startBattle();
@@ -108,12 +112,6 @@ void OverWorld::update(float deltaTime)
 
 void OverWorld::startBattle()
 {
-	if (m_currentFactionSelected == FactionName::Yellow)
-	{
-		//m_GUI.reset(m_player2);
-		m_currentFactionSelected = FactionName::Blue;
-	}
-
 	if (m_startBattle)
 	{
 		OverWorldGUI::CURRENT_WINDOW = eBattle;

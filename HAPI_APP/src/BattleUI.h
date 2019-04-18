@@ -4,6 +4,7 @@
 #include "FactionName.h"
 #include <vector>
 
+struct 
 struct EntityProperties;
 struct Tile;
 class Battle;
@@ -83,7 +84,7 @@ class BattleUI : public IHapiSpritesInputListener
 	};
 
 public:
-	BattleUI(Battle& battle, std::vector<EntityProperties*>& player1, std::vector<EntityProperties*>& player2);
+	BattleUI(Battle& battles);
 
 	std::pair<int, int> getCameraPositionOffset() const;
 
@@ -92,6 +93,7 @@ public:
 	void update();
 	void newPhase();
 	void newTurn(FactionName playersTurn);
+	void startShipPlacement(std::vector<Player>& players);
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;

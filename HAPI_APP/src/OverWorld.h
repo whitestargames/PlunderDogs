@@ -10,15 +10,6 @@
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
 
-struct Player
-{
-	Player(FactionName name);
-
-	std::vector<EntityProperties> m_entities;
-	std::vector<EntityProperties*> m_selectedEntities;
-	const FactionName m_factionName;
-};
-
 class OverWorld : public IHapiSpritesInputListener
 {
 public:
@@ -27,7 +18,6 @@ public:
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
-	bool battleState = false;
 
 	void render();
 	void update(float deltaTime);
@@ -38,8 +28,6 @@ private:
 	int m_currentPlayer;
 	bool m_selectNextPlayer;
 	std::vector<Player> m_players;
-	//Player m_player1;
-	//Player m_player2;
 	OverWorldGUI m_GUI;
 	std::unique_ptr<Battle> m_battle;
 

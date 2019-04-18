@@ -373,3 +373,14 @@ void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, 
 
 	m_movementPath.render(map);
 }
+
+
+//BATTLE PLAYER
+BattlePlayer::BattlePlayer(FactionName name)
+	: m_entities(),
+	m_factionName(name)
+{}
+
+void BattlePlayer::addEntity(std::pair<int, int> startingPosition, const EntityProperties & entityProperties, FactionName playerName)
+{
+}
