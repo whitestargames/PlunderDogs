@@ -312,24 +312,42 @@ EntityProperties::EntityProperties(FactionName factionName)
 	switch (factionName)
 	{
 	case FactionName::Yellow :
-		m_movementPoints(0),
-			m_healthMax(0),
-			m_currentHealth(0),
-			m_range(0),
-			m_damage(0),
-			m_weaponType(eWeaponType::eSideCannons)
+		m_movementPoints = 10;
+		m_healthMax = 7;
+		m_currentHealth = 7;
+		m_range = 4;
+		m_damage = 2;
+		m_weaponType = eWeaponType::eSideCannons;
 		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthYellow);
 		m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 		break;
 	case FactionName::Blue :
+		m_movementPoints = 3;
+		m_healthMax = 10;
+		m_currentHealth = 10;
+		m_range = 3;
+		m_damage = 6;
+		m_weaponType = eWeaponType::eSideCannons;
 		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthBlue);
 		m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 		break;
 	case FactionName::Red :
+		m_movementPoints = 15;
+		m_healthMax = 7;
+		m_currentHealth = 7;
+		m_range = 2;
+		m_damage = 4;
+		m_weaponType = eWeaponType::eSideCannons;
 		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthRed);
 		m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 		break;
 	case FactionName::Green :
+		m_movementPoints = 3;
+		m_healthMax = 5;
+		m_currentHealth = 5;
+		m_range = 10;
+		m_damage = 8;
+		m_weaponType = eWeaponType::eSideCannons;
 		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthGreen);
 		m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 		break;
