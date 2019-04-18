@@ -170,6 +170,7 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 }
 
 //ENTITY
+<<<<<<< HEAD
 //EntityProperties::EntityProperties() 
 //	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_ship)),
 //	m_movementPoints(5),
@@ -183,6 +184,20 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 
 EntityProperties::EntityProperties(EntityType entityType) 
 	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_ship))
+=======
+EntityProperties::EntityProperties() 
+	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_ship)),
+	m_movementPoints(5),
+	m_healthMax(20),
+	m_currentHealth(20),
+	m_range(4),
+	m_damage(5)
+{
+
+}
+
+EntityProperties::EntityProperties(EntityType entityType)
+>>>>>>> parent of 89d775f... multiple entity types
 {
 	
 	m_entityType = entityType;
@@ -194,7 +209,11 @@ EntityProperties::EntityProperties(EntityType entityType)
 		m_currentHealth = 7;
 		m_range = 3;
 		m_damage = 2;
+<<<<<<< HEAD
 		m_sprite->SetFrameNumber(eSpriteFrame::eNoDamageGreen);
+=======
+		m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_ship));
+>>>>>>> parent of 89d775f... multiple entity types
 		break;
 	case EntityProperties::EntityType::eBattleShip:
 		m_movementPoints = 3;
@@ -202,7 +221,10 @@ EntityProperties::EntityProperties(EntityType entityType)
 		m_currentHealth = 10;
 		m_range = 2;
 		m_damage = 5;
+<<<<<<< HEAD
 		m_sprite->SetFrameNumber(eSpriteFrame::eNoDamageBlue);
+=======
+>>>>>>> parent of 89d775f... multiple entity types
 		break;
 	case EntityProperties::EntityType::eDestroyer:
 		m_movementPoints = 12;
@@ -210,7 +232,10 @@ EntityProperties::EntityProperties(EntityType entityType)
 		m_currentHealth = 5;
 		m_range = 3;
 		m_damage = 4;
+<<<<<<< HEAD
 		m_sprite->SetFrameNumber(eSpriteFrame::eNoDamageRed);
+=======
+>>>>>>> parent of 89d775f... multiple entity types
 		break;
 	case EntityProperties::EntityType::eGunBoat:
 		m_movementPoints = 3;
@@ -218,7 +243,10 @@ EntityProperties::EntityProperties(EntityType entityType)
 		m_currentHealth = 2;
 		m_range = 10;
 		m_damage = 6;
+<<<<<<< HEAD
 		m_sprite->SetFrameNumber(eSpriteFrame::eNoDamageYellow);
+=======
+>>>>>>> parent of 89d775f... multiple entity types
 		break;
 	default:
 		break;

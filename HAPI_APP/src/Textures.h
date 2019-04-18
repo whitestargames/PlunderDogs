@@ -79,15 +79,23 @@ struct Textures
 			return false;
 		}
 
+<<<<<<< HEAD
 		m_ship = HAPI_Wrapper::loadSpriteSheet("shipSideCannon.xml");
 		if (!m_ship)
+=======
+		m_ship_red = HAPI_Wrapper::loadSpriteSheet("ship.xml");
+		if (!m_ship_red)
+>>>>>>> parent of 89d775f... multiple entity types
 		{
 			HAPI_Sprites.UserMessage("Connot Load: 'shipSideCannon.xml'", "Texture Error");
 			return false;
 		}
 
+<<<<<<< HEAD
 		
 
+=======
+>>>>>>> parent of 89d775f... multiple entity types
 		return true;
 	}
 

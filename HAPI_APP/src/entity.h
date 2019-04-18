@@ -18,8 +18,7 @@ struct EntityProperties
 		eCruiser,
 		eBattleShip,
 		eDestroyer,
-		eGunBoat,
-		MAX = eGunBoat
+		eGunBoat
 	};
 	EntityProperties();
 	EntityProperties(EntityType entityType);
