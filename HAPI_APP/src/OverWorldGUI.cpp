@@ -97,7 +97,7 @@ void OverWorldGUI::render(std::unique_ptr<Battle>& battle)
 	}
 }
 
-void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer, bool& startBattle, bool& selectNextPlayer)
+void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer, bool& selectNextPlayer)
 {
 	switch (CURRENT_WINDOW)
 	{

@@ -32,6 +32,7 @@ Player::Player(FactionName name)
 OverWorld::OverWorld()
 	: m_totalPlayers(4),
 	m_currentPlayer(0),
+	m_selectNextPlayer(false),
 	m_players(),
 	m_GUI(),
 	m_battle(),
@@ -51,15 +52,7 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 {
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
-		if (m_currentFactionSelected == FactionName::Yellow)
-		{
-			m_GUI.onLeftClick(mouseData, m_player1, m_startBattle, m_selectedNextPlayer, m_player2);
-		}
-		else
-		{
-			m_GUI.onLeftClick(mouseData, m_player2, m_startBattle, m_selectedNextPlayer, m_player2);
-		}
-		
+		m_GUI.onLeftClick(mouseData, m_players[m_currentPlayer], m_selectNextPlayer);		
 	}
 	if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{

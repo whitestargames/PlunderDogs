@@ -36,6 +36,7 @@ public:
 private:
 	const int m_totalPlayers;
 	int m_currentPlayer;
+	bool m_selectNextPlayer;
 	std::vector<Player> m_players;
 	//Player m_player1;
 	//Player m_player2;
