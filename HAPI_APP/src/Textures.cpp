@@ -10,3 +10,4 @@ std::shared_ptr<SpriteSheet> Textures::m_thing;
 std::shared_ptr<SpriteSheet> Textures::m_hexTiles;
 std::shared_ptr<SpriteSheet> Textures::m_ship;
 std::shared_ptr<SpriteSheet> Textures::m_spawnHex;
+std::shared_ptr<SpriteSheet> Textures::m_selectedHex;
