@@ -147,24 +147,34 @@ void Battle::updateMovementPhase(float deltaTime)
 {
 	if (m_currentFaction == FactionName::Yellow)
 	{
+		int totalAliveEntities = 0;
 		for (auto& entity : m_player1Entities)
 		{
+			if (!entity->m_battleProperties.isDead())
+			{
+				++totalAliveEntities;
+			}
 			entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties, m_moveCounter);
 		}
 
-		if (m_moveCounter.m_counter >= static_cast<int>(m_player1Entities.size()))
+		if (m_moveCounter.m_counter >= totalAliveEntities)
 		{
 			nextTurn();
 		}
 	}
 	else if(m_currentFaction == FactionName::Blue)
 	{
+		int totalAliveEntities = 0;
 		for (auto& entity : m_player2Entities)
 		{
+			if (!entity->m_battleProperties.isDead())
+			{
+				++totalAliveEntities;
+			}
 			entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties, m_moveCounter);
 		}
 
-		if (m_moveCounter.m_counter >= static_cast<int>(m_player2Entities.size()))
+		if (m_moveCounter.m_counter >= totalAliveEntities)
 		{
 			nextTurn();
 		}
@@ -194,7 +204,7 @@ bool Battle::allEntitiesAttacked(std::vector<std::unique_ptr<BattleEntity>>& pla
 	bool allEntitiesAttacked = true;
 	for (const auto& entity : playerEntities)
 	{
-		if (!entity->m_battleProperties.isWeaponFired())
+		if (!entity->m_battleProperties.isDead() && !entity->m_battleProperties.isWeaponFired())
 		{
 			allEntitiesAttacked = false;
 		}

@@ -301,21 +301,22 @@ void BattleUI::onLeftClickMovementPhase()
 		return;
 	}
 
+	//Do not select killed entity
+	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_battleProperties.isDead())
+	{
+		m_selectedTile.m_tile = nullptr;
+		return;
+	}
+
 	//Clicking to where entity is moving to
 	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_battleProperties.isMovedToDestination())
 	{
 		m_selectedTile.m_tile = nullptr;
+		return;
 	}
 
 	if (m_selectedTile.m_tile)
 	{
-		//Do not select killed entity
-		if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_battleProperties.isDead())
-		{
-			m_selectedTile.m_tile = nullptr;
-			return;
-		}
-
 		//Cancel movement if clicked on same entity
 		if (m_selectedTile.m_tile->m_tileCoordinate == tileOnMouse->m_tileCoordinate)
 		{
@@ -381,8 +382,32 @@ void BattleUI::onLeftClickAttackPhase()
 		return;
 	}
 
-	//Entity already selected
-	//Fire weapon at position
+	//Do not fire on destroyed ship
+	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_battleProperties.isDead())
+	{
+		m_targetArea.clearTargetArea();
+		m_invalidPosition.m_activate = false;
+		m_selectedTile.m_tile = nullptr;
+		return;
+	}
+
+	//Do not click on entity that has been destroyed
+	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_battleProperties.isDead())
+	{
+		m_selectedTile.m_tile = nullptr;
+		return;
+	}
+
+	//Clicking on the same entity what has been previously selected
+	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_tileCoordinate == tileOnMouse->m_tileCoordinate)
+	{
+		m_targetArea.clearTargetArea();
+		m_invalidPosition.m_activate = false;
+		m_selectedTile.m_tile = nullptr;
+		return;
+	}
+
+	//Entity already selected Fire weapon at position
 	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile && !m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.isWeaponFired())
 	{
 		m_battle.fireEntityWeaponAtPosition(*m_selectedTile.m_tile->m_entityOnTile, *tileOnMouse, m_targetArea.m_targetArea);
@@ -668,7 +693,7 @@ BattleUI::CurrentSelectedTile::CurrentSelectedTile()
 
 void BattleUI::CurrentSelectedTile::render(const Map & map) const
 {
-	if (m_tile)
+	if (m_tile && (m_tile->m_type == eTileType::eSea || m_tile->m_type == eTileType::eOcean))
 	{
 		const std::pair<int, int> tileTransform = map.getTileScreenPos(m_tile->m_tileCoordinate);
 
