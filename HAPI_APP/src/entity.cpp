@@ -312,6 +312,12 @@ EntityProperties::EntityProperties(FactionName factionName)
 	switch (factionName)
 	{
 	case FactionName::Yellow :
+		m_movementPoints(0),
+			m_healthMax(0),
+			m_currentHealth(0),
+			m_range(0),
+			m_damage(0),
+			m_weaponType(eWeaponType::eSideCannons)
 		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthYellow);
 		m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 		break;
