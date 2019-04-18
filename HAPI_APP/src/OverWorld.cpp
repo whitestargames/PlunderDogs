@@ -3,6 +3,7 @@
 #include "HAPIWrapper.h"
 #include "Textures.h"
 
+
 //TODO: Will change
 std::vector<EntityProperties> assignEntities(FactionName name)
 {
@@ -22,16 +23,29 @@ std::vector<EntityProperties> assignEntities(FactionName name)
 	return entities;
 }
 
+Player::Player(FactionName name)
+	: m_entities(assignEntities(name)),
+	m_selectedEntities(),
+	m_factionName(name)
+{}
+
 OverWorld::OverWorld()
-	: m_selectedEntities(),
-	m_player1(assignEntities(FactionName::Yellow), FactionName::Yellow),
-	m_player2(assignEntities(FactionName::Blue), FactionName::Blue),
-	m_GUI(m_player1),
+	: m_totalPlayers(4),
+	m_currentPlayer(0),
+	m_players(),
+	m_GUI(),
 	m_battle(),
 	m_startBattle(false),
 	m_selectedNextPlayer(false),
 	m_currentFactionSelected(FactionName::Yellow)
-{}
+{
+	m_players.emplace_back(FactionName::Blue);
+	m_players.emplace_back(FactionName::Red);
+	m_players.emplace_back(FactionName::Green);
+	m_players.emplace_back(FactionName::Yellow);
+
+	m_GUI.reset(m_players[m_currentPlayer].m_entities);
+}
 
 void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
 {

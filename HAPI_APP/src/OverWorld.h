@@ -12,11 +12,7 @@ using namespace HAPISPACE;
 
 struct Player
 {
-	Player(std::vector<EntityProperties> entities, FactionName name)
-		: m_entities(entities),
-		m_selectedEntities(),
-		m_factionName(name)
-	{}
+	Player(FactionName name);
 
 	std::vector<EntityProperties> m_entities;
 	std::vector<EntityProperties*> m_selectedEntities;
@@ -38,9 +34,11 @@ public:
 	void startBattle();
 
 private:
-	std::vector<EntityProperties*> m_selectedEntities;
-	Player m_player1;
-	Player m_player2;
+	const int m_totalPlayers;
+	int m_currentPlayer;
+	std::vector<Player> m_players;
+	//Player m_player1;
+	//Player m_player2;
 	OverWorldGUI m_GUI;
 	std::unique_ptr<Battle> m_battle;
 

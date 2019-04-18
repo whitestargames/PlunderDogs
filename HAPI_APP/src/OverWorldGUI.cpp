@@ -10,7 +10,7 @@ constexpr int WINDOW_OBJECTHEIGHT = 150;
 constexpr int WINDOW_WIDTH = 830;
 constexpr int WINDOW_HEIGHT = 200;
 
-OverWorldGUI::OverWorldGUI(const Player& player1)
+OverWorldGUI::OverWorldGUI()
 	: m_battleMapBackground(std::make_unique<Sprite>(Textures::m_battleMapBackground)),
 	m_enemyTerritoryHexSheet(std::make_unique<Sprite>(Textures::m_enemyTerritoryHexSheet)),
 	m_prebattleUIBackground(std::make_unique<Sprite>(Textures::m_prebattleUIBackground)),
@@ -33,33 +33,7 @@ OverWorldGUI::OverWorldGUI(const Player& player1)
 	m_addMovementButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2)),
 	m_addDamageButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2)),
 	m_addRangeButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2))
-{
-	HAPI_Wrapper::setPosition(m_enemyTerritoryHexSheet, { 100, 600 });
-	HAPI_Wrapper::setPosition(m_playButton, { 1150, 722 });
-	HAPI_Wrapper::setPosition(m_backButton, { 185, 747 });
-	HAPI_Wrapper::setPosition(m_upgradesButton, { 1300, 25 });
-	//adding the windows and sliders, also populates the fleet window with all current entities
-	UI.AddWindow(FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 510, 710), fleetWindowSkinName);
-	for (int i = 0; i < player1.m_entities.size(); i++)
-	{
-		UI.GetWindow(FLEET_WINDOW)->AddCanvas(ENTITY + std::to_string(i), calculateObjectWindowPosition(i), player1.m_entities[i].m_sprite);
-	}
-	UI.GetWindow(FLEET_WINDOW)->AddSlider(FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
-	UI.AddWindow(BATTLE_FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 220, 420), fleetWindowSkinName);
-	UI.GetWindow(BATTLE_FLEET_WINDOW)->AddSlider(BATTLE_FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
-
-	//upgrade buttons positions
-	HAPI_Wrapper::setPosition(m_upgradesScreenBackground, { 185, 50 });
-	HAPI_Wrapper::setPosition(m_upgradeBackButton, { 1190, 785 });
-	HAPI_Wrapper::setPosition(m_removeHealthButton, { 625, 150 });//remove buttons
-	HAPI_Wrapper::setPosition(m_removeMovementButton, { 625, 280 });
-	HAPI_Wrapper::setPosition(m_removeDamageButton, { 625, 410 });
-	HAPI_Wrapper::setPosition(m_removeRangeButton, { 625, 540 });
-	HAPI_Wrapper::setPosition(m_addHealthButton, { 875, 150 });//add buttons
-	HAPI_Wrapper::setPosition(m_addMovementButton, { 875, 280 });
-	HAPI_Wrapper::setPosition(m_addDamageButton, { 875, 410 });
-	HAPI_Wrapper::setPosition(m_addRangeButton, { 875, 540 });
-}
+{}
 
 void OverWorldGUI::render(std::unique_ptr<Battle>& battle)
 {
@@ -123,7 +97,7 @@ void OverWorldGUI::render(std::unique_ptr<Battle>& battle)
 	}
 }
 
-void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer, bool& startBattle, bool& selectNextPlayer, Player& player2)
+void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer, bool& startBattle, bool& selectNextPlayer)
 {
 	switch (CURRENT_WINDOW)
 	{
@@ -141,17 +115,15 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			}
 			break;
 		}
+		//Play Button
 		case OverWorldWindow::ePreBattle:
 		{
 			if (HAPI_Wrapper::isTranslated(m_playButton, mouseData, 0))
 			{
-				if (!currentSelectedPlayer.m_selectedEntities.empty() && currentSelectedPlayer.m_factionName == FactionName::Yellow)
+				if (!currentSelectedPlayer.m_selectedEntities.empty())
 				{
 					CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
-					UI.DeleteWindow(FLEET_WINDOW);
-					UI.DeleteWindow(BATTLE_FLEET_WINDOW);
 					selectNextPlayer = true;
-					reset(player2);
 					return;
 				}
 
@@ -459,19 +431,49 @@ void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, Player& current
 	}
 }
 
-void OverWorldGUI::reset(Player& currentSelectedPlayer)
+void OverWorldGUI::reset(std::vector<EntityProperties>& playerEntities)
 {
 	UI.DeleteWindow(FLEET_WINDOW);
 	UI.DeleteWindow(BATTLE_FLEET_WINDOW);
 
+	HAPI_Wrapper::setPosition(m_enemyTerritoryHexSheet, { 100, 600 });
+	HAPI_Wrapper::setPosition(m_playButton, { 1150, 722 });
+	HAPI_Wrapper::setPosition(m_backButton, { 185, 747 });
+	HAPI_Wrapper::setPosition(m_upgradesButton, { 1300, 25 });
+	//adding the windows and sliders, also populates the fleet window with all current entities
 	UI.AddWindow(FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 510, 710), fleetWindowSkinName);
-	for (int i = 0; i < currentSelectedPlayer.m_entities.size(); i++) TODO:
+	for (int i = 0; i < playerEntities.size(); i++)
 	{
-		UI.GetWindow(FLEET_WINDOW)->AddCanvas(ENTITY + std::to_string(i), calculateObjectWindowPosition(i), currentSelectedPlayer.m_entities[i].m_sprite);
+		UI.GetWindow(FLEET_WINDOW)->AddCanvas(ENTITY + std::to_string(i), calculateObjectWindowPosition(i), playerEntities[i].m_sprite);
 	}
 	UI.GetWindow(FLEET_WINDOW)->AddSlider(FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
 	UI.AddWindow(BATTLE_FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 220, 420), fleetWindowSkinName);
 	UI.GetWindow(BATTLE_FLEET_WINDOW)->AddSlider(BATTLE_FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
+
+	//upgrade buttons positions
+	HAPI_Wrapper::setPosition(m_upgradesScreenBackground, { 185, 50 });
+	HAPI_Wrapper::setPosition(m_upgradeBackButton, { 1190, 785 });
+	HAPI_Wrapper::setPosition(m_removeHealthButton, { 625, 150 });//remove buttons
+	HAPI_Wrapper::setPosition(m_removeMovementButton, { 625, 280 });
+	HAPI_Wrapper::setPosition(m_removeDamageButton, { 625, 410 });
+	HAPI_Wrapper::setPosition(m_removeRangeButton, { 625, 540 });
+	HAPI_Wrapper::setPosition(m_addHealthButton, { 875, 150 });//add buttons
+	HAPI_Wrapper::setPosition(m_addMovementButton, { 875, 280 });
+	HAPI_Wrapper::setPosition(m_addDamageButton, { 875, 410 });
+	HAPI_Wrapper::setPosition(m_addRangeButton, { 875, 540 });
+
+
+	//UI.DeleteWindow(FLEET_WINDOW);
+	//UI.DeleteWindow(BATTLE_FLEET_WINDOW);
+
+	//UI.AddWindow(FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 510, 710), fleetWindowSkinName);
+	//for (int i = 0; i < currentSelectedPlayer.m_entities.size(); i++) TODO:
+	//{
+	//	UI.GetWindow(FLEET_WINDOW)->AddCanvas(ENTITY + std::to_string(i), calculateObjectWindowPosition(i), currentSelectedPlayer.m_entities[i].m_sprite);
+	//}
+	//UI.GetWindow(FLEET_WINDOW)->AddSlider(FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
+	//UI.AddWindow(BATTLE_FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 220, 420), fleetWindowSkinName);
+	//UI.GetWindow(BATTLE_FLEET_WINDOW)->AddSlider(BATTLE_FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
 }
 
 void OverWorldGUI::positionEntity(const std::string & windowName, const std::string& windowSliderName, const std::string& windowObjectName, int objectNumber, size_t vectorSize)

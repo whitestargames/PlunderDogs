@@ -61,13 +61,13 @@ private:
 
 public:
 	static OverWorldWindow CURRENT_WINDOW;
-	OverWorldGUI(const Player& player1);
+	OverWorldGUI();
 
-	void onLeftClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer, bool& startBattle, bool& selectNextPlayer, Player& player2);
+	void onLeftClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer, bool& startBattle, bool& selectNextPlayer);
 	void onRightClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer);
 	void onMouseMove(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer);
 
-	void reset(Player& currentSelectedPlayer);
+	void reset(std::vector<EntityProperties>& playerEntities);
 
 	void render(std::unique_ptr<Battle>& battle);
 };
