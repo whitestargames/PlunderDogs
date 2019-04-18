@@ -82,15 +82,13 @@ void Battle::insertEntity(std::pair<int, int> startingPosition, const EntityProp
 	switch (playerName)
 	{
 	case FactionName::Yellow :
-	{
 		m_player1Entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, playerName));
 		break;
-	}
+	
 	case FactionName::Blue:
-	{
 		m_player2Entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, playerName));
 		break;
-	}
+	
 	}
 }
 

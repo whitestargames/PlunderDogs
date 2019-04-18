@@ -71,6 +71,17 @@ class BattleUI : public IHapiSpritesInputListener
 		std::vector<std::unique_ptr<Sprite>> m_spawnSprites;
 	};
 
+	struct CurrentSelectedTile
+	{
+		CurrentSelectedTile();
+
+		void render(const Map& map) const;
+
+		std::unique_ptr<Sprite> m_sprite;
+		const Tile* m_tile;
+		std::pair<int, int> m_position;
+	};
+
 public:
 	BattleUI(Battle& battle, std::vector<EntityProperties*>& player1, std::vector<EntityProperties*>& player2);
 
@@ -88,7 +99,7 @@ public:
 
 private:
 	Battle& m_battle;
-	const Tile* m_currentTileSelected;
+	CurrentSelectedTile m_selectedTile;
 	//This stores the position at which the mouse event "eLeftMouseButtonDown" last occured while giving an entity a move command, its used to calculate what direction the mouse moved during that input.
 	std::pair<int, int> m_leftMouseDownPosition{ 0,0 };
 	//This is used to determine if an entity is currently being given a move command, it gets set to true in the "handleOnLeftClickMovementPhase()" and false after "eLeftMouseButtonUp" is detected.

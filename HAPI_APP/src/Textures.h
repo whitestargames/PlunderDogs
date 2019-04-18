@@ -79,6 +79,12 @@ struct Textures
 			return false;
 		}
 
+		m_selectedHex = HAPI_Wrapper::makeSpriteSheet("whiteHex75.png");
+		if (!m_selectedHex)
+		{
+			HAPI_Sprites.UserMessage("Connot Load: 'WhiteHex75.png'", "Texture Error");
+			return false;
+		}
 		return true;
 	}
 
@@ -92,5 +98,5 @@ struct Textures
 	static std::shared_ptr<SpriteSheet> m_hexTiles;
 	static std::shared_ptr<SpriteSheet> m_ship;
 	static std::shared_ptr<SpriteSheet> m_spawnHex;
-
+	static std::shared_ptr<SpriteSheet> m_selectedHex;
 };
