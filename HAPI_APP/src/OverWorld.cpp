@@ -51,16 +51,16 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 	{
 		bool selectNextPlayer = false;
 		m_GUI.onLeftClick(mouseData, m_players[m_currentPlayer], selectNextPlayer);
-		if (selectNextPlayer && m_currentPlayer <= m_players.size() - 1)
+		if (selectNextPlayer && m_currentPlayer <= static_cast<int>(m_players.size()) - 1)
 		{
 			++m_currentPlayer;
 
-			if (m_currentPlayer <= m_players.size() - 1)
+			if (m_currentPlayer <= static_cast<int>(m_players.size()) - 1)
 			{
 				m_GUI.reset(m_players[m_currentPlayer].m_entities);
 			}
 		}
-		if (m_currentPlayer == m_players.size())
+		if (m_currentPlayer == static_cast<int>(m_players.size()))
 		{
 			m_startBattle = true;
 			m_currentPlayer = 0;

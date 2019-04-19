@@ -124,7 +124,7 @@ void Battle::nextTurn()
 	{
 		++m_currentPlayersTurn;
 		
-		if (m_currentPlayersTurn == m_players.size())
+		if (m_currentPlayersTurn == static_cast<int>(m_players.size()))
 		{
 			m_currentPhase = BattlePhase::Movement;
 			m_currentPlayersTurn = 0;
