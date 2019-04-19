@@ -9,12 +9,8 @@ std::vector<EntityProperties> assignEntities(FactionName name)
 	std::vector<EntityProperties> entities;
 	for (int i = 0; i < 20; i++)
 	{
-		EntityProperties newEntity(name);
-		newEntity.m_movementPoints = 15;
-		newEntity.m_healthMax = 3;
-		newEntity.m_currentHealth = 3;
-		newEntity.m_range = i + 3;
-		newEntity.m_damage = 1;
+		EntityProperties newEntity(name, (EntityProperties::EntityType)(rand()%4));
+		
 
 		entities.push_back(newEntity);
 	}

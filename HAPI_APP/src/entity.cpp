@@ -186,83 +186,30 @@ void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int
 {
 	entityProperties.m_currentHealth -= damageAmount;
 	int currentHealth = entityProperties.m_currentHealth;
+	int maxHealth = entityProperties.m_healthMax;
 	auto& entitySprite = entityProperties.m_sprite;
-	switch (entityFaction)
+
+	if (currentHealth <= 0)
 	{
-	case FactionName::Blue :
-		if (currentHealth == 2)
-		{
-			entitySprite->SetFrameNumber(eShipSpriteFrame::eMediumHealthBlue);
-			entitySprite->GetTransformComp().SetOriginToCentreOfFrame(); 
-		}
-		else if (currentHealth == 1)
-		{
-			entitySprite->SetFrameNumber(eShipSpriteFrame::eLowHealthBlue);
-			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
-		}
-		else if (currentHealth <= 0)
-		{
-			entitySprite->SetFrameNumber(eShipSpriteFrame::eDeadBlue);
-			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
-			m_isDead = true;
-		}
-		
-		break;
-	case FactionName::Yellow :
-		if (currentHealth == 2)
-		{
-			entitySprite->SetFrameNumber(eShipSpriteFrame::eMediumHealthYellow);
-			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
-		}
-		else if (currentHealth == 1)
-		{
-			entitySprite->SetFrameNumber(eShipSpriteFrame::eLowHealthYellow);
-			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
-		}
-		else if (currentHealth <= 0)
-		{
-			entitySprite->SetFrameNumber(eShipSpriteFrame::eDeadYellow);
-			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
-			m_isDead = true;
-		}
-		break;
-	case FactionName::Red :
-		if (currentHealth == 2)
-		{
-			entitySprite->SetFrameNumber(eShipSpriteFrame::eMediumHealthRed);
-			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
-		}
-		else if (currentHealth == 1)
-		{
-			entitySprite->SetFrameNumber(eShipSpriteFrame::eLowHealthRed);
-			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
-		}
-		else if (currentHealth <= 0)
-		{
-			entitySprite->SetFrameNumber(eShipSpriteFrame::eDeadRed);
-			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
-			m_isDead = true;
-		}
-		break;
-	case FactionName::Green :
-		if (currentHealth == 2)
-		{
-			entitySprite->SetFrameNumber(eShipSpriteFrame::eMediumHealthGreen);
-			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
-		}
-		else if (currentHealth == 1)
-		{
-			entitySprite->SetFrameNumber(eShipSpriteFrame::eLowHealthGreen);
-			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
-		}
-		else if (currentHealth <= 0)
-		{
-			entitySprite->SetFrameNumber(eShipSpriteFrame::eDeadGreen);
-			entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
-			m_isDead = true;
-		}
-		break;
+		entitySprite->SetFrameNumber(eShipSpriteFrame::eDead);
+		entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
+		m_isDead = true;
+		return;
 	}
+
+	int healthPercentage = (currentHealth / maxHealth) * 100;
+	if (healthPercentage < 100 && healthPercentage > 50)
+	{
+		entitySprite->SetFrameNumber(eShipSpriteFrame::eLowDamage);
+		entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
+	}
+	else if (healthPercentage < 50)
+	{
+		entitySprite->SetFrameNumber(eShipSpriteFrame::eHighDamage);
+		entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
+	}
+	
+	
 }
 
 void EntityBattleProperties::fireWeapon()
@@ -309,84 +256,153 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 {
 	//TODO: Currently not working as intended
 	//UI seems to be resetting the frameNumber somewhere in OverWorldGUI. 
-	switch (factionName)
+	setEntityProperties(factionName, entityType);
+}
+
+void EntityProperties::setEntityProperties(FactionName factionName, EntityType entityType)
+{
+	switch (entityType)
 	{
-	case FactionName::Yellow :
-		m_movementPoints = 10;
+	case EntityProperties::EntityType::eCruiser:
+		m_movementPoints = 6;
 		m_healthMax = 7;
 		m_currentHealth = 7;
-		m_range = 4;
-		m_damage = 2;
-		m_weaponType = eWeaponType::eSideCannons;
+		m_range = 5;
+		m_damage = 3;
 
-		
-		m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 		break;
-	case FactionName::Blue :
-		switch (entityType)
-		{
-		case EntityProperties::EntityType::eCruiser:
-			break;
-		case EntityProperties::EntityType::eBattleShip:
-			break;
-		case EntityProperties::EntityType::eDestroyer:
-			break;
-		case EntityProperties::EntityType::eGunBoat:
-			break;
-		default:
-			break;
-		}
+	case EntityProperties::EntityType::eBattleShip:
 		m_movementPoints = 3;
 		m_healthMax = 10;
 		m_currentHealth = 10;
 		m_range = 3;
 		m_damage = 6;
-		m_weaponType = eWeaponType::eSideCannons;
 
-		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthBlue);
-		m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
-		break;
-	case FactionName::Red :
-		m_movementPoints = 15;
-		m_healthMax = 7;
-		m_currentHealth = 7;
-		m_range = 2;
-		m_damage = 4;
-		m_weaponType = eWeaponType::eSideCannons;
-
-		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthRed);
-		m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
-		break;
-	case FactionName::Green :
-		m_movementPoints = 3;
-		m_healthMax = 5;
-		m_currentHealth = 5;
-		m_range = 10;
-		m_damage = 8;
-		m_weaponType = eWeaponType::eSideCannons;
-
-		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthGreen);
-		m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
-		break;
-	}
-}
-
-void EntityProperties::setEntityProperties(EntityType entityType)
-{
-	switch (entityType)
-	{
-	case EntityProperties::EntityType::eCruiser:
-		break;
-	case EntityProperties::EntityType::eBattleShip:
 		break;
 	case EntityProperties::EntityType::eDestroyer:
+		m_movementPoints = 12;
+		m_healthMax = 5;
+		m_currentHealth = 5;
+		m_range = 2;
+		m_damage = 4;
+
 		break;
 	case EntityProperties::EntityType::eGunBoat:
+		m_movementPoints = 3;
+		m_healthMax = 3;
+		m_currentHealth = 3;
+		m_range = 15;
+		m_damage = 8;
+
 		break;
 	default:
 		break;
 	}
 
+	switch (factionName)
+	{
+	case FactionName::Yellow:
+		switch (entityType)
+		{
+		case EntityProperties::EntityType::eCruiser:
+
+			m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealth);
+
+			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_yellowShipSideCannons));
+			break;
+		case EntityProperties::EntityType::eBattleShip:
+
+			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_yellowShipBomb));
+			break;
+		case EntityProperties::EntityType::eDestroyer:
+
+			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_yellowShipMelee));
+			break;
+		case EntityProperties::EntityType::eGunBoat:
+
+			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_yellowShipSnipe));
+			break;
+		default:
+			break;
+		}
+
+		break;
+
+	case FactionName::Blue:
+		switch (entityType)
+		{
+		case EntityProperties::EntityType::eCruiser:
+
+			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_blueShipSideCannons));
+			break;
+		case EntityProperties::EntityType::eBattleShip:
+
+			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_blueShipBomb));
+			break;
+		case EntityProperties::EntityType::eDestroyer:
+
+			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_blueShipMelee));
+			break;
+		case EntityProperties::EntityType::eGunBoat:
+
+			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_blueShipSnipe));
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case FactionName::Red:
+		switch (entityType)
+		{
+		case EntityProperties::EntityType::eCruiser:
+
+			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_redShipSideCannons));
+			break;
+		case EntityProperties::EntityType::eBattleShip:
+
+			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_redShipBomb));
+			break;
+		case EntityProperties::EntityType::eDestroyer:
+
+			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_redShipMelee));
+			break;
+		case EntityProperties::EntityType::eGunBoat:
+
+			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_redShipSnipe));
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case FactionName::Green:
+		switch (entityType)
+		{
+		case EntityProperties::EntityType::eCruiser:
+
+			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_greenShipSideCannons));
+			break;
+		case EntityProperties::EntityType::eBattleShip:
+
+			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_greenShipBomb));
+			break;
+		case EntityProperties::EntityType::eDestroyer:
+
+			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_greenShipMelee));
+			break;
+		case EntityProperties::EntityType::eGunBoat:
+
+			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_blueShipSnipe));
+			break;
+		default:
+			break;
+		}
+		
+		break;
+	}
+	m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealth);
+	m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 }
 
 BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map, FactionName playerName)

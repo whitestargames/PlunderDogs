@@ -69,13 +69,13 @@ BattleUI::BattleUI(Battle & battle, std::vector<EntityProperties*>& player1, std
 	//TODO: Will change at some point
 	for (auto& i : player1)
 	{
-		i->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthYellow);//temp test
+		//i->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthYellow);//temp test
 		i->m_sprite->GetTransformComp().SetOriginToCentreOfFrame(); //.SetOrigin({ 13, 25 });
 		i->m_sprite->GetTransformComp().SetScaling({ 1,1 });
 	}
 	for (auto& i : player2)
 	{
-		i->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthBlue);//temp test
+		//i->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthBlue);//temp test
 		i->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();//.SetOrigin({ 13, 25 });
 		i->m_sprite->GetTransformComp().SetScaling({ 1,1 });
 	}

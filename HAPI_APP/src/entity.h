@@ -30,7 +30,7 @@ struct EntityProperties
 	};
 
 	EntityProperties(FactionName factionName, EntityType entityType);
-	void setEntityProperties(EntityType entityType);
+	void setEntityProperties(FactionName factionName, EntityType entityType);
 
 	std::shared_ptr<HAPISPACE::Sprite> m_sprite;
 	int m_movementPoints;
