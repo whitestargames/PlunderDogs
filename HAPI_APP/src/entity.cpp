@@ -393,7 +393,7 @@ void EntityProperties::setEntityProperties(FactionName factionName, EntityType e
 			break;
 		case EntityProperties::EntityType::eGunBoat:
 
-			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_blueShipSnipe));
+			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_greenShipSnipe));
 			break;
 		default:
 			break;
