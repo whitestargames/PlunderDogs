@@ -38,7 +38,6 @@ private:
 	int m_currentPlayersTurn;
 	Map m_map;
 	BattlePhase m_currentPhase;
-	FactionName m_currentFaction;
 	BattleUI m_battleUI;
 	MoveCounter m_moveCounter;
 

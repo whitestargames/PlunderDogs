@@ -120,7 +120,7 @@ void BattleUI::startShipPlacement(std::vector<std::pair<FactionName, std::vector
 	spawnPositions.emplace_back( 4, 11 );
 	spawnPositions.emplace_back( 22, 2 );
 	spawnPositions.emplace_back(1, 1);
-	spawnPositions.emplace_back(22, 10);
+	spawnPositions.emplace_back(15, 10);
 	const int spawnRange = 3;
 	assert(spawnPositions.size() <= players.size());
 

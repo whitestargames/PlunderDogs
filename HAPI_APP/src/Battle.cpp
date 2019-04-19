@@ -11,7 +11,6 @@ Battle::Battle(std::vector<std::pair<FactionName, std::vector<EntityProperties*>
 	m_currentPlayersTurn(0),
 	m_map(MapParser::parseMap("Level1.tmx")),
 	m_currentPhase(BattlePhase::ShipPlacement),
-	m_currentFaction(FactionName::Yellow),
 	m_battleUI(*this)
 {
 	for (auto& player : players)
@@ -52,6 +51,11 @@ void Battle::update(float deltaTime)
 	{
 		updateAttackPhase();
 	}
+
+	if (m_currentPlayersTurn == 4)
+	{
+		int i = 0;
+	}
 }
 
 void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
@@ -67,7 +71,7 @@ void Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 	player.m_battleProperties.fireWeapon();
 
 	//Disallow attacking same team
-	if (tileOnAttackPosition.m_entityOnTile && tileOnAttackPosition.m_entityOnTile->m_factionName != m_currentFaction
+	if (tileOnAttackPosition.m_entityOnTile && tileOnAttackPosition.m_entityOnTile->m_factionName != getCurentFaction()
 			&& !tileOnAttackPosition.m_entityOnTile->m_battleProperties.isDead())
 	{
 		//Find entity 
@@ -125,16 +129,15 @@ void Battle::nextTurn()
 	if (m_currentPhase == BattlePhase::ShipPlacement)
 	{
 		++m_currentPlayersTurn;
-		m_battleUI.newTurn(m_currentFaction);
+		
 		if (m_currentPlayersTurn == m_players.size())
 		{
 			m_currentPhase = BattlePhase::Movement;
 			m_currentPlayersTurn = 0;
-			
 			return;
 		}
+		m_battleUI.newTurn(getCurentFaction());
 	}
-
 
 	if (m_currentPhase == BattlePhase::Movement)
 	{
