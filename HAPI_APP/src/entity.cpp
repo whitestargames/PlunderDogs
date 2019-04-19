@@ -299,7 +299,7 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 
 //ENTITY
 EntityProperties::EntityProperties(FactionName factionName)
-	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_ship)),
+	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_yellowShipMelee)),
 	m_movementPoints(0),
 	m_healthMax(0),
 	m_currentHealth(0),

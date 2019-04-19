@@ -21,6 +21,11 @@ struct Weapons;
 class Map;
 struct EntityProperties
 {
+	enum class EntityType
+	{
+
+	};
+
 	EntityProperties(FactionName factionName);
 
 	std::shared_ptr<HAPISPACE::Sprite> m_sprite;

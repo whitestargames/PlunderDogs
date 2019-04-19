@@ -63,30 +63,10 @@ enum eTileType
 
 enum eShipSpriteFrame
 {
-	eDeadYellow = 0,
-	eDeadBlue,
-	eDeadGreen,
-	eDeadRed,
-	eDeadBlack,
-	eDeadWhite,
-	eLowHealthYellow,
-	eLowHealthBlue,
-	eLowHealthGreen,
-	eLowHealthRed,
-	eLowHealthBlack,
-	eLowHealthWhite,
-	eMediumHealthYellow,
-	eMediumHealthBlue,
-	eMediumHealthGreen,
-	eMediumHealthRed,
-	eMediumHealthBlack,
-	eMediumHealthWhite,
-	eMaxHealthYellow,
-	eMaxHealthBlue,
-	eMaxHealthGreen,
-	eMaxHealthRed,
-	eMaxHealthBlack,
-	eMaxHealthWhite
+	eMaxHealth = 0,
+	eLowDamage,
+	eHighDamage,
+	eDead
 };
 
 enum eWeaponType
