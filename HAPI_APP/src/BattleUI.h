@@ -1,7 +1,6 @@
 #pragma once
 
 #include "BattleGUI.h"
-#include "FactionName.h"
 #include "entity.h"
 #include <vector>
 

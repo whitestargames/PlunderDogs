@@ -1,11 +1,8 @@
 #pragma once
 
-#include <string>
-#include "Global.h"
 #include "Battle.h"
 #include "FactionName.h"
 #include "OverWorldGUI.h"
-#include <deque>
 
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;

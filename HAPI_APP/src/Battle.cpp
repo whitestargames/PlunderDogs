@@ -1,8 +1,5 @@
 #include "Battle.h"
 #include "Utilities/MapParser.h"
-#include "Utilities/Utilities.h"
-#include "HAPIWrapper.h"
-#include "Global.h"
 
 using namespace HAPISPACE;
 

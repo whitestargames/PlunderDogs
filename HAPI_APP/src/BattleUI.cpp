@@ -1,12 +1,7 @@
-#include "Global.h"
 #include "BattleUI.h"
-#include "HAPIWrapper.h"
 #include "Battle.h"
 #include "Pathfinding.h"
 #include "OverWorld.h"
-#include "OverWorldGUI.h"
-#include "Utilities/Utilities.h"
-#include "HAPIWrapper.h"
 #include "Textures.h"
 #include "MouseSelection.h"
 #include <assert.h>
