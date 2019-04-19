@@ -125,10 +125,41 @@ void BattleUI::startShipPlacement(std::vector<std::pair<FactionName, std::vector
 	const int spawnRange = 3;
 	assert(spawnPositions.size() <= players.size());
 
+	for (auto& player : players)
+	{
+		for (auto& entity : player.second)
+		{
+			switch (player.first)
+			{
+			case FactionName::Yellow:
+				entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthYellow);
+				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
+				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });
+				break;
+			case FactionName::Blue:
+				entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthBlue);
+				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
+				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });
+				break;
+			case FactionName::Red:
+				entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthRed);
+				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
+				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });
+				break;
+			case FactionName::Green:
+				entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthGreen);
+				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
+				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });
+				break;
+			}
+		}
+	}
+
 	for (int i = 0; i < players.size(); ++i)
 	{
 		m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>
 			(players[i].second, spawnPositions[i], spawnRange, m_battle.getMap(), players[i].first));
+		
 	}
 
 	////Hack to make sprites position correctly
