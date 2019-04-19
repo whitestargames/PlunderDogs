@@ -535,7 +535,7 @@ void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & sour
 		m_targetArea = map.getTileLine(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range, source.m_entityOnTile->m_battleProperties.getCurrentDirection());m_targetArea = map.getTileLine(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range, source.m_entityOnTile->m_battleProperties.getCurrentDirection());
 	}
 
-	else if (source.m_entityOnTile->m_entityProperties.m_weaponType == eStraightShotExplosive)
+	else if (source.m_entityOnTile->m_entityProperties.m_weaponType == eShotGun)
 	{
 		// make so where ever the place presses get radius called talk adrais about size of that
 		m_targetArea = map.getTileRadius(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range);
