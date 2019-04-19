@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <TextureAtlas imagePath="shipblueSide.png">
-	<SubTexture name="Frame0" x="7" y="3" width="29" height="49">
+	<SubTexture name="Frame0" x="7" y="3" width="35" height="49">
 		<Collider>
-			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="49" />
+			<Rectangle name="BoundingRect" type="0" left="0" right="35" top="0" bottom="49" />
 			<Circle name="BoundingCircle" type="0" radius="28.469282" y="24.000000" x="14.000000" />
 		</Collider>
 	</SubTexture>
