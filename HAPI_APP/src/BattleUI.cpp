@@ -14,6 +14,7 @@
 using namespace HAPISPACE;
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
+constexpr int SHIP_PLACEMENT_SPAWN_RANGE{ 3 };
 
 //
 //InvalidPositionSprite
@@ -116,13 +117,6 @@ void BattleUI::newTurn(FactionName playersTurn)
 void BattleUI::startShipPlacement(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players)
 {
 	assert(m_battle.getCurrentPhase() == BattlePhase::ShipPlacement);
-	std::vector<std::pair<int, int>> spawnPositions;
-	spawnPositions.emplace_back( 4, 11 );
-	spawnPositions.emplace_back( 22, 2 );
-	spawnPositions.emplace_back(1, 1);
-	spawnPositions.emplace_back(15, 10);
-	const int spawnRange = 3;
-	assert(spawnPositions.size() <= players.size());
 
 	//TODO: Change this at some point
 	for (auto& player : players)
@@ -155,11 +149,12 @@ void BattleUI::startShipPlacement(std::vector<std::pair<FactionName, std::vector
 		}
 	}
 
+	auto spawnPositions = m_battle.getMap().getSpawnPositions();
+	assert(spawnPositions.size() <= players.size());
 	for (int i = 0; i < players.size(); ++i)
 	{
 		m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>
-			(players[i].second, spawnPositions[i], spawnRange, m_battle.getMap(), players[i].first));
-		
+			(players[i].second, spawnPositions[i], SHIP_PLACEMENT_SPAWN_RANGE, m_battle.getMap(), players[i].first));
 	}
 }
 

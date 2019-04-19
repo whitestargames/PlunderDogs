@@ -103,7 +103,6 @@ void Battle::insertEntity(std::pair<int, int> startingPosition, const EntityProp
 	
 	case FactionName::Red :
 		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName));
-
 		break;
 	
 	case FactionName::Green :
