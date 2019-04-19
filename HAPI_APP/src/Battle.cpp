@@ -6,8 +6,17 @@
 
 using namespace HAPISPACE;
 
+//std::vector<BattlePlayer> m_players;
+//int m_currentPlayersTurn;
+//Map m_map;
+//BattlePhase m_currentPhase;
+//FactionName m_currentFaction;
+//BattleUI m_battleUI;
+//MoveCounter m_moveCounter;
+
 Battle::Battle(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players)
 	: m_players(),
+	m_currentPlayersTurn(0),
 	m_map(MapParser::parseMap("Level1.tmx")),
 	m_currentPhase(BattlePhase::ShipPlacement),
 	m_currentFaction(FactionName::Yellow),
@@ -142,18 +151,26 @@ void Battle::nextTurn()
 	//Handle ship placement phase
 	if (m_currentPhase == BattlePhase::ShipPlacement)
 	{
-		if (m_currentFaction == FactionName::Yellow)
-		{
-			m_currentFaction = FactionName::Blue;
-			m_battleUI.newTurn(m_currentFaction);
-		}
-		else if (m_currentFaction == FactionName::Blue)
+		++m_currentPlayersTurn;
+		m_battleUI.newTurn(m_currentFaction);
+		if (m_currentPlayersTurn == m_players.size())
 		{
 			m_currentPhase = BattlePhase::Movement;
-			m_currentFaction = FactionName::Yellow;
-			m_battleUI.newPhase();
+			m_currentPlayersTurn = 0;
+			
+			return;
 		}
-		return;
+		//if (m_currentFaction == FactionName::Yellow)
+		//{
+		//	m_currentFaction = FactionName::Blue;
+		//	m_battleUI.newTurn(m_currentFaction);
+		//}
+		//else if (m_currentFaction == FactionName::Blue)
+		//{
+		//	m_currentPhase = BattlePhase::Movement;
+		//	m_currentFaction = FactionName::Yellow;
+		//	m_battleUI.newPhase();
+		//}
 	}
 
 
@@ -311,5 +328,5 @@ BattlePhase Battle::getCurrentPhase() const
 
 FactionName Battle::getCurentFaction() const
 {
-	return m_currentFaction;
+	return m_players[m_currentPlayersTurn].m_factionName;
 }

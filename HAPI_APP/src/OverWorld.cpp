@@ -54,14 +54,21 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 	{
 		bool selectNextPlayer = false;
 		m_GUI.onLeftClick(mouseData, m_players[m_currentPlayer], selectNextPlayer);
-		if (selectNextPlayer && m_currentPlayer < m_players.size() - 1)
+		if (selectNextPlayer && m_currentPlayer <= m_players.size() - 1)
 		{
 			++m_currentPlayer;
-			m_GUI.reset(m_players[m_currentPlayer].m_entities);
+			std::cout << m_currentPlayer << "\n";
+
+			if (m_currentPlayer <= m_players.size() - 1)
+			{
+				m_GUI.reset(m_players[m_currentPlayer].m_entities);
+			}
 		}
-		else
+		if (m_currentPlayer == m_players.size())
 		{
 			m_startBattle = true;
+			m_currentPlayer = 0;
+			return;
 		}
 		
 	}
@@ -116,14 +123,15 @@ void OverWorld::startBattle()
 	{
 		OverWorldGUI::CURRENT_WINDOW = eBattle;
 		
-		std::vector<std::pair<FactionName, std::vector<EntityProperties*>&>> playersInBattle;
+		std::vector<std::pair<FactionName, std::vector<EntityProperties*>>> playersInBattle;
 		for (auto& player : m_players)
 		{
 			std::pair<FactionName, std::vector<EntityProperties*>> p;
 			p.first = player.m_factionName;
 			p.second = player.m_selectedEntities;
+			playersInBattle.push_back(p);
 		}
-
+		m_GUI.clear();
 		m_battle = std::make_unique<Battle>(playersInBattle);
 		
 		for (auto& player : m_players)

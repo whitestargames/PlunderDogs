@@ -68,6 +68,7 @@ public:
 	void onMouseMove(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer);
 
 	void reset(std::vector<EntityProperties>& playerEntities);
+	void clear();
 
 	void render(std::unique_ptr<Battle>& battle);
 };

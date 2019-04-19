@@ -60,7 +60,6 @@ void OverWorldGUI::render(std::unique_ptr<Battle>& battle)
 		case OverWorldWindow::eBattle:
 		{
 			assert(battle.get());
-			
 			battle->render();
 			break;
 		}
@@ -474,6 +473,12 @@ void OverWorldGUI::reset(std::vector<EntityProperties>& playerEntities)
 	//UI.GetWindow(FLEET_WINDOW)->AddSlider(FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
 	//UI.AddWindow(BATTLE_FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 220, 420), fleetWindowSkinName);
 	//UI.GetWindow(BATTLE_FLEET_WINDOW)->AddSlider(BATTLE_FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
+}
+
+void OverWorldGUI::clear()
+{
+	UI.DeleteWindow(FLEET_WINDOW);
+	UI.DeleteWindow(BATTLE_FLEET_WINDOW);
 }
 
 void OverWorldGUI::positionEntity(const std::string & windowName, const std::string& windowSliderName, const std::string& windowObjectName, int objectNumber, size_t vectorSize)

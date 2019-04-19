@@ -121,14 +121,14 @@ void BattleUI::startShipPlacement(std::vector<std::pair<FactionName, std::vector
 	spawnPositions.emplace_back( 4, 11 );
 	spawnPositions.emplace_back( 22, 2 );
 	spawnPositions.emplace_back(1, 1);
-	spawnPositions.emplace_back(22, 22);
+	spawnPositions.emplace_back(22, 10);
 	const int spawnRange = 3;
 	assert(spawnPositions.size() <= players.size());
 
 	for (int i = 0; i < players.size(); ++i)
 	{
 		m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>
-			(players[i].second, spawnPositions[i], 3, m_battle.getMap(), players[i].first));
+			(players[i].second, spawnPositions[i], spawnRange, m_battle.getMap(), players[i].first));
 	}
 
 	////Hack to make sprites position correctly
@@ -660,7 +660,6 @@ const Tile* BattleUI::ShipPlacementPhase::getTileOnMouse(InvalidPosition& invali
 			m_currentSelectedEntity.m_position = tileOnMouse->m_tileCoordinate;
 
 			invalidPosition.m_activate = false;
-			
 		}
 		else
 		{
@@ -676,7 +675,6 @@ void BattleUI::ShipPlacementPhase::onLeftClick(const InvalidPosition& invalidPos
 {
 	if (!invalidPosition.m_activate && currentTileSelected && !currentTileSelected->m_entityOnTile)
 	{
-
 		battle.insertEntity(currentTileSelected->m_tileCoordinate, *m_currentSelectedEntity.m_currentSelectedEntity, m_factionName);
 
 		//Change ordering around to pop front with different container
