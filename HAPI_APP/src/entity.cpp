@@ -318,6 +318,7 @@ EntityProperties::EntityProperties(FactionName factionName)
 		m_range = 4;
 		m_damage = 2;
 		m_weaponType = eWeaponType::eSideCannons;
+
 		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthYellow);
 		m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 		break;
@@ -328,6 +329,7 @@ EntityProperties::EntityProperties(FactionName factionName)
 		m_range = 3;
 		m_damage = 6;
 		m_weaponType = eWeaponType::eSideCannons;
+
 		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthBlue);
 		m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 		break;
@@ -338,6 +340,7 @@ EntityProperties::EntityProperties(FactionName factionName)
 		m_range = 2;
 		m_damage = 4;
 		m_weaponType = eWeaponType::eSideCannons;
+
 		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthRed);
 		m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 		break;
@@ -348,6 +351,7 @@ EntityProperties::EntityProperties(FactionName factionName)
 		m_range = 10;
 		m_damage = 8;
 		m_weaponType = eWeaponType::eSideCannons;
+
 		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthGreen);
 		m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 		break;

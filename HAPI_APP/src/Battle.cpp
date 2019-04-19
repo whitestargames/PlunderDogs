@@ -9,7 +9,7 @@ using namespace HAPISPACE;
 Battle::Battle(std::vector<EntityProperties*>& player1, std::vector<EntityProperties*>& player2) 
 	: m_player1Entities(),
 	m_player2Entities(),
-	m_map(MapParser::parseMap("Level1.tmx")),
+	m_map(MapParser::parseMap("TropicalIslands.tmx")),
 	m_currentPhase(BattlePhase::ShipPlacement),
 	m_currentFaction(FactionName::Yellow),
 	m_battleUI(*this, player1, player2)
