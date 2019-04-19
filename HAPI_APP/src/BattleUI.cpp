@@ -688,6 +688,13 @@ const Tile* BattleUI::ShipPlacementPhase::getTileOnMouse(InvalidPosition& invali
 
 void BattleUI::ShipPlacementPhase::onLeftClick(const InvalidPosition& invalidPosition, const Tile* currentTileSelected, Battle& battle)
 {
+	//(tile->m_type == eTileType::eSea ||
+	//	tile->m_type == eTileType::eOcean)
+	if (currentTileSelected->m_type != eTileType::eSea && currentTileSelected->m_type != eTileType::eOcean)
+	{
+		return;
+	}
+
 	if (!invalidPosition.m_activate && currentTileSelected && !currentTileSelected->m_entityOnTile)
 	{
 		battle.insertEntity(currentTileSelected->m_tileCoordinate, *m_currentSelectedEntity.m_currentSelectedEntity, m_factionName);
