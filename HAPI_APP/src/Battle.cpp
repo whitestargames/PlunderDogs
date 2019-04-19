@@ -6,7 +6,7 @@
 
 using namespace HAPISPACE;
 
-Battle::Battle(std::vector<Player>& players) 
+Battle::Battle(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players)
 	: m_players(),
 	m_map(MapParser::parseMap("Level1.tmx")),
 	m_currentPhase(BattlePhase::ShipPlacement),
@@ -15,7 +15,7 @@ Battle::Battle(std::vector<Player>& players)
 {
 	for (auto& player : players)
 	{
-		m_players.emplace_back(player.m_factionName);
+		m_players.emplace_back(player.first);
 	}
 
 	m_battleUI.startShipPlacement(players);
@@ -26,15 +26,22 @@ void Battle::render() const
 	m_map.drawMap();
 	
 	m_battleUI.renderUI();
-	for (const auto& entity : m_player1Entities)
-	{
-		entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
-	}
 
-	for (const auto& entity : m_player2Entities)
+	for (auto& player : m_players)
 	{
-		entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
+		for (auto& entity : player.m_entities)
+		{
+			entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
+		}
 	}
+	//for (const auto& entity : m_player1Entities)
+	//{
+	//	entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
+	//}
+	//for (const auto& entity : m_player2Entities)
+	//{
+	//	entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
+	//}
 
 	m_battleUI.renderGUI();
 }
@@ -82,19 +89,40 @@ void Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 	}
 }
 
-void Battle::insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, FactionName playerName)
+void Battle::insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, FactionName factionName)
 {
 	assert(m_currentPhase == BattlePhase::ShipPlacement);
-	switch (playerName)
+
+	auto& player = getPlayer(factionName);
+	switch (factionName)
 	{
 	case FactionName::Yellow :
-		m_player1Entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, playerName));
+		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName));
+		player.m_entities.back()->m_entityProperties.m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthYellow);
+		player.m_entities.back()->m_entityProperties.m_sprite->GetTransformComp().SetOriginToCentreOfFrame(); //.SetOrigin({ 13, 25 });
+		player.m_entities.back()->m_entityProperties.m_sprite->GetTransformComp().SetScaling({ 1,1 });
 		break;
-	
+
 	case FactionName::Blue:
-		m_player2Entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, playerName));
+		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName));
+		player.m_entities.back()->m_entityProperties.m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthBlue);
+		player.m_entities.back()->m_entityProperties.m_sprite->GetTransformComp().SetOriginToCentreOfFrame(); //.SetOrigin({ 13, 25 });
+		player.m_entities.back()->m_entityProperties.m_sprite->GetTransformComp().SetScaling({ 1,1 });
 		break;
 	
+	case FactionName::Red :
+		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName));
+		player.m_entities.back()->m_entityProperties.m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthRed);
+		player.m_entities.back()->m_entityProperties.m_sprite->GetTransformComp().SetOriginToCentreOfFrame(); //.SetOrigin({ 13, 25 });
+		player.m_entities.back()->m_entityProperties.m_sprite->GetTransformComp().SetScaling({ 1,1 });
+		break;
+	
+	case FactionName::Green :
+		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName));
+		player.m_entities.back()->m_entityProperties.m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthGreen);
+		player.m_entities.back()->m_entityProperties.m_sprite->GetTransformComp().SetOriginToCentreOfFrame(); //.SetOrigin({ 13, 25 });
+		player.m_entities.back()->m_entityProperties.m_sprite->GetTransformComp().SetScaling({ 1,1 });
+		break;
 	}
 }
 
@@ -102,15 +130,16 @@ void Battle::nextTurn()
 {
 	m_moveCounter.m_counter = 0;
 
-	for (auto& entity : m_player1Entities)
+	//Notify all players new turn has started
+	for (auto& player : m_players)
 	{
-		entity->m_battleProperties.onNewTurn();
-	}
-	for (auto& entity : m_player2Entities)
-	{
-		entity->m_battleProperties.onNewTurn();
+		for (auto& entity : player.m_entities)
+		{
+			entity->m_battleProperties.onNewTurn();
+		}
 	}
 
+	//Handle ship placement phase
 	if (m_currentPhase == BattlePhase::ShipPlacement)
 	{
 		if (m_currentFaction == FactionName::Yellow)
@@ -127,82 +156,126 @@ void Battle::nextTurn()
 		return;
 	}
 
-	//Player 1
-	if (m_currentFaction == FactionName::Yellow && m_currentPhase == BattlePhase::Movement)
+
+	if (m_currentPhase == BattlePhase::Movement)
 	{
 		m_currentPhase = BattlePhase::Attack;
 	}
-	else if (m_currentFaction == FactionName::Yellow && m_currentPhase == BattlePhase::Attack)
+	else if (m_currentPhase == BattlePhase::Attack)
 	{
-		m_currentFaction = FactionName::Blue;
 		m_currentPhase = BattlePhase::Movement;
+		++m_currentPlayersTurn;
 	}
-	//Player 2
-	else if (m_currentFaction == FactionName::Blue && m_currentPhase == BattlePhase::Movement)
+
+	if (m_currentPlayersTurn == m_players.size())
 	{
-		m_currentPhase = BattlePhase::Attack;
+		m_currentPlayersTurn = 0;
 	}
-	else if (m_currentFaction == FactionName::Blue && m_currentPhase == BattlePhase::Attack)
-	{
-		m_currentFaction = FactionName::Yellow;
-		m_currentPhase = BattlePhase::Movement;
-	}
+
+	////Player 1
+	//if (m_currentFaction == FactionName::Yellow && m_currentPhase == BattlePhase::Movement)
+	//{
+	//	m_currentPhase = BattlePhase::Attack;
+	//}
+	//else if (m_currentFaction == FactionName::Yellow && m_currentPhase == BattlePhase::Attack)
+	//{
+	//	m_currentFaction = FactionName::Blue;
+	//	m_currentPhase = BattlePhase::Movement;
+	//}
+	////Player 2
+	//else if (m_currentFaction == FactionName::Blue && m_currentPhase == BattlePhase::Movement)
+	//{
+	//	m_currentPhase = BattlePhase::Attack;
+	//}
+	//else if (m_currentFaction == FactionName::Blue && m_currentPhase == BattlePhase::Attack)
+	//{
+	//	m_currentFaction = FactionName::Yellow;
+	//	m_currentPhase = BattlePhase::Movement;
+	//}
 }
 
 void Battle::updateMovementPhase(float deltaTime)
 {
-	if (m_currentFaction == FactionName::Yellow)
+	int totalAliveEntities = 0;
+	for (auto& entity : m_players[m_currentPlayersTurn].m_entities)
 	{
-		int totalAliveEntities = 0;
-		for (auto& entity : m_player1Entities)
+		if (!entity->m_battleProperties.isDead())
 		{
-			if (!entity->m_battleProperties.isDead())
-			{
-				++totalAliveEntities;
-			}
-			entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties, m_moveCounter);
+			++totalAliveEntities;
 		}
-
-		if (m_moveCounter.m_counter >= totalAliveEntities)
-		{
-			nextTurn();
-		}
+		entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties, m_moveCounter);
 	}
-	else if(m_currentFaction == FactionName::Blue)
+
+	if (m_moveCounter.m_counter >= totalAliveEntities)
 	{
-		int totalAliveEntities = 0;
-		for (auto& entity : m_player2Entities)
-		{
-			if (!entity->m_battleProperties.isDead())
-			{
-				++totalAliveEntities;
-			}
-			entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties, m_moveCounter);
-		}
-
-		if (m_moveCounter.m_counter >= totalAliveEntities)
-		{
-			nextTurn();
-		}
+		nextTurn();
 	}
+
+
+	//for (auto& player : m_players)
+	//{
+	//	for (auto& entity : player.m_entities)
+	//	{
+
+	//	}
+	//}
+
+	//if (m_currentFaction == FactionName::Yellow)
+	//{
+	//	int totalAliveEntities = 0;
+	//	for (auto& entity : m_player1Entities)
+	//	{
+	//		if (!entity->m_battleProperties.isDead())
+	//		{
+	//			++totalAliveEntities;
+	//		}
+	//		entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties, m_moveCounter);
+	//	}
+
+	//	if (m_moveCounter.m_counter >= totalAliveEntities)
+	//	{
+	//		nextTurn();
+	//	}
+	//}
+	//else if(m_currentFaction == FactionName::Blue)
+	//{
+	//	int totalAliveEntities = 0;
+	//	for (auto& entity : m_player2Entities)
+	//	{
+	//		if (!entity->m_battleProperties.isDead())
+	//		{
+	//			++totalAliveEntities;
+	//		}
+	//		entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties, m_moveCounter);
+	//	}
+
+	//	if (m_moveCounter.m_counter >= totalAliveEntities)
+	//	{
+	//		nextTurn();
+	//	}
+	//}
 }
 
 void Battle::updateAttackPhase()
 {
-	if (m_currentFaction == FactionName::Yellow)
+	if (allEntitiesAttacked(m_players[m_currentPlayersTurn].m_entities))
 	{
-		if (allEntitiesAttacked(m_player1Entities))
-		{
-			nextTurn();
-		}
+		nextTurn();
 	}
-	else if (m_currentFaction == FactionName::Blue)
-	{
-		if (allEntitiesAttacked(m_player2Entities))
-		{
-			nextTurn();
-		}
-	}
+	//if (m_currentFaction == FactionName::Yellow)
+	//{
+	//	if (allEntitiesAttacked(m_player1Entities))
+	//	{
+	//		nextTurn();
+	//	}
+	//}
+	//else if (m_currentFaction == FactionName::Blue)
+	//{
+	//	if (allEntitiesAttacked(m_player2Entities))
+	//	{
+	//		nextTurn();
+	//	}
+	//}
 }
 
 bool Battle::allEntitiesAttacked(std::vector<std::unique_ptr<BattleEntity>>& playerEntities) const
@@ -217,6 +290,13 @@ bool Battle::allEntitiesAttacked(std::vector<std::unique_ptr<BattleEntity>>& pla
 	}
 
 	return allEntitiesAttacked;
+}
+
+BattlePlayer & Battle::getPlayer(FactionName factionName)
+{
+	auto cIter = std::find_if(m_players.begin(), m_players.end(), [factionName](const auto& player) { return factionName == player.m_factionName; });
+	assert(cIter != m_players.end());
+	return *cIter;
 }
 
 const Map & Battle::getMap() const

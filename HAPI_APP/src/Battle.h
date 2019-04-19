@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Map.h"
-#include "entity.h"
 #include "BattleUI.h"
 #include "FactionName.h"
 
@@ -17,7 +16,7 @@ struct MoveCounter;
 class Battle
 {
 public:
-	Battle(std::vector<Player>& players);
+	Battle(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players);
 
 	const Map& getMap() const;
 	
@@ -31,11 +30,12 @@ public:
 
 	void fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea);
 
-	void insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, FactionName playerName);
+	void insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, FactionName factionName);
 	void nextTurn();
 
 private:
 	std::vector<BattlePlayer> m_players;
+	int m_currentPlayersTurn;
 	Map m_map;
 	BattlePhase m_currentPhase;
 	FactionName m_currentFaction;
@@ -45,4 +45,5 @@ private:
 	void updateMovementPhase(float deltaTime);
 	void updateAttackPhase();
 	bool allEntitiesAttacked(std::vector<std::unique_ptr<BattleEntity>>& playerEntities) const;
+	BattlePlayer& getPlayer(FactionName factionName);
 };

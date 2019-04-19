@@ -7,8 +7,6 @@
 #include "Global.h"
 #include "FactionName.h"
 
-
-
 struct MoveCounter
 {
 	MoveCounter()
@@ -113,14 +111,10 @@ struct Player
 	const FactionName m_factionName;
 };
 
-class BattlePlayer
+struct BattlePlayer
 {
-public:
 	BattlePlayer(FactionName name);
 
-	void addEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, FactionName playerName);
-
-private:
 	std::vector<std::unique_ptr<BattleEntity>> m_entities;
 	const FactionName m_factionName;
 };

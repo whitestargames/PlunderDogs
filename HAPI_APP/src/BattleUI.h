@@ -2,9 +2,9 @@
 
 #include "BattleGUI.h"
 #include "FactionName.h"
+#include "entity.h"
 #include <vector>
 
-struct 
 struct EntityProperties;
 struct Tile;
 class Battle;
@@ -55,7 +55,7 @@ class BattleUI : public IHapiSpritesInputListener
 			std::pair<int, int> m_position;
 		};
 	public:
-		ShipPlacementPhase(std::vector<EntityProperties*>& player,
+		ShipPlacementPhase(std::vector<EntityProperties*> player,
 			std::pair<int, int> spawnPosition, int range, const Map& map, FactionName factionName);
 
 		bool isCompleted() const;
@@ -66,7 +66,7 @@ class BattleUI : public IHapiSpritesInputListener
 
 	private:
 		FactionName m_factionName;
-		std::vector<EntityProperties*>& m_player;
+		std::vector<EntityProperties*> m_player;
 		CurrentSelectedEntity m_currentSelectedEntity;
 		std::vector<const Tile*> m_spawnArea;
 		std::vector<std::unique_ptr<Sprite>> m_spawnSprites;
@@ -93,7 +93,7 @@ public:
 	void update();
 	void newPhase();
 	void newTurn(FactionName playersTurn);
-	void startShipPlacement(std::vector<Player>& players);
+	void startShipPlacement(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players);
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;

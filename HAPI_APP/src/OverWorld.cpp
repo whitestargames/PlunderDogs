@@ -116,7 +116,21 @@ void OverWorld::startBattle()
 	{
 		OverWorldGUI::CURRENT_WINDOW = eBattle;
 		
-		m_battle = std::make_unique<Battle>(m_player1.m_selectedEntities, m_player2.m_selectedEntities);
+		std::vector<std::pair<FactionName, std::vector<EntityProperties*>&>> playersInBattle;
+		for (auto& player : m_players)
+		{
+			std::pair<FactionName, std::vector<EntityProperties*>> p;
+			p.first = player.m_factionName;
+			p.second = player.m_selectedEntities;
+		}
+
+		m_battle = std::make_unique<Battle>(playersInBattle);
+		
+		for (auto& player : m_players)
+		{
+			player.m_selectedEntities.clear();
+		}
+
 		m_startBattle = false;
 	}
 }
