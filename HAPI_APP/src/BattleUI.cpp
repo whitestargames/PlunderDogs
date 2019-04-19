@@ -80,7 +80,6 @@ void BattleUI::renderUI() const
 		break;
 	}
 
-	//m_selectedTile.render(m_battle.getMap());
 	m_invalidPosition.render(m_battle.getMap());
 }
 
@@ -125,6 +124,7 @@ void BattleUI::startShipPlacement(std::vector<std::pair<FactionName, std::vector
 	const int spawnRange = 3;
 	assert(spawnPositions.size() <= players.size());
 
+	//TODO: Change this at some point
 	for (auto& player : players)
 	{
 		for (auto& entity : player.second)
@@ -161,22 +161,6 @@ void BattleUI::startShipPlacement(std::vector<std::pair<FactionName, std::vector
 			(players[i].second, spawnPositions[i], spawnRange, m_battle.getMap(), players[i].first));
 		
 	}
-
-	////Hack to make sprites position correctly
-	////TODO: Will change at some point
-	//for (auto& i : player1)
-	//{
-	//	i->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthYellow);//temp test
-	//	i->m_sprite->GetTransformComp().SetOriginToCentreOfFrame(); //.SetOrigin({ 13, 25 });
-	//	i->m_sprite->GetTransformComp().SetScaling({ 1,1 });
-	//}
-	//for (auto& i : player2)
-	//{
-	//	i->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthBlue);//temp test
-	//	i->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();//.SetOrigin({ 13, 25 });
-	//	i->m_sprite->GetTransformComp().SetScaling({ 1,1 });
-	//}
-	//m_playerShipPlacement
 }
 
 void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)

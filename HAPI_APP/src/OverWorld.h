@@ -24,17 +24,10 @@ public:
 	void startBattle();
 
 private:
-	const int m_totalPlayers;
 	int m_currentPlayer;
 	bool m_selectNextPlayer;
 	std::vector<Player> m_players;
 	OverWorldGUI m_GUI;
 	std::unique_ptr<Battle> m_battle;
-
-	//Temporary - will change functionality in next few days
-	//14/04/19
 	bool m_startBattle;
-	bool m_selectedNextPlayer;
-
-	FactionName m_currentFactionSelected;
 };

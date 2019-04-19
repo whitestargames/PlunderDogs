@@ -30,15 +30,12 @@ Player::Player(FactionName name)
 {}
 
 OverWorld::OverWorld()
-	: m_totalPlayers(4),
-	m_currentPlayer(0),
+	: m_currentPlayer(0),
 	m_selectNextPlayer(false),
 	m_players(),
 	m_GUI(),
 	m_battle(),
-	m_startBattle(false),
-	m_selectedNextPlayer(false),
-	m_currentFactionSelected(FactionName::Yellow)
+	m_startBattle(false)
 {
 	m_players.emplace_back(FactionName::Blue);
 	m_players.emplace_back(FactionName::Red);
@@ -57,7 +54,6 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 		if (selectNextPlayer && m_currentPlayer <= m_players.size() - 1)
 		{
 			++m_currentPlayer;
-			std::cout << m_currentPlayer << "\n";
 
 			if (m_currentPlayer <= m_players.size() - 1)
 			{
@@ -75,27 +71,12 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 	if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
 		m_GUI.onRightClick(mouseData, m_players[m_currentPlayer]);
-		//if (m_currentFactionSelected == FactionName::Yellow)
-		//{
-		//	m_GUI.onRightClick(mouseData, m_player1);
-		//}
-		//else
-		//{
-		//	m_GUI.onRightClick(mouseData, m_player2);
-		//}
 	}
 }
 
 void OverWorld::OnMouseMove(const HAPI_TMouseData & mouseData)
 {
-	if (m_currentFactionSelected == FactionName::Yellow)
-	{
-		m_GUI.onMouseMove(mouseData, m_players[m_currentPlayer]);
-	}
-	else
-	{
-		m_GUI.onMouseMove(mouseData, m_players[m_currentPlayer]);
-	}
+	m_GUI.onMouseMove(mouseData, m_players[m_currentPlayer]);
 }
 
 void OverWorld::render()
