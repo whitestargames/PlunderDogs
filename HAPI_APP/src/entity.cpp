@@ -298,7 +298,7 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 }
 
 //ENTITY
-EntityProperties::EntityProperties(FactionName factionName)
+EntityProperties::EntityProperties(FactionName factionName, EntityType entityType)
 	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_yellowShipMelee)),
 	m_movementPoints(0),
 	m_healthMax(0),
@@ -319,10 +319,23 @@ EntityProperties::EntityProperties(FactionName factionName)
 		m_damage = 2;
 		m_weaponType = eWeaponType::eSideCannons;
 
-		m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthYellow);
+		
 		m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 		break;
 	case FactionName::Blue :
+		switch (entityType)
+		{
+		case EntityProperties::EntityType::eCruiser:
+			break;
+		case EntityProperties::EntityType::eBattleShip:
+			break;
+		case EntityProperties::EntityType::eDestroyer:
+			break;
+		case EntityProperties::EntityType::eGunBoat:
+			break;
+		default:
+			break;
+		}
 		m_movementPoints = 3;
 		m_healthMax = 10;
 		m_currentHealth = 10;
@@ -356,6 +369,24 @@ EntityProperties::EntityProperties(FactionName factionName)
 		m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 		break;
 	}
+}
+
+void EntityProperties::setEntityProperties(EntityType entityType)
+{
+	switch (entityType)
+	{
+	case EntityProperties::EntityType::eCruiser:
+		break;
+	case EntityProperties::EntityType::eBattleShip:
+		break;
+	case EntityProperties::EntityType::eDestroyer:
+		break;
+	case EntityProperties::EntityType::eGunBoat:
+		break;
+	default:
+		break;
+	}
+
 }
 
 BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map, FactionName playerName)

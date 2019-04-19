@@ -23,10 +23,14 @@ struct EntityProperties
 {
 	enum class EntityType
 	{
-
+		eCruiser,
+		eBattleShip,
+		eDestroyer,
+		eGunBoat
 	};
 
-	EntityProperties(FactionName factionName);
+	EntityProperties(FactionName factionName, EntityType entityType);
+	void setEntityProperties(EntityType entityType);
 
 	std::shared_ptr<HAPISPACE::Sprite> m_sprite;
 	int m_movementPoints;
