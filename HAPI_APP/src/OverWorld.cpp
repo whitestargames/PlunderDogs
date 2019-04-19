@@ -1,7 +1,6 @@
 #include  "Overworld.h"
-#include "Utilities/Utilities.h"
-#include "HAPIWrapper.h"
 #include "Textures.h"
+
 
 //TODO: Will change
 std::vector<EntityProperties> assignEntities(FactionName name)
@@ -18,54 +17,60 @@ std::vector<EntityProperties> assignEntities(FactionName name)
 	return entities;
 }
 
-OverWorld::OverWorld()
-	: m_selectedEntities(),
-	m_player1(assignEntities(FactionName::Yellow), FactionName::Yellow),
-	m_player2(assignEntities(FactionName::Blue), FactionName::Blue),
-	m_GUI(m_player1),
-	m_battle(),
-	m_startBattle(false),
-	m_selectedNextPlayer(false),
-	m_currentFactionSelected(FactionName::Yellow)
+Player::Player(FactionName name)
+	: m_entities(assignEntities(name)),
+	m_selectedEntities(),
+	m_factionName(name)
 {}
+
+OverWorld::OverWorld()
+	: m_currentPlayer(0),
+	m_selectNextPlayer(false),
+	m_players(),
+	m_GUI(),
+	m_battle(),
+	m_startBattle(false)
+{
+	m_players.emplace_back(FactionName::Blue);
+	m_players.emplace_back(FactionName::Red);
+	m_players.emplace_back(FactionName::Green);
+	m_players.emplace_back(FactionName::Yellow);
+
+	m_GUI.reset(m_players[m_currentPlayer].m_entities);
+}
 
 void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
 {
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
-		if (m_currentFactionSelected == FactionName::Yellow)
+		bool selectNextPlayer = false;
+		m_GUI.onLeftClick(mouseData, m_players[m_currentPlayer], selectNextPlayer);
+		if (selectNextPlayer && m_currentPlayer <= static_cast<int>(m_players.size()) - 1)
 		{
-			m_GUI.onLeftClick(mouseData, m_player1, m_startBattle, m_selectedNextPlayer, m_player2);
+			++m_currentPlayer;
+
+			if (m_currentPlayer <= static_cast<int>(m_players.size()) - 1)
+			{
+				m_GUI.reset(m_players[m_currentPlayer].m_entities);
+			}
 		}
-		else
+		if (m_currentPlayer == static_cast<int>(m_players.size()))
 		{
-			m_GUI.onLeftClick(mouseData, m_player2, m_startBattle, m_selectedNextPlayer, m_player2);
+			m_startBattle = true;
+			m_currentPlayer = 0;
+			return;
 		}
 		
 	}
 	if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
-		if (m_currentFactionSelected == FactionName::Yellow)
-		{
-			m_GUI.onRightClick(mouseData, m_player1);
-		}
-		else
-		{
-			m_GUI.onRightClick(mouseData, m_player2);
-		}
+		m_GUI.onRightClick(mouseData, m_players[m_currentPlayer]);
 	}
 }
 
 void OverWorld::OnMouseMove(const HAPI_TMouseData & mouseData)
 {
-	if (m_currentFactionSelected == FactionName::Yellow)
-	{
-		m_GUI.onMouseMove(mouseData, m_player1);
-	}
-	else
-	{
-		m_GUI.onMouseMove(mouseData, m_player2);
-	}
+	m_GUI.onMouseMove(mouseData, m_players[m_currentPlayer]);
 }
 
 void OverWorld::render()
@@ -75,13 +80,6 @@ void OverWorld::render()
 
 void OverWorld::update(float deltaTime)
 {
-	if (m_selectedNextPlayer)
-	{
-		assert(m_currentFactionSelected == FactionName::Yellow);
-		m_currentFactionSelected = FactionName::Blue;
-		m_selectedNextPlayer = false;
-	}
-
 	if (m_startBattle)
 	{
 		startBattle();
@@ -96,17 +94,26 @@ void OverWorld::update(float deltaTime)
 
 void OverWorld::startBattle()
 {
-	if (m_currentFactionSelected == FactionName::Yellow)
-	{
-		//m_GUI.reset(m_player2);
-		m_currentFactionSelected = FactionName::Blue;
-	}
-
 	if (m_startBattle)
 	{
 		OverWorldGUI::CURRENT_WINDOW = eBattle;
 		
-		m_battle = std::make_unique<Battle>(m_player1.m_selectedEntities, m_player2.m_selectedEntities);
+		std::vector<std::pair<FactionName, std::vector<EntityProperties*>>> playersInBattle;
+		for (auto& player : m_players)
+		{
+			std::pair<FactionName, std::vector<EntityProperties*>> p;
+			p.first = player.m_factionName;
+			p.second = player.m_selectedEntities;
+			playersInBattle.push_back(p);
+		}
+		m_GUI.clear();
+		m_battle = std::make_unique<Battle>(playersInBattle);
+		
+		for (auto& player : m_players)
+		{
+			player.m_selectedEntities.clear();
+		}
+
 		m_startBattle = false;
 	}
 }

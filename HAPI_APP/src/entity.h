@@ -110,3 +110,20 @@ struct BattleEntity
 	//TODO: Might change location of this value
 	const FactionName m_factionName;
 };
+
+struct Player
+{
+	Player(FactionName name);
+
+	std::vector<EntityProperties> m_entities;
+	std::vector<EntityProperties*> m_selectedEntities;
+	const FactionName m_factionName;
+};
+
+struct BattlePlayer
+{
+	BattlePlayer(FactionName name);
+
+	std::vector<std::unique_ptr<BattleEntity>> m_entities;
+	const FactionName m_factionName;
+};

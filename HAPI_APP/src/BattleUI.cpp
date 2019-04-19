@@ -1,12 +1,7 @@
-#include "Global.h"
 #include "BattleUI.h"
-#include "HAPIWrapper.h"
 #include "Battle.h"
 #include "Pathfinding.h"
 #include "OverWorld.h"
-#include "OverWorldGUI.h"
-#include "Utilities/Utilities.h"
-#include "HAPIWrapper.h"
 #include "Textures.h"
 #include "MouseSelection.h"
 #include <assert.h>
@@ -14,6 +9,7 @@
 using namespace HAPISPACE;
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
+constexpr int SHIP_PLACEMENT_SPAWN_RANGE{ 3 };
 
 //
 //InvalidPositionSprite
@@ -49,37 +45,12 @@ void BattleUI::InvalidPosition::setPosition(std::pair<int, int> screenPosition, 
 //
 //BattleUI
 //
-BattleUI::BattleUI(Battle & battle, std::vector<EntityProperties*>& player1, std::vector<EntityProperties*>& player2)
+BattleUI::BattleUI(Battle & battle)
 	: m_battle(battle),
 	m_gui({ battle.getMap().getDimensions().first * 28 - 150, battle.getMap().getDimensions().second * 32 - 150}),
 	m_selectedTile(),
 	m_invalidPosition()
-{
-
-	assert(m_battle.getCurrentPhase() == BattlePhase::ShipPlacement);
-	//Player Spawn Positions
-	//TODO: Get them parsed with map instead of hardcoded
-	std::pair<int, int> player1SpawnPos{ 4, 11 };
-	m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>(player1, player1SpawnPos, 4, m_battle.getMap(), FactionName::Yellow));
-	std::pair<int, int> player2SpawnPos{ 22, 2 };
-	m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>(player2, player2SpawnPos, 4, m_battle.getMap(), FactionName::Blue));
-
-	
-	//Hack to make sprites position correctly
-	//TODO: Will change at some point
-	for (auto& i : player1)
-	{
-		//i->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthYellow);//temp test
-		i->m_sprite->GetTransformComp().SetOriginToCentreOfFrame(); //.SetOrigin({ 13, 25 });
-		i->m_sprite->GetTransformComp().SetScaling({ 1,1 });
-	}
-	for (auto& i : player2)
-	{
-		//i->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthBlue);//temp test
-		i->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();//.SetOrigin({ 13, 25 });
-		i->m_sprite->GetTransformComp().SetScaling({ 1,1 });
-	}
-}
+{}
 
 std::pair<int, int> BattleUI::getCameraPositionOffset() const
 {
@@ -105,7 +76,6 @@ void BattleUI::renderUI() const
 		break;
 	}
 
-	//m_selectedTile.render(m_battle.getMap());
 	m_invalidPosition.render(m_battle.getMap());
 }
 
@@ -136,6 +106,50 @@ void BattleUI::newTurn(FactionName playersTurn)
 				break;
 			}
 		}
+	}
+}
+
+void BattleUI::startShipPlacement(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players)
+{
+	assert(m_battle.getCurrentPhase() == BattlePhase::ShipPlacement);
+
+	//TODO: Change this at some point
+	for (auto& player : players)
+	{
+		for (auto& entity : player.second)
+		{
+			switch (player.first)
+			{
+			case FactionName::Yellow:
+				entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthYellow);
+				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
+				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });
+				break;
+			case FactionName::Blue:
+				entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthBlue);
+				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
+				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });
+				break;
+			case FactionName::Red:
+				entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthRed);
+				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
+				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });
+				break;
+			case FactionName::Green:
+				entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthGreen);
+				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
+				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });
+				break;
+			}
+		}
+	}
+
+	auto spawnPositions = m_battle.getMap().getSpawnPositions();
+	assert(spawnPositions.size() == players.size());
+	for (int i = 0; i < players.size(); ++i)
+	{
+		m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>
+			(players[i].second, spawnPositions[i], SHIP_PLACEMENT_SPAWN_RANGE, m_battle.getMap(), players[i].first));
 	}
 }
 
@@ -562,7 +576,7 @@ BattleUI::TargetArea::HighlightNode::HighlightNode()
 	sprite->GetTransformComp().SetOriginToCentreOfFrame();
 }
 
-BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*>& player, 
+BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*> player, 
 	std::pair<int, int> spawnPosition, int range, const Map& map, FactionName factionName)
 	: m_factionName(factionName),
 	m_player(player),
@@ -651,7 +665,6 @@ const Tile* BattleUI::ShipPlacementPhase::getTileOnMouse(InvalidPosition& invali
 			m_currentSelectedEntity.m_position = tileOnMouse->m_tileCoordinate;
 
 			invalidPosition.m_activate = false;
-			
 		}
 		else
 		{
@@ -665,7 +678,18 @@ const Tile* BattleUI::ShipPlacementPhase::getTileOnMouse(InvalidPosition& invali
 
 void BattleUI::ShipPlacementPhase::onLeftClick(const InvalidPosition& invalidPosition, const Tile* currentTileSelected, Battle& battle)
 {
-	if (!invalidPosition.m_activate && currentTileSelected && !currentTileSelected->m_entityOnTile)
+	if (!currentTileSelected)
+	{
+		return;
+	}
+
+	//Disallow spawning on land
+	if (currentTileSelected->m_type != eTileType::eSea && currentTileSelected->m_type != eTileType::eOcean)
+	{
+		return;
+	}
+
+	if (!invalidPosition.m_activate && !currentTileSelected->m_entityOnTile)
 	{
 		battle.insertEntity(currentTileSelected->m_tileCoordinate, *m_currentSelectedEntity.m_currentSelectedEntity, m_factionName);
 

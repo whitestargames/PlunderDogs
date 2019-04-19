@@ -63,7 +63,7 @@ private:
 	float m_drawScale;
 	std::pair<int, int> m_drawOffset;
 	std::vector<Tile> m_data;
-
+	std::vector<std::pair<int, int>> m_spawnPositions;
 
 	std::pair<int, int> offsetToCube(std::pair<int, int> offset) const;
 	std::pair<int, int> cubeToOffset(std::pair<int, int> cube) const;
@@ -89,6 +89,8 @@ public:
 	//Will be nullptr if it accesses an invalid tile
 	std::vector<Tile*> getTileLine(std::pair<int, int> coord, int range, eDirection direction);
 	std::vector<const Tile*> getTileLine(std::pair<int, int> coord, int range, eDirection direction)const;
+
+	std::vector<std::pair<int, int>> getSpawnPositions() const;
 
 	//For finding the location on the screen a given tile is being drawn
 	std::pair<int, int> getTileScreenPos(std::pair<int, int> coord) const;

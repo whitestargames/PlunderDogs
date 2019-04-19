@@ -228,8 +228,12 @@ std::vector< Tile*> Map::getTileCone(intPair coord, int range, eDirection direct
 				{
 					if (inCone(cubeCoord, tempCube, direction))
 					{
-						tileStore.push_back(getTile(intPair(x, y)));
-						//std::cout << "CubeCheck " << x << ", " << y << std::endl;//Test
+						Tile* tile = getTile(intPair(x, y));
+
+						if (tile && (tile->m_type == eTileType::eSea || tile->m_type == eTileType::eOcean))
+						{
+							tileStore.push_back(getTile(intPair(x, y)));
+						}
 					}
 				}
 			}
@@ -268,8 +272,11 @@ std::vector<const Tile*> Map::getTileCone(intPair coord, int range, eDirection d
 				{
 					if (inCone(cubeCoord, tempCube, direction))
 					{
-						tileStore.push_back(getTile(intPair(x, y)));
-						//std::cout << "CubeCheck " << x << ", " << y << std::endl;//Test
+						const Tile* tile = getTile(intPair(x, y));
+						if (tile && (tile->m_type == eTileType::eSea || tile->m_type == eTileType::eOcean))
+						{
+							tileStore.push_back(getTile(intPair(x, y)));
+						}
 					}
 				}
 			}
@@ -362,6 +369,12 @@ Map::Map(intPair size, const std::vector<std::vector<int>>& tileData) :
 	m_drawScale(2)
 {
 	m_data.reserve(m_mapDimensions.first * m_mapDimensions.second);
+
+	//TODO: Will be loaded in through Tiled
+	m_spawnPositions.emplace_back(4, 11);
+	m_spawnPositions.emplace_back(22, 2);
+	m_spawnPositions.emplace_back(1, 1);
+	m_spawnPositions.emplace_back(15, 10);
 
 	for (int y = 0; y < m_mapDimensions.second; y++)
 	{
@@ -491,4 +504,9 @@ std::vector<const Tile*> Map::getTileLine(
 		tileStore.emplace_back(pushBackTile);
 	}
 	return tileStore;
+}
+
+std::vector<std::pair<int, int>> Map::getSpawnPositions() const
+{
+	return m_spawnPositions;
 }
