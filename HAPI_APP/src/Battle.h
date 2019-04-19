@@ -11,8 +11,6 @@ enum class BattlePhase
 	Attack
 };
 
-struct Player;
-struct MoveCounter;
 class Battle
 {
 public:
@@ -26,10 +24,8 @@ public:
 	void render() const;
 	void update(float deltaTime);
 	void moveEntityToPosition(BattleEntity& entity, const Tile& destination);
-	void setMapDrawOffset(std::pair<int, int> offset) { m_map.setDrawOffset(offset); }
 
 	void fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea);
-
 	void insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, FactionName factionName);
 	void nextTurn();
 

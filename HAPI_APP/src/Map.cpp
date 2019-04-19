@@ -228,8 +228,12 @@ std::vector< Tile*> Map::getTileCone(intPair coord, int range, eDirection direct
 				{
 					if (inCone(cubeCoord, tempCube, direction))
 					{
-						tileStore.push_back(getTile(intPair(x, y)));
-						//std::cout << "CubeCheck " << x << ", " << y << std::endl;//Test
+						Tile* tile = getTile(intPair(x, y));
+
+						if (tile && (tile->m_type == eTileType::eSea || tile->m_type == eTileType::eOcean))
+						{
+							tileStore.push_back(getTile(intPair(x, y)));
+						}
 					}
 				}
 			}
@@ -268,8 +272,11 @@ std::vector<const Tile*> Map::getTileCone(intPair coord, int range, eDirection d
 				{
 					if (inCone(cubeCoord, tempCube, direction))
 					{
-						tileStore.push_back(getTile(intPair(x, y)));
-						//std::cout << "CubeCheck " << x << ", " << y << std::endl;//Test
+						const Tile* tile = getTile(intPair(x, y));
+						if (tile && (tile->m_type == eTileType::eSea || tile->m_type == eTileType::eOcean))
+						{
+							tileStore.push_back(getTile(intPair(x, y)));
+						}
 					}
 				}
 			}

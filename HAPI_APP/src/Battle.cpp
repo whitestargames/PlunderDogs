@@ -51,11 +51,6 @@ void Battle::update(float deltaTime)
 	{
 		updateAttackPhase();
 	}
-
-	if (m_currentPlayersTurn == 4)
-	{
-		int i = 0;
-	}
 }
 
 void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
