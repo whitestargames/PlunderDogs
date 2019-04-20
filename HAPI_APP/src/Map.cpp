@@ -486,7 +486,8 @@ std::vector<Tile*> Map::getTileLine(
 	Tile* pushBackTile{ getTile(coord) };
 	for (int i = 0; i < range; i++)
 	{
-		pushBackTile = getAdjacentTiles(pushBackTile->m_tileCoordinate)[direction];
+		if (pushBackTile)
+			pushBackTile = getAdjacentTiles(pushBackTile->m_tileCoordinate)[direction];
 		tileStore.emplace_back(pushBackTile);
 	}
 	return tileStore;
@@ -502,7 +503,8 @@ std::vector<const Tile*> Map::getTileLine(
 	assert(pushBackTile);
 	for (int i = 0; i < range; i++)
 	{
-		pushBackTile = getAdjacentTiles(pushBackTile->m_tileCoordinate)[direction];
+		if (pushBackTile)
+			pushBackTile = getAdjacentTiles(pushBackTile->m_tileCoordinate)[direction];
 		tileStore.emplace_back(pushBackTile);
 	}
 	return tileStore;

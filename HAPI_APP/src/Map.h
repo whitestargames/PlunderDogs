@@ -85,8 +85,8 @@ public:
 	//Returns tiles in a cone emanating from a given tile, skipping the tile itself
 	std::vector<Tile*> getTileCone(std::pair<int, int> coord, int range, eDirection direction);
 	std::vector<const Tile*> getTileCone(std::pair<int, int> coord, int range, eDirection direction)const;
-	//Returns tiles in a line from a given direction, an element in the vector 
-	//Will be nullptr if it accesses an invalid tile
+	//Returns tiles in a line from a given direction,
+	//An element in the vector will be nullptr if it accesses an invalid tile
 	std::vector<Tile*> getTileLine(std::pair<int, int> coord, int range, eDirection direction);
 	std::vector<const Tile*> getTileLine(std::pair<int, int> coord, int range, eDirection direction)const;
 
