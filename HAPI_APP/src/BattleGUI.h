@@ -22,7 +22,7 @@ public:
 
 	void render() const;
 	void update(int WindDirection);
-	void updateTeamState(int tempfaction);
+	void updateFactionToken(int tempfaction);
 	void OnMouseLeftClick(const HAPI_TMouseData& mouseData);
 	//void OnMouseScroll could be added
 	void OnMouseMove(const HAPI_TMouseData& mouseData);

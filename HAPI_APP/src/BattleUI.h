@@ -90,7 +90,7 @@ public:
 	void renderUI() const;
 	void renderGUI() const;
 	void update();
-	void FactionUpdate();//tempName
+	void FactionUpdateGUI();//tempName
 	void newPhase();
 	void newTurn(FactionName playersTurn);
 	void startShipPlacement(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players);
@@ -109,7 +109,7 @@ private:
 	BattleGUI m_gui;
 	InvalidPosition m_invalidPosition;
 	std::vector<std::unique_ptr<ShipPlacementPhase>> m_playerShipPlacement;
-	FactionName currentFaction;
+	FactionName currentFaction;//temp value needed as interum
 	//Movement Phase
 	void onMouseMoveMovementPhase();
 	void onLeftClickMovementPhase();

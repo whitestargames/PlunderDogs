@@ -90,9 +90,9 @@ void BattleUI::update()
 	m_gui.update(m_battle.getMap().getWindDirection());// added update for gui to receive wind direction so compass direction updates
 }
 
-void BattleUI::FactionUpdate()
+void BattleUI::FactionUpdateGUI()
 {
-	m_gui.updateTeamState((int)currentFaction);
+	m_gui.updateFactionToken((int)currentFaction);
 }
 
 void BattleUI::newPhase()

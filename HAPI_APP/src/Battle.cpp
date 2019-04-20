@@ -174,7 +174,7 @@ void Battle::updateAttackPhase()
 {
 	if (allEntitiesAttacked(m_players[m_currentPlayersTurn].m_entities))
 	{
-		m_battleUI.FactionUpdate();
+		m_battleUI.FactionUpdateGUI();
 		nextTurn();
 	}
 }

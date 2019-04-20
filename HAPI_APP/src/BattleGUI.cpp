@@ -169,7 +169,7 @@ void BattleGUI::update(int WindDirection)
 	}
 }
 
-void BattleGUI::updateTeamState(int faction)
+void BattleGUI::updateFactionToken(int faction)
 {
 	switch (faction)
 	{
