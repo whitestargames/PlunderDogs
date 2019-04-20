@@ -1,27 +1,27 @@
 <?xml version="1.0"?>
 <TextureAtlas imagePath="playerFlags_surface.png">
-	<SubTexture name="Frame0" x="2" y="3" width="29" height="20">
+	<SubTexture name="Frame0" x="5" y="7" width="66" height="46">
 		<Collider>
-			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="20" />
-			<Circle name="BoundingCircle" type="0" radius="17.613914" y="10.000000" x="14.000000" />
+			<Rectangle name="BoundingRect" type="0" left="0" right="66" top="0" bottom="46" />
+			<Circle name="BoundingCircle" type="0" radius="40.224369" y="23.000000" x="33.000000" />
 		</Collider>
 	</SubTexture>
-	<SubTexture name="Frame1" x="37" y="3" width="28" height="20">
+	<SubTexture name="Frame1" x="84" y="7" width="67" height="46">
 		<Collider>
-			<Rectangle name="BoundingRect" type="0" left="0" right="28" top="0" bottom="20" />
-			<Circle name="BoundingCircle" type="0" radius="17.204651" y="10.000000" x="14.000000" />
+			<Rectangle name="BoundingRect" type="0" left="0" right="67" top="0" bottom="46" />
+			<Circle name="BoundingCircle" type="0" radius="40.635574" y="23.000000" x="33.000000" />
 		</Collider>
 	</SubTexture>
-	<SubTexture name="Frame2" x="71" y="3" width="29" height="20">
+	<SubTexture name="Frame2" x="163" y="7" width="67" height="46">
 		<Collider>
-			<Rectangle name="BoundingRect" type="0" left="0" right="29" top="0" bottom="20" />
-			<Circle name="BoundingCircle" type="0" radius="17.613914" y="10.000000" x="14.000000" />
+			<Rectangle name="BoundingRect" type="0" left="0" right="67" top="0" bottom="46" />
+			<Circle name="BoundingCircle" type="0" radius="40.635574" y="23.000000" x="33.000000" />
 		</Collider>
 	</SubTexture>
-	<SubTexture name="Frame3" x="106" y="3" width="28" height="20">
+	<SubTexture name="Frame3" x="242" y="7" width="67" height="46">
 		<Collider>
-			<Rectangle name="BoundingRect" type="0" left="0" right="28" top="0" bottom="20" />
-			<Circle name="BoundingCircle" type="0" radius="17.204651" y="10.000000" x="14.000000" />
+			<Rectangle name="BoundingRect" type="0" left="0" right="67" top="0" bottom="46" />
+			<Circle name="BoundingCircle" type="0" radius="40.635574" y="23.000000" x="33.000000" />
 		</Collider>
 	</SubTexture>
 </TextureAtlas>

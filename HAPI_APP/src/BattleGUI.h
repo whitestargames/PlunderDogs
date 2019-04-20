@@ -34,7 +34,9 @@ private:
 	std::unique_ptr<Sprite> m_pauseMenuBackground;
 	std::unique_ptr<Sprite> m_resumeButton;
 	std::unique_ptr<Sprite> m_quitButton;
-	std::unique_ptr<Sprite> m_Compass;
+	std::unique_ptr<Sprite> m_CompassBackGround;
+	std::unique_ptr<Sprite> m_CompassPointer;
+	std::unique_ptr<Sprite> m_activeTeamMarker;
 	//postBattleScreen
 	std::unique_ptr<Sprite> m_postBattleBackground;
 	std::unique_ptr<Sprite> m_doneButton;

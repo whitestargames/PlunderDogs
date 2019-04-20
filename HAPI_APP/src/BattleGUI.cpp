@@ -11,7 +11,11 @@ BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
 	m_quitButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "quitButton.png", 2)),
 	m_postBattleBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PostBattleBackground.png")),
 	m_doneButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "doneButton.png", 2)),
-	m_Compass(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "Compass.png")),
+	m_CompassBackGround(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "windDirectionCompassBackGround.png")),
+	m_CompassPointer(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "windDirectionArrow.png")),
+	m_activeTeamMarker(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + "playerFlags.xml")),
+	
+	
 	m_currentBattleWindow(BattleWindow::eCombat),
 	m_maxCameraOffset(maxCameraOffset)
 {
@@ -19,8 +23,12 @@ BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
 	m_battleIcons->GetTransformComp().SetPosition({ 350, 800 });
 	m_pauseButton->GetTransformComp().SetPosition({ 1450, 50 });
 	m_chickenButton->GetTransformComp().SetPosition({ 1450, 750 });
-	m_Compass->GetTransformComp().SetOriginToCentreOfFrame();
-	m_Compass->GetTransformComp().SetPosition({ 1350, 800});
+	m_CompassBackGround->GetTransformComp().SetOriginToCentreOfFrame();
+	m_CompassBackGround->GetTransformComp().SetPosition({ 80, 80 });
+	m_CompassPointer->GetTransformComp().SetOrigin({ 20,60 });
+	m_CompassPointer->GetTransformComp().SetPosition({ 80, 80 });
+	m_activeTeamMarker->GetTransformComp().SetOriginToCentreOfFrame();
+	m_activeTeamMarker->GetTransformComp().SetPosition({ 1400,50 });
 	
 	//pauseMenu
 	m_resumeButton->GetTransformComp().SetPosition({ 658, 297 });
@@ -49,7 +57,9 @@ void BattleGUI::render() const
 	}
 	m_pauseButton->Render(SCREEN_SURFACE);
 	m_chickenButton->Render(SCREEN_SURFACE);
-	m_Compass->Render(SCREEN_SURFACE);
+	m_CompassBackGround->Render(SCREEN_SURFACE);
+	m_CompassPointer->Render(SCREEN_SURFACE);
+	m_activeTeamMarker->Render(SCREEN_SURFACE);
 
 	switch (m_currentBattleWindow)
 	{
@@ -88,17 +98,17 @@ void BattleGUI::update(int WindDirection)
 	//value by the wind direction 
 	if (WindDirection < 2)
 	{
-		m_Compass->GetTransformComp().SetRotation(WindDirection * 0.785398);
+		m_CompassPointer->GetTransformComp().SetRotation(WindDirection * 0.785398);
 	}
 
 	else if (WindDirection >= 2 && WindDirection < 5)
 	{
-		m_Compass->GetTransformComp().SetRotation((WindDirection+1) * 0.785398);
+		m_CompassPointer->GetTransformComp().SetRotation((WindDirection+1) * 0.785398);
 	}
 
 	else if (WindDirection == 5)
 	{
-		m_Compass->GetTransformComp().SetRotation((WindDirection + 2) * 0.785398);
+		m_CompassPointer->GetTransformComp().SetRotation((WindDirection + 2) * 0.785398);
 	}
 /////////////////////////////////////////////////////////////////////////////////////// 
 	if (shipSelected)
