@@ -364,7 +364,7 @@ Map::Map(intPair size, const std::vector<std::vector<int>>& tileData) :
 	m_mapDimensions(size),
 	m_data(),
 	m_drawOffset(intPair(10, 60)),
-	m_windDirection(eNorth),
+	m_windDirection(eNorthWest),
 	m_windStrength(0.4),
 	m_drawScale(2)
 {

@@ -59,6 +59,7 @@ std::pair<int, int> BattleUI::getCameraPositionOffset() const
 
 void BattleUI::renderUI() const
 {
+	
 	switch (m_battle.getCurrentPhase())
 	{
 	case BattlePhase::ShipPlacement:
@@ -86,7 +87,7 @@ void BattleUI::renderGUI() const
 
 void BattleUI::update()
 {
-	m_gui.update();
+	m_gui.update(m_battle.getMap().getWindDirection());// added update for gui to receive wind direction so compass direction updates
 }
 
 void BattleUI::newPhase()

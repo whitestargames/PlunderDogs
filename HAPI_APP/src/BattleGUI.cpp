@@ -11,6 +11,7 @@ BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
 	m_quitButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "quitButton.png", 2)),
 	m_postBattleBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PostBattleBackground.png")),
 	m_doneButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "doneButton.png", 2)),
+	m_Compass(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "Compass.png")),
 	m_currentBattleWindow(BattleWindow::eCombat),
 	m_maxCameraOffset(maxCameraOffset)
 {
@@ -18,6 +19,9 @@ BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
 	m_battleIcons->GetTransformComp().SetPosition({ 350, 800 });
 	m_pauseButton->GetTransformComp().SetPosition({ 1450, 50 });
 	m_chickenButton->GetTransformComp().SetPosition({ 1450, 750 });
+	m_Compass->GetTransformComp().SetOriginToCentreOfFrame();
+	m_Compass->GetTransformComp().SetPosition({ 1350, 800});
+	
 	//pauseMenu
 	m_resumeButton->GetTransformComp().SetPosition({ 658, 297 });
 	m_quitButton->GetTransformComp().SetPosition({ 658, 427 });
@@ -45,6 +49,7 @@ void BattleGUI::render() const
 	}
 	m_pauseButton->Render(SCREEN_SURFACE);
 	m_chickenButton->Render(SCREEN_SURFACE);
+	m_Compass->Render(SCREEN_SURFACE);
 
 	switch (m_currentBattleWindow)
 	{
@@ -76,8 +81,26 @@ void BattleGUI::render() const
 	}
 }
 
-void BattleGUI::update()
+void BattleGUI::update(int WindDirection)
 {
+	// loop for changing compass rotation this is for offset to skip horizonantel because of enum
+	//willTalk to gabriel about using the defaulted enum because if its a full set the condition wont be needed can just times that 
+	//value by the wind direction 
+	if (WindDirection < 2)
+	{
+		m_Compass->GetTransformComp().SetRotation(WindDirection * 0.785398);
+	}
+
+	else if (WindDirection >= 2 && WindDirection < 5)
+	{
+		m_Compass->GetTransformComp().SetRotation((WindDirection+1) * 0.785398);
+	}
+
+	else if (WindDirection == 5)
+	{
+		m_Compass->GetTransformComp().SetRotation((WindDirection + 2) * 0.785398);
+	}
+/////////////////////////////////////////////////////////////////////////////////////// 
 	if (shipSelected)
 	{
 		if (playAnimation)

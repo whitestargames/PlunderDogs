@@ -21,10 +21,11 @@ public:
 	std::pair<int, int> getCameraPositionOffset() const;
 
 	void render() const;
-	void update();
+	void update(int WindDirection);
 	void OnMouseLeftClick(const HAPI_TMouseData& mouseData);
 	//void OnMouseScroll could be added
 	void OnMouseMove(const HAPI_TMouseData& mouseData);
+	
 
 private:
 	std::unique_ptr<Sprite> m_battleIcons;
@@ -33,9 +34,11 @@ private:
 	std::unique_ptr<Sprite> m_pauseMenuBackground;
 	std::unique_ptr<Sprite> m_resumeButton;
 	std::unique_ptr<Sprite> m_quitButton;
+	std::unique_ptr<Sprite> m_Compass;
 	//postBattleScreen
 	std::unique_ptr<Sprite> m_postBattleBackground;
 	std::unique_ptr<Sprite> m_doneButton;
+
 
 	BattleWindow m_currentBattleWindow;
 	std::pair<int, int> m_maxCameraOffset;

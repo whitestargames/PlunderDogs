@@ -60,6 +60,7 @@ private:
 	const std::pair<int, int> m_mapDimensions;
 	float m_windStrength;
 	eDirection m_windDirection;
+	
 	float m_drawScale;
 	std::pair<int, int> m_drawOffset;
 	std::vector<Tile> m_data;
