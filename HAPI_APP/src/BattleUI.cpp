@@ -526,19 +526,53 @@ void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & sour
 	
 	if (source.m_entityOnTile->m_entityProperties.m_weaponType == eSideCannons)
 	{
-		m_targetArea = map.getTileCone(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range, source.m_entityOnTile->m_battleProperties.getCurrentDirection());
+		m_targetArea = map.getTileCone(source.m_tileCoordinate,
+			source.m_entityOnTile->m_entityProperties.m_range, 
+			source.m_entityOnTile->m_battleProperties.getCurrentDirection());
 	
 	}
 
 	else if (source.m_entityOnTile->m_entityProperties.m_weaponType == eStraightShot)
 	{
-		m_targetArea = map.getTileLine(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range, source.m_entityOnTile->m_battleProperties.getCurrentDirection());m_targetArea = map.getTileLine(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range, source.m_entityOnTile->m_battleProperties.getCurrentDirection());
+		m_targetArea = map.getTileLine(source.m_tileCoordinate, 
+			source.m_entityOnTile->m_entityProperties.m_range, 
+			source.m_entityOnTile->m_battleProperties.getCurrentDirection());
+
 	}
 
 	else if (source.m_entityOnTile->m_entityProperties.m_weaponType == eShotGun)
 	{
 		// make so where ever the place presses get radius called talk adrais about size of that
-		m_targetArea = map.getTileRadius(source.m_tileCoordinate, source.m_entityOnTile->m_entityProperties.m_range);
+		m_targetArea = map.getTileRadius(source.m_tileCoordinate, 
+			source.m_entityOnTile->m_entityProperties.m_range);
+	}
+
+	else if (source.m_entityOnTile->m_entityProperties.m_weaponType == eFlamethrower)
+	{
+		eDirection directionOfFire;
+		switch (source.m_entityOnTile->m_battleProperties.getCurrentDirection() )
+		{
+		case eNorth:
+			directionOfFire = eSouth;
+			break;
+		case eNorthEast:
+			directionOfFire = eSouthWest;
+			break;
+		case eSouthEast:
+			directionOfFire = eNorthWest;
+			break;
+		case eSouth:
+			directionOfFire = eNorth;
+			break;
+		case eSouthWest:
+			directionOfFire = eNorthEast;
+			break;
+		case eNorthWest:
+			directionOfFire = eSouthEast;
+			break;
+		}
+		m_targetArea = map.getTileLine(source.m_tileCoordinate,
+			source.m_entityOnTile->m_entityProperties.m_range, directionOfFire);
 	}
 	
 	if (m_targetArea.empty())

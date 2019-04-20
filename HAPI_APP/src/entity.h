@@ -15,22 +15,21 @@ struct MoveCounter
 
 	int m_counter;
 };
+enum class EntityType
+{
+	eCruiser,
+	eBattleShip,
+	eDestroyer,
+	eGunBoat
+};
 
 struct Tile;
 struct Weapons;
 class Map;
+
 struct EntityProperties
 {
-	enum class EntityType
-	{
-		eCruiser,
-		eBattleShip,
-		eDestroyer,
-		eGunBoat
-	};
-
 	EntityProperties(FactionName factionName, EntityType entityType);
-	void setEntityProperties(FactionName factionName, EntityType entityType);
 
 	std::shared_ptr<HAPISPACE::Sprite> m_sprite;
 	int m_movementPoints;
