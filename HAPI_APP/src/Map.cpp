@@ -371,10 +371,10 @@ Map::Map(intPair size, const std::vector<std::vector<int>>& tileData) :
 	m_data.reserve(m_mapDimensions.first * m_mapDimensions.second);
 
 	//TODO: Will be loaded in through Tiled
-	m_spawnPositions.emplace_back(4, 11);
-	m_spawnPositions.emplace_back(22, 2);
-	m_spawnPositions.emplace_back(1, 1);
-	m_spawnPositions.emplace_back(15, 10);
+	m_spawnPositions.emplace_back(11, 6);
+	m_spawnPositions.emplace_back(8, 18);
+	m_spawnPositions.emplace_back(28, 28);
+	m_spawnPositions.emplace_back(20, 10);
 
 	for (int y = 0; y < m_mapDimensions.second; y++)
 	{
