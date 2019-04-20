@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Global.h"
 #include "Map.h"
 #include "BattleUI.h"
-#include "FactionName.h"
 
 enum class BattlePhase
 {

@@ -120,22 +120,22 @@ void BattleUI::startShipPlacement(std::vector<std::pair<FactionName, std::vector
 		{
 			switch (player.first)
 			{
-			case FactionName::Yellow:
+			case FactionName::eYellow:
 				//entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthYellow);
 				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });
 				break;
-			case FactionName::Blue:
+			case FactionName::eBlue:
 				//entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthBlue);
 				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });
 				break;
-			case FactionName::Red:
+			case FactionName::eRed:
 				//entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthRed);
 				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });
 				break;
-			case FactionName::Green:
+			case FactionName::eGreen:
 				//entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthGreen);
 				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });

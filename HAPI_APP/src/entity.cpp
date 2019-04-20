@@ -289,7 +289,7 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 
 	switch (factionName)
 	{
-	case FactionName::Yellow:
+	case FactionName::eYellow:
 		switch (entityType)
 		{
 		case EntityType::eCruiser:
@@ -315,7 +315,7 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 
 		break;
 
-	case FactionName::Blue:
+	case FactionName::eBlue:
 		switch (entityType)
 		{
 		case EntityType::eCruiser:
@@ -338,7 +338,7 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 		}
 
 		break;
-	case FactionName::Red:
+	case FactionName::eRed:
 		switch (entityType)
 		{
 		case EntityType::eCruiser:
@@ -362,7 +362,7 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 		}
 
 		break;
-	case FactionName::Green:
+	case FactionName::eGreen:
 		switch (entityType)
 		{
 		case EntityType::eCruiser:

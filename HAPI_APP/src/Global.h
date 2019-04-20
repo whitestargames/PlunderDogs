@@ -1,5 +1,13 @@
 #pragma once
 
+enum FactionName
+{
+	eYellow = 0,
+	eBlue,
+	eGreen,
+	eRed
+};
+
 enum eDirection
 {
 	eNorth,

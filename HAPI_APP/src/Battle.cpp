@@ -85,19 +85,19 @@ void Battle::insertEntity(std::pair<int, int> startingPosition, const EntityProp
 	auto& player = getPlayer(factionName);
 	switch (factionName)
 	{
-	case FactionName::Yellow :
+	case FactionName::eYellow :
 		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName));
 		break;
 
-	case FactionName::Blue:
+	case FactionName::eBlue:
 		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName));
 		break;
 	
-	case FactionName::Red :
+	case FactionName::eRed :
 		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName));
 		break;
 	
-	case FactionName::Green :
+	case FactionName::eGreen :
 		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName));
 		break;
 	}

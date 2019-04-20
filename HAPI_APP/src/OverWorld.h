@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Global.h"
 #include "Battle.h"
-#include "FactionName.h"
 #include "OverWorldGUI.h"
 
 using namespace HAPI_UI_SPACE;

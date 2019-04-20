@@ -30,10 +30,10 @@ OverWorld::OverWorld()
 	m_battle(),
 	m_startBattle(false)
 {
-	m_players.emplace_back(FactionName::Blue);
-	m_players.emplace_back(FactionName::Red);
-	m_players.emplace_back(FactionName::Green);
-	m_players.emplace_back(FactionName::Yellow);
+	m_players.emplace_back(FactionName::eBlue);
+	m_players.emplace_back(FactionName::eRed);
+	m_players.emplace_back(FactionName::eGreen);
+	m_players.emplace_back(FactionName::eYellow);
 
 	m_GUI.reset(m_players[m_currentPlayer].m_entities);
 }
