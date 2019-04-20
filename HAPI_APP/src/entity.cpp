@@ -9,14 +9,14 @@ constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
 
 //ENTITY BATTLE PROPERTIES
-EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosition)
+EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosition, eDirection startingDirection)
 	: m_currentPosition(startingPosition),
 	m_pathToTile(),
 	m_movementTimer(0.35f),
 	m_movedToDestination(false),
 	m_movementPath(),
 	m_movementPathSize(0),
-	m_currentDirection(eDirection::eNorth),
+	m_currentDirection(startingDirection),
 	m_weaponFired(false),
 	m_isDead(false)
 {}
@@ -74,10 +74,12 @@ void EntityBattleProperties::MovementPath::render(const Map& map) const
 		if (i.activate)
 		{
 			const std::pair<int, int> tileTransform = map.getTileScreenPos(i.m_position);
+			float scale = map.getDrawScale();
 
 			i.sprite->GetTransformComp().SetPosition({
-			static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
-			static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
+				static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * scale),
+				static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * scale) });
+			i.sprite->GetTransformComp().SetScaling({ scale / 2, scale / 2 });
 
 			i.sprite->Render(SCREEN_SURFACE);
 		}	
@@ -223,7 +225,7 @@ void EntityBattleProperties::onNewTurn()
 	m_weaponFired = false;
 }
 
-void EntityBattleProperties::handleRotation(EntityProperties& entityProperties, const Map& map)
+void EntityBattleProperties::handleRotation(EntityProperties& entityProperties)
 {
 	int rotationAngle = 60;
 	int directionToTurn = m_pathToTile.front().first;
@@ -293,9 +295,6 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 		switch (entityType)
 		{
 		case EntityType::eCruiser:
-
-		
-
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_yellowShipSideCannons));
 			break;
 		case EntityType::eBattleShip:
@@ -383,7 +382,6 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 			break;
 
 		}
-
 		break;
 	}
 	m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealth);
@@ -391,11 +389,12 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 }
 
 
-BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map, FactionName playerName)
+BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map, FactionName playerName, eDirection startingDirection)
 	: m_entityProperties(entityProperties),
-	m_battleProperties(startingPosition),
+	m_battleProperties(startingPosition, startingDirection),
 	m_factionName(playerName)
 {
+	m_entityProperties.m_sprite->GetTransformComp().SetRotation(DEGREES_TO_RADIANS(startingDirection * 60 % 360));
 	map.insertEntity(*this);
 }
 
@@ -410,7 +409,7 @@ void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProp
 			m_currentPosition = m_pathToTile.front().second;
 			m_movementPath.eraseNode(m_currentPosition, map);
 
-			handleRotation(entityProperties, map);
+			handleRotation(entityProperties);
 			m_pathToTile.pop_front();
 
 			if (m_pathToTile.empty())
@@ -426,15 +425,16 @@ void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, 
 {
 	//Set sprite position to current position
 	const std::pair<int, int> tileTransform = map.getTileScreenPos(m_currentPosition);
+	float scale = map.getDrawScale();
+
 	sprite->GetTransformComp().SetPosition({
-		static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
-		static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
+		static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * scale),
+		static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * scale) });
+	sprite->GetTransformComp().SetScaling({ scale / 2, scale / 2 });
 
 	sprite->Render(SCREEN_SURFACE);
-
 	m_movementPath.render(map);
 }
-
 
 //BATTLE PLAYER
 BattlePlayer::BattlePlayer(FactionName name)

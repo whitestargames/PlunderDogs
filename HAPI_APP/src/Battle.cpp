@@ -78,7 +78,7 @@ void Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 	}
 }
 
-void Battle::insertEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, FactionName factionName)
+void Battle::insertEntity(std::pair<int, int> startingPosition, eDirection startingDirection, const EntityProperties& entityProperties, FactionName factionName)
 {
 	assert(m_currentPhase == BattlePhase::ShipPlacement);
 
@@ -86,19 +86,19 @@ void Battle::insertEntity(std::pair<int, int> startingPosition, const EntityProp
 	switch (factionName)
 	{
 	case FactionName::eYellow :
-		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName));
+		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName, startingDirection));
 		break;
 
 	case FactionName::eBlue:
-		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName));
+		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName, startingDirection));
 		break;
 	
 	case FactionName::eRed :
-		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName));
+		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName, startingDirection));
 		break;
 	
 	case FactionName::eGreen :
-		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName));
+		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName, startingDirection));
 		break;
 	}
 }

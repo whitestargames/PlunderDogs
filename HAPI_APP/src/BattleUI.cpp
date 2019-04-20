@@ -159,8 +159,6 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 	{
 		return;
 	}
-
-	
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
 		m_gui.OnMouseLeftClick(mouseData);
@@ -169,9 +167,11 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 		{
 		case BattlePhase::ShipPlacement :
 		{
+			m_isMovingEntity = true;
+			m_leftMouseDownPosition = { mouseData.x, mouseData.y };
 			assert(!m_playerShipPlacement.empty());
-			m_playerShipPlacement.front()->onLeftClick(m_invalidPosition, m_selectedTile.m_tile, m_battle);
-			m_selectedTile.m_tile = nullptr;
+			//m_playerShipPlacement.front()->onLeftClick(m_invalidPosition, eNorth, m_selectedTile.m_tile, m_battle);
+			//m_selectedTile.m_tile = nullptr;
 			break;
 		}
 		case BattlePhase::Movement:
@@ -204,8 +204,9 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 	}
 	else if (mouseEvent == EMouseEvent::eLeftButtonUp)
 	{
-		if (m_isMovingEntity)
+		if (m_isMovingEntity && m_battle.getCurrentPhase() == BattlePhase::ShipPlacement)
 		{
+			assert(!m_playerShipPlacement.empty());
 			std::pair<double, eDirection> inputInformation{ calculateDirection(m_leftMouseDownPosition,HAPI_Wrapper::getMouseLocation()) };
 			if (inputInformation.first > 20)
 			{
@@ -214,13 +215,18 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 				destination tile but the direction of the aformentioned movement.  In order for this to work the pathfinding must be capable of taking an eDirection as part of the 
 				function used by the battle to move the entity.
 				*/
+				m_playerShipPlacement.front()->onLeftClick(m_invalidPosition, inputInformation.second, m_selectedTile.m_tile, m_battle);
 				//m_battle.moveEntityToPosition(*m_selectedTile.m_tile->m_entityOnTile, *m_battle.getMap().getTile(m_leftMouseDownPosition), inputInformation.second);
 			}
 			/*
 			This function call is to be used if the movement of the mouse during the move command is small enough to be considered unintended,
 			in this case the ship should not rotate after reaching the destination.
 			*/
-			else m_battle.moveEntityToPosition(*m_selectedTile.m_tile->m_entityOnTile, *m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(m_leftMouseDownPosition)));
+			else 
+			{
+				m_playerShipPlacement.front()->onLeftClick(m_invalidPosition, eNorth, m_selectedTile.m_tile, m_battle);
+			}
+			//else m_battle.moveEntityToPosition(*m_selectedTile.m_tile->m_entityOnTile, *m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(m_leftMouseDownPosition)));
 			m_selectedTile.m_tile = nullptr;
 			m_isMovingEntity = false;
 		}
@@ -241,7 +247,9 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 	case BattlePhase::ShipPlacement:
 	{
 		assert(!m_playerShipPlacement.empty());
-		m_selectedTile.m_tile = m_playerShipPlacement.front()->getTileOnMouse(m_invalidPosition, m_selectedTile.m_tile, m_battle.getMap());
+		if(!m_isMovingEntity)
+			m_selectedTile.m_tile = m_playerShipPlacement.front()->getTileOnMouse(
+				m_invalidPosition, m_selectedTile.m_tile, m_battle.getMap());
 		break;
 	}
 	case BattlePhase::Movement:
@@ -711,23 +719,20 @@ const Tile* BattleUI::ShipPlacementPhase::getTileOnMouse(InvalidPosition& invali
 	return tileOnMouse;
 }
 
-void BattleUI::ShipPlacementPhase::onLeftClick(const InvalidPosition& invalidPosition, const Tile* currentTileSelected, Battle& battle)
+void BattleUI::ShipPlacementPhase::onLeftClick(const InvalidPosition& invalidPosition, eDirection startingDirection, const Tile* currentTileSelected, Battle& battle)
 {
 	if (!currentTileSelected)
 	{
 		return;
 	}
-
 	//Disallow spawning on land
 	if (currentTileSelected->m_type != eTileType::eSea && currentTileSelected->m_type != eTileType::eOcean)
 	{
 		return;
 	}
-
 	if (!invalidPosition.m_activate && !currentTileSelected->m_entityOnTile)
 	{
-		battle.insertEntity(currentTileSelected->m_tileCoordinate, *m_currentSelectedEntity.m_currentSelectedEntity, m_factionName);
-
+		battle.insertEntity(currentTileSelected->m_tileCoordinate, startingDirection, *m_currentSelectedEntity.m_currentSelectedEntity, m_factionName);
 		//Change ordering around to pop front with different container
 		m_player.pop_back();
 		if (m_player.empty())
@@ -735,7 +740,6 @@ void BattleUI::ShipPlacementPhase::onLeftClick(const InvalidPosition& invalidPos
 			battle.nextTurn();
 			return;
 		}
-
 		m_currentSelectedEntity.m_currentSelectedEntity = m_player.back();
 	}
 }

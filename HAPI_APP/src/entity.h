@@ -67,7 +67,7 @@ class EntityBattleProperties
 	};
 
 public:
-	EntityBattleProperties(std::pair<int, int> startingPosition);
+	EntityBattleProperties(std::pair<int, int> startingPosition, eDirection startingDirection = eNorth);
 
 	eDirection getCurrentDirection() const;
 	bool isMovedToDestination() const;
@@ -97,12 +97,12 @@ private:
 	bool m_movedToDestination;
 	bool m_isDead;
 
-	void handleRotation(EntityProperties& entityProperties, const Map& map);
+	void handleRotation(EntityProperties& entityProperties);
 };
 
 struct BattleEntity
 {
-	BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map, FactionName playerName);
+	BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map, FactionName playerName, eDirection startingDirection = eNorth);
 
 	EntityProperties m_entityProperties;
 	EntityBattleProperties m_battleProperties;
