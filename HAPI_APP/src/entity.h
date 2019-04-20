@@ -13,6 +13,7 @@ class Map;
 struct EntityProperties
 {
 	EntityProperties();
+	EntityProperties(const int movementPoints, const int healthPoints, const int range, const int damage, const int upgradePoints);
 
 	std::shared_ptr<HAPISPACE::Sprite> m_sprite;
 	int m_movementPoints;
@@ -20,6 +21,7 @@ struct EntityProperties
 	int m_currentHealth;
 	int m_range;
 	int m_damage;
+	int m_upgradePoints;
 };
 
 struct EntityBattleProperties
