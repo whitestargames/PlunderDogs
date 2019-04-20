@@ -29,6 +29,7 @@ BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
 	m_CompassPointer->GetTransformComp().SetPosition({ 80, 80 });
 	m_activeTeamMarker->GetTransformComp().SetOriginToCentreOfFrame();
 	m_activeTeamMarker->GetTransformComp().SetPosition({ 1400,50 });
+	m_activeTeamMarker->SetFrameNumber(2);
 	
 	//pauseMenu
 	m_resumeButton->GetTransformComp().SetPosition({ 658, 297 });
@@ -93,9 +94,7 @@ void BattleGUI::render() const
 
 void BattleGUI::update(int WindDirection)
 {
-	// loop for changing compass rotation this is for offset to skip horizonantel because of enum
-	//willTalk to gabriel about using the defaulted enum because if its a full set the condition wont be needed can just times that 
-	//value by the wind direction 
+
 	if (WindDirection < 2)
 	{
 		m_CompassPointer->GetTransformComp().SetRotation(WindDirection * 0.785398);
@@ -110,7 +109,7 @@ void BattleGUI::update(int WindDirection)
 	{
 		m_CompassPointer->GetTransformComp().SetRotation((WindDirection + 2) * 0.785398);
 	}
-/////////////////////////////////////////////////////////////////////////////////////// 
+
 	if (shipSelected)
 	{
 		if (playAnimation)
@@ -167,6 +166,25 @@ void BattleGUI::update(int WindDirection)
 		}
 		break;//the battle should continue to render behind the pause menu so is before the switch case
 	}
+	}
+}
+
+void BattleGUI::updateTeamState(int faction)
+{
+	switch (faction)
+	{
+	case 0:
+		m_activeTeamMarker->SetFrameNumber(2);
+		break;
+	case 1:
+		m_activeTeamMarker->SetFrameNumber(0);
+		break;
+	case 2:
+		m_activeTeamMarker->SetFrameNumber(3);
+		break;
+	case 3:
+		m_activeTeamMarker->SetFrameNumber(1);
+		break;
 	}
 }
 

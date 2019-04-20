@@ -22,6 +22,7 @@ public:
 
 	void render() const;
 	void update(int WindDirection);
+	void updateTeamState(int tempfaction);
 	void OnMouseLeftClick(const HAPI_TMouseData& mouseData);
 	//void OnMouseScroll could be added
 	void OnMouseMove(const HAPI_TMouseData& mouseData);
@@ -54,4 +55,5 @@ private:
 	std::pair<int, int> CameraPositionOffset;//camera offset that will be used by the map
 	float cameraZoom = 1.0f;//variable to multiply scale by
 	std::pair<int, int> m_cameraPositionOffset;
+	
 };
