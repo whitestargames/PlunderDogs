@@ -13,7 +13,7 @@ BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
 	m_doneButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "doneButton.png", 2)),
 	m_CompassBackGround(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "windDirectionCompassBackGround.png")),
 	m_CompassPointer(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "windDirectionArrow.png")),
-	m_activeTeamMarker(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + "playerFlags.xml")),
+	m_activeFactionToken(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + "playerFlags.xml")),
 	
 	
 	m_currentBattleWindow(BattleWindow::eCombat),
@@ -27,9 +27,9 @@ BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
 	m_CompassBackGround->GetTransformComp().SetPosition({ 80, 80 });
 	m_CompassPointer->GetTransformComp().SetOrigin({ 20,60 });
 	m_CompassPointer->GetTransformComp().SetPosition({ 80, 80 });
-	m_activeTeamMarker->GetTransformComp().SetOriginToCentreOfFrame();
-	m_activeTeamMarker->GetTransformComp().SetPosition({ 1400,50 });
-	m_activeTeamMarker->SetFrameNumber(2);
+	m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
+	m_activeFactionToken->GetTransformComp().SetPosition({ 1400,50 });
+	m_activeFactionToken->SetFrameNumber(2);
 	
 	//pauseMenu
 	m_resumeButton->GetTransformComp().SetPosition({ 658, 297 });
@@ -60,7 +60,7 @@ void BattleGUI::render() const
 	m_chickenButton->Render(SCREEN_SURFACE);
 	m_CompassBackGround->Render(SCREEN_SURFACE);
 	m_CompassPointer->Render(SCREEN_SURFACE);
-	m_activeTeamMarker->Render(SCREEN_SURFACE);
+	m_activeFactionToken->Render(SCREEN_SURFACE);
 
 	switch (m_currentBattleWindow)
 	{
@@ -174,16 +174,16 @@ void BattleGUI::updateFactionToken(int faction)
 	switch (faction)
 	{
 	case 0:
-		m_activeTeamMarker->SetFrameNumber(2);
+		m_activeFactionToken->SetFrameNumber(2);
 		break;
 	case 1:
-		m_activeTeamMarker->SetFrameNumber(0);
+		m_activeFactionToken->SetFrameNumber(0);
 		break;
 	case 2:
-		m_activeTeamMarker->SetFrameNumber(3);
+		m_activeFactionToken->SetFrameNumber(3);
 		break;
 	case 3:
-		m_activeTeamMarker->SetFrameNumber(1);
+		m_activeFactionToken->SetFrameNumber(1);
 		break;
 	}
 }
