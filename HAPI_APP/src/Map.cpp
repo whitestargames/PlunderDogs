@@ -493,7 +493,6 @@ std::vector<Tile*> Map::getTileLine(
 	return tileStore;
 }
 
-//22, 27 - Not Working
 std::vector<const Tile*> Map::getTileLine(
 	std::pair<int, int> coord, int range, eDirection direction)const
 {
