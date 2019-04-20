@@ -492,12 +492,14 @@ std::vector<Tile*> Map::getTileLine(
 	return tileStore;
 }
 
+//22, 27 - Not Working
 std::vector<const Tile*> Map::getTileLine(
 	std::pair<int, int> coord, int range, eDirection direction)const
 {
 	std::vector<const Tile*> tileStore;
 	tileStore.reserve(range);
 	const Tile* pushBackTile{ getTile(coord) };
+	assert(pushBackTile);
 	for (int i = 0; i < range; i++)
 	{
 		pushBackTile = getAdjacentTiles(pushBackTile->m_tileCoordinate)[direction];
