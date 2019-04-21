@@ -156,25 +156,9 @@ void BattleGUI::update(eDirection windDirection)
 	}
 }
 
-void BattleGUI::updateFactionToken(int faction)
+void BattleGUI::updateFactionToken(int factionName)
 {
-	
-
-	switch (faction)
-	{
-	case 0://enum corresponds to blue
-		m_activeFactionToken->SetFrameNumber(1);
-		break;
-	case 1://enum corresponds to green
-		m_activeFactionToken->SetFrameNumber(2);
-		break;
-	case 2://enum corresponds to red
-		m_activeFactionToken->SetFrameNumber(3);
-		break;
-	case 3://enum corresponds to yellow
-		m_activeFactionToken->SetFrameNumber(0);
-		break;
-	}
+	m_activeFactionToken->SetFrameNumber(static_cast<int>(factionName));
 }
 
 void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData)

@@ -90,9 +90,9 @@ void BattleUI::update()
 	m_gui.update(m_battle.getMap().getWindDirection());// added update for gui to receive wind direction so compass direction updates
 }
 
-void BattleUI::FactionUpdateGUI()
+void BattleUI::FactionUpdateGUI(FactionName faction)
 {
-	m_gui.updateFactionToken(currentFaction);
+	m_gui.updateFactionToken(faction);
 }
 
 void BattleUI::newPhase()
@@ -271,9 +271,9 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 	}
 }
 
-void BattleUI::GetCurrentFaction(FactionName faction)
+void BattleUI::setCurrentFaction(FactionName faction)
 {
-	currentFaction = faction;
+	FactionUpdateGUI(faction);
 }
 
 void BattleUI::onMouseMoveMovementPhase()
