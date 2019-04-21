@@ -2,6 +2,7 @@
 
 #include <HAPISprites_lib.h>
 #include <HAPISprites_UI.h>
+#include "Global.h"
 
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
@@ -21,7 +22,7 @@ public:
 	std::pair<int, int> getCameraPositionOffset() const;
 
 	void render() const;
-	void update(int WindDirection);
+	void update(eDirection windDirection);
 	void updateFactionToken(int tempfaction);
 	void OnMouseLeftClick(const HAPI_TMouseData& mouseData);
 	//void OnMouseScroll could be added

@@ -92,23 +92,9 @@ void BattleGUI::render() const
 	}
 }
 
-void BattleGUI::update(int WindDirection)
+void BattleGUI::update(eDirection windDirection)
 {
-
-	if (WindDirection < 2)
-	{
-		m_CompassPointer->GetTransformComp().SetRotation(WindDirection * 0.785398);
-	}
-
-	else if (WindDirection >= 2 && WindDirection < 5)
-	{
-		m_CompassPointer->GetTransformComp().SetRotation((WindDirection+1) * 0.785398);
-	}
-
-	else if (WindDirection == 5)
-	{
-		m_CompassPointer->GetTransformComp().SetRotation((WindDirection + 2) * 0.785398);
-	}
+		m_CompassPointer->GetTransformComp().SetRotation(static_cast<float>(windDirection) * 0.333333 * 3.14159);
 
 	if (shipSelected)
 	{
