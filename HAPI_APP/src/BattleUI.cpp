@@ -92,7 +92,7 @@ void BattleUI::update()
 
 void BattleUI::FactionUpdateGUI()
 {
-	m_gui.updateFactionToken((int)currentFaction);
+	m_gui.updateFactionToken(currentFaction);
 }
 
 void BattleUI::newPhase()
