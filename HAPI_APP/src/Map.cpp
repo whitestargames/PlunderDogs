@@ -368,6 +368,11 @@ eTimeOfDay Map::getTimeOfDay() const
 	return m_timeOfDay;
 }
 
+void Map::setTimeOfDay(eTimeOfDay timeOfDay)
+{
+	m_timeOfDay = timeOfDay;
+}
+
 void Map::insertEntity(BattleEntity& newEntity)
 {
 	Tile* tile = getTile(newEntity.m_battleProperties.getCurrentPosition());	
@@ -454,6 +459,9 @@ Map::Map(intPair size, const std::vector<std::vector<int>>& tileData) :
 				return;
 			}
 			m_data[x + y * m_mapDimensions.first].m_daySprite->SetFrameNumber(tileID);
+			m_data[x + y * m_mapDimensions.first].m_aftersprite->SetFrameNumber(tileID);
+			m_data[x + y * m_mapDimensions.first].m_eveningSprite->SetFrameNumber(tileID);
+			m_data[x + y * m_mapDimensions.first].m_nightSprite->SetFrameNumber(tileID);
 		}
 	}
 }

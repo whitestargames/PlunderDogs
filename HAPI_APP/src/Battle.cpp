@@ -8,7 +8,8 @@ Battle::Battle(std::vector<std::pair<FactionName, std::vector<EntityProperties*>
 	m_currentPlayersTurn(0),
 	m_map(MapParser::parseMap("Level1.tmx")),
 	m_currentPhase(BattlePhase::ShipPlacement),
-	m_battleUI(*this)
+	m_battleUI(*this),
+	m_dayTime(20.0f)
 {
 	for (auto& player : players)
 	{
@@ -29,6 +30,7 @@ void Battle::render() const
 		for (auto& entity : player.m_entities)
 		{
 			entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
+			
 		}
 	}
 
@@ -39,7 +41,19 @@ void Battle::update(float deltaTime)
 {
 	m_battleUI.update();
 	m_map.setDrawOffset(m_battleUI.getCameraPositionOffset());
-
+	m_dayTime.update(deltaTime);
+	std::cout << m_dayTime.getElaspedTime() << std::endl;
+	if (m_dayTime.isExpired())
+	{
+		std::cout << "change time of  day " << std::endl;
+		int timeOfDay = (int)m_map.getTimeOfDay() + 1;
+		if (timeOfDay > eTimeOfDay::eNight)
+		{
+			timeOfDay = 0;
+		}
+		m_map.setTimeOfDay((eTimeOfDay)timeOfDay);
+		m_dayTime.reset();
+	}
 	if (m_currentPhase == BattlePhase::Movement)
 	{
 		updateMovementPhase(deltaTime);

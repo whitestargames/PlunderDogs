@@ -114,6 +114,7 @@ public:
 	//so check if getTile is null before using
 	std::pair<int, int> getMouseClickCoord(std::pair<int, int> mouseCoord) const;
 	eTimeOfDay getTimeOfDay()const;
+	void setTimeOfDay(eTimeOfDay timeOfDay);
 
 	//Moves an entitys position on the map, returns false if the position is already taken
 	bool moveEntity(std::pair<int, int> originalPos, std::pair<int, int> newPos);
