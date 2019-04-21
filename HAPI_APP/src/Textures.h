@@ -72,77 +72,77 @@ struct Textures
 			return false;
 		}
 
-		m_battleIcons = HAPI_Wrapper::makeSprite("battleIcons.png");
+		m_battleIcons = HAPI_Wrapper::makeSpriteSheet("battleIcons.png");
 		if (!m_battleIcons)
 		{
 			HAPI_Sprites.UserMessage("Cannot Load : 'battleIcons.png'", "Texture Error");
 			return false;
 		}
 
-		m_pauseButton = HAPI_Wrapper::makeSprite("pauseButton.png",2);
+		m_pauseButton = HAPI_Wrapper::makeSpriteSheet("pauseButton.png",2);
 		if (!m_pauseButton)
 		{
 			HAPI_Sprites.UserMessage("Cannot Load : 'pauseButton.png'", "Texture Error");
 			return false;
 		}
 
-		m_chickenButton = HAPI_Wrapper::makeSprite("chickenButton.png");
+		m_chickenButton = HAPI_Wrapper::makeSpriteSheet("chickenButton.png");
 		if (!m_chickenButton)
 		{
 			HAPI_Sprites.UserMessage("Cannot Load : 'chickenButton.png'", "Texture Error");
 			return false;
 		}
 
-		m_pauseMenuBackground = HAPI_Wrapper::makeSprite("pauseMenuBackground.png");
+		m_pauseMenuBackground = HAPI_Wrapper::makeSpriteSheet("pauseMenuBackground.png");
 		if (!m_pauseMenuBackground)
 		{
 			HAPI_Sprites.UserMessage("Cannot Load : 'pauseMenuBackground.png'", "Texture Error");
 			return false;
 		}
 
-		m_resumeButton = HAPI_Wrapper::makeSprite("resumeButton.png",2);
+		m_resumeButton = HAPI_Wrapper::makeSpriteSheet("resumeButton.png",2);
 		if (!m_resumeButton)
 		{
 			HAPI_Sprites.UserMessage("Cannot Load : 'resumeButton.png'", "Texture Error");
 			return false;
 		}
 
-		m_quitButton = HAPI_Wrapper::makeSprite("quitButton.png", 2);
+		m_quitButton = HAPI_Wrapper::makeSpriteSheet("quitButton.png", 2);
 		if (!m_quitButton)
 		{
 			HAPI_Sprites.UserMessage("Cannot Load : 'quitButton.png'", "Texture Error");
 			return false;
 		}
 
-		m_postBattleBackground = HAPI_Wrapper::makeSprite("PostBattleBackground.png" );
+		m_postBattleBackground = HAPI_Wrapper::makeSpriteSheet("PostBattleBackground.png" );
 		if (!m_postBattleBackground)
 		{
 			HAPI_Sprites.UserMessage("Cannot Load : 'PostBattleBackground.png'", "Texture Error");
 			return false;
 		}
 
-		m_doneButton = HAPI_Wrapper::makeSprite("doneButton.png", 2);
+		m_doneButton = HAPI_Wrapper::makeSpriteSheet("doneButton.png", 2);
 		if (!m_doneButton)
 		{
 			HAPI_Sprites.UserMessage("Cannot Load : 'doneButton.png'", "Texture Error");
 			return false;
 		}
 
-		m_CompassBackGround = HAPI_Wrapper::makeSprite("windDirectionCompassBackGround.png");
+		m_CompassBackGround = HAPI_Wrapper::makeSpriteSheet("windDirectionCompassBackGround.png");
 		if (!m_CompassBackGround)
 		{
 			HAPI_Sprites.UserMessage("Cannot Load : 'windDirectionCompassBackGround.png'", "Texture Error");
 			return false;
 		}
 
-		m_CompassPointer = HAPI_Wrapper::makeSprite("windDirectionArrow.png");
+		m_CompassPointer = HAPI_Wrapper::makeSpriteSheet("windDirectionArrow.png");
 		if (!m_CompassPointer)
 		{
 			HAPI_Sprites.UserMessage("Cannot Load : 'windDirectionArrow.png'", "Texture Error");
 			return false;
 		}
 
-		m_activeFactionToken = HAPI_Wrapper::loadSprite("playerFlags.xml");
+		m_activeFactionToken = HAPI_Wrapper::loadSpriteSheet("playerFlags.xml");
 		if (!m_activeFactionToken)
 		{
 			HAPI_Sprites.UserMessage("Cannot Load : 'playerFlags.xml'", "Texture Error");
@@ -272,17 +272,17 @@ struct Textures
 	static std::shared_ptr<SpriteSheet> m_hexTiles;
 	static std::shared_ptr<SpriteSheet> m_spawnHex;
 	static std::shared_ptr<SpriteSheet> m_selectedHex;
-	static std::shared_ptr<Sprite> Textures::m_battleIcons;
-	static std::shared_ptr<Sprite> Textures::m_pauseButton;
-	static std::shared_ptr<Sprite> Textures::m_chickenButton;
-	static std::shared_ptr<Sprite> Textures::m_pauseMenuBackground;
-	static std::shared_ptr<Sprite> Textures::m_resumeButton;
-	static std::shared_ptr<Sprite> Textures::m_quitButton;
-	static std::shared_ptr<Sprite> Textures::m_CompassBackGround;
-	static std::shared_ptr<Sprite> Textures::m_CompassPointer;
-	static std::shared_ptr<Sprite> Textures::m_activeFactionToken;
-	static std::shared_ptr<Sprite> Textures::m_postBattleBackground;
-	static std::shared_ptr<Sprite> Textures::m_doneButton;
+	static std::shared_ptr<SpriteSheet> m_battleIcons;
+	static std::shared_ptr<SpriteSheet> m_pauseButton;
+	static std::shared_ptr<SpriteSheet> m_chickenButton;
+	static std::shared_ptr<SpriteSheet> m_pauseMenuBackground;
+	static std::shared_ptr<SpriteSheet> m_resumeButton;
+	static std::shared_ptr<SpriteSheet> m_quitButton;
+	static std::shared_ptr<SpriteSheet> m_CompassBackGround;
+	static std::shared_ptr<SpriteSheet> m_CompassPointer;
+	static std::shared_ptr<SpriteSheet> m_activeFactionToken;
+	static std::shared_ptr<SpriteSheet> m_postBattleBackground;
+	static std::shared_ptr<SpriteSheet> m_doneButton;
 	static std::shared_ptr<SpriteSheet> m_blueShipSideCannons;
 	static std::shared_ptr<SpriteSheet> m_blueShipBomb;
 	static std::shared_ptr<SpriteSheet> m_blueShipMelee;

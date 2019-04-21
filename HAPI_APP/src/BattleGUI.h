@@ -31,9 +31,20 @@ public:
 
 private:
 	BattleWindow m_currentBattleWindow;
-	Textures texture;
 	std::pair<int, int> m_maxCameraOffset;
 	//Map m_map;
+	std::unique_ptr<Sprite> m_battleIcons;
+	std::unique_ptr<Sprite> m_pauseButton;
+	std::unique_ptr<Sprite> m_chickenButton;
+	std::unique_ptr<Sprite> m_pauseMenuBackground;
+	std::unique_ptr<Sprite> m_resumeButton;
+	std::unique_ptr<Sprite> m_quitButton;
+	std::unique_ptr<Sprite> m_postBattleBackground;
+	std::unique_ptr<Sprite> m_doneButton;
+	std::unique_ptr<Sprite> m_activeFactionToken;
+	std::unique_ptr<Sprite> m_CompassPointer;
+	std::unique_ptr<Sprite> m_CompassBackGround;
+	
 	DWORD animationStartTime;
 	bool shipSelected;
 	bool playAnimation;
