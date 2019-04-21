@@ -486,6 +486,7 @@ void BattleUI::onMouseMoveAttackPhase()
 	//tileOnMouse in new position
 	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_tileCoordinate != tileOnMouse->m_tileCoordinate)
 	{
+		//TODO: this does not work if some of the tiles are nullptr!
 		auto cIter = std::find_if(m_targetArea.m_targetArea.cbegin(), m_targetArea.m_targetArea.cend(),
 			[tileCoordinate](const auto& tile) { return tileCoordinate == tile->m_tileCoordinate; });
 		//tileOnMouse within weapon range
