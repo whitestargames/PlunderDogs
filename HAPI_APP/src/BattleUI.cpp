@@ -592,6 +592,9 @@ void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & sour
 	//using same convention as movement // from source should be able to get position
 	for (int i = 0; i < m_targetArea.size(); i++)
 	{
+		if (!m_targetArea[i])//Check that i is not nullptr
+			continue;
+
 		std::pair<int, int>tilePos = map.getTileScreenPos(m_targetArea[i]->m_tileCoordinate);
 		m_targetAreaSprites[i].sprite->GetTransformComp().SetPosition(
 			{
