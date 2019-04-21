@@ -36,7 +36,7 @@ private:
 	BattlePhase m_currentPhase;
 	BattleUI m_battleUI;
 	MoveCounter m_moveCounter;
-	Timer dayTime;
+	Timer m_dayTime;
 
 	void updateMovementPhase(float deltaTime);
 	void updateAttackPhase();
