@@ -5,7 +5,7 @@ using namespace HAPISPACE;
 
 Battle::Battle(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players)
 	: m_players(),
-	m_currentPlayersTurn(static_cast<int>(FactionName::Yellow)),
+	m_currentPlayersTurn(static_cast<int>(FactionName::eYellow)),
 	m_map(MapParser::parseMap("Level1.tmx")),
 	m_currentPhase(BattlePhase::ShipPlacement),
 	m_battleUI(*this),
@@ -47,11 +47,14 @@ void Battle::update(float deltaTime)
 	{
 		std::cout << "change time of  day " << std::endl;
 		int timeOfDay = (int)m_map.getTimeOfDay() + 1;
+		int wind = rand()%eDirection::Max;
 		if (timeOfDay > eTimeOfDay::eNight)
 		{
 			timeOfDay = 0;
 		}
+		
 		m_map.setTimeOfDay((eTimeOfDay)timeOfDay);
+		m_map.setWindDirection((eDirection) wind);
 		m_dayTime.reset();
 	}
 	if (m_currentPhase == BattlePhase::Movement)
