@@ -25,7 +25,7 @@ BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
 	m_chickenButton->GetTransformComp().SetPosition({ 1450, 750 });
 	m_CompassBackGround->GetTransformComp().SetOriginToCentreOfFrame();
 	m_CompassBackGround->GetTransformComp().SetPosition({ 80, 80 });
-	m_CompassPointer->GetTransformComp().SetOrigin({ 20,60 });
+	m_CompassPointer->GetTransformComp().SetOrigin({ 21.5f,60 });
 	m_CompassPointer->GetTransformComp().SetPosition({ 80, 80 });
 	m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
 	m_activeFactionToken->GetTransformComp().SetPosition({ 1350,50 });// position just temp can be adjusted as needed
@@ -94,7 +94,8 @@ void BattleGUI::render() const
 
 void BattleGUI::update(eDirection windDirection)
 {
-	m_CompassPointer->GetTransformComp().SetRotation(static_cast<float>(windDirection) * 0.333333 * 3.14159);
+	//m_CompassPointer->GetTransformComp().SetRotation(static_cast<float>(windDirection) * 0.333333 * 3.14159);
+	m_CompassPointer->GetTransformComp().SetRotation(DEGREES_TO_RADIANS(static_cast<int>(windDirection) *60 % 360));
 
 	if (shipSelected)
 	{
