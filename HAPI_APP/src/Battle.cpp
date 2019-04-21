@@ -5,7 +5,7 @@ using namespace HAPISPACE;
 
 Battle::Battle(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players)
 	: m_players(),
-	m_currentPlayersTurn(0),
+	m_currentPlayersTurn(static_cast<int>(FactionName::Yellow)),
 	m_map(MapParser::parseMap("Level1.tmx")),
 	m_currentPhase(BattlePhase::ShipPlacement),
 	m_battleUI(*this)
