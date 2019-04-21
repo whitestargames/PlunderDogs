@@ -42,8 +42,29 @@ void Map::drawMap() const
 				m_data[access + x].m_daySprite->Render(SCREEN_SURFACE);
 				break;
 			case eTimeOfDay::eAfternoon:
+				m_data[access + x].m_aftersprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
+					(xPos - m_drawOffset.first)*m_drawScale,
+					(yPosOdd - m_drawOffset.second)*m_drawScale));
+				m_data[access + x].m_aftersprite->GetTransformComp().SetScaling(
+					HAPISPACE::VectorF(m_drawScale, m_drawScale));
+				m_data[access + x].m_aftersprite->Render(SCREEN_SURFACE);
+				break;
 			case eTimeOfDay::eEvening:
+				m_data[access + x].m_eveningSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
+					(xPos - m_drawOffset.first)*m_drawScale,
+					(yPosOdd - m_drawOffset.second)*m_drawScale));
+				m_data[access + x].m_eveningSprite->GetTransformComp().SetScaling(
+					HAPISPACE::VectorF(m_drawScale, m_drawScale));
+				m_data[access + x].m_eveningSprite->Render(SCREEN_SURFACE);
+				break;
 			case eTimeOfDay::eNight:
+				m_data[access + x].m_nightSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
+					(xPos - m_drawOffset.first)*m_drawScale,
+					(yPosOdd - m_drawOffset.second)*m_drawScale));
+				m_data[access + x].m_nightSprite->GetTransformComp().SetScaling(
+					HAPISPACE::VectorF(m_drawScale, m_drawScale));
+				m_data[access + x].m_nightSprite->Render(SCREEN_SURFACE);
+				break;
 			}
 			//Is Odd
 			
@@ -52,12 +73,42 @@ void Map::drawMap() const
 		{
 			const float xPos = (float)x * textureDimensions.first * 3 / 4;
 			//Is even
-			m_data[access + x].m_sprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
-				(xPos - m_drawOffset.first)*m_drawScale,
-				(yPosEven - m_drawOffset.second)*m_drawScale));
-			m_data[access + x].m_sprite->GetTransformComp().SetScaling(
-				HAPISPACE::VectorF(m_drawScale, m_drawScale));
-			m_data[access + x].m_sprite->Render(SCREEN_SURFACE);
+			switch (m_timeOfDay)
+			{
+			case eTimeOfDay::eMorning:
+				m_data[access + x].m_daySprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
+					(xPos - m_drawOffset.first)*m_drawScale,
+					(yPosEven - m_drawOffset.second)*m_drawScale));
+				m_data[access + x].m_daySprite->GetTransformComp().SetScaling(
+					HAPISPACE::VectorF(m_drawScale, m_drawScale));
+				m_data[access + x].m_daySprite->Render(SCREEN_SURFACE);
+				break;
+			case eTimeOfDay::eAfternoon:
+				m_data[access + x].m_aftersprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
+					(xPos - m_drawOffset.first)*m_drawScale,
+					(yPosEven - m_drawOffset.second)*m_drawScale));
+				m_data[access + x].m_aftersprite->GetTransformComp().SetScaling(
+					HAPISPACE::VectorF(m_drawScale, m_drawScale));
+				m_data[access + x].m_aftersprite->Render(SCREEN_SURFACE);
+				break;
+			case eTimeOfDay::eEvening:
+				m_data[access + x].m_eveningSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
+					(xPos - m_drawOffset.first)*m_drawScale,
+					(yPosEven - m_drawOffset.second)*m_drawScale));
+				m_data[access + x].m_eveningSprite->GetTransformComp().SetScaling(
+					HAPISPACE::VectorF(m_drawScale, m_drawScale));
+				m_data[access + x].m_eveningSprite->Render(SCREEN_SURFACE);
+				break;
+			case eTimeOfDay::eNight:
+				m_data[access + x].m_nightSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
+					(xPos - m_drawOffset.first)*m_drawScale,
+					(yPosEven - m_drawOffset.second)*m_drawScale));
+				m_data[access + x].m_nightSprite->GetTransformComp().SetScaling(
+					HAPISPACE::VectorF(m_drawScale, m_drawScale));
+				m_data[access + x].m_nightSprite->Render(SCREEN_SURFACE);
+				break;
+			}
+		
 		}
 		access += m_mapDimensions.first;
 	}
@@ -312,6 +363,11 @@ bool Map::moveEntity(intPair originalPos, intPair newPos)
 	return true;
 }
 
+eTimeOfDay Map::getTimeOfDay() const
+{
+	return m_timeOfDay;
+}
+
 void Map::insertEntity(BattleEntity& newEntity)
 {
 	Tile* tile = getTile(newEntity.m_battleProperties.getCurrentPosition());	
@@ -324,7 +380,7 @@ void Map::insertEntity(BattleEntity& newEntity)
 intPair Map::getTileScreenPos(intPair coord) const
 {
 	intPair textureDimensions = intPair(
-		m_data[0].m_sprite->FrameWidth(),
+		m_data[0].m_daySprite->FrameWidth(),
 		FRAME_HEIGHT);
 
 	const float xPos = static_cast<float>(coord.first * textureDimensions.first) * 3 / 4;
@@ -339,7 +395,7 @@ intPair Map::getTileScreenPos(intPair coord) const
 intPair Map::getMouseClickCoord(intPair mouseCoord) const
 {
 	intPair textureDimensions = intPair(
-		m_data[0].m_sprite->FrameWidth(),
+		m_data[0].m_daySprite->FrameWidth(),
 		FRAME_HEIGHT);
 	
 	const float translatedX = (static_cast<float>(mouseCoord.first - FRAME_CENTRE_X) / m_drawScale) + static_cast<float>(m_drawOffset.first);

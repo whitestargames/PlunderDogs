@@ -659,7 +659,22 @@ void BattleUI::ShipPlacementPhase::render(const InvalidPosition& invalidPosition
 {
 	for (auto& i : m_spawnArea)
 	{
-		i->m_sprite->Render(SCREEN_SURFACE);
+		switch (map.getTimeOfDay())
+		{
+		case eTimeOfDay::eMorning:
+			i->m_daySprite->Render(SCREEN_SURFACE);
+			break;
+		case eTimeOfDay::eAfternoon:
+			i->m_aftersprite->Render(SCREEN_SURFACE);
+			break;
+		case eTimeOfDay::eEvening:
+			i->m_eveningSprite->Render(SCREEN_SURFACE);
+			break;
+		case eTimeOfDay::eNight:
+			i->m_nightSprite->Render(SCREEN_SURFACE);
+			break;
+		}
+		
 	}
 
 	if (m_currentSelectedEntity.m_currentSelectedEntity && !invalidPosition.m_activate)
