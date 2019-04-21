@@ -17,7 +17,7 @@ BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
 	texture.m_CompassPointer->GetTransformComp().SetPosition({ 80, 80 });
 	texture.m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
 	texture.m_activeFactionToken->GetTransformComp().SetPosition({ 1350,50 });// position just temp can be adjusted as needed
-	texture.m_activeFactionToken->SetFrameNumber(2);//setting sprite frame to blue because that the first ship
+	texture.m_activeFactionToken->SetFrameNumber(3);//setting sprite frame to blue because that the first ship
 	
 	//pauseMenu
 	texture.m_resumeButton->GetTransformComp().SetPosition({ 658, 297 });
@@ -147,17 +147,18 @@ void BattleGUI::updateFactionToken(int faction)
 {
 	switch (faction)
 	{
-	case 0:
+	case 0://enum corresponds to blue
 		texture.m_activeFactionToken->SetFrameNumber(2);
 		break;
-	case 1:
+	case 1://enum corresponds to green
+		
+		texture.m_activeFactionToken->SetFrameNumber(1);
+		break;
+	case 2://enum corresponds to red
 		texture.m_activeFactionToken->SetFrameNumber(0);
 		break;
-	case 2:
+	case 3://enum corresponds to yellow
 		texture.m_activeFactionToken->SetFrameNumber(3);
-		break;
-	case 3:
-		texture.m_activeFactionToken->SetFrameNumber(1);
 		break;
 	}
 }
