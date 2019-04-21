@@ -100,6 +100,6 @@ std::pair<double, eDirection> calculateDirection(Tile* startLocation, Tile* endL
 		case 4: returnVariable.second = eSouthWest;
 		case 5: returnVariable.second = eNorthWest;
 		}
-
 	}
+	return returnVariable;
 }
