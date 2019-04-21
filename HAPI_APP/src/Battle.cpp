@@ -67,6 +67,7 @@ void Battle::render() const
 
 void Battle::update(float deltaTime)
 {
+	m_battleUI.setCurrentFaction(getCurentFaction());
 	m_battleUI.update();
 	m_map.setDrawOffset(m_battleUI.getCameraPositionOffset());
 
@@ -140,9 +141,10 @@ void Battle::insertEntity(std::pair<int, int> startingPosition, eDirection start
 
 void Battle::nextTurn()
 {
-
+	
 	m_moveCounter.m_counter = 0;
-	m_battleUI.GetCurrentFaction(getCurentFaction());
+
+	
 	
 	//Notify all players new turn has started
 
@@ -177,11 +179,13 @@ void Battle::nextTurn()
 	{
 		m_currentPhase = BattlePhase::Movement;
 		++m_currentPlayersTurn;
+		
 	}
 
 	if (m_currentPlayersTurn == m_players.size())
 	{
 		m_currentPlayersTurn = 0;
+		
 	}
 
 }
@@ -189,6 +193,7 @@ void Battle::nextTurn()
 void Battle::updateMovementPhase(float deltaTime)
 {
 	int totalAliveEntities = 0;
+	
 	for (auto& entity : m_players[m_currentPlayersTurn].m_entities)
 	{
 		if (!entity->m_battleProperties.isDead())
@@ -208,7 +213,7 @@ void Battle::updateAttackPhase()
 {
 	if (allEntitiesAttacked(m_players[m_currentPlayersTurn].m_entities))
 	{
-		m_battleUI.FactionUpdateGUI();
+		
 		nextTurn();
 	}
 }

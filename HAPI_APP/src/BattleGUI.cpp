@@ -29,7 +29,7 @@ BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
 	m_CompassPointer->GetTransformComp().SetPosition({ 80, 80 });
 	m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
 	m_activeFactionToken->GetTransformComp().SetPosition({ 1350,50 });// position just temp can be adjusted as needed
-	m_activeFactionToken->SetFrameNumber(3);//defualt position yellow;
+	
 	
 	//pauseMenu
 	m_resumeButton->GetTransformComp().SetPosition({ 658, 297 });
@@ -156,23 +156,9 @@ void BattleGUI::update(eDirection windDirection)
 	}
 }
 
-void BattleGUI::updateFactionToken(int faction)
+void BattleGUI::updateFactionToken(int factionName)
 {
-	switch (faction)
-	{
-	case 0://enum corresponds to blue
-		m_activeFactionToken->SetFrameNumber(2);
-		break;
-	case 1://enum corresponds to green
-		m_activeFactionToken->SetFrameNumber(1);
-		break;
-	case 2://enum corresponds to red
-		m_activeFactionToken->SetFrameNumber(0);
-		break;
-	case 3://enum corresponds to yellow
-		m_activeFactionToken->SetFrameNumber(3);
-		break;
-	}
+	m_activeFactionToken->SetFrameNumber(static_cast<int>(factionName));
 }
 
 void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData)
