@@ -103,13 +103,15 @@ private:
 	CurrentSelectedTile m_selectedTile;
 	//This stores the position at which the mouse event "eLeftMouseButtonDown" last occured while giving an entity a move command, 
 	//it's used to calculate what direction the mouse moved during that input.
-	std::pair<int, int> m_leftMouseDownPosition{ 0,0 };
+	std::pair<int, int> m_leftMouseDownPosition;
 	//This is used to determine if an entity is currently being given a move command, it gets set to true in the "handleOnLeftClickMovementPhase()" and false after "eLeftMouseButtonUp" is detected.
-	bool m_isMovingEntity{ false };
+	bool m_isMovingEntity;
+	//Used to store the tile selected for movement when the lmb is depressed, so that it can be used for moveEntity input on mouse up
+	const Tile* m_mouseDownTile;
 	BattleGUI m_gui;
 	InvalidPosition m_invalidPosition;
 	std::vector<std::unique_ptr<ShipPlacementPhase>> m_playerShipPlacement;
-	
+
 	//Movement Phase
 	void onMouseMoveMovementPhase();
 	void onLeftClickMovementPhase();

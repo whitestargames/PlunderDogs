@@ -82,6 +82,7 @@ public:
 	void clearMovementPath();
 
 	void moveEntity(Map& map, const Tile& tile);
+	void moveEntity(Map& map, const Tile& tile, eDirection endDirection);
 	void takeDamage(EntityProperties& entityProperties, int damageAmount, FactionName entityFaction);
 	void fireWeapon();
 	void onNewTurn();

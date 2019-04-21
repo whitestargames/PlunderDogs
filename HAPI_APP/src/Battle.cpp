@@ -56,6 +56,12 @@ void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
 	entity.m_battleProperties.moveEntity(m_map, destination);
 }
 
+void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination, eDirection endDirection)
+{
+	assert(m_currentPhase == BattlePhase::Movement);
+	entity.m_battleProperties.moveEntity(m_map, destination, endDirection);
+}
+
 void Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea)
 {
 	assert(m_currentPhase == BattlePhase::Attack);

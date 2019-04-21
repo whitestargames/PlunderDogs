@@ -49,7 +49,10 @@ BattleUI::BattleUI(Battle & battle)
 	: m_battle(battle),
 	m_gui({ battle.getMap().getDimensions().first * 28 - 150, battle.getMap().getDimensions().second * 32 - 150}),
 	m_selectedTile(),
-	m_invalidPosition()
+	m_invalidPosition(),
+	m_leftMouseDownPosition({0, 0}),
+	m_isMovingEntity(false),
+	m_mouseDownTile(nullptr)
 {}
 
 std::pair<int, int> BattleUI::getCameraPositionOffset() const
@@ -170,12 +173,11 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 			m_isMovingEntity = true;
 			m_leftMouseDownPosition = { mouseData.x, mouseData.y };
 			assert(!m_playerShipPlacement.empty());
-			//m_playerShipPlacement.front()->onLeftClick(m_invalidPosition, eNorth, m_selectedTile.m_tile, m_battle);
-			//m_selectedTile.m_tile = nullptr;
 			break;
 		}
 		case BattlePhase::Movement:
 		{
+			m_leftMouseDownPosition = { mouseData.x, mouseData.y };
 			onLeftClickMovementPhase();
 			break;
 		}
@@ -204,29 +206,49 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 	}
 	else if (mouseEvent == EMouseEvent::eLeftButtonUp)
 	{
-		if (m_isMovingEntity && m_battle.getCurrentPhase() == BattlePhase::ShipPlacement)
+		if (m_isMovingEntity)
 		{
-			assert(!m_playerShipPlacement.empty());
-			std::pair<double, eDirection> inputInformation{ calculateDirection(m_leftMouseDownPosition,HAPI_Wrapper::getMouseLocation()) };
-			if (inputInformation.first > 20)
+			std::pair<double, eDirection> mouseMoveDirection{ calculateDirection(m_leftMouseDownPosition,HAPI_Wrapper::getMouseLocation()) };
+			switch (m_battle.getCurrentPhase())
 			{
-				/*
-				This function call will be used if the mouse moved a significant enough distance during inputing a move command to assume it was on purpose, it sends not only the 
-				destination tile but the direction of the aformentioned movement.  In order for this to work the pathfinding must be capable of taking an eDirection as part of the 
-				function used by the battle to move the entity.
-				*/
-				m_playerShipPlacement.front()->onLeftClick(m_invalidPosition, inputInformation.second, m_selectedTile.m_tile, m_battle);
-				//m_battle.moveEntityToPosition(*m_selectedTile.m_tile->m_entityOnTile, *m_battle.getMap().getTile(m_leftMouseDownPosition), inputInformation.second);
-			}
-			/*
-			This function call is to be used if the movement of the mouse during the move command is small enough to be considered unintended,
-			in this case the ship should not rotate after reaching the destination.
-			*/
-			else 
+			case BattlePhase::ShipPlacement :
 			{
-				m_playerShipPlacement.front()->onLeftClick(m_invalidPosition, eNorth, m_selectedTile.m_tile, m_battle);
+				assert(!m_playerShipPlacement.empty());
+				if (mouseMoveDirection.first > 20)
+				{
+					//This function call will be used if the mouse moved a significant enough distance during inputing a move command to assume it was on purpose, it sends not only the
+					//destination tile but the direction of the aformentioned movement.  In order for this to work the pathfinding must be capable of taking an eDirection as part of the
+					//function used by the battle to move the entity.
+					m_playerShipPlacement.front()->onLeftClick(m_invalidPosition, mouseMoveDirection.second, m_selectedTile.m_tile, m_battle);
+					//m_battle.moveEntityToPosition(*m_selectedTile.m_tile->m_entityOnTile, *m_battle.getMap().getTile(m_leftMouseDownPosition), mouseMoveDirection.second);
+				}
+				else
+				{
+					//This function call is to be used if the movement of the mouse during the move command is small enough to be considered unintended,
+					//in this case the ship should not rotate after reaching the destination.
+					m_playerShipPlacement.front()->onLeftClick(m_invalidPosition, eNorth, m_selectedTile.m_tile, m_battle);
+				}
+				break;
 			}
-			//else m_battle.moveEntityToPosition(*m_selectedTile.m_tile->m_entityOnTile, *m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(m_leftMouseDownPosition)));
+			case BattlePhase::Movement :
+			{
+				if (!m_mouseDownTile)
+				{
+					break;
+				}
+				if (mouseMoveDirection.first > 20)
+				{
+					m_battle.moveEntityToPosition(*m_selectedTile.m_tile->m_entityOnTile, *m_mouseDownTile, mouseMoveDirection.second);
+				}
+				else
+				{
+					m_battle.moveEntityToPosition(*m_selectedTile.m_tile->m_entityOnTile, *m_mouseDownTile);
+				}
+				break;
+			}
+			}
+			//Resetting the variables used as triggers
+			m_mouseDownTile = nullptr;
 			m_selectedTile.m_tile = nullptr;
 			m_isMovingEntity = false;
 		}
@@ -284,7 +306,7 @@ void BattleUI::onMouseMoveMovementPhase()
 			return;
 		}
 
-		if (m_selectedTile.m_tile->m_tileCoordinate != tile->m_tileCoordinate)
+		if (m_selectedTile.m_tile->m_tileCoordinate != tile->m_tileCoordinate && !m_mouseDownTile)
 		{
 			if (tile->m_type != eTileType::eSea && tile->m_type != eTileType::eOcean)
 			{
@@ -319,7 +341,6 @@ void BattleUI::onLeftClickMovementPhase()
 		{
 			m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.clearMovementPath();
 		}
-
 		return;
 	}
 
@@ -353,12 +374,14 @@ void BattleUI::onLeftClickMovementPhase()
 			m_selectedTile.m_tile = nullptr;
 		}
 
-		//Instruct Entity to move to new location
+		//Store data so Entity can move to new location
 		else if (m_selectedTile.m_tile->m_entityOnTile && (m_selectedTile.m_tile->m_tileCoordinate != tileOnMouse->m_tileCoordinate))
 		{
 			assert(m_selectedTile.m_tile->m_entityOnTile->m_factionName == m_battle.getCurentFaction());
-			m_battle.moveEntityToPosition(*m_selectedTile.m_tile->m_entityOnTile, *tileOnMouse);
-			m_selectedTile.m_tile = nullptr;
+			m_mouseDownTile = tileOnMouse;
+			m_isMovingEntity = true;
+			//m_battle.moveEntityToPosition(*m_selectedTile.m_tile->m_entityOnTile, *tileOnMouse);
+			//m_selectedTile.m_tile = nullptr;
 		}
 	}
 	else

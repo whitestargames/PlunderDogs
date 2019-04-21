@@ -182,6 +182,27 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 	}
 }
 
+void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection endDirection)
+{
+	if (!m_movedToDestination)
+	{
+		auto pathToTile = PathFinding::getPathToTile(map, m_currentPosition, tile.m_tileCoordinate);
+		if (!pathToTile.empty() && pathToTile.size() <= m_movementPathSize + 1)
+		{
+			//Set end tile to the correct facing
+			pathToTile[pathToTile.size() - 1].first = endDirection;
+
+			m_pathToTile = pathToTile;
+			map.moveEntity(m_currentPosition, pathToTile.back().second);
+			m_movedToDestination = true;
+		}
+		else
+		{
+			clearMovementPath();
+		}
+	}
+}
+
 //TODO: Will change.
 //Not sure how damage/health is going to be implemented yet. 
 void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int damageAmount, FactionName entityFaction)
