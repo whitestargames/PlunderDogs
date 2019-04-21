@@ -29,7 +29,7 @@ BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
 	m_CompassPointer->GetTransformComp().SetPosition({ 80, 80 });
 	m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
 	m_activeFactionToken->GetTransformComp().SetPosition({ 1350,50 });// position just temp can be adjusted as needed
-	m_activeFactionToken->SetFrameNumber(3);//setting sprite frame to blue because that the first ship
+	m_activeFactionToken->SetFrameNumber(3);//defualt position yellow;
 	
 	//pauseMenu
 	m_resumeButton->GetTransformComp().SetPosition({ 658, 297 });
