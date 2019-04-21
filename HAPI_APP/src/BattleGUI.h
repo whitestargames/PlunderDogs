@@ -6,7 +6,7 @@
 
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
-
+#include "Textures.h"
 enum BattleWindow
 {
 	eCombat = 0,
@@ -30,21 +30,8 @@ public:
 	
 
 private:
-	std::unique_ptr<Sprite> m_battleIcons;
-	std::unique_ptr<Sprite> m_pauseButton;
-	std::unique_ptr<Sprite> m_chickenButton;
-	std::unique_ptr<Sprite> m_pauseMenuBackground;
-	std::unique_ptr<Sprite> m_resumeButton;
-	std::unique_ptr<Sprite> m_quitButton;
-	std::unique_ptr<Sprite> m_CompassBackGround;
-	std::unique_ptr<Sprite> m_CompassPointer;
-	std::unique_ptr<Sprite> m_activeFactionToken;
-	//postBattleScreen
-	std::unique_ptr<Sprite> m_postBattleBackground;
-	std::unique_ptr<Sprite> m_doneButton;
-
-
 	BattleWindow m_currentBattleWindow;
+	Textures texture;
 	std::pair<int, int> m_maxCameraOffset;
 	//Map m_map;
 	DWORD animationStartTime;
