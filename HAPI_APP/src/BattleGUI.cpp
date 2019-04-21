@@ -14,7 +14,7 @@ BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
 	m_CompassBackGround(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "windDirectionCompassBackGround.png")),
 	m_CompassPointer(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "windDirectionArrow.png")),
 	m_activeFactionToken(HAPI_Sprites.LoadSprite(Utilities::getDataDirectory() + "playerFlags.xml")),
-	
+	//might increase size of the player flags maybe
 	
 	m_currentBattleWindow(BattleWindow::eCombat),
 	m_maxCameraOffset(maxCameraOffset)
@@ -28,8 +28,8 @@ BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
 	m_CompassPointer->GetTransformComp().SetOrigin({ 20,60 });
 	m_CompassPointer->GetTransformComp().SetPosition({ 80, 80 });
 	m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
-	m_activeFactionToken->GetTransformComp().SetPosition({ 1400,50 });
-	m_activeFactionToken->SetFrameNumber(2);
+	m_activeFactionToken->GetTransformComp().SetPosition({ 1350,50 });// position just temp can be adjusted as needed
+	m_activeFactionToken->SetFrameNumber(2);//setting sprite frame to blue because that the first ship
 	
 	//pauseMenu
 	m_resumeButton->GetTransformComp().SetPosition({ 658, 297 });
