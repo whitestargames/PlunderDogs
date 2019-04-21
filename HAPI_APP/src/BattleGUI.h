@@ -3,10 +3,10 @@
 #include <HAPISprites_lib.h>
 #include <HAPISprites_UI.h>
 #include "Global.h"
-
+#include "Textures.h"
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
-#include "Textures.h"
+
 enum BattleWindow
 {
 	eCombat = 0,
