@@ -64,6 +64,27 @@ struct Textures
 			HAPI_Sprites.UserMessage("Cannot Load : 'hexTiles.xml'", "Texture Error");
 			return false;
 		}
+
+		m_afternoonHexTiles = HAPI_Wrapper::loadSpriteSheet("afternoonHexTiles.xml");
+		if (!m_afternoonHexTiles)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'afternoonHexTiles.xml'", "Texture Error");
+			return false;
+		}
+
+		m_eveningHexTiles = HAPI_Wrapper::loadSpriteSheet("eveningHexTiles.xml");
+		if (!m_eveningHexTiles)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'eveningHexTiles.xml'", "Texture Error");
+			return false;
+		}
+
+		m_nightHexTiles = HAPI_Wrapper::loadSpriteSheet("nightHexTiles.xml");
+		if (!m_nightHexTiles)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'nightHexTiles.xml'", "Texture Error");
+			return false;
+		}
 		
 		m_spawnHex = HAPI_Wrapper::makeSpriteSheet("spawnHex.png");
 		if (!m_spawnHex)
@@ -193,6 +214,9 @@ struct Textures
 	static std::shared_ptr<SpriteSheet> m_preBattleUIBackButton;
 	static std::shared_ptr<SpriteSheet> m_thing;
 	static std::shared_ptr<SpriteSheet> m_hexTiles;
+	static std::shared_ptr<SpriteSheet> m_afternoonHexTiles;
+	static std::shared_ptr<SpriteSheet> m_eveningHexTiles;
+	static std::shared_ptr<SpriteSheet> m_nightHexTiles;
 	static std::shared_ptr<SpriteSheet> m_spawnHex;
 	static std::shared_ptr<SpriteSheet> m_selectedHex;
 	static std::shared_ptr<SpriteSheet> m_blueShipSideCannons;
