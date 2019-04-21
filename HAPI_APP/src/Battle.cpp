@@ -5,7 +5,7 @@ using namespace HAPISPACE;
 
 Battle::Battle(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players)
 	: m_players(),
-	m_currentPlayersTurn(0),
+	m_currentPlayersTurn(static_cast<int>(FactionName::Yellow)),
 	m_map(MapParser::parseMap("Level1.tmx")),
 	m_currentPhase(BattlePhase::ShipPlacement),
 	m_battleUI(*this),
@@ -61,6 +61,8 @@ void Battle::update(float deltaTime)
 	else if (m_currentPhase == BattlePhase::Attack)
 	{
 		updateAttackPhase();
+		
+
 	}
 }
 
@@ -119,9 +121,12 @@ void Battle::insertEntity(std::pair<int, int> startingPosition, eDirection start
 
 void Battle::nextTurn()
 {
-	m_moveCounter.m_counter = 0;
 
+	m_moveCounter.m_counter = 0;
+	m_battleUI.GetCurrentFaction(getCurentFaction());
+	
 	//Notify all players new turn has started
+
 	for (auto& player : m_players)
 	{
 		for (auto& entity : player.m_entities)
@@ -158,6 +163,7 @@ void Battle::nextTurn()
 	{
 		m_currentPlayersTurn = 0;
 	}
+
 }
 
 void Battle::updateMovementPhase(float deltaTime)
@@ -182,6 +188,7 @@ void Battle::updateAttackPhase()
 {
 	if (allEntitiesAttacked(m_players[m_currentPlayersTurn].m_entities))
 	{
+		m_battleUI.FactionUpdateGUI();
 		nextTurn();
 	}
 }
@@ -219,5 +226,6 @@ BattlePhase Battle::getCurrentPhase() const
 
 FactionName Battle::getCurentFaction() const
 {
+	
 	return m_players[m_currentPlayersTurn].m_factionName;
 }

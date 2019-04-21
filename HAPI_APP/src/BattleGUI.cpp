@@ -3,21 +3,34 @@
 #include "Utilities/MapParser.h"
 
 BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
-	: m_battleIcons(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "battleIcons.png")),
-	m_pauseButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "pauseButton.png", 2)),
-	m_chickenButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "chickenButton.png")),
-	m_pauseMenuBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "pauseMenuBackground.png")),
-	m_resumeButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "resumeButton.png", 2)),
-	m_quitButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "quitButton.png", 2)),
-	m_postBattleBackground(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "PostBattleBackground.png")),
-	m_doneButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "doneButton.png", 2)),
+	:
+	m_battleIcons(HAPI_Sprites.MakeSprite(Textures::m_battleIcons)),
+	m_pauseButton(HAPI_Sprites.MakeSprite(Textures::m_pauseButton)),
+	m_chickenButton(HAPI_Sprites.MakeSprite(Textures::m_chickenButton)),
+	m_pauseMenuBackground(HAPI_Sprites.MakeSprite(Textures::m_pauseMenuBackground)),
+	m_resumeButton(HAPI_Sprites.MakeSprite(Textures::m_resumeButton)),
+	m_quitButton(HAPI_Sprites.MakeSprite(Textures::m_quitButton)),
+	m_postBattleBackground(HAPI_Sprites.MakeSprite(Textures::m_postBattleBackground)),
+	m_doneButton(HAPI_Sprites.MakeSprite(Textures::m_doneButton)),
+	m_activeFactionToken(HAPI_Sprites.MakeSprite(Textures::m_activeFactionToken)),
+	m_CompassPointer(HAPI_Sprites.MakeSprite(Textures::m_CompassPointer)),
+	m_CompassBackGround(HAPI_Sprites.MakeSprite(Textures::m_CompassBackGround)),
+
 	m_currentBattleWindow(BattleWindow::eCombat),
 	m_maxCameraOffset(maxCameraOffset)
-{
+{	
 	//battle
 	m_battleIcons->GetTransformComp().SetPosition({ 350, 800 });
 	m_pauseButton->GetTransformComp().SetPosition({ 1450, 50 });
 	m_chickenButton->GetTransformComp().SetPosition({ 1450, 750 });
+	m_CompassBackGround->GetTransformComp().SetOriginToCentreOfFrame();
+	m_CompassBackGround->GetTransformComp().SetPosition({ 80, 80 });
+	m_CompassPointer->GetTransformComp().SetOrigin({ 20,60 });
+	m_CompassPointer->GetTransformComp().SetPosition({ 80, 80 });
+	m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
+	m_activeFactionToken->GetTransformComp().SetPosition({ 1350,50 });// position just temp can be adjusted as needed
+	m_activeFactionToken->SetFrameNumber(3);//defualt position yellow;
+	
 	//pauseMenu
 	m_resumeButton->GetTransformComp().SetPosition({ 658, 297 });
 	m_quitButton->GetTransformComp().SetPosition({ 658, 427 });
@@ -45,6 +58,9 @@ void BattleGUI::render() const
 	}
 	m_pauseButton->Render(SCREEN_SURFACE);
 	m_chickenButton->Render(SCREEN_SURFACE);
+	m_CompassBackGround->Render(SCREEN_SURFACE);
+	m_CompassPointer->Render(SCREEN_SURFACE);
+	m_activeFactionToken->Render(SCREEN_SURFACE);
 
 	switch (m_currentBattleWindow)
 	{
@@ -76,8 +92,10 @@ void BattleGUI::render() const
 	}
 }
 
-void BattleGUI::update()
+void BattleGUI::update(eDirection windDirection)
 {
+	m_CompassPointer->GetTransformComp().SetRotation(static_cast<float>(windDirection) * 0.333333 * 3.14159);
+
 	if (shipSelected)
 	{
 		if (playAnimation)
@@ -137,6 +155,25 @@ void BattleGUI::update()
 	}
 }
 
+void BattleGUI::updateFactionToken(int faction)
+{
+	switch (faction)
+	{
+	case 0://enum corresponds to blue
+		m_activeFactionToken->SetFrameNumber(2);
+		break;
+	case 1://enum corresponds to green
+		m_activeFactionToken->SetFrameNumber(1);
+		break;
+	case 2://enum corresponds to red
+		m_activeFactionToken->SetFrameNumber(0);
+		break;
+	case 3://enum corresponds to yellow
+		m_activeFactionToken->SetFrameNumber(3);
+		break;
+	}
+}
+
 void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData)
 {
 	switch (m_currentBattleWindow)
@@ -149,7 +186,7 @@ void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData)
 			m_currentBattleWindow = BattleWindow::ePause;//enables the pause menu
 		}
 					if (m_chickenButton->GetSpritesheet()->GetFrameRect(0).Translated(
-			m_chickenButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
+						m_chickenButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
 		{
 			animationStartTime = HAPI_Sprites.GetTime();
 			shipSelected = true;

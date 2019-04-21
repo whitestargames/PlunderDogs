@@ -15,9 +15,7 @@ class Battle
 {
 public:
 	Battle(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players);
-
 	const Map& getMap() const;
-	
 	BattlePhase getCurrentPhase() const;
 	FactionName getCurentFaction() const;
 
