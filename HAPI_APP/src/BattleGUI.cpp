@@ -151,7 +151,6 @@ void BattleGUI::updateFactionToken(int faction)
 		texture.m_activeFactionToken->SetFrameNumber(2);
 		break;
 	case 1://enum corresponds to green
-		
 		texture.m_activeFactionToken->SetFrameNumber(1);
 		break;
 	case 2://enum corresponds to red
