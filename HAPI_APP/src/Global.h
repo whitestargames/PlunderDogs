@@ -84,3 +84,12 @@ enum eWeaponType
 	eShotGun, 
 	eFlamethrower
 };
+
+
+enum eTimeOfDay
+{
+	eMorning = 0,
+	eAfternoon,
+	eEvening,
+	eNight
+};

@@ -15,8 +15,11 @@ constexpr float FRAME_CENTRE_Y{ 32.5 };
 
 void Map::drawMap() const 
 {
+
+	
+	
 	intPair textureDimensions = intPair(
-		m_data[0].m_sprite->FrameWidth(),
+		m_data[0].m_daySprite->FrameWidth(), 
 		FRAME_HEIGHT);
 
 	int access{ 0 };
@@ -28,13 +31,22 @@ void Map::drawMap() const
 		for (int x = 1; x < m_mapDimensions.first; x += 2)
 		{
 			const float xPos = (float)x * textureDimensions.first * 3 / 4;
+			switch (m_timeOfDay)
+			{
+			case eTimeOfDay::eMorning:
+				m_data[access + x].m_daySprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
+					(xPos - m_drawOffset.first)*m_drawScale,
+					(yPosOdd - m_drawOffset.second)*m_drawScale));
+				m_data[access + x].m_daySprite->GetTransformComp().SetScaling(
+					HAPISPACE::VectorF(m_drawScale, m_drawScale));
+				m_data[access + x].m_daySprite->Render(SCREEN_SURFACE);
+				break;
+			case eTimeOfDay::eAfternoon:
+			case eTimeOfDay::eEvening:
+			case eTimeOfDay::eNight:
+			}
 			//Is Odd
-			m_data[access + x].m_sprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
-				(xPos - m_drawOffset.first)*m_drawScale,
-				(yPosOdd - m_drawOffset.second)*m_drawScale));
-			m_data[access + x].m_sprite->GetTransformComp().SetScaling(
-				HAPISPACE::VectorF(m_drawScale, m_drawScale));
-			m_data[access + x].m_sprite->Render(SCREEN_SURFACE);
+			
 		}
 		for (int x = 0; x < m_mapDimensions.first; x += 2)
 		{
@@ -359,7 +371,8 @@ Map::Map(intPair size, const std::vector<std::vector<int>>& tileData) :
 	m_drawOffset(intPair(10, 60)),
 	m_windDirection(eNorth),
 	m_windStrength(0.4),
-	m_drawScale(2)
+	m_drawScale(2),
+	m_timeOfDay(eMorning)
 {
 	m_data.reserve(m_mapDimensions.first * m_mapDimensions.second);
 
@@ -376,14 +389,15 @@ Map::Map(intPair size, const std::vector<std::vector<int>>& tileData) :
 			const int tileID = tileData[y][x];
 			assert(tileID != -1);
 			m_data.emplace_back(static_cast<eTileType>(tileID), 
-				Textures::m_hexTiles, intPair(x, y));
+				Textures::m_hexTiles, Textures::m_afternoonHexTiles, 
+				Textures::m_eveningHexTiles, Textures::m_nightHexTiles, intPair(x, y));
 
-			if (!m_data[x + y * m_mapDimensions.first].m_sprite)
+			if (!m_data[x + y * m_mapDimensions.first].m_daySprite)
 			{
 				HAPI_Sprites.UserMessage("Could not load tile spritesheet", "Error");
 				return;
 			}
-			m_data[x + y * m_mapDimensions.first].m_sprite->SetFrameNumber(tileID);
+			m_data[x + y * m_mapDimensions.first].m_daySprite->SetFrameNumber(tileID);
 		}
 	}
 }
