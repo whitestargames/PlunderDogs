@@ -3,13 +3,41 @@
 
 using namespace HAPISPACE;
 
+void Battle::setTimeOfDay(float deltaTime)
+{
+	m_dayTime.update(deltaTime);
+	if (m_dayTime.isExpired())
+	{
+		int timeOfDay = (int)m_map.getTimeOfDay() + 1;
+		if (timeOfDay > eTimeOfDay::eNight)
+		{
+			timeOfDay = 0;
+		}
+
+		m_map.setTimeOfDay((eTimeOfDay)timeOfDay);
+		m_dayTime.reset();
+	}
+}
+
+void Battle::setWindDirectoin(float deltaTime)
+{
+	m_windTime.update(deltaTime);
+	if (m_windTime.isExpired())
+	{
+		int wind = rand() % eDirection::Max;
+		m_map.setWindDirection((eDirection)wind);
+		m_windTime.reset();
+	}
+}
+
 Battle::Battle(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players)
 	: m_players(),
 	m_currentPlayersTurn(static_cast<int>(FactionName::eYellow)),
 	m_map(MapParser::parseMap("Level1.tmx")),
 	m_currentPhase(BattlePhase::ShipPlacement),
 	m_battleUI(*this),
-	m_dayTime(20.0f)
+	m_dayTime(20.0f),
+	m_windTime(10)
 {
 	for (auto& player : players)
 	{
@@ -41,22 +69,10 @@ void Battle::update(float deltaTime)
 {
 	m_battleUI.update();
 	m_map.setDrawOffset(m_battleUI.getCameraPositionOffset());
-	m_dayTime.update(deltaTime);
-	std::cout << m_dayTime.getElaspedTime() << std::endl;
-	if (m_dayTime.isExpired())
-	{
-		std::cout << "change time of  day " << std::endl;
-		int timeOfDay = (int)m_map.getTimeOfDay() + 1;
-		int wind = rand()%eDirection::Max;
-		if (timeOfDay > eTimeOfDay::eNight)
-		{
-			timeOfDay = 0;
-		}
-		
-		m_map.setTimeOfDay((eTimeOfDay)timeOfDay);
-		m_map.setWindDirection((eDirection) wind);
-		m_dayTime.reset();
-	}
+
+	setTimeOfDay(deltaTime);
+	setWindDirectoin(deltaTime);
+
 	if (m_currentPhase == BattlePhase::Movement)
 	{
 		updateMovementPhase(deltaTime);
@@ -141,6 +157,7 @@ void Battle::nextTurn()
 	//Handle ship placement phase
 	if (m_currentPhase == BattlePhase::ShipPlacement)
 	{
+
 		++m_currentPlayersTurn;
 		
 		if (m_currentPlayersTurn == static_cast<int>(m_players.size()))
