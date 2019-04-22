@@ -78,7 +78,7 @@ private:
 	std::pair<int, int> m_drawOffset;
 	std::vector<Tile> m_data;
 	std::vector<std::pair<int, int>> m_spawnPositions;
-	eTimeOfDay m_timeOfDay;
+	eGameTime m_timeOfDay;
 
 	std::pair<int, int> offsetToCube(std::pair<int, int> offset) const;
 	std::pair<int, int> cubeToOffset(std::pair<int, int> cube) const;
@@ -114,8 +114,8 @@ public:
 	//can give values that aren't valid tiles if you click off the map 
 	//so check if getTile is null before using
 	std::pair<int, int> getMouseClickCoord(std::pair<int, int> mouseCoord) const;
-	eTimeOfDay getTimeOfDay()const;
-	void setTimeOfDay(eTimeOfDay timeOfDay);
+	eGameTime getTimeOfDay()const;
+	void setTimeOfDay(eGameTime timeOfDay);
 
 	//Moves an entitys position on the map, returns false if the position is already taken
 	bool moveEntity(std::pair<int, int> originalPos, std::pair<int, int> newPos);
