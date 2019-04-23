@@ -95,8 +95,6 @@ void Battle::update(float deltaTime)
 	else if (m_currentPhase == BattlePhase::Attack)
 	{
 		updateAttackPhase();
-		
-
 	}
 }
 

@@ -33,7 +33,6 @@ public:
 private:
 	BattleWindow m_currentBattleWindow;
 	std::pair<int, int> m_maxCameraOffset;
-	//Map m_map;
 	std::unique_ptr<Sprite> m_battleIcons;
 	std::unique_ptr<Sprite> m_pauseButton;
 	std::unique_ptr<Sprite> m_chickenButton;

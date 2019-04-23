@@ -16,11 +16,27 @@ BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
 	m_activeFactionToken(HAPI_Sprites.MakeSprite(Textures::m_activeFactionToken)),
 	m_CompassPointer(HAPI_Sprites.MakeSprite(Textures::m_CompassPointer)),
 	m_CompassBackGround(HAPI_Sprites.MakeSprite(Textures::m_CompassBackGround)),
-
 	m_currentBattleWindow(BattleWindow::eCombat),
 	m_maxCameraOffset(maxCameraOffset)
 {	
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onReset, this), "BattleGUI", GameEvent::eResetBattle); 
+	m_battleIcons->GetTransformComp().SetPosition({ 350, 800 });
+	m_pauseButton->GetTransformComp().SetPosition({ 1450, 50 });
+	m_chickenButton->GetTransformComp().SetPosition({ 1450, 750 });
+	m_CompassBackGround->GetTransformComp().SetOriginToCentreOfFrame();
+	m_CompassBackGround->GetTransformComp().SetPosition({ 80, 80 });
+	m_CompassPointer->GetTransformComp().SetOrigin({ 21.5f,60 });
+	m_CompassPointer->GetTransformComp().SetPosition({ 80, 80 });
+	m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
+	m_activeFactionToken->GetTransformComp().SetPosition({ 1350,50 });// position just temp can be adjusted as needed
+
+
+	//pauseMenu
+	m_resumeButton->GetTransformComp().SetPosition({ 658, 297 });
+	m_quitButton->GetTransformComp().SetPosition({ 658, 427 });
+	//postBattle
+	m_postBattleBackground->GetTransformComp().SetPosition({ 200, 100 });
+	m_doneButton->GetTransformComp().SetPosition({ 660, 710 });
 }
 
 BattleGUI::~BattleGUI()
@@ -301,4 +317,5 @@ void BattleGUI::onReset()
 	m_cameraPositionOffset = std::pair<int, int>(); 
 	cameraZoom = 1.0f;
 	animationOffset = 100;
+	m_currentBattleWindow = BattleWindow::eCombat;
 }

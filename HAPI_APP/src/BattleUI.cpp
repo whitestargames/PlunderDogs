@@ -187,7 +187,6 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 		{
 			m_isMovingEntity = true;
 			m_leftMouseDownPosition = { mouseData.x, mouseData.y };
-			assert(!m_playerShipPlacement.empty());
 			break;
 		}
 		case BattlePhase::Movement:

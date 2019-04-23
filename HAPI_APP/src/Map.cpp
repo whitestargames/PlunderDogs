@@ -487,6 +487,7 @@ void Map::onReset()
 	m_windDirection = eNorth;
 	m_windStrength = 0.4;
 	m_timeOfDay = eMorning;
+	m_spawnPositions.clear();
 }
 
 const Tile * Map::getTile(std::pair<int, int> coordinate) const

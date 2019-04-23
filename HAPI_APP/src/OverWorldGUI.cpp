@@ -2,6 +2,7 @@
 #include "Textures.h"
 #include "OverWorld.h"
 #include "Utilities/Utilities.h"
+#include "GameEventMessenger.h"
 
 OverWorldWindow OverWorldGUI::CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
 
@@ -33,7 +34,14 @@ OverWorldGUI::OverWorldGUI()
 	m_addMovementButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2)),
 	m_addDamageButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2)),
 	m_addRangeButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2))
-{}
+{
+	GameEventMessenger::getInstance().subscribe(std::bind(&OverWorldGUI::onReset, this), "OverWorldGUI", GameEvent::eResetBattle);
+}
+
+OverWorldGUI::~OverWorldGUI()
+{
+	GameEventMessenger::getInstance().unsubscribe("OverWorldGUI", GameEvent::eResetBattle);
+}
 
 void OverWorldGUI::render(Battle& battle)
 {
@@ -429,7 +437,7 @@ void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, Player& current
 	}
 }
 
-void OverWorldGUI::reset(std::vector<EntityProperties>& playerEntities)
+void OverWorldGUI::reset(const std::vector<EntityProperties>& playerEntities)
 {
 	UI.DeleteWindow(FLEET_WINDOW);
 	UI.DeleteWindow(BATTLE_FLEET_WINDOW);
@@ -512,6 +520,11 @@ bool OverWorldGUI::entityContainsMouse(const std::string & windowName, const std
 		return true;
 	}
 	return false;
+}
+
+void OverWorldGUI::onReset()
+{
+	CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
 }
 
 bool OverWorldGUI::windowObjectExists(const std::string & windowName, const std::string& windowObjectName) const

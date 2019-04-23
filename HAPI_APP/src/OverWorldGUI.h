@@ -31,6 +31,8 @@ private:
 	HAPISPACE::RectangleI windowScreenRect(const std::string& windowName) const;
 	HAPISPACE::VectorI calculateObjectScrolledPosition(const std::string& windowName, const std::string& windowSliderName, int objectNumber, size_t vectorSize);
 	bool entityContainsMouse(const std::string& windowName, const std::string& windowObjectName, HAPISPACE::VectorI windowTopLeft, HAPISPACE::VectorI mousePosition) const;
+
+	void onReset();
 	bool windowObjectExists(const std::string& windowName, const std::string& windowObjectName) const;
 
 	HAPISPACE::SliderLayout sliderLayout;
@@ -62,12 +64,13 @@ private:
 public:
 	static OverWorldWindow CURRENT_WINDOW;
 	OverWorldGUI();
+	~OverWorldGUI();
 
 	void onLeftClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer, bool& selectNextPlayer);
 	void onRightClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer);
 	void onMouseMove(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer);
 
-	void reset(std::vector<EntityProperties>& playerEntities);
+	void reset(const std::vector<EntityProperties>& playerEntities);
 	void clear();
 
 	void render(Battle& battle);

@@ -132,4 +132,5 @@ void OverWorld::onReset()
 	{
 		player.m_selectedEntities.clear();
 	}
+	m_GUI.reset(m_players[m_currentPlayer].m_entities);
 }
