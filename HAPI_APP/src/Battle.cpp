@@ -3,12 +3,41 @@
 
 using namespace HAPISPACE;
 
+void Battle::setTimeOfDay(float deltaTime)
+{
+	m_dayTime.update(deltaTime);
+	if (m_dayTime.isExpired())
+	{
+		int timeOfDay = (int)m_map.getTimeOfDay() + 1;
+		if (timeOfDay > eTimeOfDay::eNight)
+		{
+			timeOfDay = 0;
+		}
+
+		m_map.setTimeOfDay((eTimeOfDay)timeOfDay);
+		m_dayTime.reset();
+	}
+}
+
+void Battle::setWindDirectoin(float deltaTime)
+{
+	m_windTime.update(deltaTime);
+	if (m_windTime.isExpired())
+	{
+		int wind = rand() % eDirection::Max;
+		m_map.setWindDirection((eDirection)wind);
+		m_windTime.reset();
+	}
+}
+
 Battle::Battle(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players)
 	: m_players(),
-	m_currentPlayersTurn(0),
+	m_currentPlayersTurn(static_cast<int>(FactionName::eYellow)),
 	m_map(MapParser::parseMap("Level1.tmx")),
 	m_currentPhase(BattlePhase::ShipPlacement),
-	m_battleUI(*this)
+	m_battleUI(*this),
+	m_dayTime(20.0f),
+	m_windTime(10)
 {
 	for (auto& player : players)
 	{
@@ -29,6 +58,7 @@ void Battle::render() const
 		for (auto& entity : player.m_entities)
 		{
 			entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
+			
 		}
 	}
 
@@ -37,8 +67,12 @@ void Battle::render() const
 
 void Battle::update(float deltaTime)
 {
+	m_battleUI.setCurrentFaction(getCurentFaction());
 	m_battleUI.update();
 	m_map.setDrawOffset(m_battleUI.getCameraPositionOffset());
+
+	setTimeOfDay(deltaTime);
+	setWindDirectoin(deltaTime);
 
 	if (m_currentPhase == BattlePhase::Movement)
 	{
@@ -47,6 +81,8 @@ void Battle::update(float deltaTime)
 	else if (m_currentPhase == BattlePhase::Attack)
 	{
 		updateAttackPhase();
+		
+
 	}
 }
 
@@ -111,9 +147,13 @@ void Battle::insertEntity(std::pair<int, int> startingPosition, eDirection start
 
 void Battle::nextTurn()
 {
+	
 	m_moveCounter.m_counter = 0;
 
+	
+	
 	//Notify all players new turn has started
+
 	for (auto& player : m_players)
 	{
 		for (auto& entity : player.m_entities)
@@ -125,6 +165,7 @@ void Battle::nextTurn()
 	//Handle ship placement phase
 	if (m_currentPhase == BattlePhase::ShipPlacement)
 	{
+
 		++m_currentPlayersTurn;
 		
 		if (m_currentPlayersTurn == static_cast<int>(m_players.size()))
@@ -144,17 +185,21 @@ void Battle::nextTurn()
 	{
 		m_currentPhase = BattlePhase::Movement;
 		++m_currentPlayersTurn;
+		
 	}
 
 	if (m_currentPlayersTurn == m_players.size())
 	{
 		m_currentPlayersTurn = 0;
+		
 	}
+
 }
 
 void Battle::updateMovementPhase(float deltaTime)
 {
 	int totalAliveEntities = 0;
+	
 	for (auto& entity : m_players[m_currentPlayersTurn].m_entities)
 	{
 		if (!entity->m_battleProperties.isDead())
@@ -174,6 +219,7 @@ void Battle::updateAttackPhase()
 {
 	if (allEntitiesAttacked(m_players[m_currentPlayersTurn].m_entities))
 	{
+		
 		nextTurn();
 	}
 }
@@ -211,5 +257,6 @@ BattlePhase Battle::getCurrentPhase() const
 
 FactionName Battle::getCurentFaction() const
 {
+	
 	return m_players[m_currentPlayersTurn].m_factionName;
 }

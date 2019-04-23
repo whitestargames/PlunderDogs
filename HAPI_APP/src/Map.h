@@ -24,17 +24,30 @@ struct Tile
 	const enum eTileType m_type;
 	//TODO: Dangerous exposure of raw pointer
 	BattleEntity* m_entityOnTile;
-	std::unique_ptr<HAPISPACE::Sprite> m_sprite;
+	std::unique_ptr<HAPISPACE::Sprite> m_daySprite;
+	std::unique_ptr<HAPISPACE::Sprite> m_aftersprite;
+	std::unique_ptr<HAPISPACE::Sprite> m_eveningSprite;
+	std::unique_ptr<HAPISPACE::Sprite> m_nightSprite;
 	const std::pair<int, int> m_tileCoordinate;
 
-	Tile(eTileType type, std::shared_ptr<HAPISPACE::SpriteSheet> spriteSheet, std::pair<int, int> coord) :
+	Tile(eTileType type, std::shared_ptr<HAPISPACE::SpriteSheet> daySpriteSheet,
+						std::shared_ptr<HAPISPACE::SpriteSheet> afternoonSpriteSheet,
+						std::shared_ptr<HAPISPACE::SpriteSheet> eveningSpriteSheet,
+						std::shared_ptr<HAPISPACE::SpriteSheet> nightSpriteSheet,
+						std::pair<int, int> coord) :
 		m_type(type),
 		m_entityOnTile(nullptr),
-		m_sprite(),
+		m_daySprite(),
+		m_aftersprite(),
+		m_eveningSprite(),
+		m_nightSprite(),
 		m_tileCoordinate(coord)
 	{
 		//HAPI's make sprite takes a pointer to an existing spritesheet
-		m_sprite = HAPI_Sprites.MakeSprite(spriteSheet);
+		m_daySprite = HAPI_Sprites.MakeSprite(daySpriteSheet);
+		m_aftersprite = HAPI_Sprites.MakeSprite(afternoonSpriteSheet);
+		m_eveningSprite = HAPI_Sprites.MakeSprite(eveningSpriteSheet);
+		m_nightSprite = HAPI_Sprites.MakeSprite(nightSpriteSheet);
 	}
 
 	//Tile(eTileType type, const std::string& spriteName, std::pair<int, int> coord) :
@@ -60,10 +73,12 @@ private:
 	const std::pair<int, int> m_mapDimensions;
 	float m_windStrength;
 	eDirection m_windDirection;
+	
 	float m_drawScale;
 	std::pair<int, int> m_drawOffset;
 	std::vector<Tile> m_data;
 	std::vector<std::pair<int, int>> m_spawnPositions;
+	eTimeOfDay m_timeOfDay;
 
 	std::pair<int, int> offsetToCube(std::pair<int, int> offset) const;
 	std::pair<int, int> cubeToOffset(std::pair<int, int> cube) const;
@@ -99,6 +114,8 @@ public:
 	//can give values that aren't valid tiles if you click off the map 
 	//so check if getTile is null before using
 	std::pair<int, int> getMouseClickCoord(std::pair<int, int> mouseCoord) const;
+	eTimeOfDay getTimeOfDay()const;
+	void setTimeOfDay(eTimeOfDay timeOfDay);
 
 	//Moves an entitys position on the map, returns false if the position is already taken
 	bool moveEntity(std::pair<int, int> originalPos, std::pair<int, int> newPos);

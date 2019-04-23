@@ -62,6 +62,7 @@ std::pair<int, int> BattleUI::getCameraPositionOffset() const
 
 void BattleUI::renderUI() const
 {
+	
 	switch (m_battle.getCurrentPhase())
 	{
 	case BattlePhase::ShipPlacement:
@@ -89,7 +90,12 @@ void BattleUI::renderGUI() const
 
 void BattleUI::update()
 {
-	m_gui.update();
+	m_gui.update(m_battle.getMap().getWindDirection());// added update for gui to receive wind direction so compass direction updates
+}
+
+void BattleUI::FactionUpdateGUI(FactionName faction)
+{
+	m_gui.updateFactionToken(faction);
 }
 
 void BattleUI::newPhase()
@@ -285,6 +291,11 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 		break;
 	}
 	}
+}
+
+void BattleUI::setCurrentFaction(FactionName faction)
+{
+	FactionUpdateGUI(faction);
 }
 
 void BattleUI::onMouseMoveMovementPhase()
@@ -682,7 +693,22 @@ void BattleUI::ShipPlacementPhase::render(const InvalidPosition& invalidPosition
 {
 	for (auto& i : m_spawnArea)
 	{
-		i->m_sprite->Render(SCREEN_SURFACE);
+		switch (map.getTimeOfDay())
+		{
+		case eTimeOfDay::eMorning:
+			i->m_daySprite->Render(SCREEN_SURFACE);
+			break;
+		case eTimeOfDay::eAfternoon:
+			i->m_aftersprite->Render(SCREEN_SURFACE);
+			break;
+		case eTimeOfDay::eEvening:
+			i->m_eveningSprite->Render(SCREEN_SURFACE);
+			break;
+		case eTimeOfDay::eNight:
+			i->m_nightSprite->Render(SCREEN_SURFACE);
+			break;
+		}
+		
 	}
 
 	if (m_currentSelectedEntity.m_currentSelectedEntity && !invalidPosition.m_activate)

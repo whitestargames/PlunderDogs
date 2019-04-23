@@ -90,6 +90,7 @@ public:
 	void renderUI() const;
 	void renderGUI() const;
 	void update();
+	void FactionUpdateGUI(FactionName faction);//tempName
 	void newPhase();
 	void newTurn(FactionName playersTurn);
 	void startShipPlacement(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players);
@@ -97,7 +98,7 @@ public:
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
-
+	void setCurrentFaction(FactionName faction);
 private:
 	Battle& m_battle;
 	CurrentSelectedTile m_selectedTile;
