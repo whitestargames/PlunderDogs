@@ -33,7 +33,7 @@ void Map::drawMap() const
 			const float xPos = (float)x * textureDimensions.first * 3 / 4;
 			switch (m_timeOfDay)
 			{
-			case eGameTime::eMorning:
+			case eTimeOfDay::eMorning:
 				m_data[access + x].m_daySprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosOdd - m_drawOffset.second)*m_drawScale));
@@ -41,7 +41,7 @@ void Map::drawMap() const
 					HAPISPACE::VectorF(m_drawScale, m_drawScale));
 				m_data[access + x].m_daySprite->Render(SCREEN_SURFACE);
 				break;
-			case eGameTime::eAfternoon:
+			case eTimeOfDay::eAfternoon:
 				m_data[access + x].m_aftersprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosOdd - m_drawOffset.second)*m_drawScale));
@@ -49,7 +49,7 @@ void Map::drawMap() const
 					HAPISPACE::VectorF(m_drawScale, m_drawScale));
 				m_data[access + x].m_aftersprite->Render(SCREEN_SURFACE);
 				break;
-			case eGameTime::eEvening:
+			case eTimeOfDay::eEvening:
 				m_data[access + x].m_eveningSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosOdd - m_drawOffset.second)*m_drawScale));
@@ -57,7 +57,7 @@ void Map::drawMap() const
 					HAPISPACE::VectorF(m_drawScale, m_drawScale));
 				m_data[access + x].m_eveningSprite->Render(SCREEN_SURFACE);
 				break;
-			case eGameTime::eNight:
+			case eTimeOfDay::eNight:
 				m_data[access + x].m_nightSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosOdd - m_drawOffset.second)*m_drawScale));
@@ -75,7 +75,7 @@ void Map::drawMap() const
 			//Is even
 			switch (m_timeOfDay)
 			{
-			case eGameTime::eMorning:
+			case eTimeOfDay::eMorning:
 				m_data[access + x].m_daySprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosEven - m_drawOffset.second)*m_drawScale));
@@ -83,7 +83,7 @@ void Map::drawMap() const
 					HAPISPACE::VectorF(m_drawScale, m_drawScale));
 				m_data[access + x].m_daySprite->Render(SCREEN_SURFACE);
 				break;
-			case eGameTime::eAfternoon:
+			case eTimeOfDay::eAfternoon:
 				m_data[access + x].m_aftersprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosEven - m_drawOffset.second)*m_drawScale));
@@ -91,7 +91,7 @@ void Map::drawMap() const
 					HAPISPACE::VectorF(m_drawScale, m_drawScale));
 				m_data[access + x].m_aftersprite->Render(SCREEN_SURFACE);
 				break;
-			case eGameTime::eEvening:
+			case eTimeOfDay::eEvening:
 				m_data[access + x].m_eveningSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosEven - m_drawOffset.second)*m_drawScale));
@@ -99,7 +99,7 @@ void Map::drawMap() const
 					HAPISPACE::VectorF(m_drawScale, m_drawScale));
 				m_data[access + x].m_eveningSprite->Render(SCREEN_SURFACE);
 				break;
-			case eGameTime::eNight:
+			case eTimeOfDay::eNight:
 				m_data[access + x].m_nightSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosEven - m_drawOffset.second)*m_drawScale));
@@ -363,12 +363,12 @@ bool Map::moveEntity(intPair originalPos, intPair newPos)
 	return true;
 }
 
-eGameTime Map::getTimeOfDay() const
+eTimeOfDay Map::getTimeOfDay() const
 {
 	return m_timeOfDay;
 }
 
-void Map::setTimeOfDay(eGameTime timeOfDay)
+void Map::setTimeOfDay(eTimeOfDay timeOfDay)
 {
 	m_timeOfDay = timeOfDay;
 }

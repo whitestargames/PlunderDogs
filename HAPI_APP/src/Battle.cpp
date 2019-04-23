@@ -3,51 +3,19 @@
 
 using namespace HAPISPACE;
 
-Battle::GameTimeHandler::GameTimeHandler(eGameTime startingTime, float expirationTime)
-	: m_timer(expirationTime),
-	m_currentGameTime(startingTime)
-{}
-
-void Battle::GameTimeHandler::update(float deltaTime)
-{
-	m_timer.update(deltaTime);
-	if (m_timer.isExpired())
-	{
-		switch (m_currentGameTime)
-		{
-		case eGameTime::eMorning :
-			m_currentGameTime = eAfternoon;
-			break;
-		case eGameTime::eAfternoon :
-			m_currentGameTime = eEvening;
-			break;
-		case eGameTime::eEvening :
-			m_currentGameTime = eNight;
-			break;
-		case eGameTime::eNight :
-			m_currentGameTime = eMorning;
-			break;
-		}
-	}
-}
-
-eGameTime Battle::GameTimeHandler::getTimeOfDay() const
-{
-	return m_currentGameTime;
-}
-
 void Battle::setTimeOfDay(float deltaTime)
 {
 	m_dayTime.update(deltaTime);
 	if (m_dayTime.isExpired())
 	{
-		eGameTime timeOfDay;
-		if ((int)m_map.getTimeOfDay() + 1 > eGameTime::eNight)
+		int timeOfDay = (int)m_map.getTimeOfDay() + 1;
+		if (timeOfDay > eTimeOfDay::eNight)
 		{
-			timeOfDay = eGameTime::eNight;
-			m_map.setTimeOfDay(timeOfDay);
+			timeOfDay = 0;
 		}
-		m_map.setTimeOfDay(timeOfDay);
+
+		m_map.setTimeOfDay((eTimeOfDay)timeOfDay);
+		m_dayTime.reset();
 	}
 }
 
@@ -286,4 +254,3 @@ FactionName Battle::getCurentFaction() const
 	
 	return m_players[m_currentPlayersTurn].m_factionName;
 }
-

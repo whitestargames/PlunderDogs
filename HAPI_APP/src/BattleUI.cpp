@@ -672,16 +672,16 @@ void BattleUI::ShipPlacementPhase::render(const InvalidPosition& invalidPosition
 	{
 		switch (map.getTimeOfDay())
 		{
-		case eGameTime::eMorning:
+		case eTimeOfDay::eMorning:
 			i->m_daySprite->Render(SCREEN_SURFACE);
 			break;
-		case eGameTime::eAfternoon:
+		case eTimeOfDay::eAfternoon:
 			i->m_aftersprite->Render(SCREEN_SURFACE);
 			break;
-		case eGameTime::eEvening:
+		case eTimeOfDay::eEvening:
 			i->m_eveningSprite->Render(SCREEN_SURFACE);
 			break;
-		case eGameTime::eNight:
+		case eTimeOfDay::eNight:
 			i->m_nightSprite->Render(SCREEN_SURFACE);
 			break;
 		}

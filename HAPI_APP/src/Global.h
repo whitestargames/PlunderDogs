@@ -86,7 +86,7 @@ enum eWeaponType
 };
 
 
-enum eGameTime
+enum eTimeOfDay
 {
 	eMorning = 0,
 	eAfternoon,

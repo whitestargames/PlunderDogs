@@ -3,7 +3,6 @@
 #include "Global.h"
 #include "Map.h"
 #include "BattleUI.h"
-#include <array>
 
 enum class BattlePhase
 {
@@ -14,19 +13,6 @@ enum class BattlePhase
 
 class Battle
 {
-	class GameTimeHandler
-	{
-	public:
-		GameTimeHandler(eGameTime startingTime, float expirationTime);
-		
-		eGameTime getTimeOfDay() const;
-		void update(float deltaTime);
-
-	private:
-		eGameTime m_currentGameTime;
-		Timer m_timer;
-	};
-
 public:
 	void setTimeOfDay(float deltaTime);
 	void setWindDirectoin(float deltaTime);
@@ -52,7 +38,6 @@ private:
 	MoveCounter m_moveCounter;
 	Timer m_dayTime;
 	Timer m_windTime;
-	GameTimeHandler m_gameTimeHandler;
 
 	void updateMovementPhase(float deltaTime);
 	void updateAttackPhase();
