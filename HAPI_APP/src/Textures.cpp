@@ -3,6 +3,7 @@
 std::shared_ptr<SpriteSheet> Textures::m_mouseCrossHair;
 std::shared_ptr<SpriteSheet> Textures::m_battleMapBackground;
 std::shared_ptr<SpriteSheet> Textures::m_enemyTerritoryHexSheet;
+std::shared_ptr<SpriteSheet> Textures::m_levelSelectSheet;
 std::shared_ptr<SpriteSheet> Textures::m_prebattleUIBackground;
 std::shared_ptr<SpriteSheet> Textures::m_preBattleUIPlayButton;
 std::shared_ptr<SpriteSheet> Textures::m_preBattleUIBackButton;
@@ -24,6 +25,7 @@ std::shared_ptr<SpriteSheet> Textures::m_CompassPointer;
 std::shared_ptr<SpriteSheet> Textures::m_activeFactionToken;
 std::shared_ptr<SpriteSheet> Textures::m_postBattleBackground;
 std::shared_ptr<SpriteSheet> Textures::m_doneButton;
+
 
 std::shared_ptr<SpriteSheet> Textures::m_blueShipSideCannons; 
 std::shared_ptr<SpriteSheet> Textures::m_blueShipBomb;

@@ -12,7 +12,9 @@ constexpr int WINDOW_HEIGHT = 200;
 
 OverWorldGUI::OverWorldGUI()
 	: m_battleMapBackground(std::make_unique<Sprite>(Textures::m_battleMapBackground)),
-	m_enemyTerritoryHexSheet(std::make_unique<Sprite>(Textures::m_enemyTerritoryHexSheet)),
+	m_selectMapButtons1(std::make_unique<Sprite>(Textures::m_levelSelectSheet)),
+	m_selectMapButtons2(std::make_unique<Sprite>(Textures::m_levelSelectSheet)),
+	m_selectMapButtons3(std::make_unique<Sprite>(Textures::m_levelSelectSheet)),
 	m_prebattleUIBackground(std::make_unique<Sprite>(Textures::m_prebattleUIBackground)),
 	m_playButton(std::make_unique<Sprite>(Textures::m_preBattleUIPlayButton)),
 	m_backButton(std::make_unique<Sprite>(Textures::m_preBattleUIBackButton)),
@@ -33,7 +35,10 @@ OverWorldGUI::OverWorldGUI()
 	m_addMovementButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2)),
 	m_addDamageButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2)),
 	m_addRangeButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2))
-{}
+{
+	
+	
+}
 
 void OverWorldGUI::render(std::unique_ptr<Battle>& battle)
 {
@@ -66,7 +71,9 @@ void OverWorldGUI::render(std::unique_ptr<Battle>& battle)
 		case OverWorldWindow::eLevelSelection:
 		{
 			HAPI_Wrapper::render(m_battleMapBackground);
-			HAPI_Wrapper::render(m_enemyTerritoryHexSheet);
+			HAPI_Wrapper::render(m_selectMapButtons1);
+			HAPI_Wrapper::render(m_selectMapButtons2);
+			HAPI_Wrapper::render(m_selectMapButtons3);
 			break;
 		}
 		case OverWorldWindow::eUpgrade:
@@ -102,15 +109,23 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 	{
 		case OverWorldWindow::eLevelSelection:
 		{
-			if (HAPI_Wrapper::isTranslated(m_enemyTerritoryHexSheet, mouseData, 0))
+			if (HAPI_Wrapper::isTranslated(m_selectMapButtons1, mouseData, 0))
+			{
+				CURRENT_WINDOW = OverWorldWindow::ePreBattle;
+				UI.OpenWindow(FLEET_WINDOW);
+				UI.OpenWindow(BATTLE_FLEET_WINDOW);// put different load map strings here
+			}
+			if (HAPI_Wrapper::isTranslated(m_selectMapButtons2, mouseData, 0))
 			{
 				CURRENT_WINDOW = OverWorldWindow::ePreBattle;
 				UI.OpenWindow(FLEET_WINDOW);
 				UI.OpenWindow(BATTLE_FLEET_WINDOW);
 			}
-			if (HAPI_Wrapper::isTranslated(m_upgradesButton, mouseData, 0))
+			if (HAPI_Wrapper::isTranslated(m_selectMapButtons3, mouseData, 0))
 			{
-				CURRENT_WINDOW = OverWorldWindow::eUpgrade;
+				CURRENT_WINDOW = OverWorldWindow::ePreBattle;
+				UI.OpenWindow(FLEET_WINDOW);
+				UI.OpenWindow(BATTLE_FLEET_WINDOW);
 			}
 			break;
 		}
@@ -292,22 +307,31 @@ void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, Player& current
 	{
 	case OverWorldWindow::eLevelSelection:
 	{
-		if (HAPI_Wrapper::isTranslated(m_enemyTerritoryHexSheet, mouseData, 0))//checks if mouse is over button
+		if (HAPI_Wrapper::isTranslated(m_selectMapButtons1, mouseData, 0))//checks if mouse is over button
 		{
-			m_enemyTerritoryHexSheet->SetFrameNumber(1);//changes the buttons sprite to hover sprite
+			m_selectMapButtons1->SetFrameNumber(3);//changes the buttons sprite to hover sprite
 		}
-		else if (m_enemyTerritoryHexSheet->GetFrameNumber() != 0)//if mouse is not over the button and the button has the hover sprite
+		else if (m_selectMapButtons1->GetFrameNumber() != 0)//if mouse is not over the button and the button has the hover sprite
 		{
-			m_enemyTerritoryHexSheet->SetFrameNumber(0);// sets it to the default sprite
+			m_selectMapButtons1->SetFrameNumber(0);// sets it to the default sprite
 		}
-		if (HAPI_Wrapper::isTranslated(m_upgradesButton, mouseData, 0))
+		if (HAPI_Wrapper::isTranslated(m_selectMapButtons2, mouseData, 0))//checks if mouse is over button
 		{
-			m_upgradesButton->SetFrameNumber(1);
+			m_selectMapButtons2->SetFrameNumber(4);//changes the buttons sprite to hover sprite
 		}
-		else if (m_upgradesButton->GetFrameNumber() != 0)
+		else if (m_selectMapButtons2->GetFrameNumber() != 0)//if mouse is not over the button and the button has the hover sprite
 		{
-			m_upgradesButton->SetFrameNumber(0);
+			m_selectMapButtons2->SetFrameNumber(1);// sets it to the default sprite
 		}
+		if (HAPI_Wrapper::isTranslated(m_selectMapButtons3, mouseData, 0))//checks if mouse is over button
+		{
+			m_selectMapButtons3->SetFrameNumber(5);//changes the buttons sprite to hover sprite
+		}
+		else if (m_selectMapButtons3->GetFrameNumber() != 0)//if mouse is not over the button and the button has the hover sprite
+		{
+			m_selectMapButtons3->SetFrameNumber(2);// sets it to the default sprite
+		}
+
 		break;
 	}
 	case OverWorldWindow::ePreBattle:
@@ -434,8 +458,13 @@ void OverWorldGUI::reset(std::vector<EntityProperties>& playerEntities)
 {
 	UI.DeleteWindow(FLEET_WINDOW);
 	UI.DeleteWindow(BATTLE_FLEET_WINDOW);
+	m_selectMapButtons1->SetFrameNumber(0);
+	m_selectMapButtons2->SetFrameNumber(1);
+	m_selectMapButtons3->SetFrameNumber(2);
 
-	HAPI_Wrapper::setPosition(m_enemyTerritoryHexSheet, { 100, 600 });
+	HAPI_Wrapper::setPosition(m_selectMapButtons1, { 100, 600 });
+	HAPI_Wrapper::setPosition(m_selectMapButtons2, { 100, 400 });
+	HAPI_Wrapper::setPosition(m_selectMapButtons3, { 100, 200 });
 	HAPI_Wrapper::setPosition(m_playButton, { 1150, 722 });
 	HAPI_Wrapper::setPosition(m_backButton, { 185, 747 });
 	HAPI_Wrapper::setPosition(m_upgradesButton, { 1300, 25 });
