@@ -6,6 +6,8 @@
 #include "Utilities/Utilities.h"
 #include "entity.h"
 #include "Textures.h"
+#include "GameEventMessenger.h"
+#include "Utilities/MapParser.h"
 
 typedef std::pair<int, int> intPair;
 
@@ -15,9 +17,6 @@ constexpr float FRAME_CENTRE_Y{ 32.5 };
 
 void Map::drawMap() const 
 {
-
-	
-	
 	intPair textureDimensions = intPair(
 		m_data[0].m_daySprite->FrameWidth(), 
 		FRAME_HEIGHT);
@@ -112,6 +111,11 @@ void Map::drawMap() const
 		}
 		access += m_mapDimensions.first;
 	}
+}
+
+Map::~Map()
+{
+	GameEventMessenger::getInstance().unsubscribe("Map", GameEvent::eResetBattle);
 }
 
 intPair Map::offsetToCube(intPair offset) const
@@ -426,15 +430,10 @@ intPair Map::getMouseClickCoord(intPair mouseCoord) const
 	return closestTile;
 }
 
-Map::Map(intPair size, const std::vector<std::vector<int>>& tileData) :
-	m_mapDimensions(size),
-	m_data(),
-	m_drawOffset(intPair(10, 60)),
-	m_windDirection(eNorth),
-	m_windStrength(0.4),
-	m_drawScale(2),
-	m_timeOfDay(eMorning)
+void Map::loadmap(const std::string & mapName)
 {
+	MapDetails mapDetails = MapParser::parseMap(mapName);
+	m_mapDimensions = mapDetails.mapDimensions;
 	m_data.reserve(m_mapDimensions.first * m_mapDimensions.second);
 
 	//TODO: Will be loaded in through Tiled
@@ -447,10 +446,10 @@ Map::Map(intPair size, const std::vector<std::vector<int>>& tileData) :
 	{
 		for (int x = 0; x < m_mapDimensions.first; x++)
 		{
-			const int tileID = tileData[y][x];
+			const int tileID = mapDetails.tileData[y][x];
 			assert(tileID != -1);
-			m_data.emplace_back(static_cast<eTileType>(tileID), 
-				Textures::m_hexTiles, Textures::m_afternoonHexTiles, 
+			m_data.emplace_back(static_cast<eTileType>(tileID),
+				Textures::m_hexTiles, Textures::m_afternoonHexTiles,
 				Textures::m_eveningHexTiles, Textures::m_nightHexTiles, intPair(x, y));
 
 			if (!m_data[x + y * m_mapDimensions.first].m_daySprite)
@@ -464,6 +463,30 @@ Map::Map(intPair size, const std::vector<std::vector<int>>& tileData) :
 			m_data[x + y * m_mapDimensions.first].m_nightSprite->SetFrameNumber(tileID);
 		}
 	}
+}
+
+Map::Map() :
+	m_mapDimensions(),
+	m_data(),
+	m_drawOffset(intPair(10, 60)),
+	m_windDirection(eNorth),
+	m_windStrength(0.4),
+	m_drawScale(2),
+	m_timeOfDay(eMorning)
+{
+	GameEventMessenger::getInstance().subscribe(std::bind(&Map::onReset, this), "Map", GameEvent::eResetBattle);
+}
+
+void Map::onReset()
+{
+	m_data.clear();
+	m_mapDimensions = std::pair<int, int>();
+	m_drawOffset = intPair(10, 60);
+	m_drawScale = 2;
+
+	m_windDirection = eNorth;
+	m_windStrength = 0.4;
+	m_timeOfDay = eMorning;
 }
 
 const Tile * Map::getTile(std::pair<int, int> coordinate) const

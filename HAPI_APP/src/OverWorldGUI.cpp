@@ -35,7 +35,7 @@ OverWorldGUI::OverWorldGUI()
 	m_addRangeButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2))
 {}
 
-void OverWorldGUI::render(std::unique_ptr<Battle>& battle)
+void OverWorldGUI::render(Battle& battle)
 {
 	SCREEN_SURFACE->Clear();
 
@@ -59,8 +59,7 @@ void OverWorldGUI::render(std::unique_ptr<Battle>& battle)
 		}
 		case OverWorldWindow::eBattle:
 		{
-			assert(battle.get());
-			battle->render();
+			battle.render();
 			break;
 		}
 		case OverWorldWindow::eLevelSelection:

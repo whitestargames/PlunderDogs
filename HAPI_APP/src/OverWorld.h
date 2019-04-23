@@ -11,6 +11,7 @@ class OverWorld : public IHapiSpritesInputListener
 {
 public:
 	OverWorld();
+	~OverWorld();
 
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
@@ -25,6 +26,8 @@ private:
 	bool m_selectNextPlayer;
 	std::vector<Player> m_players;
 	OverWorldGUI m_GUI;
-	std::unique_ptr<Battle> m_battle;
+	Battle m_battle;
 	bool m_startBattle;
+
+	void onReset();
 };

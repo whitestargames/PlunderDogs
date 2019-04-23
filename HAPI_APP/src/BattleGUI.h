@@ -18,6 +18,7 @@ class BattleGUI
 {
 public:
 	BattleGUI(std::pair<int, int> maxCameraOffset);
+	~BattleGUI();
 
 	std::pair<int, int> getCameraPositionOffset() const;
 
@@ -54,5 +55,5 @@ private:
 	std::pair<int, int> CameraPositionOffset;//camera offset that will be used by the map
 	float cameraZoom = 1.0f;//variable to multiply scale by
 	std::pair<int, int> m_cameraPositionOffset;
-	
+	void onReset();
 };

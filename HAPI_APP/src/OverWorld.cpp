@@ -1,5 +1,6 @@
 #include  "Overworld.h"
 #include "Textures.h"
+#include "GameEventMessenger.h"
 
 
 //TODO: Will change
@@ -30,6 +31,7 @@ OverWorld::OverWorld()
 	m_battle(),
 	m_startBattle(false)
 {
+	GameEventMessenger::getInstance().subscribe(std::bind(&OverWorld::onReset, this), "OverWorld", GameEvent::eResetBattle);
 	m_players.emplace_back(FactionName::eYellow);
 	m_players.emplace_back(FactionName::eBlue);
 	m_players.emplace_back(FactionName::eGreen);
@@ -37,6 +39,11 @@ OverWorld::OverWorld()
 	
 
 	m_GUI.reset(m_players[m_currentPlayer].m_entities);
+}
+
+OverWorld::~OverWorld()
+{
+	GameEventMessenger::getInstance().unsubscribe("OverWorld", GameEvent::eResetBattle);
 }
 
 void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
@@ -87,8 +94,7 @@ void OverWorld::update(float deltaTime)
 
 	if (OverWorldGUI::CURRENT_WINDOW == eBattle)
 	{		
-		assert(m_battle.get());
-		m_battle->update(deltaTime);
+		m_battle.update(deltaTime);
 	}
 }
 
@@ -107,7 +113,7 @@ void OverWorld::startBattle()
 			playersInBattle.push_back(p);
 		}
 		m_GUI.clear();
-		m_battle = std::make_unique<Battle>(playersInBattle);
+		m_battle.startBattle("Level1.tmx", playersInBattle);
 		
 		for (auto& player : m_players)
 		{
@@ -115,5 +121,15 @@ void OverWorld::startBattle()
 		}
 
 		m_startBattle = false;
+	}
+}
+
+void OverWorld::onReset()
+{
+	m_currentPlayer = 0;
+	m_selectNextPlayer = false;
+	for (auto& player : m_players)
+	{
+		player.m_selectedEntities.clear();
 	}
 }

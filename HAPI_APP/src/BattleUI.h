@@ -84,6 +84,7 @@ class BattleUI : public IHapiSpritesInputListener
 
 public:
 	BattleUI(Battle& battles);
+	~BattleUI();
 
 	std::pair<int, int> getCameraPositionOffset() const;
 
@@ -123,4 +124,5 @@ private:
 	void onRightClickAttackPhase();
 	void onMouseMoveAttackPhase();
 	TargetArea m_targetArea;
+	void onReset();
 };

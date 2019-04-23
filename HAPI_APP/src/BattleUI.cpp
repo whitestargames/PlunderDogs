@@ -4,6 +4,7 @@
 #include "OverWorld.h"
 #include "Textures.h"
 #include "MouseSelection.h"
+#include "GameEventMessenger.h"
 #include <assert.h>
 
 using namespace HAPISPACE;
@@ -53,7 +54,15 @@ BattleUI::BattleUI(Battle & battle)
 	m_leftMouseDownPosition({0, 0}),
 	m_isMovingEntity(false),
 	m_mouseDownTile(nullptr)
-{}
+{
+	//gameEventMessenger.subscribe(std::bind(&Window::closeWindow, this), "Window", GameEvent::CloseWindow);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleUI::onReset, this), "BattleUI", GameEvent::eResetBattle);
+}
+
+BattleUI::~BattleUI()
+{
+	GameEventMessenger::getInstance().unsubscribe("BattleUI", GameEvent::eResetBattle);
+}
 
 std::pair<int, int> BattleUI::getCameraPositionOffset() const
 {
@@ -62,7 +71,6 @@ std::pair<int, int> BattleUI::getCameraPositionOffset() const
 
 void BattleUI::renderUI() const
 {
-	
 	switch (m_battle.getCurrentPhase())
 	{
 	case BattlePhase::ShipPlacement:
@@ -121,6 +129,7 @@ void BattleUI::newTurn(FactionName playersTurn)
 void BattleUI::startShipPlacement(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players)
 {
 	assert(m_battle.getCurrentPhase() == BattlePhase::ShipPlacement);
+	assert(m_playerShipPlacement.empty());
 
 	//TODO: Change this at some point
 	for (auto& player : players)
@@ -535,6 +544,14 @@ void BattleUI::onMouseMoveAttackPhase()
 			m_invalidPosition.m_activate = false;
 		}
 	}
+}
+
+void BattleUI::onReset()
+{
+	m_playerShipPlacement.clear();
+	m_targetArea.clearTargetArea();
+	m_selectedTile.m_tile = nullptr;
+	m_invalidPosition.m_activate = false;
 }
 
 //Weapon Graph

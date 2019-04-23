@@ -1,6 +1,7 @@
 #include "BattleGUI.h"
 #include "Utilities/Utilities.h"
 #include "Utilities/MapParser.h"
+#include "GameEventMessenger.h"
 
 BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
 	:
@@ -19,24 +20,12 @@ BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
 	m_currentBattleWindow(BattleWindow::eCombat),
 	m_maxCameraOffset(maxCameraOffset)
 {	
-	//battle
-	m_battleIcons->GetTransformComp().SetPosition({ 350, 800 });
-	m_pauseButton->GetTransformComp().SetPosition({ 1450, 50 });
-	m_chickenButton->GetTransformComp().SetPosition({ 1450, 750 });
-	m_CompassBackGround->GetTransformComp().SetOriginToCentreOfFrame();
-	m_CompassBackGround->GetTransformComp().SetPosition({ 80, 80 });
-	m_CompassPointer->GetTransformComp().SetOrigin({ 21.5f,60 });
-	m_CompassPointer->GetTransformComp().SetPosition({ 80, 80 });
-	m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
-	m_activeFactionToken->GetTransformComp().SetPosition({ 1350,50 });// position just temp can be adjusted as needed
-	
-	
-	//pauseMenu
-	m_resumeButton->GetTransformComp().SetPosition({ 658, 297 });
-	m_quitButton->GetTransformComp().SetPosition({ 658, 427 });
-	//postBattle
-	m_postBattleBackground->GetTransformComp().SetPosition({ 200, 100 });
-	m_doneButton->GetTransformComp().SetPosition({ 660, 710 });
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onReset, this), "BattleGUI", GameEvent::eResetBattle); 
+}
+
+BattleGUI::~BattleGUI()
+{
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eResetBattle);
 }
 
 std::pair<int, int> BattleGUI::getCameraPositionOffset() const
@@ -195,7 +184,8 @@ void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData)
 		else if (m_quitButton->GetSpritesheet()->GetFrameRect(0).Translated(
 			m_quitButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the resume button
 		{
-			m_currentBattleWindow = BattleWindow::ePostBattle;//disables the pause menu
+			GameEventMessenger::getInstance().broadcast(GameEvent::eResetBattle);
+			//m_currentBattleWindow = BattleWindow::ePostBattle;//disables the pause menu
 		}
 		break;
 	}
@@ -285,4 +275,30 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 		break;
 	}
 	}
+}
+
+void BattleGUI::onReset()
+{
+	//battle
+	m_battleIcons->GetTransformComp().SetPosition({ 350, 800 });
+	m_pauseButton->GetTransformComp().SetPosition({ 1450, 50 });
+	m_chickenButton->GetTransformComp().SetPosition({ 1450, 750 });
+	m_CompassBackGround->GetTransformComp().SetOriginToCentreOfFrame();
+	m_CompassBackGround->GetTransformComp().SetPosition({ 80, 80 });
+	m_CompassPointer->GetTransformComp().SetOrigin({ 21.5f,60 });
+	m_CompassPointer->GetTransformComp().SetPosition({ 80, 80 });
+	m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
+	m_activeFactionToken->GetTransformComp().SetPosition({ 1350,50 });// position just temp can be adjusted as needed
+
+
+	//pauseMenu
+	m_resumeButton->GetTransformComp().SetPosition({ 658, 297 });
+	m_quitButton->GetTransformComp().SetPosition({ 658, 427 });
+	//postBattle
+	m_postBattleBackground->GetTransformComp().SetPosition({ 200, 100 });
+	m_doneButton->GetTransformComp().SetPosition({ 660, 710 });
+
+	m_cameraPositionOffset = std::pair<int, int>(); 
+	cameraZoom = 1.0f;
+	animationOffset = 100;
 }

@@ -70,5 +70,5 @@ public:
 	void reset(std::vector<EntityProperties>& playerEntities);
 	void clear();
 
-	void render(std::unique_ptr<Battle>& battle);
+	void render(Battle& battle);
 };

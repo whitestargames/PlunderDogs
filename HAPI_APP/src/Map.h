@@ -70,7 +70,7 @@ struct Tile
 class Map
 {
 private:
-	const std::pair<int, int> m_mapDimensions;
+	std::pair<int, int> m_mapDimensions;
 	float m_windStrength;
 	eDirection m_windDirection;
 	
@@ -86,6 +86,7 @@ private:
 	bool inCone(std::pair<int, int> orgHex, std::pair<int, int> testHex, eDirection dir) const;
 	//Finds the euclidean distance from a point to a tile's centre, used by getMouseClickCoord
 	float tileDistanceMag(std::pair<int, int> tileCoord, std::pair<int, int> mouseClick) const;
+	void onReset();
 public:
 	//Returns a pointer to a given tile, returns nullptr if there is no tile there
 	Tile *getTile(std::pair<int, int> coordinate);
@@ -137,5 +138,8 @@ public:
 	eDirection getWindDirection() const { return m_windDirection; }
 	void setWindDirection(eDirection direction) { m_windDirection = direction; }
 
-	Map(std::pair<int, int> size, const std::vector<std::vector<int>>& tileData);
+	void loadmap(const std::string& mapName);
+
+	Map();
+	~Map();
 };
