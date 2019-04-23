@@ -24,7 +24,6 @@ enum OverWorldWindow
 	eBattle = 0,
 	ePreBattle,
 	eLevelSelection,
-	eUpgrade
 };
 
 enum eTileType
