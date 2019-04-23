@@ -7,6 +7,8 @@ std::shared_ptr<SpriteSheet> Textures::m_levelSelectSheet;
 std::shared_ptr<SpriteSheet> Textures::m_prebattleUIBackground;
 std::shared_ptr<SpriteSheet> Textures::m_preBattleUIPlayButton;
 std::shared_ptr<SpriteSheet> Textures::m_preBattleUIBackButton;
+std::shared_ptr<SpriteSheet> Textures::m_playerSelectIcons; 
+std::shared_ptr<SpriteSheet> Textures::m_playerSelectBackground;
 std::shared_ptr<SpriteSheet> Textures::m_thing;
 std::shared_ptr<SpriteSheet> Textures::m_hexTiles;
 std::shared_ptr<SpriteSheet> Textures::m_afternoonHexTiles;

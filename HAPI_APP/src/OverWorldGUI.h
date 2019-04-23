@@ -21,11 +21,14 @@ private:
 	std::unique_ptr<Sprite> m_selectMapButtons1;
 	std::unique_ptr<Sprite> m_selectMapButtons2;
 	std::unique_ptr<Sprite> m_selectMapButtons3;
+	std::unique_ptr<Sprite> m_playerSelectButton1;
+	std::unique_ptr<Sprite> m_playerSelectButton2;
+	std::unique_ptr<Sprite> m_playerSelectButton3;
+	std::unique_ptr<Sprite> m_playerSelectButton4;
+	std::unique_ptr<Sprite> m_playerSelectBackground;
 	std::unique_ptr<Sprite> m_prebattleUIBackground;
 	std::unique_ptr<Sprite> m_playButton;
 	std::unique_ptr<Sprite> m_backButton;
-
-
 
 	void positionEntity(const std::string& windowName, const std::string& windowSliderName, const std::string& windowObjectName, int objectNumber, size_t vectorSize);
 	float getWindowSliderValue(const std::string &windowName, const std::string &windowSliderName) const;
