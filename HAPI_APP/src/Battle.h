@@ -16,7 +16,7 @@ class Battle
 public:
 	void setTimeOfDay(float deltaTime);
 	void setWindDirectoin(float deltaTime);
-	Battle(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players,std::string levelName);
+	Battle(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players);
 	const Map& getMap() const;
 	BattlePhase getCurrentPhase() const;
 	FactionName getCurentFaction() const;

@@ -27,7 +27,7 @@ OverWorld::OverWorld()
 	m_selectNextPlayer(false),
 	m_players(),
 	m_GUI(),
-	m_battle("Level1.tmx"),// known good file as test
+	m_battle(),
 	m_startBattle(false)
 {
 	m_players.emplace_back(FactionName::eYellow);

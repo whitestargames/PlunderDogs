@@ -30,10 +30,10 @@ void Battle::setWindDirectoin(float deltaTime)
 	}
 }
 
-Battle::Battle(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players,std::string levelName)
+Battle::Battle(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players)
 	: m_players(),
 	m_currentPlayersTurn(static_cast<int>(FactionName::eYellow)),
-	m_map(MapParser::parseMap(levelName)),
+	m_map(MapParser::parseMap("Level1.tmx")),
 	m_currentPhase(BattlePhase::ShipPlacement),
 	m_battleUI(*this),
 	m_dayTime(20.0f),
