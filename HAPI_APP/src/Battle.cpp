@@ -59,6 +59,7 @@ void Battle::startBattle(const std::string & newMapName, std::vector<std::pair<F
 	}
 
 	m_battleUI.startShipPlacement(newPlayers);
+	m_battleUI.loadGUI(m_map.getDimensions());
 }
 
 void Battle::render() const

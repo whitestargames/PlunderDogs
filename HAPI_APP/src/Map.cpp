@@ -466,7 +466,7 @@ void Map::loadmap(const std::string & mapName)
 }
 
 Map::Map() :
-	m_mapDimensions(),
+	m_mapDimensions(0, 0),
 	m_data(),
 	m_drawOffset(intPair(10, 60)),
 	m_windDirection(eNorth),
@@ -480,7 +480,7 @@ Map::Map() :
 void Map::onReset()
 {
 	m_data.clear();
-	m_mapDimensions = std::pair<int, int>();
+	m_mapDimensions = std::pair<int, int>(0, 0);
 	m_drawOffset = intPair(10, 60);
 	m_drawScale = 2;
 

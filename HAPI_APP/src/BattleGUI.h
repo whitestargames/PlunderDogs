@@ -17,7 +17,7 @@ enum BattleWindow
 class BattleGUI
 {
 public:
-	BattleGUI(std::pair<int, int> maxCameraOffset);
+	BattleGUI();
 	~BattleGUI();
 
 	std::pair<int, int> getCameraPositionOffset() const;
@@ -28,6 +28,7 @@ public:
 	void OnMouseLeftClick(const HAPI_TMouseData& mouseData);
 	//void OnMouseScroll could be added
 	void OnMouseMove(const HAPI_TMouseData& mouseData);
+	void setMaxCameraOffset(std::pair<int, int> maxCameraOffset);
 	
 
 private:

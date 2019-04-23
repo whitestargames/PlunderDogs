@@ -48,14 +48,13 @@ void BattleUI::InvalidPosition::setPosition(std::pair<int, int> screenPosition, 
 //
 BattleUI::BattleUI(Battle & battle)
 	: m_battle(battle),
-	m_gui({ battle.getMap().getDimensions().first * 28 - 150, battle.getMap().getDimensions().second * 32 - 150}),
+	m_gui(),
 	m_selectedTile(),
 	m_invalidPosition(),
 	m_leftMouseDownPosition({0, 0}),
 	m_isMovingEntity(false),
 	m_mouseDownTile(nullptr)
 {
-	//gameEventMessenger.subscribe(std::bind(&Window::closeWindow, this), "Window", GameEvent::CloseWindow);
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleUI::onReset, this), "BattleUI", GameEvent::eResetBattle);
 }
 
@@ -94,6 +93,11 @@ void BattleUI::renderUI() const
 void BattleUI::renderGUI() const
 {
 	m_gui.render();
+}
+
+void BattleUI::loadGUI(std::pair<int, int> mapDimensions)
+{
+	m_gui.setMaxCameraOffset(mapDimensions);
 }
 
 void BattleUI::update()

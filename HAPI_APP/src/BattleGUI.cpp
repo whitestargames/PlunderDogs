@@ -3,7 +3,7 @@
 #include "Utilities/MapParser.h"
 #include "GameEventMessenger.h"
 
-BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
+BattleGUI::BattleGUI()
 	:
 	m_battleIcons(HAPI_Sprites.MakeSprite(Textures::m_battleIcons)),
 	m_pauseButton(HAPI_Sprites.MakeSprite(Textures::m_pauseButton)),
@@ -17,7 +17,7 @@ BattleGUI::BattleGUI(std::pair<int, int> maxCameraOffset)
 	m_CompassPointer(HAPI_Sprites.MakeSprite(Textures::m_CompassPointer)),
 	m_CompassBackGround(HAPI_Sprites.MakeSprite(Textures::m_CompassBackGround)),
 	m_currentBattleWindow(BattleWindow::eCombat),
-	m_maxCameraOffset(maxCameraOffset)
+	m_maxCameraOffset(0, 0)
 {	
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onReset, this), "BattleGUI", GameEvent::eResetBattle); 
 	m_battleIcons->GetTransformComp().SetPosition({ 350, 800 });
@@ -293,6 +293,12 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 	}
 }
 
+void BattleGUI::setMaxCameraOffset(std::pair<int, int> maxCameraOffset)
+{
+	// battle.getMap().getDimensions().first * 28 - 150, battle.getMap().getDimensions().second * 32 - 150}),
+	m_maxCameraOffset = std::pair<int, int>(maxCameraOffset.first * 28 - 150, maxCameraOffset.second * 32 - 150);
+}
+
 void BattleGUI::onReset()
 {
 	//battle
@@ -314,8 +320,8 @@ void BattleGUI::onReset()
 	m_postBattleBackground->GetTransformComp().SetPosition({ 200, 100 });
 	m_doneButton->GetTransformComp().SetPosition({ 660, 710 });
 
-	m_cameraPositionOffset = std::pair<int, int>(); 
-	cameraZoom = 1.0f;
-	animationOffset = 100;
+	//m_cameraPositionOffset = std::pair<int, int>(); 
+	//cameraZoom = 1.0f;
+	//animationOffset = 100;
 	m_currentBattleWindow = BattleWindow::eCombat;
 }

@@ -90,6 +90,7 @@ public:
 
 	void renderUI() const;
 	void renderGUI() const;
+	void loadGUI(std::pair<int, int> mapDimensions);
 	void update();
 	void FactionUpdateGUI(FactionName faction);//tempName
 	void newPhase();
