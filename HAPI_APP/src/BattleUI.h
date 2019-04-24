@@ -3,11 +3,15 @@
 #include "BattleGUI.h"
 #include "entity.h"
 #include <vector>
-
+#include "Timer.h"
 struct EntityProperties;
 struct Tile;
 class Battle;
 class Map;
+
+
+
+
 class BattleUI : public IHapiSpritesInputListener
 {
 	struct TargetArea
@@ -39,6 +43,21 @@ class BattleUI : public IHapiSpritesInputListener
 		std::unique_ptr<Sprite> m_sprite;
 		bool m_activate;
 		std::pair<int, int> m_position;
+	};
+
+	struct ParticleSystem
+	{
+		std::pair<float, float> m_position;
+		Timer m_lifeSpan;
+		std::unique_ptr<HAPISPACE::Sprite> m_particle;
+		int m_frameNum = 0;
+		bool m_isEmitting;
+
+		ParticleSystem(float lifespan, std::shared_ptr<HAPISPACE::SpriteSheet> texture);
+		void setPosition(std::pair<int, int> position);
+		void run(float deltaTime, const Map& map);
+		void render() const;
+		
 	};
 
 	class ShipPlacementPhase
@@ -88,8 +107,9 @@ public:
 	std::pair<int, int> getCameraPositionOffset() const;
 
 	void renderUI() const;
+	void renderParticles() const;
 	void renderGUI() const;
-	void update();
+	void update(float deltaTime);
 	void FactionUpdateGUI(FactionName faction);//tempName
 	void newPhase();
 	void newTurn(FactionName playersTurn);
@@ -123,4 +143,5 @@ private:
 	void onRightClickAttackPhase();
 	void onMouseMoveAttackPhase();
 	TargetArea m_targetArea;
+	ParticleSystem m_explosion;
 };

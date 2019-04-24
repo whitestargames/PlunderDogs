@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<TextureAtlas imagePath="explosion_surface.png">
+	<SubTexture name="Frame0" x="0" y="0" width="67" height="96">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="67" top="0" bottom="96" />
+			<Circle name="BoundingCircle" type="0" radius="58.534180" y="48.000000" x="33.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame1" x="71" y="0" width="81" height="97">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="81" top="0" bottom="97" />
+			<Circle name="BoundingCircle" type="0" radius="63.186234" y="48.000000" x="40.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame2" x="156" y="0" width="91" height="94">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="91" top="0" bottom="94" />
+			<Circle name="BoundingCircle" type="0" radius="65.415977" y="47.000000" x="45.000000" />
+		</Collider>
+	</SubTexture>
+	<SubTexture name="Frame3" x="254" y="0" width="70" height="93">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="70" top="0" bottom="93" />
+			<Circle name="BoundingCircle" type="0" radius="58.200085" y="46.000000" x="35.000000" />
+		</Collider>
+	</SubTexture>
+</TextureAtlas>
