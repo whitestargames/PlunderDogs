@@ -280,6 +280,11 @@ struct Textures
 			HAPI_Sprites.UserMessage("Connot Load: 'shipYellowSnipe.xml'", "Texture Error");
 			return false;
 		}
+		m_background = HAPI_Wrapper::makeSpriteSheet("background.jpg");
+		if (!m_background)
+		{
+			return false;
+		}
 		return true;
 	}
 
@@ -323,4 +328,6 @@ struct Textures
 	static std::shared_ptr<SpriteSheet> m_yellowShipBomb;
 	static std::shared_ptr<SpriteSheet> m_yellowShipMelee;
 	static std::shared_ptr<SpriteSheet> m_yellowShipSnipe;
+
+	static std::shared_ptr<SpriteSheet> m_background;
 };

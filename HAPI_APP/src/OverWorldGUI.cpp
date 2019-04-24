@@ -35,6 +35,8 @@ OverWorldGUI::OverWorldGUI()
 	m_addDamageButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2)),
 	m_addRangeButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2))
 {
+	m_background = std::make_unique<Sprite>(Textures::m_background);
+	HAPI_Wrapper::setPosition(m_background, { 0, 0 });
 	GameEventMessenger::getInstance().subscribe(std::bind(&OverWorldGUI::onReset, this), "OverWorldGUI", GameEvent::eResetBattle);
 }
 
@@ -72,8 +74,11 @@ void OverWorldGUI::render(Battle& battle)
 		}
 		case OverWorldWindow::eLevelSelection:
 		{
-			HAPI_Wrapper::render(m_battleMapBackground);
+			//HAPI_Wrapper::render(m_battleMapBackground);
+			HAPI_Wrapper::render(m_background);
 			HAPI_Wrapper::render(m_enemyTerritoryHexSheet);
+
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1000, 250), HAPISPACE::Colour255::BLACK, "Plunder Dogs", 105, {}, {}, 2.5f);
 			break;
 		}
 		case OverWorldWindow::eUpgrade:
@@ -133,6 +138,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 					return;
 				}
 
+
 				////TODO: Change at some point
 				//if (!currentSelectedPlayer.m_selectedEntities.empty())
 				//{
@@ -142,6 +148,8 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 				//	startBattle = true;
 				//}
 			}
+
+
 			else if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
 			{
 				CURRENT_WINDOW = OverWorldWindow::eLevelSelection;

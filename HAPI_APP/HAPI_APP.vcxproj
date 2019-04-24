@@ -191,6 +191,7 @@
     <ClCompile Include="src\Utilities\Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AudioPlayer.h" />
     <ClInclude Include="src\BattleGUI.h" />
     <ClInclude Include="src\Battle.h" />
     <ClInclude Include="src\BattleUI.h" />

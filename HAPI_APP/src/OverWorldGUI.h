@@ -23,6 +23,8 @@ private:
 	std::unique_ptr<Sprite> m_playButton;
 	std::unique_ptr<Sprite> m_backButton;
 
+	std::unique_ptr<Sprite> m_background;
+	std::unique_ptr<Sprite> m_quitButton;
 
 
 	void positionEntity(const std::string& windowName, const std::string& windowSliderName, const std::string& windowObjectName, int objectNumber, size_t vectorSize);
