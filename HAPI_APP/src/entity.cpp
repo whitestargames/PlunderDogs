@@ -178,7 +178,8 @@ EntityProperties::EntityProperties()
 	m_currentHealth(20),
 	m_range(4),
 	m_damage(5),
-	m_upgradePoints(2)
+	m_upgradePoints(2),
+	m_maxUpgradePoints(2)
 {
 
 }
@@ -191,7 +192,8 @@ EntityProperties::EntityProperties(const int movementPoints, const int healthPoi
 	m_currentHealth(healthPoints),
 	m_range(range),
 	m_damage(damage),
-	m_upgradePoints(upgradePoints)
+	m_upgradePoints(upgradePoints),
+	m_maxUpgradePoints(upgradePoints)
 {
 }
 

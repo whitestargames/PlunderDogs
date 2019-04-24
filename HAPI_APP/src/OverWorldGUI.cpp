@@ -200,34 +200,100 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, std::vector<Ent
 			else if (m_addHealthButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addHealthButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//health+
+				if (m_currentlySelected != nullptr)
+				{
+					if (m_currentlySelected->m_upgradePoints > 0)
+					{
+						m_currentlySelected->m_upgradePoints--;
+						m_currentlySelected->m_healthMax++;
+						m_currentlySelected->m_currentHealth++;
+					}
+				}
 			}
 			else if (m_addMovementButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addMovementButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//movement+
+				if (m_currentlySelected != nullptr)
+				{
+					if (m_currentlySelected->m_upgradePoints > 0)
+					{
+						m_currentlySelected->m_upgradePoints--;
+						m_currentlySelected->m_movementPoints++;
+					}
+				}
 			}
 			else if (m_addDamageButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addDamageButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//damage+
+				if (m_currentlySelected != nullptr)
+				{
+					if (m_currentlySelected->m_upgradePoints > 0)
+					{
+						m_currentlySelected->m_upgradePoints--;
+						m_currentlySelected->m_damage++;
+					}
+				}
 			}
 			else if (m_addRangeButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addRangeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//range+
+				if (m_currentlySelected != nullptr)
+				{
+					if (m_currentlySelected->m_upgradePoints > 0)
+					{
+						m_currentlySelected->m_upgradePoints--;
+						m_currentlySelected->m_range++;
+					}
+				}
 			}
 			else if (m_removeHealthButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeHealthButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//health-
+				if (m_currentlySelected != nullptr)
+				{
+					if (m_currentlySelected->m_upgradePoints < m_currentlySelected->m_maxUpgradePoints)
+					{
+						m_currentlySelected->m_currentHealth--;
+						m_currentlySelected->m_healthMax--;
+						m_currentlySelected->m_upgradePoints++;
+					}
+				}
 			}
 			else if (m_removeMovementButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeMovementButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//movement-
+				if (m_currentlySelected != nullptr)
+				{
+					if (m_currentlySelected->m_upgradePoints < m_currentlySelected->m_maxUpgradePoints)
+					{
+						m_currentlySelected->m_movementPoints--;
+						m_currentlySelected->m_upgradePoints++;
+					}
+				}
 			}
 			else if (m_removeDamageButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeDamageButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//damage-
+				if (m_currentlySelected != nullptr)
+				{
+					if (m_currentlySelected->m_upgradePoints < m_currentlySelected->m_maxUpgradePoints)
+					{
+						m_currentlySelected->m_damage--;
+						m_currentlySelected->m_upgradePoints++;
+					}
+				}
 			}
 			else if (m_removeRangeButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeRangeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//range-
+				if (m_currentlySelected != nullptr)
+				{
+					if (m_currentlySelected->m_upgradePoints < m_currentlySelected->m_maxUpgradePoints)
+					{
+						m_currentlySelected->m_range--;
+						m_currentlySelected->m_upgradePoints++;
+					}
+				}
 			}
 			bool selection = false;
 			checkShipSelect(selection, UPGRADE_FLEET_WINDOW, UPGRADE_FLEET_SCROLLBAR, HAPISPACE::VectorI(mouseData.x, mouseData.y), m_upgradeFleetWindowTopLeft, entities, true);

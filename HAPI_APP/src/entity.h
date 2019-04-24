@@ -23,6 +23,7 @@ struct EntityProperties
 	int m_range;
 	int m_damage;
 	int m_upgradePoints;
+	int m_maxUpgradePoints;
 };
 
 struct EntityBattleProperties
