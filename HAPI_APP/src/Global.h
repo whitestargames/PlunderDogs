@@ -25,6 +25,8 @@ enum OverWorldWindow
 	ePreBattle,
 	eLevelSelection,
 	ePlayerSelection, 
+	eUpgrade
+
 };
 
 enum eTileType
