@@ -65,7 +65,6 @@ void Battle::startBattle(const std::string & newMapName, std::vector<std::pair<F
 void Battle::render() const
 {
 	m_map.drawMap();
-	
 	m_battleUI.renderUI();
 
 	for (auto& player : m_players)
@@ -75,14 +74,15 @@ void Battle::render() const
 			entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
 		}
 	}
-
+	
+	m_battleUI.renderParticles();
 	m_battleUI.renderGUI();
 }
 
 void Battle::update(float deltaTime)
 {
 	m_battleUI.setCurrentFaction(getCurentFaction());
-	m_battleUI.update();
+	m_battleUI.update(deltaTime);
 	m_map.setDrawOffset(m_battleUI.getCameraPositionOffset());
 
 	setTimeOfDay(deltaTime);
@@ -127,6 +127,7 @@ void Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 		if (cIter != targetArea.cend())
 		{
 			auto& enemy = tileOnAttackPosition.m_entityOnTile;
+
 			enemy->m_battleProperties.takeDamage(enemy->m_entityProperties, player.m_entityProperties.m_damage, enemy->m_factionName);
 		}
 	}

@@ -51,8 +51,11 @@ BattleUI::BattleUI(Battle & battle)
 	m_gui(),
 	m_selectedTile(),
 	m_invalidPosition(),
-	m_leftMouseDownPosition({0, 0}),
+	m_leftMouseDownPosition({ 0, 0 }),
 	m_isMovingEntity(false),
+	m_mouseDownTile(nullptr),
+	m_explosion(0.08, Textures::m_explosion),
+	m_fire(0.02, Textures::m_fire),
 	m_mouseDownTile(nullptr)
 {
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleUI::onReset, this), "BattleUI", GameEvent::eResetBattle);
@@ -84,10 +87,18 @@ void BattleUI::renderUI() const
 	case BattlePhase::Attack:
 		m_selectedTile.render(m_battle.getMap());
 		m_targetArea.render(m_battle.getMap());
+		
 		break;
 	}
 
 	m_invalidPosition.render(m_battle.getMap());
+	
+}
+
+void BattleUI::renderParticles() const
+{
+	m_explosion.render();
+	m_fire.render();
 }
 
 void BattleUI::renderGUI() const
@@ -95,14 +106,17 @@ void BattleUI::renderGUI() const
 	m_gui.render();
 }
 
+
 void BattleUI::loadGUI(std::pair<int, int> mapDimensions)
 {
 	m_gui.setMaxCameraOffset(mapDimensions);
 }
 
-void BattleUI::update()
+void BattleUI::update(float deltaTime)
 {
 	m_gui.update(m_battle.getMap().getWindDirection());// added update for gui to receive wind direction so compass direction updates
+	m_explosion.run(deltaTime, m_battle.getMap());
+	m_fire.run(deltaTime, m_battle.getMap());
 }
 
 void BattleUI::FactionUpdateGUI(FactionName faction)
@@ -478,6 +492,22 @@ void BattleUI::onLeftClickAttackPhase()
 	//Entity already selected Fire weapon at position
 	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile && !m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.isWeaponFired())
 	{
+		if (tileOnMouse->m_entityOnTile != nullptr)
+		{
+			if (m_selectedTile.m_tile->m_entityOnTile->m_entityProperties.m_weaponType == eFlamethrower)
+			{
+				m_fire.orient(m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.getCurrentDirection());
+				m_fire.setPosition(m_targetArea.m_targetArea[0]->m_tileCoordinate);
+				m_fire.m_isEmitting = true;
+			}
+			else
+			{
+				m_explosion.setPosition(tileOnMouse->m_entityOnTile->m_battleProperties.getCurrentPosition());
+				m_explosion.m_isEmitting = true;
+			}
+			
+		}
+	
 		m_battle.fireEntityWeaponAtPosition(*m_selectedTile.m_tile->m_entityOnTile, *tileOnMouse, m_targetArea.m_targetArea);
 
 		//TODO: Might change this
@@ -622,6 +652,7 @@ void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & sour
 		{
 		case eNorth:
 			directionOfFire = eSouth;
+			
 			break;
 		case eNorthEast:
 			directionOfFire = eSouthWest;
@@ -844,4 +875,86 @@ void BattleUI::CurrentSelectedTile::render(const Map & map) const
 
 		m_sprite->Render(SCREEN_SURFACE);
 	}
+}
+
+BattleUI::ParticleSystem::ParticleSystem(float lifespan, std::shared_ptr<HAPISPACE::SpriteSheet> texture) :
+	m_position(),
+	m_lifeSpan(lifespan),
+	m_particle(HAPI_Sprites.MakeSprite(texture)),
+	m_frameNum(0),
+	m_isEmitting(false)
+{
+	m_particle->SetFrameNumber(m_frameNum);
+}
+
+void BattleUI::ParticleSystem::setPosition(std::pair<int, int> position)
+{
+	m_position = position;
+}
+
+void BattleUI::ParticleSystem::run(float deltaTime, const Map& map) 
+{
+
+	if (m_isEmitting)
+	{
+		const std::pair<int, int> tileTransform = map.getTileScreenPos(m_position);
+		m_particle->GetTransformComp().SetPosition({
+			tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),
+			tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
+
+		m_lifeSpan.update(deltaTime);
+
+		if (m_lifeSpan.isExpired())
+		{
+			m_particle->SetFrameNumber(m_frameNum);
+			
+			m_lifeSpan.reset();
+			++m_frameNum;
+		}
+
+		if (m_frameNum >= m_particle->GetNumFrames())
+		{
+			m_isEmitting = false;
+			m_frameNum = 0;
+		}
+	}
+
+}
+
+void BattleUI::ParticleSystem::render()const 
+{
+	if (m_isEmitting)
+	{
+		m_particle->GetTransformComp().SetOriginToCentreOfFrame();
+		m_particle->GetTransformComp().SetScaling(1.5);
+		m_particle->Render(SCREEN_SURFACE);
+	}
+}
+
+void BattleUI::ParticleSystem::orient(eDirection entityDir)
+{
+	eDirection direction;
+	switch (entityDir)
+	{
+	case eNorth:
+		direction = eSouth;
+
+		break;
+	case eNorthEast:
+		direction = eSouthWest;
+		break;
+	case eSouthEast:
+		direction = eNorthWest;
+		break;
+	case eSouth:
+		direction = eNorth;
+		break;
+	case eSouthWest:
+		direction = eNorthEast;
+		break;
+	case eNorthWest:
+		direction = eSouthEast;
+		break;
+	}
+	m_particle->GetTransformComp().SetRotation(DEGREES_TO_RADIANS(static_cast<int>(direction) * 60 % 360));
 }

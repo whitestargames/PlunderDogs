@@ -16,9 +16,16 @@ class OverWorldGUI
 private:
 	EntityProperties* m_currentlySelected;
 	bool m_enitiesAdded;
-
+	//m_enemyTerritoryHexSheet   might need name for replacing
 	std::unique_ptr<Sprite> m_battleMapBackground;
-	std::unique_ptr<Sprite> m_enemyTerritoryHexSheet;
+	std::unique_ptr<Sprite> m_selectMapButtons1;
+	std::unique_ptr<Sprite> m_selectMapButtons2;
+	std::unique_ptr<Sprite> m_selectMapButtons3;
+	std::unique_ptr<Sprite> m_playerSelectButton1;
+	std::unique_ptr<Sprite> m_playerSelectButton2;
+	std::unique_ptr<Sprite> m_playerSelectButton3;
+	std::unique_ptr<Sprite> m_playerSelectButton4;
+	std::unique_ptr<Sprite> m_playerSelectBackground;
 	std::unique_ptr<Sprite> m_prebattleUIBackground;
 	std::unique_ptr<Sprite> m_playButton;
 	std::unique_ptr<Sprite> m_backButton;
