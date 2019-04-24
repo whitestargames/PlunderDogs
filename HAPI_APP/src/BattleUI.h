@@ -54,7 +54,7 @@ class BattleUI : public IHapiSpritesInputListener
 			std::pair<int, int> m_position;
 		};
 	public:
-		ShipPlacementPhase(std::vector<EntityProperties*> player,
+		ShipPlacementPhase(const std::vector<EntityProperties*>& player,
 			std::pair<int, int> spawnPosition, int range, const Map& map, FactionName factionName);
 
 		bool isCompleted() const;
@@ -95,7 +95,7 @@ public:
 	void FactionUpdateGUI(FactionName faction);//tempName
 	void newPhase();
 	void newTurn(FactionName playersTurn);
-	void startShipPlacement(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players);
+	void startShipPlacement(const std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players);
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;

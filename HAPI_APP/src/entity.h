@@ -26,12 +26,12 @@ enum class EntityType
 struct Tile;
 struct Weapons;
 class Map;
-
 struct EntityProperties
 {
 	EntityProperties(FactionName factionName, EntityType entityType);
-	~EntityProperties();
 
+	FactionName m_factionName;
+	EntityType m_entityType;
 	std::shared_ptr<HAPISPACE::Sprite> m_sprite;
 	int m_movementPoints;
 	int m_healthMax;
@@ -39,9 +39,6 @@ struct EntityProperties
 	int m_range;
 	int m_damage;
 	int m_weaponType;
-	FactionName m_factionName;
-	EntityType m_entityType;
-	void onReset();
 };
 
 class EntityBattleProperties
@@ -71,7 +68,8 @@ class EntityBattleProperties
 	};
 
 public:
-	EntityBattleProperties(std::pair<int, int> startingPosition, eDirection startingDirection = eNorth);
+	EntityBattleProperties(std::pair<int, int> startingPosition, FactionName factionName, 
+		EntityType entityType, eDirection startingDirection = eNorth);
 
 	eDirection getCurrentDirection() const;
 	bool isMovedToDestination() const;
@@ -92,6 +90,7 @@ public:
 	void onNewTurn();
 
 private:
+	std::shared_ptr<HAPISPACE::Sprite> m_sprite;
 	std::pair<int, int> m_currentPosition;
 	std::deque<std::pair<eDirection, std::pair<int, int>>> m_pathToTile;
 	Timer m_movementTimer;
@@ -107,7 +106,8 @@ private:
 
 struct BattleEntity
 {
-	BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map, FactionName playerName, eDirection startingDirection = eNorth);
+	BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map,
+		FactionName factionName, EntityType entityType, eDirection startingDirection = eDirection::eNorth);
 
 	EntityProperties m_entityProperties;
 	EntityBattleProperties m_battleProperties;
@@ -120,7 +120,7 @@ struct Player
 	Player(FactionName name);
 
 	std::vector<EntityProperties> m_entities;
-	std::vector<EntityProperties> m_selectedEntities;
+	std::vector<EntityProperties*> m_selectedEntities;
 	const FactionName m_factionName;
 };
 

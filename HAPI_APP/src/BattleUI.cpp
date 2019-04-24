@@ -130,7 +130,7 @@ void BattleUI::newTurn(FactionName playersTurn)
 	}
 }
 
-void BattleUI::startShipPlacement(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players)
+void BattleUI::startShipPlacement(const std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players)
 {
 	assert(m_battle.getCurrentPhase() == BattlePhase::ShipPlacement);
 	assert(m_playerShipPlacement.empty());
@@ -677,7 +677,7 @@ BattleUI::TargetArea::HighlightNode::HighlightNode()
 	sprite->GetTransformComp().SetOriginToCentreOfFrame();
 }
 
-BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*> player, 
+BattleUI::ShipPlacementPhase::ShipPlacementPhase(const std::vector<EntityProperties*>& player, 
 	std::pair<int, int> spawnPosition, int range, const Map& map, FactionName factionName)
 	: m_factionName(factionName),
 	m_player(player),

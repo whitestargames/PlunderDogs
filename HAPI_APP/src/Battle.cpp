@@ -48,7 +48,7 @@ Battle::~Battle()
 	GameEventMessenger::getInstance().unsubscribe("Battle", GameEvent::eResetBattle);
 }
 
-void Battle::startBattle(const std::string & newMapName, std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& newPlayers)
+void Battle::startBattle(const std::string & newMapName, const std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& newPlayers)
 {
 	assert(m_players.empty());
 	m_map.loadmap(newMapName);
@@ -138,24 +138,25 @@ void Battle::insertEntity(std::pair<int, int> startingPosition, eDirection start
 	assert(m_currentPhase == BattlePhase::ShipPlacement);
 
 	auto& player = getPlayer(factionName);
-	switch (factionName)
-	{
-	case FactionName::eYellow :
-		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName, startingDirection));
-		break;
+	player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName, startingDirection));
 
-	case FactionName::eBlue:
-		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName, startingDirection));
-		break;
-	
-	case FactionName::eRed :
-		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName, startingDirection));
-		break;
-	
-	case FactionName::eGreen :
-		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName, startingDirection));
-		break;
-	}
+	//switch (factionName)
+	//{
+	//case FactionName::eYellow :
+	//	
+	//	break;
+	//case FactionName::eBlue:
+	//	player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName, startingDirection));
+	//	break;
+	//
+	//case FactionName::eRed :
+	//	player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName, startingDirection));
+	//	break;
+	//
+	//case FactionName::eGreen :
+	//	player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName, startingDirection));
+	//	break;
+	//}
 }
 
 void Battle::nextTurn()

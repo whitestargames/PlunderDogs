@@ -104,10 +104,10 @@ void OverWorld::startBattle()
 	{
 		OverWorldGUI::CURRENT_WINDOW = eBattle;
 		
-		std::vector<std::pair<FactionName, std::vector<EntityProperties>>> playersInBattle;
+		std::vector<std::pair<FactionName, std::vector<EntityProperties*>>> playersInBattle;
 		for (auto& player : m_players)
 		{
-			std::pair<FactionName, std::vector<EntityProperties>> p;
+			std::pair<FactionName, std::vector<EntityProperties*>> p;
 			p.first = player.m_factionName;
 			p.second = player.m_selectedEntities;
 			playersInBattle.push_back(p);
