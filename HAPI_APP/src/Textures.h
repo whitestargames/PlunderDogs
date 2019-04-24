@@ -36,10 +36,10 @@ struct Textures
 			return false;
 		}
 
-		m_playerSelectIcons = HAPI_Wrapper::makeSpriteSheet("playerSelectIcons.png", 3);
+		m_playerSelectIcons = HAPI_Wrapper::makeSpriteSheet("yellowSelectBtn.png", 3);
 		if (!m_playerSelectIcons)
 		{
-			HAPI_Sprites.UserMessage("Cannot Load : 'playerSelectIcons.png'", "Texture Error");
+			HAPI_Sprites.UserMessage("Cannot Load : 'yellowSelectBtn.png'", "Texture Error");
 			return false;
 		}
 		m_playerSelectBackground = HAPI_Wrapper::makeSpriteSheet("playerSelectBackground.png");
