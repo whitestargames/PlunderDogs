@@ -140,15 +140,13 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 					selectNextPlayer = true;
 					return;
 				}
+			}
 
-				////TODO: Change at some point
-				//if (!currentSelectedPlayer.m_selectedEntities.empty())
-				//{
-				//	UI.CloseWindow(FLEET_WINDOW);
-				//	UI.CloseWindow(BATTLE_FLEET_WINDOW);
-				//	CURRENT_WINDOW = OverWorldWindow::eBattle;
-				//	startBattle = true;
-				//}
+			if (HAPI_Wrapper::isTranslated(m_upgradesButton, mouseData, 0))
+			{
+				CURRENT_WINDOW = OverWorldWindow::eUpgrade;
+				UI.CloseWindow(FLEET_WINDOW);
+				UI.CloseWindow(BATTLE_FLEET_WINDOW);
 			}
 			else if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
 			{
@@ -354,9 +352,20 @@ void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, Player& current
 			m_backButton->SetFrameNumber(0);
 		}
 
+		if (HAPI_Wrapper::isTranslated(m_upgradesButton, mouseData, 0))
+		{
+			m_upgradesButton->SetFrameNumber(1);
+		}
+		else if (m_upgradesButton->GetFrameNumber() != 0)
+		{
+			m_upgradesButton->SetFrameNumber(0);
+		}
+
 		//varies the position of objects based on the slder value
 		if (mouseData.leftButtonDown)
 		{
+
+			
 			if (windowScreenRect(FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 			{
 				for (int i = 0; i < currentSelectedPlayer.m_entities.size(); i++)
