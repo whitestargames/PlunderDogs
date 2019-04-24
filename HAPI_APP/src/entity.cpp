@@ -2,7 +2,6 @@
 #include "Map.h"
 #include "Pathfinding.h"
 #include "Textures.h"
-#include "GameEventMessenger.h"
 
 constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
 constexpr size_t WEAPON_HIGHLIGHT_SIZE{ 200 };
@@ -232,6 +231,8 @@ void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int
 		m_isDead = true;
 		
 	}
+	
+	
 }
 
 void EntityBattleProperties::fireWeapon()
@@ -270,10 +271,9 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 EntityProperties::EntityProperties(FactionName factionName, EntityType entityType)
 	
 {
-	GameEventMessenger::getInstance().subscribe(std::bind(&EntityProperties::onReset, this), "Entity", GameEvent::eResetBattle);
-
 	//TODO: Currently not working as intended
 	//UI seems to be resetting the frameNumber somewhere in OverWorldGUI. 
+	
 	switch (entityType)
 	{
 	case EntityType::eCruiser:
@@ -384,150 +384,6 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 		break;
 	case FactionName::eGreen:
 		switch (entityType)
-		{
-		case EntityType::eCruiser:
-
-			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_greenShipSideCannons));
-			break;
-		case EntityType::eBattleShip:
-
-			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_greenShipBomb));
-			break;
-		case EntityType::eDestroyer:
-
-			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_greenShipMelee));
-			break;
-		case EntityType::eGunBoat:
-
-			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_greenShipSnipe));
-			break;
-
-		}
-		break;
-	}
-	m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealth);
-	m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
-}
-
-EntityProperties::~EntityProperties()
-{
-	//GameEventMessenger::getInstance().unsubscribe("Entity", GameEvent::eResetBattle);
-}
-
-void EntityProperties::onReset()
-{
-	//TODO: Currently not working as intended
-//UI seems to be resetting the frameNumber somewhere in OverWorldGUI. 
-	switch (m_entityType)
-	{
-	case EntityType::eCruiser:
-		m_movementPoints = 15;
-		m_healthMax = 15;
-		m_currentHealth = 10;
-		m_range = 6;
-		m_damage = 5;
-		m_weaponType = eWeaponType::eSideCannons;
-		break;
-	case EntityType::eBattleShip:
-		m_movementPoints = 10;
-		m_healthMax = 25;
-		m_currentHealth = 25;
-		m_range = 2;
-		m_damage = 7;
-		m_weaponType = eWeaponType::eShotGun;
-		break;
-	case EntityType::eDestroyer:
-		m_movementPoints = 20;
-		m_healthMax = 10;
-		m_currentHealth = 10;
-		m_range = 6;
-		m_damage = 5;
-		m_weaponType = eWeaponType::eFlamethrower;
-		break;
-	case EntityType::eGunBoat:
-		m_movementPoints = 8;
-		m_healthMax = 8;
-		m_currentHealth = 8;
-		m_range = 15;
-		m_damage = 9;
-		m_weaponType = eWeaponType::eStraightShot;
-		break;
-	}
-
-	switch (m_factionName)
-	{
-	case FactionName::eYellow:
-		switch (m_entityType)
-		{
-		case EntityType::eCruiser:
-			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_yellowShipSideCannons));
-			break;
-		case EntityType::eBattleShip:
-
-			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_yellowShipBomb));
-			break;
-		case EntityType::eDestroyer:
-
-			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_yellowShipMelee));
-			break;
-		case EntityType::eGunBoat:
-
-			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_yellowShipSnipe));
-			break;
-
-		}
-
-		break;
-
-	case FactionName::eBlue:
-		switch (m_entityType)
-		{
-		case EntityType::eCruiser:
-
-			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_blueShipSideCannons));
-			break;
-		case EntityType::eBattleShip:
-
-			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_blueShipBomb));
-			break;
-		case EntityType::eDestroyer:
-
-			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_blueShipMelee));
-			break;
-		case EntityType::eGunBoat:
-
-			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_blueShipSnipe));
-			break;
-
-		}
-
-		break;
-	case FactionName::eRed:
-		switch (m_entityType)
-		{
-		case EntityType::eCruiser:
-
-			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_redShipSideCannons));
-			break;
-		case EntityType::eBattleShip:
-
-			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_redShipBomb));
-			break;
-		case EntityType::eDestroyer:
-
-			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_redShipMelee));
-			break;
-		case EntityType::eGunBoat:
-
-			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_redShipSnipe));
-			break;
-		default:
-			break;
-		}
-
-		break;
-	case FactionName::eGreen:
-		switch (m_entityType)
 		{
 		case EntityType::eCruiser:
 
