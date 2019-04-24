@@ -4,7 +4,7 @@
 #include "Utilities/Utilities.h"
 #include "GameEventMessenger.h"
 
-OverWorldWindow OverWorldGUI::CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
+OverWorldWindow OverWorldGUI::CURRENT_WINDOW = OverWorldWindow::ePlayerSelection;
 
 constexpr int WINDOW_OBJECTWIDTH = 75;
 constexpr int WINDOW_OBJECTHEIGHT = 150;
@@ -31,6 +31,11 @@ OverWorldGUI::OverWorldGUI()
 	m_prebattleUIBackground(std::make_unique<Sprite>(Textures::m_prebattleUIBackground)),
 	m_playButton(std::make_unique<Sprite>(Textures::m_preBattleUIPlayButton)),
 	m_backButton(std::make_unique<Sprite>(Textures::m_preBattleUIBackButton)),
+	m_playerSelectButton1(std::make_unique<Sprite>(Textures::m_playerSelectIcons)),
+	m_playerSelectButton2(std::make_unique<Sprite>(Textures::m_playerSelectIcons)),
+	m_playerSelectButton3(std::make_unique<Sprite>(Textures::m_playerSelectIcons)),
+	m_playerSelectButton4(std::make_unique<Sprite>(Textures::m_playerSelectIcons)),
+	m_playerSelectBackground(std::make_unique<Sprite>(Textures::m_playerSelectBackground)),
 	fleetWindowSkinName(UI.LoadSkin(Utilities::getDataDirectory() + "fleetWindowSkin.xml")),
 	fleetWindowSliderSkinName(UI.LoadSkin(Utilities::getDataDirectory() + "fleetWindowSliderSkin.xml")),
 	m_currentlySelected(nullptr),
@@ -67,6 +72,17 @@ void OverWorldGUI::render(Battle& battle)
 
 	switch (CURRENT_WINDOW)
 	{
+		case OverWorldWindow::ePlayerSelection:
+		{
+			m_playerSelectBackground->Render(SCREEN_SURFACE);
+			m_playerSelectButton1->Render(SCREEN_SURFACE);
+			m_playerSelectButton2->Render(SCREEN_SURFACE);
+			m_playerSelectButton3->Render(SCREEN_SURFACE);
+			m_playerSelectButton4->Render(SCREEN_SURFACE);
+			m_playButton->Render(SCREEN_SURFACE);
+			m_backButton->Render(SCREEN_SURFACE); //put back button part functionality same as play button need to implement functionality
+			break;
+		}
 		case OverWorldWindow::eShipSelection:
 		{
 			m_prebattleUIBackground->Render(SCREEN_SURFACE);
@@ -135,8 +151,34 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 {
 	switch (CURRENT_WINDOW)
 	{
+		case OverWorldWindow::ePlayerSelection:
+		{
+			if (HAPI_Wrapper::isTranslated(m_playerSelectButton1, mouseData, 0))
+			{
+				m_playerSelectButton1->AdvanceToNextFrame();
+			}
+			if (HAPI_Wrapper::isTranslated(m_playerSelectButton2, mouseData, 0))
+			{
+				m_playerSelectButton2->AdvanceToNextFrame();
+			}
+			if (HAPI_Wrapper::isTranslated(m_playerSelectButton3, mouseData, 0))
+			{
+				m_playerSelectButton3->AdvanceToNextFrame();
+			}
+			if (HAPI_Wrapper::isTranslated(m_playerSelectButton4, mouseData, 0))
+			{
+				m_playerSelectButton4->AdvanceToNextFrame();
+			}
+			if (HAPI_Wrapper::isTranslated(m_playButton, mouseData, 0))
+			{
+				CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
+			}
+			break;
+
+		}
 		case OverWorldWindow::eLevelSelection:
 		{
+
 			if (HAPI_Wrapper::isTranslated(m_selectMapButtons1, mouseData, 0))
 			{
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
@@ -341,6 +383,18 @@ void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, Player& current
 {
 	switch (CURRENT_WINDOW)
 	{
+
+	case OverWorldWindow::ePlayerSelection:
+	{
+		if (HAPI_Wrapper::isTranslated(m_playButton, mouseData, 0))
+		{
+			m_playButton->SetFrameNumber(1);
+		}
+		else if (m_playButton->GetFrameNumber() != 0)
+		{
+			m_playButton->SetFrameNumber(0);
+		}
+	}
 	case OverWorldWindow::eLevelSelection:
 	{
 		if (HAPI_Wrapper::isTranslated(m_selectMapButtons1, mouseData, 0))//checks if mouse is over button
@@ -512,6 +566,12 @@ void OverWorldGUI::reset(const std::vector<EntityProperties>& playerEntities)
 	HAPI_Wrapper::setPosition(m_selectMapButtons1, { 100, 600 });
 	HAPI_Wrapper::setPosition(m_selectMapButtons2, { 100, 400 });
 	HAPI_Wrapper::setPosition(m_selectMapButtons3, { 100, 200 });
+
+	HAPI_Wrapper::setPosition(m_playerSelectButton1, { 300, 100 });
+	HAPI_Wrapper::setPosition(m_playerSelectButton2, { 300, 300 });
+	HAPI_Wrapper::setPosition(m_playerSelectButton3, { 300, 500 });
+	HAPI_Wrapper::setPosition(m_playerSelectButton4, { 300, 700 });
+
 	HAPI_Wrapper::setPosition(m_playButton, { 1150, 722 });
 	HAPI_Wrapper::setPosition(m_backButton, { 185, 747 });
 	HAPI_Wrapper::setPosition(m_upgradesButton, { 1300, 25 });
