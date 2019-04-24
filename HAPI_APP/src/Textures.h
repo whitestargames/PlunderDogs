@@ -303,6 +303,9 @@ struct Textures
 		m_background = HAPI_Wrapper::makeSpriteSheet("background.jpg");
 		if (!m_background)
 		{
+			HAPI_Sprites.UserMessage("Connot Load: 'background.jpg'", "Texture Error");
+			return false;
+		}
 
 
 		m_explosion = HAPI_Wrapper::loadSpriteSheet("explosion.xml");

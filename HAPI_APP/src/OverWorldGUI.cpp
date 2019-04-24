@@ -81,7 +81,7 @@ void OverWorldGUI::render(Battle& battle)
 
 			//HAPI_Wrapper::render(m_battleMapBackground);
 			HAPI_Wrapper::render(m_background);
-			HAPI_Wrapper::render(m_enemyTerritoryHexSheet);
+			//HAPI_Wrapper::render(m_enemyTerritoryHexSheet);
 
 			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1000, 250), HAPISPACE::Colour255::BLACK, "Plunder Dogs", 105, {}, {}, 2.5f);
 
@@ -152,22 +152,14 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			{
 				if (!currentSelectedPlayer.m_selectedEntities.empty())
 				{
-					CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
+					//CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
+
 					selectNextPlayer = true;
+					UI.CloseWindow(FLEET_WINDOW);
+					UI.CloseWindow(BATTLE_FLEET_WINDOW);
 					return;
 				}
 			}
-
-
-
-				////TODO: Change at some point
-				//if (!currentSelectedPlayer.m_selectedEntities.empty())
-				//{
-				//	UI.CloseWindow(FLEET_WINDOW);
-				//	UI.CloseWindow(BATTLE_FLEET_WINDOW);
-				//	CURRENT_WINDOW = OverWorldWindow::eBattle;
-				//	startBattle = true;
-				//}
 
 			if (HAPI_Wrapper::isTranslated(m_upgradesButton, mouseData, 0))
 			{
