@@ -32,12 +32,15 @@ struct EntityProperties
 	EntityProperties(FactionName factionName, EntityType entityType);
 
 	std::shared_ptr<HAPISPACE::Sprite> m_sprite;
+	std::shared_ptr<HAPISPACE::Sprite> m_selectedSprite;
 	int m_movementPoints;
 	int m_healthMax;
 	int m_currentHealth;
 	int m_range;
 	int m_damage;
 	int m_weaponType;
+	int m_upgradePoints;
+	int m_maxUpgradePoints;
 };
 
 class EntityBattleProperties

@@ -268,7 +268,7 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 }
 
 //ENTITY
-EntityProperties::EntityProperties(FactionName factionName, EntityType entityType)
+EntityProperties::EntityProperties(FactionName factionName, EntityType entityType) : m_upgradePoints(2), m_maxUpgradePoints(2), m_selectedSprite(HAPI_Sprites.MakeSprite(Textures::m_thing))
 	
 {
 	//TODO: Currently not working as intended
