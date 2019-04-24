@@ -11,7 +11,7 @@ constexpr int WINDOW_WIDTH = 830;
 constexpr int WINDOW_HEIGHT = 200;
 
 OverWorldGUI::OverWorldGUI()
-	: m_battleMapBackground(std::make_unique<Sprite>(Textures::m_battleMapBackground)),
+	: m_battleMapBackground(std::make_unique<Sprite>(Textures::m_levelSelectBackground)),
 	m_selectMapButtons1(std::make_unique<Sprite>(Textures::m_levelSelectSheet)),
 	m_selectMapButtons2(std::make_unique<Sprite>(Textures::m_levelSelectSheet)),
 	m_selectMapButtons3(std::make_unique<Sprite>(Textures::m_levelSelectSheet)),

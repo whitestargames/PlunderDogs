@@ -16,10 +16,10 @@ struct Textures
 			return false;
 		}
 
-		m_battleMapBackground = HAPI_Wrapper::makeSpriteSheet("TempBattleMapBackground.png");
-		if (!m_battleMapBackground)
+		m_levelSelectBackground = HAPI_Wrapper::makeSpriteSheet("levelSelectBackground.jpg");
+		if (!m_levelSelectBackground)
 		{
-			HAPI_Sprites.UserMessage("Cannot Load : 'TempBattleMapBackground.png'", "Texture Error");
+			HAPI_Sprites.UserMessage("Cannot Load : 'levelSelectBackground.jpg'", "Texture Error");
 		}
 
 		m_enemyTerritoryHexSheet = HAPI_Wrapper::makeSpriteSheet("EnemyTerritoryHexSheet.png", 2);
@@ -303,7 +303,7 @@ struct Textures
 	}
 
 	static std::shared_ptr<SpriteSheet> m_mouseCrossHair;
-	static std::shared_ptr<SpriteSheet> m_battleMapBackground;
+	static std::shared_ptr<SpriteSheet> m_levelSelectBackground;
 	static std::shared_ptr<SpriteSheet> m_enemyTerritoryHexSheet;
 	static std::shared_ptr<SpriteSheet> m_levelSelectSheet;
 	static std::shared_ptr<SpriteSheet> m_playerSelectIcons;
