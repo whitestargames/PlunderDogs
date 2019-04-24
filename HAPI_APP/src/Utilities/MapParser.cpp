@@ -5,11 +5,17 @@
 #include <assert.h>
 #include "Utilities.h"
 
+
+MapDetails::MapDetails(std::pair<int, int> mapSize, const std::vector<std::vector<int>>& tileData)
+	: mapDimensions(mapSize),
+	tileData(tileData)
+{}
+
 std::vector<std::vector<int>> parseTileData(const TiXmlElement& rootElement, const std::pair<int, int> mapSize);
 std::pair<int, int> parseMapSize(const TiXmlElement& rootElement);
 std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElement, std::pair<int, int> mapSize);
 
-Map MapParser::parseMap(const std::string& name)
+MapDetails MapParser::parseMap(const std::string& name)
 {
 	TiXmlDocument mapFile;
 	bool mapLoaded = mapFile.LoadFile(Utilities::getDataDirectory() + name);
@@ -18,7 +24,7 @@ Map MapParser::parseMap(const std::string& name)
 	const auto& rootElement = mapFile.RootElement();
 	std::pair<int, int> mapSize = parseMapSize(*rootElement);
 
-	return Map(mapSize, parseTileData(*rootElement, mapSize));
+	return MapDetails(mapSize, parseTileData(*rootElement, mapSize));
 }
 
 std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElement, std::pair<int, int> mapSize)

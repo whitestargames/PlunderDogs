@@ -1,5 +1,6 @@
 #include "Battle.h"
 #include "Utilities/MapParser.h"
+#include "GameEventMessenger.h"
 
 using namespace HAPISPACE;
 
@@ -30,21 +31,35 @@ void Battle::setWindDirectoin(float deltaTime)
 	}
 }
 
-Battle::Battle(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players)
+Battle::Battle()
 	: m_players(),
 	m_currentPlayersTurn(static_cast<int>(FactionName::eYellow)),
-	m_map(MapParser::parseMap("Level1.tmx")),
+	m_map(),
 	m_currentPhase(BattlePhase::ShipPlacement),
 	m_battleUI(*this),
 	m_dayTime(20.0f),
 	m_windTime(10)
 {
-	for (auto& player : players)
+	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onReset, this), "Battle", GameEvent::eResetBattle);
+}
+
+Battle::~Battle()
+{
+	GameEventMessenger::getInstance().unsubscribe("Battle", GameEvent::eResetBattle);
+}
+
+void Battle::startBattle(const std::string & newMapName, std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& newPlayers)
+{
+	assert(m_players.empty());
+	m_map.loadmap(newMapName);
+
+	for (auto& player : newPlayers)
 	{
 		m_players.emplace_back(player.first);
 	}
 
-	m_battleUI.startShipPlacement(players);
+	m_battleUI.startShipPlacement(newPlayers);
+	m_battleUI.loadGUI(m_map.getDimensions());
 }
 
 void Battle::render() const
@@ -58,7 +73,6 @@ void Battle::render() const
 		for (auto& entity : player.m_entities)
 		{
 			entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
-			
 		}
 	}
 
@@ -81,8 +95,6 @@ void Battle::update(float deltaTime)
 	else if (m_currentPhase == BattlePhase::Attack)
 	{
 		updateAttackPhase();
-		
-
 	}
 }
 
@@ -243,6 +255,16 @@ BattlePlayer & Battle::getPlayer(FactionName factionName)
 	auto cIter = std::find_if(m_players.begin(), m_players.end(), [factionName](const auto& player) { return factionName == player.m_factionName; });
 	assert(cIter != m_players.end());
 	return *cIter;
+}
+
+void Battle::onReset()
+{
+	m_currentPhase = BattlePhase::ShipPlacement;
+	m_currentPlayersTurn = static_cast<int>(FactionName::eYellow);
+	m_dayTime.reset();
+	m_windTime.reset();
+	m_moveCounter.m_counter = 0;
+	m_players.clear();
 }
 
 const Map & Battle::getMap() const

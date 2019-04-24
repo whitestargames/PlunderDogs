@@ -84,11 +84,13 @@ class BattleUI : public IHapiSpritesInputListener
 
 public:
 	BattleUI(Battle& battles);
+	~BattleUI();
 
 	std::pair<int, int> getCameraPositionOffset() const;
 
 	void renderUI() const;
 	void renderGUI() const;
+	void loadGUI(std::pair<int, int> mapDimensions);
 	void update();
 	void FactionUpdateGUI(FactionName faction);//tempName
 	void newPhase();
@@ -123,4 +125,5 @@ private:
 	void onRightClickAttackPhase();
 	void onMouseMoveAttackPhase();
 	TargetArea m_targetArea;
+	void onReset();
 };

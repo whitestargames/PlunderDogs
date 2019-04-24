@@ -1,9 +1,17 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
-class Map;
+struct MapDetails
+{
+	MapDetails(std::pair<int, int> mapSize, const std::vector<std::vector<int>>& tileData);
+
+	const std::pair<int, int> mapDimensions;
+	const std::vector<std::vector<int>> tileData;
+};
+
 namespace MapParser
 {
-	Map parseMap(const std::string& name);
+	MapDetails parseMap(const std::string& name);
 }

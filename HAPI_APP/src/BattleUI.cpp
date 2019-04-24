@@ -4,6 +4,7 @@
 #include "OverWorld.h"
 #include "Textures.h"
 #include "MouseSelection.h"
+#include "GameEventMessenger.h"
 #include <assert.h>
 
 using namespace HAPISPACE;
@@ -47,13 +48,20 @@ void BattleUI::InvalidPosition::setPosition(std::pair<int, int> screenPosition, 
 //
 BattleUI::BattleUI(Battle & battle)
 	: m_battle(battle),
-	m_gui({ battle.getMap().getDimensions().first * 28 - 150, battle.getMap().getDimensions().second * 32 - 150}),
+	m_gui(),
 	m_selectedTile(),
 	m_invalidPosition(),
 	m_leftMouseDownPosition({0, 0}),
 	m_isMovingEntity(false),
 	m_mouseDownTile(nullptr)
-{}
+{
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleUI::onReset, this), "BattleUI", GameEvent::eResetBattle);
+}
+
+BattleUI::~BattleUI()
+{
+	GameEventMessenger::getInstance().unsubscribe("BattleUI", GameEvent::eResetBattle);
+}
 
 std::pair<int, int> BattleUI::getCameraPositionOffset() const
 {
@@ -62,7 +70,6 @@ std::pair<int, int> BattleUI::getCameraPositionOffset() const
 
 void BattleUI::renderUI() const
 {
-	
 	switch (m_battle.getCurrentPhase())
 	{
 	case BattlePhase::ShipPlacement:
@@ -86,6 +93,11 @@ void BattleUI::renderUI() const
 void BattleUI::renderGUI() const
 {
 	m_gui.render();
+}
+
+void BattleUI::loadGUI(std::pair<int, int> mapDimensions)
+{
+	m_gui.setMaxCameraOffset(mapDimensions);
 }
 
 void BattleUI::update()
@@ -121,6 +133,7 @@ void BattleUI::newTurn(FactionName playersTurn)
 void BattleUI::startShipPlacement(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players)
 {
 	assert(m_battle.getCurrentPhase() == BattlePhase::ShipPlacement);
+	assert(m_playerShipPlacement.empty());
 
 	//TODO: Change this at some point
 	for (auto& player : players)
@@ -178,7 +191,6 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 		{
 			m_isMovingEntity = true;
 			m_leftMouseDownPosition = { mouseData.x, mouseData.y };
-			assert(!m_playerShipPlacement.empty());
 			break;
 		}
 		case BattlePhase::Movement:
@@ -540,6 +552,14 @@ void BattleUI::onMouseMoveAttackPhase()
 			m_invalidPosition.m_activate = false;
 		}
 	}
+}
+
+void BattleUI::onReset()
+{
+	m_playerShipPlacement.clear();
+	m_targetArea.clearTargetArea();
+	m_selectedTile.m_tile = nullptr;
+	m_invalidPosition.m_activate = false;
 }
 
 //Weapon Graph

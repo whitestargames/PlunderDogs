@@ -16,11 +16,13 @@ class Battle
 public:
 	void setTimeOfDay(float deltaTime);
 	void setWindDirectoin(float deltaTime);
-	Battle(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players);
+	Battle();
+	~Battle();
 	const Map& getMap() const;
 	BattlePhase getCurrentPhase() const;
 	FactionName getCurentFaction() const;
 
+	void startBattle(const std::string& newMapName, std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& newPlayers);
 	void render() const;
 	void update(float deltaTime);
 	void moveEntityToPosition(BattleEntity& entity, const Tile& destination);
@@ -44,4 +46,6 @@ private:
 	void updateAttackPhase();
 	bool allEntitiesAttacked(std::vector<std::unique_ptr<BattleEntity>>& playerEntities) const;
 	BattlePlayer& getPlayer(FactionName factionName);
+
+	void onReset();
 };
