@@ -54,7 +54,7 @@ BattleUI::BattleUI(Battle & battle)
 	m_isMovingEntity(false),
 	m_mouseDownTile(nullptr),
 	m_explosion(0.08, Textures::m_explosion),
-	m_fire(0.04, Textures::m_fire)
+	m_fire(0.02, Textures::m_fire)
 {}
 
 std::pair<int, int> BattleUI::getCameraPositionOffset() const
