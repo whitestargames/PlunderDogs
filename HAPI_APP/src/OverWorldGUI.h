@@ -45,6 +45,9 @@ private:
 	HAPISPACE::VectorI m_battleFleetWindowTopLeft{ HAPISPACE::VectorI(220, 220) };
 	HAPISPACE::VectorI m_upgradeFleetWindowTopLeft{ HAPISPACE::VectorI(220, 120) };
 
+	const int m_maxShips{6};
+	int m_currentShips{ 0 };
+
 	const std::string fleetWindowSliderSkinName;
 	const std::string fleetWindowSkinName;
 	const std::string ENTITY = "entity";

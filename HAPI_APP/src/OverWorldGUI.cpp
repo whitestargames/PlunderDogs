@@ -581,29 +581,33 @@ void OverWorldGUI::checkShipSelect(bool & selection, const std::string & shipWin
 
 void OverWorldGUI::selectBattleShip(const std::string & shipWindow, const std::string & windowSlider, const std::string & selectedShipWindow, const std::string & selectedWindowSlider, const HAPISPACE::VectorI & mouseData, const HAPISPACE::VectorI & windowTopLeft, const HAPISPACE::VectorI & selectedTopLeft, std::vector<EntityProperties>& entities, std::vector<EntityProperties*>& selectedEntities)
 {
-	if (windowScreenRect(shipWindow).Contains(mouseData))
+	if (m_currentShips < m_maxShips)
 	{
-		for (int i = 0; i < entities.size(); i++)
+		if (windowScreenRect(shipWindow).Contains(mouseData))
 		{
-			positionEntity(shipWindow, windowSlider, (ENTITY + std::to_string(i)), i, entities.size());
-			if (entityContainsMouse(shipWindow, ENTITY + std::to_string(i), windowTopLeft, mouseData))
+			for (int i = 0; i < entities.size(); i++)
 			{
-				bool isSelected{ false };
-				for (int j = 0; j < selectedEntities.size(); j++)
+				positionEntity(shipWindow, windowSlider, (ENTITY + std::to_string(i)), i, entities.size());
+				if (entityContainsMouse(shipWindow, ENTITY + std::to_string(i), windowTopLeft, mouseData))
 				{
-					if (selectedEntities[j] == &entities[i])
-					{
-						isSelected = true;
-					}
-				}
-				if (!isSelected)
-				{
-					selectedEntities.push_back(&entities[i]);
+					bool isSelected{ false };
 					for (int j = 0; j < selectedEntities.size(); j++)
 					{
-						if (!windowObjectExists(selectedShipWindow, ENTITY + std::to_string(j)))
+						if (selectedEntities[j] == &entities[i])
 						{
-							UI.GetWindow(selectedShipWindow)->AddCanvas(ENTITY + std::to_string(j), calculateObjectWindowPosition(j), selectedEntities[j]->m_sprite);
+							isSelected = true;
+						}
+					}
+					if (!isSelected)
+					{
+						m_currentShips++;
+						selectedEntities.push_back(&entities[i]);
+						for (int j = 0; j < selectedEntities.size(); j++)
+						{
+							if (!windowObjectExists(selectedShipWindow, ENTITY + std::to_string(j)))
+							{
+								UI.GetWindow(selectedShipWindow)->AddCanvas(ENTITY + std::to_string(j), calculateObjectWindowPosition(j), selectedEntities[j]->m_sprite);
+							}
 						}
 					}
 				}
@@ -623,6 +627,7 @@ void OverWorldGUI::deselectBattleShip(const std::string & selectedShipWindow, co
 			{
 				UI.GetWindow(selectedShipWindow)->DeleteObject(ENTITY + std::to_string(j));
 			}
+			m_currentShips--;
 			selectedEntities.erase(selectedEntities.begin() + i);
 			for (int j = 0; j < selectedEntities.size(); j++)
 			{
