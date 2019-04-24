@@ -16,6 +16,7 @@ struct EntityProperties
 	EntityProperties(const int movementPoints, const int healthPoints, const int range, const int damage, const int upgradePoints);
 
 	std::shared_ptr<HAPISPACE::Sprite> m_sprite;
+	std::shared_ptr<HAPISPACE::Sprite> m_selectedSprite;
 	int m_movementPoints;
 	int m_healthMax;
 	int m_currentHealth;

@@ -172,6 +172,7 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 //ENTITY
 EntityProperties::EntityProperties()
 	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_ship)),
+	m_selectedSprite(HAPI_Sprites.MakeSprite(Textures::m_thing)),
 	m_movementPoints(5),
 	m_healthMax(20),
 	m_currentHealth(20),
@@ -184,6 +185,7 @@ EntityProperties::EntityProperties()
 
 EntityProperties::EntityProperties(const int movementPoints, const int healthPoints, const int range, const int damage, const int upgradePoints)
 	: m_sprite(HAPI_Sprites.MakeSprite(Textures::m_ship)),
+	m_selectedSprite(HAPI_Sprites.MakeSprite(Textures::m_thing)),
 	m_movementPoints(movementPoints),
 	m_healthMax(healthPoints),
 	m_currentHealth(healthPoints),
