@@ -21,6 +21,8 @@ std::string OverWorldGUI::getSelectedMap()
 	return selectedMap;
 }
 
+
+
 OverWorldGUI::OverWorldGUI()
 	: m_battleMapBackground(std::make_unique<Sprite>(Textures::m_levelSelectBackground)),
 	m_selectMapButtons1(std::make_unique<Sprite>(Textures::m_levelSelectSheet)),
@@ -129,7 +131,7 @@ void OverWorldGUI::render(Battle& battle)
 	}
 }
 
-void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer, bool& selectNextPlayer)
+void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer, bool& selectNextPlayer, bool& resetPlayer)
 {
 	switch (CURRENT_WINDOW)
 	{
@@ -185,6 +187,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 
 			else if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
 			{
+				resetPlayer = true;
 				CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
 				UI.CloseWindow(FLEET_WINDOW);
 				UI.CloseWindow(BATTLE_FLEET_WINDOW);

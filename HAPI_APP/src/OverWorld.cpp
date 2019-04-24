@@ -47,10 +47,13 @@ OverWorld::~OverWorld()
 
 void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
 {
+
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
+	
 		bool selectNextPlayer = false;
-		m_GUI.onLeftClick(mouseData, m_players[m_currentPlayer], selectNextPlayer);
+		bool resetPlayer = false;
+		m_GUI.onLeftClick(mouseData, m_players[m_currentPlayer], selectNextPlayer, resetPlayer);
 		if (selectNextPlayer && m_currentPlayer <= static_cast<int>(m_players.size()) - 1)
 		{
 			++m_currentPlayer;
@@ -60,12 +63,20 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 				m_GUI.reset(m_players[m_currentPlayer].m_entities);
 			}
 		}
+		if (resetPlayer)
+		{
+			m_currentPlayer = 0;
+			m_GUI.setShipSelectionTrigger(false);
+			m_GUI.reset(m_players[m_currentPlayer].m_entities);
+			return;
+		}
 		if (m_currentPlayer == static_cast<int>(m_players.size()))
 		{
 			m_startBattle = true;
 			m_currentPlayer = 0;
 			return;
 		}
+		
 		
 	}
 	if (mouseEvent == EMouseEvent::eRightButtonDown)
