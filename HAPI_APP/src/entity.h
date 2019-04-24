@@ -30,6 +30,7 @@ class Map;
 struct EntityProperties
 {
 	EntityProperties(FactionName factionName, EntityType entityType);
+	~EntityProperties();
 
 	std::shared_ptr<HAPISPACE::Sprite> m_sprite;
 	int m_movementPoints;
@@ -38,6 +39,9 @@ struct EntityProperties
 	int m_range;
 	int m_damage;
 	int m_weaponType;
+	FactionName m_factionName;
+	EntityType m_entityType;
+	void onReset();
 };
 
 class EntityBattleProperties
@@ -116,7 +120,7 @@ struct Player
 	Player(FactionName name);
 
 	std::vector<EntityProperties> m_entities;
-	std::vector<EntityProperties*> m_selectedEntities;
+	std::vector<EntityProperties> m_selectedEntities;
 	const FactionName m_factionName;
 };
 
