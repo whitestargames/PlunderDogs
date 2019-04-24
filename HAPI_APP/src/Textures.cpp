@@ -47,3 +47,4 @@ std::shared_ptr<SpriteSheet> Textures::m_yellowShipMelee;
 std::shared_ptr<SpriteSheet> Textures::m_yellowShipSnipe;
 
 std::shared_ptr<SpriteSheet> Textures::m_explosion;
+std::shared_ptr<SpriteSheet> Textures::m_fire;

@@ -57,6 +57,7 @@ class BattleUI : public IHapiSpritesInputListener
 		void setPosition(std::pair<int, int> position);
 		void run(float deltaTime, const Map& map);
 		void render() const;
+		void orient(eDirection direction);
 		
 	};
 
@@ -144,4 +145,5 @@ private:
 	void onMouseMoveAttackPhase();
 	TargetArea m_targetArea;
 	ParticleSystem m_explosion;
+	ParticleSystem m_fire;
 };

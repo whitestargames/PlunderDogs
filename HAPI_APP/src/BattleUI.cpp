@@ -47,14 +47,14 @@ void BattleUI::InvalidPosition::setPosition(std::pair<int, int> screenPosition, 
 //
 BattleUI::BattleUI(Battle & battle)
 	: m_battle(battle),
-	m_gui({ battle.getMap().getDimensions().first * 28 - 150, battle.getMap().getDimensions().second * 32 - 150}),
+	m_gui({ battle.getMap().getDimensions().first * 28 - 150, battle.getMap().getDimensions().second * 32 - 150 }),
 	m_selectedTile(),
 	m_invalidPosition(),
-	m_leftMouseDownPosition({0, 0}),
+	m_leftMouseDownPosition({ 0, 0 }),
 	m_isMovingEntity(false),
 	m_mouseDownTile(nullptr),
-	m_explosion(0.08, Textures::m_explosion)
-	
+	m_explosion(0.08, Textures::m_explosion),
+	m_fire(0.02, Textures::m_fire)
 {}
 
 std::pair<int, int> BattleUI::getCameraPositionOffset() const
@@ -90,6 +90,7 @@ void BattleUI::renderUI() const
 void BattleUI::renderParticles() const
 {
 	m_explosion.render();
+	m_fire.render();
 }
 
 void BattleUI::renderGUI() const
@@ -101,6 +102,7 @@ void BattleUI::update(float deltaTime)
 {
 	m_gui.update(m_battle.getMap().getWindDirection());// added update for gui to receive wind direction so compass direction updates
 	m_explosion.run(deltaTime, m_battle.getMap());
+	m_fire.run(deltaTime, m_battle.getMap());
 }
 
 void BattleUI::FactionUpdateGUI(FactionName faction)
@@ -478,8 +480,18 @@ void BattleUI::onLeftClickAttackPhase()
 	{
 		if (tileOnMouse->m_entityOnTile != nullptr)
 		{
-			m_explosion.setPosition(tileOnMouse->m_entityOnTile->m_battleProperties.getCurrentPosition());
-			m_explosion.m_isEmitting = true;
+			if (m_selectedTile.m_tile->m_entityOnTile->m_entityProperties.m_weaponType == eFlamethrower)
+			{
+				m_fire.orient(m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.getCurrentDirection());
+				m_fire.setPosition(m_targetArea.m_targetArea[0]->m_tileCoordinate);
+				m_fire.m_isEmitting = true;
+			}
+			else
+			{
+				m_explosion.setPosition(tileOnMouse->m_entityOnTile->m_battleProperties.getCurrentPosition());
+				m_explosion.m_isEmitting = true;
+			}
+			
 		}
 	
 		m_battle.fireEntityWeaponAtPosition(*m_selectedTile.m_tile->m_entityOnTile, *tileOnMouse, m_targetArea.m_targetArea);
@@ -613,6 +625,7 @@ void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & sour
 		{
 		case eNorth:
 			directionOfFire = eSouth;
+			
 			break;
 		case eNorthEast:
 			directionOfFire = eSouthWest;
@@ -889,4 +902,32 @@ void BattleUI::ParticleSystem::render()const
 		m_particle->GetTransformComp().SetScaling(1.5);
 		m_particle->Render(SCREEN_SURFACE);
 	}
+}
+
+void BattleUI::ParticleSystem::orient(eDirection entityDir)
+{
+	eDirection direction;
+	switch (entityDir)
+	{
+	case eNorth:
+		direction = eSouth;
+
+		break;
+	case eNorthEast:
+		direction = eSouthWest;
+		break;
+	case eSouthEast:
+		direction = eNorthWest;
+		break;
+	case eSouth:
+		direction = eNorth;
+		break;
+	case eSouthWest:
+		direction = eNorthEast;
+		break;
+	case eNorthWest:
+		direction = eSouthEast;
+		break;
+	}
+	m_particle->GetTransformComp().SetRotation(DEGREES_TO_RADIANS(static_cast<int>(direction) * 60 % 360));
 }
