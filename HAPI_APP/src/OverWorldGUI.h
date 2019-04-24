@@ -69,12 +69,17 @@ private:
 	std::unique_ptr<Sprite> m_addDamageButton;
 	std::unique_ptr<Sprite> m_addRangeButton;
 	std::unique_ptr<Sprite> m_upgradeBackButton;
+	std::string selectedMap = "Level1.tmx";
+	bool shipSelectionTrigger{ false };
+	
 
 public:
+	void setShipSelectionTrigger(bool trigger);
+	std::string getSelectedMap();
 	static OverWorldWindow CURRENT_WINDOW;
 	OverWorldGUI();
 	~OverWorldGUI();
-
+	
 	void onLeftClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer, bool& selectNextPlayer);
 	void onRightClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer);
 	void onMouseMove(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer);

@@ -11,6 +11,16 @@ constexpr int WINDOW_OBJECTHEIGHT = 150;
 constexpr int WINDOW_WIDTH = 830;
 constexpr int WINDOW_HEIGHT = 200;
 
+void OverWorldGUI::setShipSelectionTrigger(bool trigger)
+{
+	shipSelectionTrigger = trigger;
+}
+
+std::string OverWorldGUI::getSelectedMap()
+{
+	return selectedMap;
+}
+
 OverWorldGUI::OverWorldGUI()
 	: m_battleMapBackground(std::make_unique<Sprite>(Textures::m_levelSelectBackground)),
 	m_selectMapButtons1(std::make_unique<Sprite>(Textures::m_levelSelectSheet)),
@@ -128,18 +138,21 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			if (HAPI_Wrapper::isTranslated(m_selectMapButtons1, mouseData, 0))
 			{
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
+				selectedMap = "Level1.tmx";
 				UI.OpenWindow(FLEET_WINDOW);
 				UI.OpenWindow(BATTLE_FLEET_WINDOW);// put different load map strings here
 			}
 			if (HAPI_Wrapper::isTranslated(m_selectMapButtons2, mouseData, 0))
 			{
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
+				selectedMap = "Level2.tmx";
 				UI.OpenWindow(FLEET_WINDOW);
 				UI.OpenWindow(BATTLE_FLEET_WINDOW);
 			}
 			if (HAPI_Wrapper::isTranslated(m_selectMapButtons3, mouseData, 0))
 			{
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
+				selectedMap = "Level3.tmx";
 				UI.OpenWindow(FLEET_WINDOW);
 				UI.OpenWindow(BATTLE_FLEET_WINDOW);
 			}
@@ -156,8 +169,8 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 					selectNextPlayer = true;
 					UI.CloseWindow(FLEET_WINDOW);
 					UI.CloseWindow(BATTLE_FLEET_WINDOW);
-
-					//reset here 
+					shipSelectionTrigger=  true ;
+;					//reset here 
 					return;
 				}
 			}
@@ -534,8 +547,12 @@ void OverWorldGUI::reset(const std::vector<EntityProperties>& playerEntities)
 	//UI.AddWindow(BATTLE_FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 220, 420), fleetWindowSkinName);
 	//UI.GetWindow(BATTLE_FLEET_WINDOW)->AddSlider(BATTLE_FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
 	
-	UI.OpenWindow(FLEET_WINDOW);
-	UI.OpenWindow(BATTLE_FLEET_WINDOW);// put different load map strings here
+	if (shipSelectionTrigger)
+	{
+		UI.OpenWindow(FLEET_WINDOW);
+		UI.OpenWindow(BATTLE_FLEET_WINDOW);
+	}
+	
 }
 
 void OverWorldGUI::clear()

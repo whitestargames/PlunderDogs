@@ -101,6 +101,7 @@ void OverWorld::startBattle()
 {
 	if (m_startBattle)
 	{
+		m_GUI.setShipSelectionTrigger(false);
 		OverWorldGUI::CURRENT_WINDOW = eBattle;
 		
 		std::vector<std::pair<FactionName, std::vector<EntityProperties*>>> playersInBattle;
@@ -112,7 +113,8 @@ void OverWorld::startBattle()
 			playersInBattle.push_back(p);
 		}
 		m_GUI.clear();
-		m_battle.startBattle("Level1.tmx", playersInBattle);
+		
+		m_battle.startBattle(m_GUI.getSelectedMap(), playersInBattle);
 		
 		for (auto& player : m_players)
 		{
