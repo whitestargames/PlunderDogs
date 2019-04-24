@@ -22,7 +22,7 @@ public:
 	BattlePhase getCurrentPhase() const;
 	FactionName getCurentFaction() const;
 
-	void startBattle(const std::string& newMapName, const std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& newPlayers);
+	void startBattle(const std::string& newMapName, std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& newPlayers);
 	void render() const;
 	void update(float deltaTime);
 	void moveEntityToPosition(BattleEntity& entity, const Tile& destination);
