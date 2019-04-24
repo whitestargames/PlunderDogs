@@ -53,7 +53,7 @@ BattleUI::BattleUI(Battle & battle)
 	m_leftMouseDownPosition({0, 0}),
 	m_isMovingEntity(false),
 	m_mouseDownTile(nullptr),
-	m_explosion(0.2, Textures::m_explosion)
+	m_explosion(0.08, Textures::m_explosion)
 	
 {}
 
@@ -476,8 +476,12 @@ void BattleUI::onLeftClickAttackPhase()
 	//Entity already selected Fire weapon at position
 	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile && !m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.isWeaponFired())
 	{
-		m_explosion.setPosition(tileOnMouse->m_entityOnTile->m_battleProperties.getCurrentPosition());
-		m_explosion.m_isEmitting = true;
+		if (tileOnMouse->m_entityOnTile != nullptr)
+		{
+			m_explosion.setPosition(tileOnMouse->m_entityOnTile->m_battleProperties.getCurrentPosition());
+			m_explosion.m_isEmitting = true;
+		}
+	
 		m_battle.fireEntityWeaponAtPosition(*m_selectedTile.m_tile->m_entityOnTile, *tileOnMouse, m_targetArea.m_targetArea);
 
 		//TODO: Might change this
@@ -882,6 +886,7 @@ void BattleUI::ParticleSystem::render()const
 	if (m_isEmitting)
 	{
 		m_particle->GetTransformComp().SetOriginToCentreOfFrame();
+		m_particle->GetTransformComp().SetScaling(1.5);
 		m_particle->Render(SCREEN_SURFACE);
 	}
 }
