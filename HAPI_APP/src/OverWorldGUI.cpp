@@ -55,7 +55,7 @@ void OverWorldGUI::render(Battle& battle)
 
 	switch (CURRENT_WINDOW)
 	{
-		case OverWorldWindow::ePreBattle:
+		case OverWorldWindow::eShipSelection:
 		{
 			m_prebattleUIBackground->Render(SCREEN_SURFACE);
 			m_playButton->Render(SCREEN_SURFACE);
@@ -127,36 +127,37 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 		{
 			if (HAPI_Wrapper::isTranslated(m_selectMapButtons1, mouseData, 0))
 			{
-				CURRENT_WINDOW = OverWorldWindow::ePreBattle;
+				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				UI.OpenWindow(FLEET_WINDOW);
 				UI.OpenWindow(BATTLE_FLEET_WINDOW);// put different load map strings here
 			}
 			if (HAPI_Wrapper::isTranslated(m_selectMapButtons2, mouseData, 0))
 			{
-				CURRENT_WINDOW = OverWorldWindow::ePreBattle;
+				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				UI.OpenWindow(FLEET_WINDOW);
 				UI.OpenWindow(BATTLE_FLEET_WINDOW);
 			}
 			if (HAPI_Wrapper::isTranslated(m_selectMapButtons3, mouseData, 0))
 			{
-				CURRENT_WINDOW = OverWorldWindow::ePreBattle;
+				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				UI.OpenWindow(FLEET_WINDOW);
 				UI.OpenWindow(BATTLE_FLEET_WINDOW);
 			}
 			break;
 		}
 		//Play Button
-		case OverWorldWindow::ePreBattle:
+		case OverWorldWindow::eShipSelection:
 		{
 			if (HAPI_Wrapper::isTranslated(m_playButton, mouseData, 0))
 			{
 				if (!currentSelectedPlayer.m_selectedEntities.empty())
 				{
 					//CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
-
 					selectNextPlayer = true;
 					UI.CloseWindow(FLEET_WINDOW);
 					UI.CloseWindow(BATTLE_FLEET_WINDOW);
+
+					//reset here 
 					return;
 				}
 			}
@@ -257,7 +258,7 @@ void OverWorldGUI::onRightClick(const HAPI_TMouseData& mouseData, Player& curren
 {
 	switch (CURRENT_WINDOW)
 	{
-	case OverWorldWindow::ePreBattle:
+	case OverWorldWindow::eShipSelection:
 	{
 		//loops through the entity vector to make sure the object is positioned correctly and tests to see if the mouse is on one of the objects.
 		//selects a ship to go into battle
@@ -353,7 +354,7 @@ void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, Player& current
 
 		break;
 	}
-	case OverWorldWindow::ePreBattle:
+	case OverWorldWindow::eShipSelection:
 	{
 		if (HAPI_Wrapper::isTranslated(m_playButton, mouseData, 0))
 		{
@@ -532,6 +533,9 @@ void OverWorldGUI::reset(const std::vector<EntityProperties>& playerEntities)
 	//UI.GetWindow(FLEET_WINDOW)->AddSlider(FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
 	//UI.AddWindow(BATTLE_FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 220, 420), fleetWindowSkinName);
 	//UI.GetWindow(BATTLE_FLEET_WINDOW)->AddSlider(BATTLE_FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
+	
+	UI.OpenWindow(FLEET_WINDOW);
+	UI.OpenWindow(BATTLE_FLEET_WINDOW);// put different load map strings here
 }
 
 void OverWorldGUI::clear()
