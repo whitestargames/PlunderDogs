@@ -37,7 +37,6 @@ OverWorld::OverWorld()
 	m_players.emplace_back(FactionName::eGreen);
 	m_players.emplace_back(FactionName::eRed);
 	
-
 	m_GUI.reset(m_players[m_currentPlayer].m_entities);
 }
 
@@ -128,9 +127,10 @@ void OverWorld::onReset()
 {
 	m_currentPlayer = 0;
 	m_selectNextPlayer = false;
-	for (auto& player : m_players)
-	{
-		player.m_selectedEntities.clear();
-	}
+	m_players.clear();
+	m_players.emplace_back(FactionName::eYellow);
+	m_players.emplace_back(FactionName::eBlue);
+	m_players.emplace_back(FactionName::eGreen);
+	m_players.emplace_back(FactionName::eRed);
 	m_GUI.reset(m_players[m_currentPlayer].m_entities);
 }

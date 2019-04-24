@@ -36,5 +36,4 @@ void HAPI_Sprites_Main()
 
 		lastFrameStart = frameStart;
 	}
-			//battleGUI.render();
 }

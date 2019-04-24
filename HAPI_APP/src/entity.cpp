@@ -435,7 +435,6 @@ void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProp
 
 			if (m_pathToTile.empty())
 			{
-				//m_movedToDestination = true;
 				++moveCounter.m_counter;
 			}
 		}

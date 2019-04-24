@@ -73,7 +73,6 @@ void Battle::render() const
 		for (auto& entity : player.m_entities)
 		{
 			entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
-			
 		}
 	}
 
