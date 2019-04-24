@@ -59,10 +59,10 @@ void OverWorldGUI::render(Battle& battle)
 			m_upgradesButton->Render(SCREEN_SURFACE);
 			if (m_currentlySelected != nullptr)
 			{
-				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 270), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_currentHealth), 50);
-				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 355), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_damage), 50);
-				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 445), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_movementPoints), 50);
-				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1440, 535), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_range), 50);
+				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1600, 360), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_currentHealth), 50);
+				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1600, 445), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_damage), 50);
+				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1600, 535), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_movementPoints), 50);
+				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1600, 625), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_range), 50);
 			}
 			
 			break;
@@ -78,20 +78,20 @@ void OverWorldGUI::render(Battle& battle)
 			HAPI_Wrapper::render(m_background);
 			HAPI_Wrapper::render(m_enemyTerritoryHexSheet);
 
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1000, 250), HAPISPACE::Colour255::BLACK, "Plunder Dogs", 105, {}, {}, 2.5f);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1160, 340), HAPISPACE::Colour255::BLACK, "Plunder Dogs", 105, {}, {}, 2.5f);
 			break;
 		}
 		case OverWorldWindow::eUpgrade:
 		{
 			m_upgradesScreenBackground->Render(SCREEN_SURFACE);
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1170, 150), HAPISPACE::Colour255::BLACK, "36", 50);//draw text gold
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1110, 270), HAPISPACE::Colour255::BLACK, "BUY", 50);
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1110, 315), HAPISPACE::Colour255::BLACK, "SHIPS", 50);
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(710, 150), HAPISPACE::Colour255::BLACK, "56", 50);//draw stat text*4
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(710, 280), HAPISPACE::Colour255::BLACK, "6", 50);//draw stat text*4
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(710, 410), HAPISPACE::Colour255::BLACK, "4", 50);//draw stat text*4
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(710, 540), HAPISPACE::Colour255::BLACK, "3", 50);//draw stat text*4
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(640, 670), HAPISPACE::Colour255::BLACK, "UPGRADES: " "0" "/" "2", 50);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1330, 240), HAPISPACE::Colour255::BLACK, "36", 50);//draw text gold
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1270, 160), HAPISPACE::Colour255::BLACK, "BUY", 50);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1270, 405), HAPISPACE::Colour255::BLACK, "SHIPS", 50);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(870, 240), HAPISPACE::Colour255::BLACK, "56", 50);//draw stat text*4
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(870, 370), HAPISPACE::Colour255::BLACK, "6", 50);//draw stat text*4
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(870, 500), HAPISPACE::Colour255::BLACK, "4", 50);//draw stat text*4
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(870, 630), HAPISPACE::Colour255::BLACK, "3", 50);//draw stat text*4
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 760), HAPISPACE::Colour255::BLACK, "UPGRADES: " "0" "/" "2", 50);
 			m_upgradeBackButton->Render(SCREEN_SURFACE);
 			//if render "+" button*5
 			//if render "-" button*5
@@ -450,10 +450,11 @@ void OverWorldGUI::reset(const std::vector<EntityProperties>& playerEntities)
 	UI.DeleteWindow(FLEET_WINDOW);
 	UI.DeleteWindow(BATTLE_FLEET_WINDOW);
 
-	HAPI_Wrapper::setPosition(m_enemyTerritoryHexSheet, { 100, 600 });
-	HAPI_Wrapper::setPosition(m_playButton, { 1150, 722 });
-	HAPI_Wrapper::setPosition(m_backButton, { 185, 747 });
-	HAPI_Wrapper::setPosition(m_upgradesButton, { 1300, 25 });
+	HAPI_Wrapper::setPosition(m_prebattleUIBackground, { 160, 90 });
+	HAPI_Wrapper::setPosition(m_enemyTerritoryHexSheet, { 260, 690 });
+	HAPI_Wrapper::setPosition(m_playButton, { 1310, 812 });
+	HAPI_Wrapper::setPosition(m_backButton, { 345, 837 });
+	HAPI_Wrapper::setPosition(m_upgradesButton, { 1460, 115 });
 	//adding the windows and sliders, also populates the fleet window with all current entities
 	UI.AddWindow(FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 510, 710), fleetWindowSkinName);
 	for (int i = 0; i < playerEntities.size(); i++)
@@ -465,16 +466,16 @@ void OverWorldGUI::reset(const std::vector<EntityProperties>& playerEntities)
 	UI.GetWindow(BATTLE_FLEET_WINDOW)->AddSlider(BATTLE_FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
 
 	//upgrade buttons positions
-	HAPI_Wrapper::setPosition(m_upgradesScreenBackground, { 185, 50 });
-	HAPI_Wrapper::setPosition(m_upgradeBackButton, { 1190, 785 });
-	HAPI_Wrapper::setPosition(m_removeHealthButton, { 625, 150 });//remove buttons
-	HAPI_Wrapper::setPosition(m_removeMovementButton, { 625, 280 });
-	HAPI_Wrapper::setPosition(m_removeDamageButton, { 625, 410 });
-	HAPI_Wrapper::setPosition(m_removeRangeButton, { 625, 540 });
-	HAPI_Wrapper::setPosition(m_addHealthButton, { 875, 150 });//add buttons
-	HAPI_Wrapper::setPosition(m_addMovementButton, { 875, 280 });
-	HAPI_Wrapper::setPosition(m_addDamageButton, { 875, 410 });
-	HAPI_Wrapper::setPosition(m_addRangeButton, { 875, 540 });
+	HAPI_Wrapper::setPosition(m_upgradesScreenBackground, { 345, 140 });
+	HAPI_Wrapper::setPosition(m_upgradeBackButton, { 1350, 785 });
+	HAPI_Wrapper::setPosition(m_removeHealthButton, { 785, 240 });//remove buttons
+	HAPI_Wrapper::setPosition(m_removeMovementButton, { 785, 370 });
+	HAPI_Wrapper::setPosition(m_removeDamageButton, { 785, 500 });
+	HAPI_Wrapper::setPosition(m_removeRangeButton, { 785, 630 });
+	HAPI_Wrapper::setPosition(m_addHealthButton, { 1035, 240 });//add buttons
+	HAPI_Wrapper::setPosition(m_addMovementButton, { 1035, 370 });
+	HAPI_Wrapper::setPosition(m_addDamageButton, { 1035, 500 });
+	HAPI_Wrapper::setPosition(m_addRangeButton, { 1035, 630 });
 
 
 	//UI.DeleteWindow(FLEET_WINDOW);
