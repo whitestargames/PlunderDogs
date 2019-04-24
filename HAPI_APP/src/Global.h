@@ -24,7 +24,11 @@ enum OverWorldWindow
 	eBattle = 0,
 	ePreBattle,
 	eLevelSelection,
+<<<<<<< HEAD
 	ePlayerSelection, 
+=======
+	eUpgrade
+>>>>>>> parent of 58eef46... all upgrade from the program removed
 };
 
 enum eTileType
