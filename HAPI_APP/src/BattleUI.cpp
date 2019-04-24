@@ -180,7 +180,7 @@ void BattleUI::startShipPlacement(std::vector<std::pair<FactionName, std::vector
 	}
 
 	auto spawnPositions = m_battle.getMap().getSpawnPositions();
-	assert(spawnPositions.size() == players.size());
+	//assert(spawnPositions.size() == players.size());
 	for (int i = 0; i < players.size(); ++i)
 	{
 		m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>
