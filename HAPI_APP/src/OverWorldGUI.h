@@ -72,13 +72,13 @@ private:
 	std::unique_ptr<Sprite> m_upgradeBackButton;
 	std::string selectedMap = "Level1.tmx";
 	bool shipSelectionTrigger{ false };
-	std::vector<Player>GUI_playerSelections;
+	
 	
 	
 
 public:
 
-	void getM_Player(std::vector<Player>& m_playerList);
+	
 	void setShipSelectionTrigger(bool trigger);
 	std::string getSelectedMap();
 	static OverWorldWindow CURRENT_WINDOW;

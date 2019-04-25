@@ -11,17 +11,6 @@ constexpr int WINDOW_OBJECTHEIGHT = 150;
 constexpr int WINDOW_WIDTH = 830;
 constexpr int WINDOW_HEIGHT = 200;
 
-void OverWorldGUI::getM_Player(std::vector<Player>& m_playerList)
-{
-	if (CURRENT_WINDOW == OverWorldWindow::eLevelSelection)
-	{
-		GUI_playerSelections.clear();
-		m_playerList = GUI_playerSelections;
-
-	}
-
-}
-
 void OverWorldGUI::setShipSelectionTrigger(bool trigger)
 {
 	shipSelectionTrigger = trigger;
@@ -189,22 +178,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 				std::pair < FactionName, ePlayerSelect>m_playerSelectRedPair{ FactionName::eRed,(ePlayerSelect)m_playerSelectRed->GetFrameNumber() };
 				std::pair < FactionName, ePlayerSelect>m_playerSelectBluePair{ FactionName::eBlue,(ePlayerSelect)m_playerSelectBlue->GetFrameNumber() };
 				
-				if (m_playerSelectYellowPair.second == ePlayerSelect::eHuman)
-				{
-					GUI_playerSelections.emplace_back(m_playerSelectYellowPair.first);
-				}
-				if (m_playerSelectGreenPair.second == ePlayerSelect::eHuman)
-				{
-					GUI_playerSelections.emplace_back(m_playerSelectGreenPair.first);
-				}
-				if (m_playerSelectRedPair.second == ePlayerSelect::eHuman)
-				{
-					GUI_playerSelections.emplace_back(m_playerSelectRedPair.first);
-				}
-				if (m_playerSelectBluePair.second == ePlayerSelect::eHuman)
-				{
-					GUI_playerSelections.emplace_back(m_playerSelectBluePair.first);
-				}
+		
 
 				
 			}
