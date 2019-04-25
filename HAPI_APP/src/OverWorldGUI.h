@@ -72,7 +72,7 @@ private:
 	std::unique_ptr<Sprite> m_upgradeBackButton;
 	std::string selectedMap = "Level1.tmx";
 	bool shipSelectionTrigger{ false };
-	
+	int getActivePlayerCount();
 	
 	
 

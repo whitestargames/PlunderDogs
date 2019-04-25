@@ -11,6 +11,30 @@ constexpr int WINDOW_OBJECTHEIGHT = 150;
 constexpr int WINDOW_WIDTH = 830;
 constexpr int WINDOW_HEIGHT = 200;
 
+int OverWorldGUI::getActivePlayerCount()
+{
+	int playerCount = 0;
+
+	if (m_playerSelectYellow->GetFrameNumber() == ePlayerSelect::eHuman)
+	{
+		playerCount++;
+	}
+	if (m_playerSelectGreen->GetFrameNumber() == ePlayerSelect::eHuman)
+	{
+		playerCount++;
+	}
+	if (m_playerSelectRed->GetFrameNumber() == ePlayerSelect::eHuman)
+	{
+		playerCount++;
+	}
+	if (m_playerSelectBlue->GetFrameNumber() == ePlayerSelect::eHuman)
+	{
+		playerCount++;
+	}
+
+	return playerCount;
+}
+
 void OverWorldGUI::setActivePlayers(std::vector<Player>& players)
 {
 	players.clear();
@@ -192,7 +216,13 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			}
 			if (HAPI_Wrapper::isTranslated(m_playButton, mouseData, 0))
 			{
-				CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
+
+				// put int function
+				if (getActivePlayerCount() >=2)
+				{
+					CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
+				}
+				
 		
 			}
 			break;
