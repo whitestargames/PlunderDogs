@@ -36,10 +36,28 @@ struct Textures
 			return false;
 		}
 
-		m_playerSelectIcons = HAPI_Wrapper::makeSpriteSheet("yellowSelectBtn.png", 3);
-		if (!m_playerSelectIcons)
+		m_playerSelectIconYellow = HAPI_Wrapper::makeSpriteSheet("yellowSelectBtn.png", 3);
+		if (!m_playerSelectIconYellow)
 		{
 			HAPI_Sprites.UserMessage("Cannot Load : 'yellowSelectBtn.png'", "Texture Error");
+			return false;
+		}
+		m_playerSelectIconGreen = HAPI_Wrapper::makeSpriteSheet("greenSelectBtn.png", 3);
+		if (!m_playerSelectIconGreen)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'greenSelectBtn.png'", "Texture Error");
+			return false;
+		}
+		m_playerSelectIconRed = HAPI_Wrapper::makeSpriteSheet("redSelectBtn.png", 3);
+		if (!m_playerSelectIconRed)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'redSelectBtn.png'", "Texture Error");
+			return false;
+		}
+		m_playerSelectIconBlue = HAPI_Wrapper::makeSpriteSheet("blueSelectBtn.png", 3);
+		if (!m_playerSelectIconBlue)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'blueSelectBtn.png'", "Texture Error");
 			return false;
 		}
 		m_playerSelectBackground = HAPI_Wrapper::makeSpriteSheet("playerSelectBackground.png");
@@ -328,7 +346,10 @@ struct Textures
 	static std::shared_ptr<SpriteSheet> m_levelSelectBackground;
 	static std::shared_ptr<SpriteSheet> m_enemyTerritoryHexSheet;
 	static std::shared_ptr<SpriteSheet> m_levelSelectSheet;
-	static std::shared_ptr<SpriteSheet> m_playerSelectIcons;
+	static std::shared_ptr<SpriteSheet> m_playerSelectIconYellow;
+	static std::shared_ptr<SpriteSheet> m_playerSelectIconGreen;
+	static std::shared_ptr<SpriteSheet> m_playerSelectIconRed;
+	static std::shared_ptr<SpriteSheet> m_playerSelectIconBlue;
 	static std::shared_ptr<SpriteSheet> m_playerSelectBackground;
 	static std::shared_ptr<SpriteSheet> m_prebattleUIBackground;
 	static std::shared_ptr<SpriteSheet> m_preBattleUIPlayButton;

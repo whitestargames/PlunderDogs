@@ -21,10 +21,10 @@ private:
 	std::unique_ptr<Sprite> m_selectMapButtons1;
 	std::unique_ptr<Sprite> m_selectMapButtons2;
 	std::unique_ptr<Sprite> m_selectMapButtons3;
-	std::unique_ptr<Sprite> m_playerSelectButton1;
-	std::unique_ptr<Sprite> m_playerSelectButton2;
-	std::unique_ptr<Sprite> m_playerSelectButton3;
-	std::unique_ptr<Sprite> m_playerSelectButton4;
+	std::unique_ptr<Sprite> m_playerSelectYellow;
+	std::unique_ptr<Sprite> m_playerSelectGreen;
+	std::unique_ptr<Sprite> m_playerSelectRed;
+	std::unique_ptr<Sprite> m_playerSelectBlue;
 	std::unique_ptr<Sprite> m_playerSelectBackground;
 	std::unique_ptr<Sprite> m_prebattleUIBackground;
 	std::unique_ptr<Sprite> m_playButton;

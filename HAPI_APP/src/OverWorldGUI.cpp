@@ -31,11 +31,11 @@ OverWorldGUI::OverWorldGUI()
 	m_prebattleUIBackground(std::make_unique<Sprite>(Textures::m_prebattleUIBackground)),
 	m_playButton(std::make_unique<Sprite>(Textures::m_preBattleUIPlayButton)),
 	m_backButton(std::make_unique<Sprite>(Textures::m_preBattleUIBackButton)),
-	m_playerSelectButton1(std::make_unique<Sprite>(Textures::m_playerSelectIcons)),
-	m_playerSelectButton2(std::make_unique<Sprite>(Textures::m_playerSelectIcons)),
-	m_playerSelectButton3(std::make_unique<Sprite>(Textures::m_playerSelectIcons)),
-	m_playerSelectButton4(std::make_unique<Sprite>(Textures::m_playerSelectIcons)),
-	m_playerSelectBackground(std::make_unique<Sprite>(Textures::m_playerSelectBackground)),
+	m_playerSelectYellow(std::make_unique<Sprite>(Textures::m_playerSelectIconYellow)),
+	m_playerSelectGreen(std::make_unique<Sprite>(Textures::m_playerSelectIconGreen)),
+	m_playerSelectRed(std::make_unique<Sprite>(Textures::m_playerSelectIconRed)),
+	m_playerSelectBlue(std::make_unique<Sprite>(Textures::m_playerSelectIconBlue)),
+	m_playerSelectBackground(std::make_unique<Sprite>(Textures::m_levelSelectBackground)),
 	fleetWindowSkinName(UI.LoadSkin(Utilities::getDataDirectory() + "fleetWindowSkin.xml")),
 	fleetWindowSliderSkinName(UI.LoadSkin(Utilities::getDataDirectory() + "fleetWindowSliderSkin.xml")),
 	m_currentlySelected(nullptr),
@@ -75,10 +75,10 @@ void OverWorldGUI::render(Battle& battle)
 		case OverWorldWindow::ePlayerSelection:
 		{
 			m_playerSelectBackground->Render(SCREEN_SURFACE);
-			m_playerSelectButton1->Render(SCREEN_SURFACE);
-			m_playerSelectButton2->Render(SCREEN_SURFACE);
-			m_playerSelectButton3->Render(SCREEN_SURFACE);
-			m_playerSelectButton4->Render(SCREEN_SURFACE);
+			m_playerSelectYellow->Render(SCREEN_SURFACE);
+			m_playerSelectGreen->Render(SCREEN_SURFACE);
+			m_playerSelectRed->Render(SCREEN_SURFACE);
+			m_playerSelectBlue->Render(SCREEN_SURFACE);
 			m_playButton->Render(SCREEN_SURFACE);
 			break;
 		}
@@ -153,21 +153,21 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 	{
 		case OverWorldWindow::ePlayerSelection:
 		{
-			if (HAPI_Wrapper::isTranslated(m_playerSelectButton1, mouseData, 0))
+			if (HAPI_Wrapper::isTranslated(m_playerSelectYellow, mouseData, 0))
 			{
-				m_playerSelectButton1->AdvanceToNextFrame();
+				m_playerSelectYellow->AdvanceToNextFrame();
 			}
-			if (HAPI_Wrapper::isTranslated(m_playerSelectButton2, mouseData, 0))
+			if (HAPI_Wrapper::isTranslated(m_playerSelectGreen, mouseData, 0))
 			{
-				m_playerSelectButton2->AdvanceToNextFrame();
+				m_playerSelectGreen->AdvanceToNextFrame();
 			}
-			if (HAPI_Wrapper::isTranslated(m_playerSelectButton3, mouseData, 0))
+			if (HAPI_Wrapper::isTranslated(m_playerSelectRed, mouseData, 0))
 			{
-				m_playerSelectButton3->AdvanceToNextFrame();
+				m_playerSelectRed->AdvanceToNextFrame();
 			}
-			if (HAPI_Wrapper::isTranslated(m_playerSelectButton4, mouseData, 0))
+			if (HAPI_Wrapper::isTranslated(m_playerSelectBlue, mouseData, 0))
 			{
-				m_playerSelectButton4->AdvanceToNextFrame();
+				m_playerSelectBlue->AdvanceToNextFrame();
 			}
 			if (HAPI_Wrapper::isTranslated(m_playButton, mouseData, 0))
 			{
@@ -580,10 +580,10 @@ void OverWorldGUI::reset(const std::vector<EntityProperties>& playerEntities)
 	HAPI_Wrapper::setPosition(m_selectMapButtons2, { 500, 300 });
 	HAPI_Wrapper::setPosition(m_selectMapButtons3, { 700, 300 });
 
-	HAPI_Wrapper::setPosition(m_playerSelectButton1, { 300, 300 });
-	HAPI_Wrapper::setPosition(m_playerSelectButton2, { 600, 300 });
-	HAPI_Wrapper::setPosition(m_playerSelectButton3, { 900, 300 });
-	HAPI_Wrapper::setPosition(m_playerSelectButton4, { 1200, 300 });
+	HAPI_Wrapper::setPosition(m_playerSelectYellow, { 300, 300 });
+	HAPI_Wrapper::setPosition(m_playerSelectGreen, { 600, 300 });
+	HAPI_Wrapper::setPosition(m_playerSelectRed, { 900, 300 });
+	HAPI_Wrapper::setPosition(m_playerSelectBlue, { 1200, 300 });
 
 	HAPI_Wrapper::setPosition(m_playButton, { 1150, 722 });
 	HAPI_Wrapper::setPosition(m_backButton, { 185, 747 });

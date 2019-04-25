@@ -15,7 +15,7 @@ class Battle
 {
 public:
 	void setTimeOfDay(float deltaTime);
-	void setWindDirectoin(float deltaTime);
+	void setWindDirection(float deltaTime);
 	Battle();
 	~Battle();
 	const Map& getMap() const;

@@ -20,7 +20,7 @@ void Battle::setTimeOfDay(float deltaTime)
 	}
 }
 
-void Battle::setWindDirectoin(float deltaTime)
+void Battle::setWindDirection(float deltaTime)
 {
 	m_windTime.update(deltaTime);
 	if (m_windTime.isExpired())
@@ -86,7 +86,7 @@ void Battle::update(float deltaTime)
 	m_map.setDrawOffset(m_battleUI.getCameraPositionOffset());
 
 	setTimeOfDay(deltaTime);
-	setWindDirectoin(deltaTime);
+	setWindDirection(deltaTime);
 
 	if (m_currentPhase == BattlePhase::Movement)
 	{
