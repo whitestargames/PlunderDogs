@@ -50,6 +50,7 @@ std::pair<int, int> BattleGUI::getCameraPositionOffset() const
 
 void BattleGUI::render() const
 {
+
 	if (shipSelected)
 	{
 		m_battleIcons->Render(SCREEN_SURFACE);
@@ -58,8 +59,8 @@ void BattleGUI::render() const
 		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(860, (905 + animationOffset)), HAPISPACE::Colour255::BLACK, "4", 44);
 		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1060, (905 + animationOffset)), HAPISPACE::Colour255::BLACK, "3/4", 44);
 		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1295, (905 + animationOffset)), HAPISPACE::Colour255::BLACK, "5", 44);
-		
 	}
+	
 	m_pauseButton->Render(SCREEN_SURFACE);
 	m_chickenButton->Render(SCREEN_SURFACE);
 	m_CompassBackGround->Render(SCREEN_SURFACE);

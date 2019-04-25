@@ -17,8 +17,16 @@ private:
 	EntityProperties* m_currentlySelected;
 	bool m_enitiesAdded;
 
+	//m_enemyTerritoryHexSheet   might need name for replacing
 	std::unique_ptr<Sprite> m_battleMapBackground;
-	std::unique_ptr<Sprite> m_enemyTerritoryHexSheet;
+	std::unique_ptr<Sprite> m_selectMapButtons1;
+	std::unique_ptr<Sprite> m_selectMapButtons2;
+	std::unique_ptr<Sprite> m_selectMapButtons3;
+	std::unique_ptr<Sprite> m_playerSelectYellow;
+	std::unique_ptr<Sprite> m_playerSelectGreen;
+	std::unique_ptr<Sprite> m_playerSelectRed;
+	std::unique_ptr<Sprite> m_playerSelectBlue;
+	std::unique_ptr<Sprite> m_playerSelectBackground;
 	std::unique_ptr<Sprite> m_prebattleUIBackground;
 	std::unique_ptr<Sprite> m_playButton;
 	std::unique_ptr<Sprite> m_backButton;
@@ -76,13 +84,22 @@ private:
 	std::unique_ptr<Sprite> m_addDamageButton;
 	std::unique_ptr<Sprite> m_addRangeButton;
 	std::unique_ptr<Sprite> m_upgradeBackButton;
+	std::string selectedMap = "Level1.tmx";
+	bool shipSelectionTrigger{ false };
+	int getActivePlayerCount();
+	
+	
 
 public:
+
+	void setActivePlayers(std::vector<Player>&players);
+	void setShipSelectionTrigger(bool trigger);
+	std::string getSelectedMap();
 	static OverWorldWindow CURRENT_WINDOW;
 	OverWorldGUI();
 	~OverWorldGUI();
-
-	void onLeftClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer, bool& selectNextPlayer);
+	
+	void onLeftClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer, bool& selectNextPlayer,bool& resetPlayer);
 	void onRightClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer);
 	void onMouseMove(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer);
 

@@ -31,11 +31,13 @@ OverWorld::OverWorld()
 	m_battle(),
 	m_startBattle(false)
 {
+	
 	GameEventMessenger::getInstance().subscribe(std::bind(&OverWorld::onReset, this), "OverWorld", GameEvent::eResetBattle);
 	m_players.emplace_back(FactionName::eYellow);
 	m_players.emplace_back(FactionName::eBlue);
 	m_players.emplace_back(FactionName::eGreen);
 	m_players.emplace_back(FactionName::eRed);
+	
 	
 	m_GUI.reset(m_players[m_currentPlayer].m_entities);
 }
@@ -47,10 +49,18 @@ OverWorld::~OverWorld()
 
 void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
 {
+
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
+		if (OverWorldGUI::CURRENT_WINDOW == eLevelSelection)
+		{
+			m_GUI.setActivePlayers(m_players);
+			onReset();
+		}
+
 		bool selectNextPlayer = false;
-		m_GUI.onLeftClick(mouseData, m_players[m_currentPlayer], selectNextPlayer);
+		bool resetPlayer = false;
+		m_GUI.onLeftClick(mouseData, m_players[m_currentPlayer], selectNextPlayer, resetPlayer);
 		if (selectNextPlayer && m_currentPlayer <= static_cast<int>(m_players.size()) - 1)
 		{
 			++m_currentPlayer;
@@ -60,12 +70,21 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 				m_GUI.reset(m_players[m_currentPlayer].m_entities);
 			}
 		}
+		if (resetPlayer)
+		{
+		//m_currentPlayer = 0;
+		//m_GUI.setShipSelectionTrigger(false);
+		//	m_GUI.reset(m_players[m_currentPlayer].m_entities);
+			onReset();
+			return;
+		}
 		if (m_currentPlayer == static_cast<int>(m_players.size()))
 		{
 			m_startBattle = true;
 			m_currentPlayer = 0;
 			return;
 		}
+		
 		
 	}
 	if (mouseEvent == EMouseEvent::eRightButtonDown)
@@ -81,26 +100,33 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData & mouseData)
 
 void OverWorld::render()
 {
+
 	m_GUI.render(m_battle);
+
 }
 
 void OverWorld::update(float deltaTime)
 {
+
 	if (m_startBattle)
 	{
 		startBattle();
 	}
 
 	if (OverWorldGUI::CURRENT_WINDOW == eBattle)
-	{		
+	{
 		m_battle.update(deltaTime);
 	}
+
+	
+	
 }
 
 void OverWorld::startBattle()
 {
 	if (m_startBattle)
 	{
+		m_GUI.setShipSelectionTrigger(false);
 		OverWorldGUI::CURRENT_WINDOW = eBattle;
 		
 		std::vector<std::pair<FactionName, std::vector<EntityProperties*>>> playersInBattle;
@@ -112,7 +138,8 @@ void OverWorld::startBattle()
 			playersInBattle.push_back(p);
 		}
 		m_GUI.clear();
-		m_battle.startBattle("Level1.tmx", playersInBattle);
+		
+		m_battle.startBattle(m_GUI.getSelectedMap(), playersInBattle);
 		
 		for (auto& player : m_players)
 		{
@@ -123,14 +150,16 @@ void OverWorld::startBattle()
 	}
 }
 
+
 void OverWorld::onReset()
 {
+	m_GUI.setShipSelectionTrigger(false);
 	m_currentPlayer = 0;
 	m_selectNextPlayer = false;
-	m_players.clear();
-	m_players.emplace_back(FactionName::eYellow);
-	m_players.emplace_back(FactionName::eBlue);
-	m_players.emplace_back(FactionName::eGreen);
-	m_players.emplace_back(FactionName::eRed);
+	//m_players.clear();
+	//m_players.emplace_back(FactionName::eYellow);
+	//m_players.emplace_back(FactionName::eBlue);
+	//m_players.emplace_back(FactionName::eGreen);
+	//m_players.emplace_back(FactionName::eRed);
 	m_GUI.reset(m_players[m_currentPlayer].m_entities);
 }
