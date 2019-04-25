@@ -344,7 +344,6 @@ void BattleUI::onMouseMoveMovementPhase()
 			}
 		}
 	}
-
 }
 
 void BattleUI::onLeftClickMovementPhase()
@@ -450,18 +449,21 @@ void BattleUI::onLeftClickAttackPhase()
 		return;
 	}
 
+	//Select new entity that is on same team
+	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile && tileOnMouse->m_entityOnTile &&
+		(tileOnMouse->m_entityOnTile->m_factionName == m_selectedTile.m_tile->m_entityOnTile->m_factionName))
+	{
+		if (!tileOnMouse->m_entityOnTile->m_battleProperties.isWeaponFired())
+		{
+			m_selectedTile.m_tile = tileOnMouse;
+		}
+	}
+
 	//Do not fire on destroyed ship
 	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_battleProperties.isDead())
 	{
 		m_targetArea.clearTargetArea();
 		m_invalidPosition.m_activate = false;
-		m_selectedTile.m_tile = nullptr;
-		return;
-	}
-
-	//Do not click on entity that has been destroyed
-	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_battleProperties.isDead())
-	{
 		m_selectedTile.m_tile = nullptr;
 		return;
 	}
@@ -816,6 +818,7 @@ void BattleUI::ShipPlacementPhase::onLeftClick(const InvalidPosition& invalidPos
 		if (m_player.empty())
 		{
 			battle.nextTurn();
+			
 			return;
 		}
 		m_currentSelectedEntity.m_currentSelectedEntity = m_player.back();
