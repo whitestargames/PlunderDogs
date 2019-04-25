@@ -287,7 +287,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			else if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
 			{
 				resetPlayer = true;
-				CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
+				CURRENT_WINDOW = OverWorldWindow::ePlayerSelection;
 				UI.CloseWindow(FLEET_WINDOW);
 				UI.CloseWindow(BATTLE_FLEET_WINDOW);
 			}
