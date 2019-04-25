@@ -33,10 +33,11 @@ OverWorld::OverWorld()
 {
 	
 	GameEventMessenger::getInstance().subscribe(std::bind(&OverWorld::onReset, this), "OverWorld", GameEvent::eResetBattle);
-	m_players.emplace_back(FactionName::eYellow);
-	m_players.emplace_back(FactionName::eBlue);
-	m_players.emplace_back(FactionName::eGreen);
+	//m_players.emplace_back(FactionName::eYellow);
+	//m_players.emplace_back(FactionName::eBlue);
+	//m_players.emplace_back(FactionName::eGreen);
 	m_players.emplace_back(FactionName::eRed);
+	
 	
 	m_GUI.reset(m_players[m_currentPlayer].m_entities);
 }
@@ -93,20 +94,25 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData & mouseData)
 
 void OverWorld::render()
 {
+	m_GUI.reset(m_players[m_currentPlayer].m_entities);
+	m_GUI.getM_Player(m_players);
 	m_GUI.render(m_battle);
+
 }
 
 void OverWorld::update(float deltaTime)
 {
+
 	if (m_startBattle)
 	{
 		startBattle();
 	}
 
 	if (OverWorldGUI::CURRENT_WINDOW == eBattle)
-	{		
+	{
 		m_battle.update(deltaTime);
 	}
+	
 }
 
 void OverWorld::startBattle()
@@ -137,14 +143,15 @@ void OverWorld::startBattle()
 	}
 }
 
+
 void OverWorld::onReset()
 {
 	m_currentPlayer = 0;
 	m_selectNextPlayer = false;
 	m_players.clear();
 	m_players.emplace_back(FactionName::eYellow);
-	m_players.emplace_back(FactionName::eBlue);
-	m_players.emplace_back(FactionName::eGreen);
-	m_players.emplace_back(FactionName::eRed);
+	//m_players.emplace_back(FactionName::eBlue);
+	//m_players.emplace_back(FactionName::eGreen);
+	//m_players.emplace_back(FactionName::eRed);
 	m_GUI.reset(m_players[m_currentPlayer].m_entities);
 }

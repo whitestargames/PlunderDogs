@@ -29,6 +29,13 @@ enum OverWorldWindow
 
 };
 
+enum ePlayerSelect
+{
+	eHuman =0,
+	eAi,
+	eNone
+};
+
 enum eTileType
 {
 	eGrass = 0,

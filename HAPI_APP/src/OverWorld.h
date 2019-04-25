@@ -20,8 +20,9 @@ public:
 	void render();
 	void update(float deltaTime);
 	void startBattle();
-
+	
 private:
+	
 	int m_currentPlayer;
 	bool m_selectNextPlayer;
 	std::vector<Player> m_players;
