@@ -659,7 +659,6 @@ void OverWorldGUI::reset(const std::vector<EntityProperties>& playerEntities)
 	UI.DeleteWindow(UPGRADE_FLEET_WINDOW);
 
 	HAPI_Wrapper::setPosition(m_prebattleUIBackground, { 160, 90 });
-	HAPI_Wrapper::setPosition(m_enemyTerritoryHexSheet, { 260, 690 });
 	HAPI_Wrapper::setPosition(m_playButton, { 1310, 812 });
 	HAPI_Wrapper::setPosition(m_backButton, { 345, 837 });
 	HAPI_Wrapper::setPosition(m_upgradesButton, { 1460, 115 });
@@ -918,8 +917,5 @@ void OverWorldGUI::updateSelectedShips(const std::string & shipWindow, const HAP
 }
 
 
-void OverWorldGUI::onReset()
-{
-	CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
-}
+
 
