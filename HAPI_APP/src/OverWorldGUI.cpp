@@ -80,7 +80,6 @@ void OverWorldGUI::render(Battle& battle)
 			m_playerSelectButton3->Render(SCREEN_SURFACE);
 			m_playerSelectButton4->Render(SCREEN_SURFACE);
 			m_playButton->Render(SCREEN_SURFACE);
-			m_backButton->Render(SCREEN_SURFACE); //put back button part functionality same as play button need to implement functionality
 			break;
 		}
 		case OverWorldWindow::eShipSelection:
@@ -112,8 +111,9 @@ void OverWorldGUI::render(Battle& battle)
 			//HAPI_Wrapper::render(m_enemyTerritoryHexSheet);
 
 			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1000, 250), HAPISPACE::Colour255::BLACK, "Plunder Dogs", 105, {}, {}, 2.5f);
-
+			
 			HAPI_Wrapper::render(m_battleMapBackground);
+			HAPI_Wrapper::render(m_backButton);
 			HAPI_Wrapper::render(m_selectMapButtons1);
 			HAPI_Wrapper::render(m_selectMapButtons2);
 			HAPI_Wrapper::render(m_selectMapButtons3);
@@ -178,6 +178,11 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 		}
 		case OverWorldWindow::eLevelSelection:
 		{
+			if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
+			{
+			
+			CURRENT_WINDOW = OverWorldWindow::ePlayerSelection;
+			}
 
 			if (HAPI_Wrapper::isTranslated(m_selectMapButtons1, mouseData, 0))
 			{
@@ -397,6 +402,14 @@ void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, Player& current
 	}
 	case OverWorldWindow::eLevelSelection:
 	{
+		if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
+		{
+			m_backButton->SetFrameNumber(1);
+		}
+		else if (m_backButton->GetFrameNumber() != 0)
+		{
+			m_backButton->SetFrameNumber(0);
+		}
 		if (HAPI_Wrapper::isTranslated(m_selectMapButtons1, mouseData, 0))//checks if mouse is over button
 		{
 			m_selectMapButtons1->SetFrameNumber(3);//changes the buttons sprite to hover sprite
@@ -563,14 +576,14 @@ void OverWorldGUI::reset(const std::vector<EntityProperties>& playerEntities)
 	m_selectMapButtons2->SetFrameNumber(1);
 	m_selectMapButtons3->SetFrameNumber(2);
 
-	HAPI_Wrapper::setPosition(m_selectMapButtons1, { 100, 600 });
-	HAPI_Wrapper::setPosition(m_selectMapButtons2, { 100, 400 });
-	HAPI_Wrapper::setPosition(m_selectMapButtons3, { 100, 200 });
+	HAPI_Wrapper::setPosition(m_selectMapButtons1, { 300, 300 });
+	HAPI_Wrapper::setPosition(m_selectMapButtons2, { 500, 300 });
+	HAPI_Wrapper::setPosition(m_selectMapButtons3, { 700, 300 });
 
-	HAPI_Wrapper::setPosition(m_playerSelectButton1, { 300, 100 });
-	HAPI_Wrapper::setPosition(m_playerSelectButton2, { 300, 300 });
-	HAPI_Wrapper::setPosition(m_playerSelectButton3, { 300, 500 });
-	HAPI_Wrapper::setPosition(m_playerSelectButton4, { 300, 700 });
+	HAPI_Wrapper::setPosition(m_playerSelectButton1, { 300, 300 });
+	HAPI_Wrapper::setPosition(m_playerSelectButton2, { 600, 300 });
+	HAPI_Wrapper::setPosition(m_playerSelectButton3, { 900, 300 });
+	HAPI_Wrapper::setPosition(m_playerSelectButton4, { 1200, 300 });
 
 	HAPI_Wrapper::setPosition(m_playButton, { 1150, 722 });
 	HAPI_Wrapper::setPosition(m_backButton, { 185, 747 });
