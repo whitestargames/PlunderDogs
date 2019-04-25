@@ -67,9 +67,10 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 		}
 		if (resetPlayer)
 		{
-			m_currentPlayer = 0;
-			m_GUI.setShipSelectionTrigger(false);
-			m_GUI.reset(m_players[m_currentPlayer].m_entities);
+		//m_currentPlayer = 0;
+		//m_GUI.setShipSelectionTrigger(false);
+		//	m_GUI.reset(m_players[m_currentPlayer].m_entities);
+			onReset();
 			return;
 		}
 		if (m_currentPlayer == static_cast<int>(m_players.size()))
@@ -145,12 +146,13 @@ void OverWorld::startBattle()
 
 void OverWorld::onReset()
 {
+	m_GUI.setShipSelectionTrigger(false);
 	m_currentPlayer = 0;
 	m_selectNextPlayer = false;
 	m_players.clear();
 	m_players.emplace_back(FactionName::eYellow);
-	//m_players.emplace_back(FactionName::eBlue);
-	//m_players.emplace_back(FactionName::eGreen);
-	//m_players.emplace_back(FactionName::eRed);
+	m_players.emplace_back(FactionName::eBlue);
+	m_players.emplace_back(FactionName::eGreen);
+	m_players.emplace_back(FactionName::eRed);
 	m_GUI.reset(m_players[m_currentPlayer].m_entities);
 }

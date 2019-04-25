@@ -11,6 +11,10 @@ constexpr int WINDOW_OBJECTHEIGHT = 150;
 constexpr int WINDOW_WIDTH = 830;
 constexpr int WINDOW_HEIGHT = 200;
 
+//void OverWorldGUI::setActivePlayer(Player & players)
+//{
+//}
+
 void OverWorldGUI::setShipSelectionTrigger(bool trigger)
 {
 	shipSelectionTrigger = trigger;
@@ -469,6 +473,7 @@ void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, Player& current
 		if (HAPI_Wrapper::isTranslated(m_upgradesButton, mouseData, 0))
 		{
 			m_upgradesButton->SetFrameNumber(1);
+			
 		}
 		else if (m_upgradesButton->GetFrameNumber() != 0)
 		{
@@ -619,18 +624,6 @@ void OverWorldGUI::reset(const std::vector<EntityProperties>& playerEntities)
 	HAPI_Wrapper::setPosition(m_addDamageButton, { 875, 410 });
 	HAPI_Wrapper::setPosition(m_addRangeButton, { 875, 540 });
 
-
-	//UI.DeleteWindow(FLEET_WINDOW);
-	//UI.DeleteWindow(BATTLE_FLEET_WINDOW);
-
-	//UI.AddWindow(FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 510, 710), fleetWindowSkinName);
-	//for (int i = 0; i < currentSelectedPlayer.m_entities.size(); i++) TODO:
-	//{
-	//	UI.GetWindow(FLEET_WINDOW)->AddCanvas(ENTITY + std::to_string(i), calculateObjectWindowPosition(i), currentSelectedPlayer.m_entities[i].m_sprite);
-	//}
-	//UI.GetWindow(FLEET_WINDOW)->AddSlider(FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
-	//UI.AddWindow(BATTLE_FLEET_WINDOW, HAPISPACE::RectangleI(220, 1050, 220, 420), fleetWindowSkinName);
-	//UI.GetWindow(BATTLE_FLEET_WINDOW)->AddSlider(BATTLE_FLEET_SLIDER, HAPISPACE::RectangleI(0, 830, 160, 210), sliderLayout);
 	
 	if (shipSelectionTrigger)
 	{
@@ -682,7 +675,7 @@ bool OverWorldGUI::entityContainsMouse(const std::string & windowName, const std
 
 void OverWorldGUI::onReset()
 {
-	CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
+	CURRENT_WINDOW = OverWorldWindow::ePlayerSelection;
 }
 
 bool OverWorldGUI::windowObjectExists(const std::string & windowName, const std::string& windowObjectName) const

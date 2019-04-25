@@ -78,7 +78,7 @@ private:
 
 public:
 
-	
+	//void setActivePlayer(std::vectorPlayer& players);
 	void setShipSelectionTrigger(bool trigger);
 	std::string getSelectedMap();
 	static OverWorldWindow CURRENT_WINDOW;
