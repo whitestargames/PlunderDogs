@@ -52,7 +52,12 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
-	
+		if (OverWorldGUI::CURRENT_WINDOW == eLevelSelection)
+		{
+			m_GUI.setActivePlayers(m_players);
+			onReset();
+		}
+
 		bool selectNextPlayer = false;
 		bool resetPlayer = false;
 		m_GUI.onLeftClick(mouseData, m_players[m_currentPlayer], selectNextPlayer, resetPlayer);
@@ -112,6 +117,8 @@ void OverWorld::update(float deltaTime)
 	{
 		m_battle.update(deltaTime);
 	}
+
+	
 	
 }
 
@@ -149,10 +156,10 @@ void OverWorld::onReset()
 	m_GUI.setShipSelectionTrigger(false);
 	m_currentPlayer = 0;
 	m_selectNextPlayer = false;
-	m_players.clear();
-	m_players.emplace_back(FactionName::eYellow);
-	m_players.emplace_back(FactionName::eBlue);
-	m_players.emplace_back(FactionName::eGreen);
-	m_players.emplace_back(FactionName::eRed);
+	//m_players.clear();
+	//m_players.emplace_back(FactionName::eYellow);
+	//m_players.emplace_back(FactionName::eBlue);
+	//m_players.emplace_back(FactionName::eGreen);
+	//m_players.emplace_back(FactionName::eRed);
 	m_GUI.reset(m_players[m_currentPlayer].m_entities);
 }

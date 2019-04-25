@@ -11,9 +11,26 @@ constexpr int WINDOW_OBJECTHEIGHT = 150;
 constexpr int WINDOW_WIDTH = 830;
 constexpr int WINDOW_HEIGHT = 200;
 
-//void OverWorldGUI::setActivePlayer(Player & players)
-//{
-//}
+void OverWorldGUI::setActivePlayers(std::vector<Player>& players)
+{
+	players.clear();
+	if (m_playerSelectYellow->GetFrameNumber() == ePlayerSelect::eHuman)
+	{
+		players.emplace_back(FactionName::eYellow);
+	}
+	if (m_playerSelectGreen->GetFrameNumber() == ePlayerSelect::eHuman)
+	{
+		players.emplace_back(FactionName::eGreen);
+	}
+	if (m_playerSelectRed->GetFrameNumber() == ePlayerSelect::eHuman)
+	{
+		players.emplace_back(FactionName::eRed);
+	}
+	if (m_playerSelectBlue->GetFrameNumber() == ePlayerSelect::eHuman)
+	{
+		players.emplace_back(FactionName::eBlue);
+	}
+}
 
 void OverWorldGUI::setShipSelectionTrigger(bool trigger)
 {
@@ -176,15 +193,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			if (HAPI_Wrapper::isTranslated(m_playButton, mouseData, 0))
 			{
 				CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
-				
-				std::pair < FactionName, ePlayerSelect>m_playerSelectYellowPair{FactionName::eYellow,(ePlayerSelect)m_playerSelectYellow->GetFrameNumber()};
-				std::pair < FactionName, ePlayerSelect>m_playerSelectGreenPair{ FactionName::eGreen,(ePlayerSelect)m_playerSelectGreen->GetFrameNumber() };
-				std::pair < FactionName, ePlayerSelect>m_playerSelectRedPair{ FactionName::eRed,(ePlayerSelect)m_playerSelectRed->GetFrameNumber() };
-				std::pair < FactionName, ePlayerSelect>m_playerSelectBluePair{ FactionName::eBlue,(ePlayerSelect)m_playerSelectBlue->GetFrameNumber() };
-				
 		
-
-				
 			}
 			break;
 
