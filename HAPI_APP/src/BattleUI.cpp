@@ -58,11 +58,13 @@ BattleUI::BattleUI(Battle & battle)
 	m_fire(0.02, Textures::m_fire)
 {
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleUI::onReset, this), "BattleUI", GameEvent::eResetBattle);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleUI::onNewTurn, this), "BattleUI", GameEvent::eNewTurn);
 }
 
 BattleUI::~BattleUI()
 {
 	GameEventMessenger::getInstance().unsubscribe("BattleUI", GameEvent::eResetBattle);
+	GameEventMessenger::getInstance().unsubscribe("BattleUI", GameEvent::eNewTurn);
 }
 
 std::pair<int, int> BattleUI::getCameraPositionOffset() const
@@ -91,7 +93,6 @@ void BattleUI::renderUI() const
 	}
 
 	m_invalidPosition.render(m_battle.getMap());
-	
 }
 
 void BattleUI::renderParticles() const
@@ -127,25 +128,15 @@ void BattleUI::FactionUpdateGUI(FactionName faction)
 	m_gui.updateFactionToken(faction);
 }
 
-void BattleUI::newPhase()
-{
-	m_selectedTile.m_tile = nullptr;
-}
-
-void BattleUI::newTurn(FactionName playersTurn)
-{
-	if (m_battle.getCurrentPhase() == BattlePhase::ShipPlacement)
-	{
-		for (auto iter = m_playerShipPlacement.begin(); iter != m_playerShipPlacement.end(); ++iter)
-		{
-			if ((*iter)->isCompleted())
-			{
-				m_playerShipPlacement.erase(iter);
-				break;
-			}
-		}
-	}
-}
+//void BattleUI::newPhase()
+//{
+//	
+//}
+//
+//void BattleUI::newTurn(FactionName playersTurn)
+//{
+//
+//}
 
 void BattleUI::startShipPlacement(const std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players, Map& map)
 {
@@ -595,6 +586,23 @@ void BattleUI::onReset()
 	m_invalidPosition.m_activate = false;
 }
 
+void BattleUI::onNewTurn()
+{
+	if (m_battle.getCurrentPhase() == BattlePhase::ShipPlacement)
+	{
+		for (auto iter = m_playerShipPlacement.begin(); iter != m_playerShipPlacement.end(); ++iter)
+		{
+			if ((*iter)->isCompleted())
+			{
+				m_playerShipPlacement.erase(iter);
+				break;
+			}
+		}
+	}
+
+	m_selectedTile.m_tile = nullptr;
+}
+
 //Weapon Graph
 BattleUI::TargetArea::TargetArea()
 {
@@ -729,7 +737,7 @@ BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*> 
 	m_spawnSprites.reserve(m_spawnArea.size());
 	for (int i = 0; i < m_spawnArea.size(); ++i)
 	{
-		m_spawnSprites.push_back(std::make_unique<Sprite>(Textures::m_spawnHex));
+		m_spawnSprites.push_back(HAPI_Sprites.MakeSprite(Textures::m_spawnHex));
 	}
 
 	for (int i = 0; i < m_spawnArea.size(); ++i)
@@ -738,6 +746,7 @@ BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*> 
 		m_spawnSprites[i]->GetTransformComp().SetPosition({
 		(float)screenPosition.first + DRAW_OFFSET_X * map.getDrawScale() ,
 		(float)screenPosition.second + DRAW_OFFSET_Y * map.getDrawScale() });
+		m_spawnSprites[i]->GetTransformComp().SetOriginToCentreOfFrame();
 	}
 
 	m_currentSelectedEntity.m_currentSelectedEntity = m_player.back();

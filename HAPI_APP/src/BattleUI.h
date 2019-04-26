@@ -3,15 +3,11 @@
 #include "BattleGUI.h"
 #include "entity.h"
 #include <vector>
-#include "Timer.h"
+
 struct EntityProperties;
 struct Tile;
 class Battle;
 class Map;
-
-
-
-
 class BattleUI : public IHapiSpritesInputListener
 {
 	struct TargetArea
@@ -116,8 +112,10 @@ public:
 	void update(float deltaTime);
 
 	void FactionUpdateGUI(FactionName faction);//tempName
-	void newPhase();
-	void newTurn(FactionName playersTurn);
+
+	//void newPhase();
+	//void newTurn(FactionName playersTurn);
+
 	void startShipPlacement(const std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players, Map& map);
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
@@ -150,6 +148,7 @@ private:
 	TargetArea m_targetArea;
 
 	void onReset();
+	void onNewTurn();
 
 	ParticleSystem m_explosion;
 	ParticleSystem m_fire;

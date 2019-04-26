@@ -297,7 +297,6 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 
 void BattleGUI::setMaxCameraOffset(std::pair<int, int> maxCameraOffset)
 {
-	// battle.getMap().getDimensions().first * 28 - 150, battle.getMap().getDimensions().second * 32 - 150}),
 	m_maxCameraOffset = std::pair<int, int>(maxCameraOffset.first * 28 - 150, maxCameraOffset.second * 32 - 150);
 }
 

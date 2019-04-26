@@ -14,8 +14,6 @@ enum class BattlePhase
 class Battle
 {
 public:
-	void setTimeOfDay(float deltaTime);
-	void setWindDirection(float deltaTime);
 	Battle();
 	~Battle();
 	const Map& getMap() const;
@@ -34,8 +32,9 @@ public:
 
 private:
 	std::vector<BattlePlayer> m_players;
-	int m_currentPlayersTurn;
+	int m_currentPlayerTurn;
 	Map m_map;
+
 	BattlePhase m_currentPhase;
 	BattleUI m_battleUI;
 	MoveCounter m_moveCounter;
@@ -48,4 +47,7 @@ private:
 	BattlePlayer& getPlayer(FactionName factionName);
 
 	void onReset();
+	void incrementPlayerTurn();
+	void setTimeOfDay(float deltaTime);
+	void setWindDirection(float deltaTime);
 };
