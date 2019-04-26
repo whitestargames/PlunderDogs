@@ -103,6 +103,10 @@ void BattleUI::renderParticles() const
 void BattleUI::renderGUI() const
 {
 	m_gui.render();
+	if (m_selectedTile.m_tile  != nullptr && m_selectedTile.m_tile->m_entityOnTile != nullptr)
+	{
+		m_gui.renderStats(m_selectedTile.m_tile->m_entityOnTile->m_entityProperties);
+	}
 }
 
 
@@ -493,7 +497,7 @@ void BattleUI::onLeftClickAttackPhase()
 	//Entity already selected Fire weapon at position
 	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile && !m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.isWeaponFired())
 	{
-		if (tileOnMouse->m_entityOnTile != nullptr)
+		if ((tileOnMouse->m_entityOnTile != nullptr) && tileOnMouse->m_entityOnTile->m_factionName != m_selectedTile.m_tile->m_entityOnTile->m_factionName)
 		{
 			if (m_selectedTile.m_tile->m_entityOnTile->m_entityProperties.m_weaponType == eFlamethrower)
 			{

@@ -30,6 +30,7 @@ class Map;
 struct EntityProperties
 {
 	EntityProperties(FactionName factionName, EntityType entityType);
+	EntityProperties() {};
 
 	std::shared_ptr<HAPISPACE::Sprite> m_sprite;
 	std::shared_ptr<HAPISPACE::Sprite> m_selectedSprite;

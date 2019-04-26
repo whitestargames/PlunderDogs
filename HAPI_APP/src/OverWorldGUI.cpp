@@ -130,7 +130,9 @@ void OverWorldGUI::render(Battle& battle)
 			m_background->Render(SCREEN_SURFACE);
 			m_playButton->Render(SCREEN_SURFACE);
 			m_quitButton->Render(SCREEN_SURFACE);
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1270, 550), HAPISPACE::Colour255::BLACK, "Plunder Dogs", 105, {}, {}, 2.5f);
+			HAPI_Sprites.ChangeFontFromFile("data/RAPSCALL.TTF");
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1380, 50), HAPISPACE::Colour255::YELLOW, "Plunder\n Dogs", 190, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+			
 			break;
 		}
 	

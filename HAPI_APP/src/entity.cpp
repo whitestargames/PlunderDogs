@@ -279,7 +279,7 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 	case EntityType::eCruiser:
 		m_movementPoints = 15;
 		m_healthMax = 15;
-		m_currentHealth = 10;
+		m_currentHealth = 15;
 		m_range = 6;
 		m_damage = 5;
 		m_weaponType = eWeaponType::eSideCannons;
