@@ -367,16 +367,6 @@ bool Map::moveEntity(intPair originalPos, intPair newPos)
 	return true;
 }
 
-eTimeOfDay Map::getTimeOfDay() const
-{
-	return m_timeOfDay;
-}
-
-void Map::setTimeOfDay(eTimeOfDay timeOfDay)
-{
-	m_timeOfDay = timeOfDay;
-}
-
 void Map::insertEntity(BattleEntity& newEntity)
 {
 	Tile* tile = getTile(newEntity.m_battleProperties.getCurrentPosition());	
@@ -603,7 +593,62 @@ std::vector<const Tile*> Map::getTileLine(
 	return tileStore;
 }
 
-std::vector<std::pair<int, int>> Map::getSpawnPositions() const
+std::vector<Tile*> Map::getTileRing(std::pair<int, int> coord, int range)
 {
-	return m_spawnPositions;
+	if (range < 1)
+		HAPI_Sprites.UserMessage("getTileRing range less than 1", "Map error");
+
+	std::vector<Tile*> tileStore;
+	tileStore.reserve(6 * range);
+
+	intPair cubeCoord(offsetToCube(coord));
+
+	for (int y = std::max(0, coord.second - range);
+		y < std::min(m_mapDimensions.second, coord.second + range + 1);
+		y++)
+	{
+		for (int x = std::max(0, coord.first - range);
+			x < std::min(m_mapDimensions.first, coord.first + range + 1);
+			x++)
+		{
+			if (!(coord.first == x && coord.second == y))//If not the tile at the centre
+			{
+				if (cubeDistance(cubeCoord, offsetToCube(intPair(x, y))) == range)
+				{
+					tileStore.push_back(getTile(intPair(x, y)));
+				}
+			}
+		}
+	}
+	return tileStore;
+}
+
+std::vector<const Tile*> Map::getTileRing(std::pair<int, int> coord, int range) const
+{
+	if (range < 1)
+		HAPI_Sprites.UserMessage("getTileRing range less than 1", "Map error");
+
+	std::vector<const Tile*> tileStore;
+	tileStore.reserve(6 * range);
+
+	intPair cubeCoord(offsetToCube(coord));
+
+	for (int y = std::max(0, coord.second - range);
+		y < std::min(m_mapDimensions.second, coord.second + range + 1);
+		y++)
+	{
+		for (int x = std::max(0, coord.first - range);
+			x < std::min(m_mapDimensions.first, coord.first + range + 1);
+			x++)
+		{
+			if (!(coord.first == x && coord.second == y))//If not the tile at the centre
+			{
+				if (cubeDistance(cubeCoord, offsetToCube(intPair(x, y))) == range)
+				{
+					tileStore.push_back(getTile(intPair(x, y)));
+				}
+			}
+		}
+	}
+	return tileStore;
 }

@@ -231,7 +231,10 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 			{
 			case BattlePhase::ShipPlacement :
 			{
-				assert(!m_playerShipPlacement.empty());
+				if (m_playerShipPlacement.empty() || !m_selectedTile.m_tile)
+				{
+					break;
+				}
 				if (mouseMoveDirection.first > 20)
 				{
 					//This function call will be used if the mouse moved a significant enough distance during inputing a move command to assume it was on purpose, it sends not only the
@@ -250,7 +253,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 			}
 			case BattlePhase::Movement :
 			{
-				if (!m_mouseDownTile)
+				if (!m_mouseDownTile || !m_selectedTile.m_tile)
 				{
 					break;
 				}

@@ -73,7 +73,7 @@ private:
 	std::pair<int, int> m_mapDimensions;
 	float m_windStrength;
 	eDirection m_windDirection;
-	
+
 	float m_drawScale;
 	std::pair<int, int> m_drawOffset;
 	std::vector<Tile> m_data;
@@ -105,8 +105,10 @@ public:
 	//An element in the vector will be nullptr if it accesses an invalid tile
 	std::vector<Tile*> getTileLine(std::pair<int, int> coord, int range, eDirection direction);
 	std::vector<const Tile*> getTileLine(std::pair<int, int> coord, int range, eDirection direction)const;
-
-	std::vector<std::pair<int, int>> getSpawnPositions() const;
+	//Returns a ring of tiles at a certain radius from a specified tile
+	//An element in the vector will be nullptr if it accesses an invalid tile
+	std::vector<Tile*> getTileRing(std::pair<int, int> coord, int range);
+	std::vector<const Tile*> getTileRing(std::pair<int, int> coord, int range)const;
 
 	//For finding the location on the screen a given tile is being drawn
 	std::pair<int, int> getTileScreenPos(std::pair<int, int> coord) const;
@@ -115,8 +117,6 @@ public:
 	//can give values that aren't valid tiles if you click off the map 
 	//so check if getTile is null before using
 	std::pair<int, int> getMouseClickCoord(std::pair<int, int> mouseCoord) const;
-	eTimeOfDay getTimeOfDay()const;
-	void setTimeOfDay(eTimeOfDay timeOfDay);
 
 	//Moves an entitys position on the map, returns false if the position is already taken
 	bool moveEntity(std::pair<int, int> originalPos, std::pair<int, int> newPos);
@@ -127,7 +127,7 @@ public:
 	std::pair<int, int> getDrawOffset() const { return m_drawOffset; }
 	void setDrawOffset(std::pair<int, int> newOffset) { m_drawOffset = newOffset; }
 
-	std::pair<int, int> getDimensions() const { return m_mapDimensions;  }
+	std::pair<int, int> getDimensions() const { return m_mapDimensions; }
 
 	float getDrawScale() const { return m_drawScale; }
 	void setDrawScale(float scale) { if (scale > 0.0) m_drawScale = scale; }
@@ -135,8 +135,13 @@ public:
 	float getWindStrength() const { return m_windStrength; }
 	void setWindStrength(float strength) { if (strength > 0.0) m_windStrength = strength; }
 
+	eTimeOfDay getTimeOfDay()const { return m_timeOfDay; }
+	void setTimeOfDay(eTimeOfDay timeOfDay) { m_timeOfDay = timeOfDay; }
+
 	eDirection getWindDirection() const { return m_windDirection; }
 	void setWindDirection(eDirection direction) { m_windDirection = direction; }
+
+	std::vector<std::pair<int, int>> getSpawnPositions() const { return m_spawnPositions; }
 
 	void loadmap(const std::string& mapName);
 
