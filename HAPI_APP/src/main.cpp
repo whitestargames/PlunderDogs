@@ -1,6 +1,6 @@
 #include "OverWorld.h"
 #include "Textures.h"
-//#include "BattleGUI.h"
+
 using namespace HAPISPACE;
 
 float getDeltaTime(int frameStart, int lastFrameStart)
@@ -11,8 +11,6 @@ float getDeltaTime(int frameStart, int lastFrameStart)
 void HAPI_Sprites_Main()
 {
 	std::pair<int, int> windowSize(1920, 1080);
-	//if (!HAPI_Sprites.Initialise(windowSize.first, windowSize.second, "Plunder Dogs", eHSFullscreen))
-	//	return;
 	if (!HAPI_Sprites.Initialise(windowSize.first, windowSize.second, "Plunder Dogs", eHSEnableUI))
 		return;
 

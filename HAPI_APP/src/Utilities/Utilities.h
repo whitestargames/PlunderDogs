@@ -5,4 +5,5 @@
 namespace Utilities
 {
 	std::string getDataDirectory();
+	int getRandomNumber(int min, int max);
 }

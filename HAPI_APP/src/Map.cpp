@@ -8,12 +8,19 @@
 #include "Textures.h"
 #include "GameEventMessenger.h"
 #include "Utilities/MapParser.h"
+#include <algorithm>
 
 typedef std::pair<int, int> intPair;
 
 constexpr int FRAME_HEIGHT{ 28 };
 constexpr float FRAME_CENTRE_X{ 15.5 };
 constexpr float FRAME_CENTRE_Y{ 32.5 };
+
+//SpawnPosition
+Map::SpawnPosition::SpawnPosition(std::pair<int, int> spawnPosition)
+	: position(spawnPosition),
+	inUse(false)
+{}
 
 void Map::drawMap() const 
 {
@@ -432,15 +439,13 @@ intPair Map::getMouseClickCoord(intPair mouseCoord) const
 
 void Map::loadmap(const std::string & mapName)
 {
-	MapDetails mapDetails = MapParser::parseMap(mapName);
+	MapDetails mapDetails = MapParser::parseMapDetails(mapName);
 	m_mapDimensions = mapDetails.mapDimensions;
 	m_data.reserve(m_mapDimensions.first * m_mapDimensions.second);
-
-	//TODO: Will be loaded in through Tiled
-	m_spawnPositions.emplace_back(11, 6);
-	m_spawnPositions.emplace_back(8, 18);
-	m_spawnPositions.emplace_back(28, 28);
-	m_spawnPositions.emplace_back(20, 10);
+	for (auto spawnPosition : mapDetails.m_spawnPositions)
+	{
+		m_spawnPositions.push_back(spawnPosition);
+	}
 
 	for (int y = 0; y < m_mapDimensions.second; y++)
 	{
@@ -603,7 +608,24 @@ std::vector<const Tile*> Map::getTileLine(
 	return tileStore;
 }
 
-std::vector<std::pair<int, int>> Map::getSpawnPositions() const
+std::pair<int, int> Map::getSpawnPosition()
 {
-	return m_spawnPositions;
+	//Make sure all spawn positions aren't in use
+	assert(std::find_if(m_spawnPositions.cbegin(), m_spawnPositions.cend(),
+		[](const auto& spawnPosition) { return spawnPosition.inUse == false; }) != m_spawnPositions.cend());
+
+	bool validSpawnPositionFound = false;
+	std::pair<int, int> spawnPosition;
+	while (!validSpawnPositionFound)
+	{
+		int randNumb = Utilities::getRandomNumber(0, static_cast<int>(m_spawnPositions.size()) - 1);
+		if (!m_spawnPositions[randNumb].inUse)
+		{
+			m_spawnPositions[randNumb].inUse = true;
+			spawnPosition = m_spawnPositions[randNumb].position;
+			validSpawnPositionFound = true;
+		}
+	}
+
+	return spawnPosition;
 }

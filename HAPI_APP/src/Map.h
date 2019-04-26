@@ -69,6 +69,13 @@ struct Tile
 
 class Map
 {
+	struct SpawnPosition
+	{
+		SpawnPosition(std::pair<int, int> spawnPosition);
+
+		std::pair<int, int> position;
+		bool inUse;
+	};
 private:
 	std::pair<int, int> m_mapDimensions;
 	float m_windStrength;
@@ -77,7 +84,7 @@ private:
 	float m_drawScale;
 	std::pair<int, int> m_drawOffset;
 	std::vector<Tile> m_data;
-	std::vector<std::pair<int, int>> m_spawnPositions;
+	std::vector<SpawnPosition> m_spawnPositions;
 	eTimeOfDay m_timeOfDay;
 
 	std::pair<int, int> offsetToCube(std::pair<int, int> offset) const;
@@ -106,7 +113,7 @@ public:
 	std::vector<Tile*> getTileLine(std::pair<int, int> coord, int range, eDirection direction);
 	std::vector<const Tile*> getTileLine(std::pair<int, int> coord, int range, eDirection direction)const;
 
-	std::vector<std::pair<int, int>> getSpawnPositions() const;
+	std::pair<int, int> getSpawnPosition();
 
 	//For finding the location on the screen a given tile is being drawn
 	std::pair<int, int> getTileScreenPos(std::pair<int, int> coord) const;
