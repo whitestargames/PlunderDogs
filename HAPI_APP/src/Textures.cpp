@@ -3,7 +3,11 @@
 std::shared_ptr<SpriteSheet> Textures::m_mouseCrossHair;
 std::shared_ptr<SpriteSheet> Textures::m_levelSelectBackground;
 std::shared_ptr<SpriteSheet> Textures::m_enemyTerritoryHexSheet;
-std::shared_ptr<SpriteSheet> Textures::m_levelSelectSheet;
+std::shared_ptr<SpriteSheet> Textures::m_levelSelect1;
+std::shared_ptr<SpriteSheet> Textures::m_levelSelect2;
+std::shared_ptr<SpriteSheet> Textures::m_levelSelect3;
+std::shared_ptr<SpriteSheet> Textures::m_levelSelect4;
+std::shared_ptr<SpriteSheet> Textures::m_levelSelect5;
 std::shared_ptr<SpriteSheet> Textures::m_prebattleUIBackground;
 std::shared_ptr<SpriteSheet> Textures::m_preBattleUIPlayButton;
 std::shared_ptr<SpriteSheet> Textures::m_preBattleUIBackButton;

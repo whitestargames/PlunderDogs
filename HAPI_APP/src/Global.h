@@ -22,6 +22,7 @@ enum eDirection
 enum OverWorldWindow
 {
 	eBattle = 0,
+	eMainMenu,
 	eShipSelection,
 	eLevelSelection,
 	ePlayerSelection, 

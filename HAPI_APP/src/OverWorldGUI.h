@@ -22,6 +22,9 @@ private:
 	std::unique_ptr<Sprite> m_selectMapButtons1;
 	std::unique_ptr<Sprite> m_selectMapButtons2;
 	std::unique_ptr<Sprite> m_selectMapButtons3;
+	std::unique_ptr<Sprite> m_selectMapButtons4;
+	std::unique_ptr<Sprite> m_selectMapButtons5;
+
 	std::unique_ptr<Sprite> m_playerSelectYellow;
 	std::unique_ptr<Sprite> m_playerSelectGreen;
 	std::unique_ptr<Sprite> m_playerSelectRed;
@@ -54,9 +57,9 @@ private:
 	void onReset();
 
 	HAPISPACE::SliderLayout sliderLayout;
-	HAPISPACE::VectorI m_fleetWindowTopLeft{ HAPISPACE::VectorI(220, 510) };
-	HAPISPACE::VectorI m_battleFleetWindowTopLeft{ HAPISPACE::VectorI(220, 220) };
-	HAPISPACE::VectorI m_upgradeFleetWindowTopLeft{ HAPISPACE::VectorI(220, 120) };
+	HAPISPACE::VectorI m_fleetWindowTopLeft{ HAPISPACE::VectorI(380, 600) };
+	HAPISPACE::VectorI m_battleFleetWindowTopLeft{ HAPISPACE::VectorI(380, 310) };
+	HAPISPACE::VectorI m_upgradeFleetWindowTopLeft{ HAPISPACE::VectorI(380,210) };
 
 	const int m_maxShips{ 6 };
 	int m_currentShips{ 0 };

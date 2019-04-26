@@ -16,12 +16,6 @@ struct Textures
 			return false;
 		}
 
-		m_levelSelectBackground = HAPI_Wrapper::makeSpriteSheet("levelSelectBackground.jpg");
-		if (!m_levelSelectBackground)
-		{
-			HAPI_Sprites.UserMessage("Cannot Load : 'levelSelectBackground.jpg'", "Texture Error");
-		}
-
 		m_enemyTerritoryHexSheet = HAPI_Wrapper::makeSpriteSheet("EnemyTerritoryHexSheet.png", 2);
 		if (!m_enemyTerritoryHexSheet)
 		{
@@ -29,13 +23,43 @@ struct Textures
 			return false;
 		}
 
-		m_levelSelectSheet = HAPI_Wrapper::makeSpriteSheet("LevelButtons.png", 6);
-		if (!m_levelSelectSheet)
+		m_levelSelectBackground = HAPI_Wrapper::makeSpriteSheet("levelSelectBackground.png");
+		if (!m_levelSelectBackground)
 		{
-			HAPI_Sprites.UserMessage("Cannot Load : 'LevelButtons.png'", "Texture Error");
-			return false;
+			HAPI_Sprites.UserMessage("Cannot Load : 'levelSelectBackground.png'", "Texture Error");
 		}
 
+		m_levelSelect1 = HAPI_Wrapper::makeSpriteSheet("level1Button.png", 2);
+		if (!m_levelSelect1)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'level1Button.png'", "Texture Error");
+			return false;
+		}
+		m_levelSelect2 = HAPI_Wrapper::makeSpriteSheet("level2Button.png", 2);
+		if (!m_levelSelect2)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'level2Button.png'", "Texture Error");
+			return false;
+		}
+		m_levelSelect3 = HAPI_Wrapper::makeSpriteSheet("level3Button.png", 2);
+		if (!m_levelSelect3)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'level3Button.png'", "Texture Error");
+			return false;
+		}
+		m_levelSelect4 = HAPI_Wrapper::makeSpriteSheet("level4Button.png", 2);
+		if (!m_levelSelect4)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'level4Button.png'", "Texture Error");
+			return false;
+		}
+		m_levelSelect5 = HAPI_Wrapper::makeSpriteSheet("level5Button.png", 2);
+		if (!m_levelSelect5)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'level5Button.png'", "Texture Error");
+			return false;
+		}
+	
 		m_playerSelectIconYellow = HAPI_Wrapper::makeSpriteSheet("yellowSelectBtn.png", 3);
 		if (!m_playerSelectIconYellow)
 		{
@@ -343,9 +367,13 @@ struct Textures
 	}
 
 	static std::shared_ptr<SpriteSheet> m_mouseCrossHair;
-	static std::shared_ptr<SpriteSheet> m_levelSelectBackground;
 	static std::shared_ptr<SpriteSheet> m_enemyTerritoryHexSheet;
-	static std::shared_ptr<SpriteSheet> m_levelSelectSheet;
+	static std::shared_ptr<SpriteSheet> m_levelSelectBackground;
+	static std::shared_ptr<SpriteSheet> m_levelSelect1;
+	static std::shared_ptr<SpriteSheet> m_levelSelect2;
+	static std::shared_ptr<SpriteSheet> m_levelSelect3;
+	static std::shared_ptr<SpriteSheet> m_levelSelect4;
+	static std::shared_ptr<SpriteSheet> m_levelSelect5;
 	static std::shared_ptr<SpriteSheet> m_playerSelectIconYellow;
 	static std::shared_ptr<SpriteSheet> m_playerSelectIconGreen;
 	static std::shared_ptr<SpriteSheet> m_playerSelectIconRed;
