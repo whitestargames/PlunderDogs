@@ -3,6 +3,7 @@
 #include "BattleGUI.h"
 #include "entity.h"
 #include <vector>
+#include <deque>
 
 struct EntityProperties;
 struct Tile;
@@ -73,6 +74,8 @@ class BattleUI : public IHapiSpritesInputListener
 		ShipPlacementPhase(std::vector<EntityProperties*> player,
 			std::pair<int, int> spawnPosition, int range, const Map& map, FactionName factionName);
 
+		std::pair<int, int> getSpawnPosition() const;
+
 		bool isCompleted() const;
 		void render(const InvalidPosition& invalidPosition, const Map& map) const;
 
@@ -85,6 +88,7 @@ class BattleUI : public IHapiSpritesInputListener
 		CurrentSelectedEntity m_currentSelectedEntity;
 		std::vector<const Tile*> m_spawnArea;
 		std::vector<std::unique_ptr<Sprite>> m_spawnSprites;
+		std::pair<int, int> m_spawnPosition;
 	};
 
 	struct CurrentSelectedTile
@@ -134,7 +138,7 @@ private:
 	const Tile* m_mouseDownTile;
 	BattleGUI m_gui;
 	InvalidPosition m_invalidPosition;
-	std::vector<std::unique_ptr<ShipPlacementPhase>> m_playerShipPlacement;
+	std::deque<std::unique_ptr<ShipPlacementPhase>> m_playerShipPlacement;
 
 	//Movement Phase
 	void onMouseMoveMovementPhase();

@@ -1,6 +1,11 @@
 #include "OverWorld.h"
 #include "Textures.h"
 
+//TODO: AUDIO PLAYER
+//TODO: Target area appearing on land
+//TODO: BATTLEUI Sprites not drawin correctly - dragging around screen
+//TODO: CAn seemingly place ships on land
+
 using namespace HAPISPACE;
 
 float getDeltaTime(int frameStart, int lastFrameStart)

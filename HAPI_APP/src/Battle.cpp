@@ -167,20 +167,20 @@ void Battle::nextTurn()
 	case BattlePhase::ShipPlacement :
 		lastPlayer = (m_currentPlayerTurn == static_cast<int>(m_players.size()) - 1);
 		incrementPlayerTurn();
-		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		if (lastPlayer)
 		{
 			m_currentPhase = BattlePhase::Movement;
 			m_currentPlayerTurn = 0;
 		}
+		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		break;
 	case BattlePhase::Movement :
-		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		m_currentPhase = BattlePhase::Attack;
+		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		break;
 	case BattlePhase::Attack :
-		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		m_currentPhase = BattlePhase::Movement;
+		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		incrementPlayerTurn();
 		break;
 	}

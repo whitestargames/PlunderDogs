@@ -10,7 +10,7 @@
 using namespace HAPISPACE;
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
-constexpr int SHIP_PLACEMENT_SPAWN_RANGE{ 2 };
+constexpr int SHIP_PLACEMENT_SPAWN_RANGE{ 3 };
 
 //
 //InvalidPositionSprite
@@ -244,6 +244,10 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 					//destination tile but the direction of the aformentioned movement.  In order for this to work the pathfinding must be capable of taking an eDirection as part of the
 					//function used by the battle to move the entity.
 					m_playerShipPlacement.front()->onLeftClick(m_invalidPosition, mouseMoveDirection.second, m_selectedTile.m_tile, m_battle);
+					if (m_playerShipPlacement.front()->isCompleted())
+					{
+						m_playerShipPlacement.pop_front();
+					}
 					//m_battle.moveEntityToPosition(*m_selectedTile.m_tile->m_entityOnTile, *m_battle.getMap().getTile(m_leftMouseDownPosition), mouseMoveDirection.second);
 				}
 				else
@@ -251,6 +255,10 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 					//This function call is to be used if the movement of the mouse during the move command is small enough to be considered unintended,
 					//in this case the ship should not rotate after reaching the destination.
 					m_playerShipPlacement.front()->onLeftClick(m_invalidPosition, eNorth, m_selectedTile.m_tile, m_battle);
+					if (m_playerShipPlacement.front()->isCompleted())
+					{
+						m_playerShipPlacement.pop_front();
+					}
 				}
 				break;
 			}
@@ -588,18 +596,6 @@ void BattleUI::onReset()
 
 void BattleUI::onNewTurn()
 {
-	if (m_battle.getCurrentPhase() == BattlePhase::ShipPlacement)
-	{
-		for (auto iter = m_playerShipPlacement.begin(); iter != m_playerShipPlacement.end(); ++iter)
-		{
-			if ((*iter)->isCompleted())
-			{
-				m_playerShipPlacement.erase(iter);
-				break;
-			}
-		}
-	}
-
 	m_selectedTile.m_tile = nullptr;
 }
 
@@ -748,6 +744,8 @@ BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*> 
 		(float)screenPosition.second + DRAW_OFFSET_Y * map.getDrawScale() });
 		m_spawnSprites[i]->GetTransformComp().SetOriginToCentreOfFrame();
 	}
+
+
 
 	m_currentSelectedEntity.m_currentSelectedEntity = m_player.back();
 }
@@ -970,4 +968,9 @@ void BattleUI::ParticleSystem::orient(eDirection entityDir)
 		break;
 	}
 	m_particle->GetTransformComp().SetRotation(DEGREES_TO_RADIANS(static_cast<int>(direction) * 60 % 360));
+}
+
+std::pair<int, int> BattleUI::ShipPlacementPhase::getSpawnPosition() const
+{
+	return m_spawnPosition;
 }
