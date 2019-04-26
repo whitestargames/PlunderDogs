@@ -4,8 +4,11 @@
 #include <HAPISprites_UI.h>
 #include "Global.h"
 #include "Textures.h"
+#include "entity.h"
+
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
+
 
 enum BattleWindow
 {
@@ -23,6 +26,7 @@ public:
 	std::pair<int, int> getCameraPositionOffset() const;
 
 	void render() const;
+	void renderStats(EntityProperties& entityProperties) const;
 	void update(eDirection windDirection);
 	void updateFactionToken(int factionName);
 	void OnMouseLeftClick(const HAPI_TMouseData& mouseData);
@@ -56,4 +60,5 @@ private:
 	float cameraZoom = 1.0f;//variable to multiply scale by
 	std::pair<int, int> m_cameraPositionOffset;
 	void onReset();
+	
 };

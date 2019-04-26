@@ -51,21 +51,12 @@ std::pair<int, int> BattleGUI::getCameraPositionOffset() const
 void BattleGUI::render() const
 {
 
-	if (shipSelected)
-	{
-		m_battleIcons->Render(SCREEN_SURFACE);
-
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(600, (905 + animationOffset)), HAPISPACE::Colour255::BLACK, "45/55", 44);
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(860, (905 + animationOffset)), HAPISPACE::Colour255::BLACK, "4", 44);
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1060, (905 + animationOffset)), HAPISPACE::Colour255::BLACK, "3/4", 44);
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1295, (905 + animationOffset)), HAPISPACE::Colour255::BLACK, "5", 44);
-	}
-	
 	m_pauseButton->Render(SCREEN_SURFACE);
-	m_chickenButton->Render(SCREEN_SURFACE);
+	//m_chickenButton->Render(SCREEN_SURFACE);
 	m_CompassBackGround->Render(SCREEN_SURFACE);
 	m_CompassPointer->Render(SCREEN_SURFACE);
 	m_activeFactionToken->Render(SCREEN_SURFACE);
+
 
 	switch (m_currentBattleWindow)
 	{
@@ -97,25 +88,36 @@ void BattleGUI::render() const
 	}
 }
 
+void BattleGUI::renderStats(EntityProperties & entityProperties) const
+{
+	m_battleIcons->GetTransformComp().SetPosition({ 510, (800 + static_cast<float>(animationOffset)) });
+	m_battleIcons->Render(SCREEN_SURFACE);
+
+	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(600, (815 + animationOffset)), HAPISPACE::Colour255::BLACK, "  "+std::to_string(entityProperties.m_currentHealth) , 44);
+	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(860, (815 + animationOffset)), HAPISPACE::Colour255::BLACK, std::to_string(entityProperties.m_range), 44);
+	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1060, (815 + animationOffset)), HAPISPACE::Colour255::BLACK, std::to_string(entityProperties.m_movementPoints), 44);
+	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1295, (815 + animationOffset)), HAPISPACE::Colour255::BLACK, std::to_string(entityProperties.m_damage), 44);
+
+}
+
 void BattleGUI::update(eDirection windDirection)
 {
 	//m_CompassPointer->GetTransformComp().SetRotation(static_cast<float>(windDirection) * 0.333333 * 3.14159);
 	m_CompassPointer->GetTransformComp().SetRotation(DEGREES_TO_RADIANS(static_cast<int>(windDirection) *45 % 360));
 
-	if (shipSelected)
-	{
-		if (playAnimation)
-		{
-			animationOffset = 100 - (HAPI_Sprites.GetTime() - animationStartTime);
-			if (animationOffset < 1)
-			{
-				playAnimation = false;
-				animationOffset = 0;
-			}
+	//
+	//if (playAnimation)
+	//{
+	//	animationOffset = 100 - (HAPI_Sprites.GetTime() - animationStartTime);
+	//	if (animationOffset < 1)
+	//	{
+	//		playAnimation = false;
+	//		animationOffset = 0;
+	//	}
 
-			m_battleIcons->GetTransformComp().SetPosition({ 510, (890 + static_cast<float>(animationOffset)) });
-		}
-	}
+	//	m_battleIcons->GetTransformComp().SetPosition({ 510, (890 + static_cast<float>(animationOffset)) });
+	//}
+	
 
 	switch (m_currentBattleWindow)
 	{
