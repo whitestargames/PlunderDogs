@@ -32,9 +32,9 @@ enum OverWorldWindow
 
 enum ePlayerSelect
 {
-	eHuman =0,
+	eNone = 0,
+	eHuman,
 	eAi,
-	eNone
 };
 
 enum eTileType
