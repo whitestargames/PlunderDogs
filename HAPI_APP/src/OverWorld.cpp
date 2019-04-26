@@ -31,13 +31,8 @@ OverWorld::OverWorld()
 	m_battle(),
 	m_startBattle(false)
 {
-	
 	GameEventMessenger::getInstance().subscribe(std::bind(&OverWorld::onReset, this), "OverWorld", GameEvent::eResetBattle);
 	m_players.emplace_back(FactionName::eYellow);
-	m_players.emplace_back(FactionName::eBlue);
-	m_players.emplace_back(FactionName::eGreen);
-	m_players.emplace_back(FactionName::eRed);
-	
 	
 	m_GUI.reset(m_players[m_currentPlayer].m_entities);
 }
