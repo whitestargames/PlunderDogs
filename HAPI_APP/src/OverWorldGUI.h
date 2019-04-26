@@ -33,6 +33,7 @@ private:
 	std::unique_ptr<Sprite> m_prebattleUIBackground;
 	std::unique_ptr<Sprite> m_playButton;
 	std::unique_ptr<Sprite> m_backButton;
+	std::unique_ptr<Sprite> m_nextButton;
 
 	std::unique_ptr<Sprite> m_background;
 	std::unique_ptr<Sprite> m_quitButton;
