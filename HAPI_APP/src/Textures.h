@@ -111,12 +111,6 @@ struct Textures
 			return false;
 		}
 
-		m_preBattleUINextButton = HAPI_Wrapper::makeSpriteSheet("PrebattleUINextButton.png", 2);
-		if (!m_preBattleUINextButton)
-		{
-			HAPI_Sprites.UserMessage("Cannot Load : 'PrebattleUINextButton.png'", "Texture Error");
-			return false;
-		}
 
 		m_thing = HAPI_Wrapper::makeSpriteSheet("thing.png");
 		if (!m_thing)
@@ -388,7 +382,6 @@ struct Textures
 	static std::shared_ptr<SpriteSheet> m_playerSelectBackground;
 	static std::shared_ptr<SpriteSheet> m_prebattleUIBackground;
 	static std::shared_ptr<SpriteSheet> m_preBattleUIPlayButton;
-	static std::shared_ptr<SpriteSheet>m_preBattleUINextButton;
 	static std::shared_ptr<SpriteSheet> m_preBattleUIBackButton;
 	static std::shared_ptr<SpriteSheet> m_thing;
 	static std::shared_ptr<SpriteSheet> m_hexTiles;

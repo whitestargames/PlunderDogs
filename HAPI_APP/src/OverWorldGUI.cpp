@@ -82,7 +82,7 @@ OverWorldGUI::OverWorldGUI()
 	m_prebattleUIBackground(std::make_unique<Sprite>(Textures::m_prebattleUIBackground)),
 	m_playButton(std::make_unique<Sprite>(Textures::m_preBattleUIPlayButton)),
 	m_backButton(std::make_unique<Sprite>(Textures::m_preBattleUIBackButton)),
-	m_nextButton(std::make_unique<Sprite>(Textures::m_preBattleUINextButton)),
+	m_done(std::make_unique<Sprite>(Textures::m_doneButton)),
 	m_quitButton(std::make_unique<Sprite>(Textures::m_quitButton)),
 	m_playerSelectYellow(std::make_unique<Sprite>(Textures::m_playerSelectIconYellow)),
 	m_playerSelectGreen(std::make_unique<Sprite>(Textures::m_playerSelectIconGreen)),
@@ -146,15 +146,17 @@ void OverWorldGUI::render(Battle& battle)
 			m_playerSelectRed->Render(SCREEN_SURFACE);
 			m_playerSelectBlue->Render(SCREEN_SURFACE);
 			m_backButton->Render(SCREEN_SURFACE);
-			m_nextButton->Render(SCREEN_SURFACE);
+			m_done->Render(SCREEN_SURFACE);
 			break;
 		}
 		case OverWorldWindow::eShipSelection:
 		{
 			m_prebattleUIBackground->Render(SCREEN_SURFACE);
-			m_nextButton->Render(SCREEN_SURFACE);
+			m_done->Render(SCREEN_SURFACE);
 			m_backButton->Render(SCREEN_SURFACE);
 			m_upgradesButton->Render(SCREEN_SURFACE);
+			
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(550, 100), HAPISPACE::Colour255::BLACK, selectedMapName, 100);
 			if (m_currentlySelected != nullptr)
 			{
 				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1600, 360), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_currentHealth), 50);
@@ -296,7 +298,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			{
 				CURRENT_WINDOW = OverWorldWindow::eMainMenu;
 			}
-			if (HAPI_Wrapper::isTranslated(m_nextButton, mouseData, 0))
+			if (HAPI_Wrapper::isTranslated(m_done, mouseData, 0))
 			{
 
 				// put int function
@@ -322,6 +324,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			{
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				selectedMap = "Level1.tmx";
+				selectedMapName = "Isle of Turtles";
 				UI.OpenWindow(FLEET_WINDOW);
 				UI.OpenWindow(BATTLE_FLEET_WINDOW);// put different load map strings here
 			}
@@ -329,6 +332,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			{
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				selectedMap = "Level2.tmx";
+				selectedMapName = "Frozen Depths";
 				UI.OpenWindow(FLEET_WINDOW);
 				UI.OpenWindow(BATTLE_FLEET_WINDOW);
 			}
@@ -337,6 +341,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			{
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				selectedMap = "Level3.tmx";
+				selectedMapName = "Sun Sand Cay";
 				UI.OpenWindow(FLEET_WINDOW);
 				UI.OpenWindow(BATTLE_FLEET_WINDOW);
 			}
@@ -345,6 +350,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			{
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				selectedMap = "Level5.tmx";
+				selectedMapName = "Misty Mountains";
 				UI.OpenWindow(FLEET_WINDOW);
 				UI.OpenWindow(BATTLE_FLEET_WINDOW);
 			}
@@ -353,6 +359,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			{
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				selectedMap = "Level6.tmx";
+				selectedMapName = "Krakens Den";
 				UI.OpenWindow(FLEET_WINDOW);
 				UI.OpenWindow(BATTLE_FLEET_WINDOW);
 			}
@@ -369,7 +376,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 				CURRENT_WINDOW = OverWorldWindow::eUpgrade;
 				UI.OpenWindow(UPGRADE_FLEET_WINDOW);
 			}
-			if (HAPI_Wrapper::isTranslated(m_nextButton, mouseData, 0))
+			if (HAPI_Wrapper::isTranslated(m_done, mouseData, 0))
 			{
 				if (!currentSelectedPlayer.m_selectedEntities.empty())
 				{
@@ -560,13 +567,13 @@ void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, Player& current
 	}
 	case OverWorldWindow::ePlayerSelection:
 	{
-		if (HAPI_Wrapper::isTranslated(m_nextButton, mouseData, 0))
+		if (HAPI_Wrapper::isTranslated(m_done, mouseData, 0))
 		{
-			m_nextButton->SetFrameNumber(0);
+			m_done->SetFrameNumber(1);
 		}
-		else if (m_nextButton->GetFrameNumber() != 1)
+		else if (m_done->GetFrameNumber() != 0)
 		{
-			m_nextButton->SetFrameNumber(1);
+			m_done->SetFrameNumber(0);
 		}
 	}
 	case OverWorldWindow::eLevelSelection:
@@ -624,13 +631,13 @@ void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, Player& current
 	}
 	case OverWorldWindow::eShipSelection:
 	{
-		if (HAPI_Wrapper::isTranslated(m_nextButton, mouseData, 0))
+		if (HAPI_Wrapper::isTranslated(m_done, mouseData, 0))
 		{
-			m_nextButton->SetFrameNumber(0);
+			m_done->SetFrameNumber(1);
 		}
-		else if (m_nextButton->GetFrameNumber() != 1)
+		else if (m_done->GetFrameNumber() != 0)
 		{
-			m_nextButton->SetFrameNumber(1);
+			m_done->SetFrameNumber(0);
 		}
 
 		if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
@@ -780,7 +787,7 @@ void OverWorldGUI::reset(const std::vector<EntityProperties>& playerEntities)
 
 	HAPI_Wrapper::setPosition(m_prebattleUIBackground, { 160, 90 });
 	HAPI_Wrapper::setPosition(m_playButton, { 1310, 812 });
-	HAPI_Wrapper::setPosition(m_nextButton, { 1310, 812 });
+	HAPI_Wrapper::setPosition(m_done, { 1310, 812 });
 	HAPI_Wrapper::setPosition(m_quitButton, { 1600, 812 });
 	HAPI_Wrapper::setPosition(m_backButton, { 345, 837 });
 	HAPI_Wrapper::setPosition(m_upgradesButton, { 1460, 115 });
@@ -1035,6 +1042,8 @@ void OverWorldGUI::updateSelectedShips(const std::string & shipWindow, const HAP
 		}
 	}
 }
+
+
 
 
 

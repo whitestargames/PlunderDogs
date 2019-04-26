@@ -10,7 +10,6 @@ std::shared_ptr<SpriteSheet> Textures::m_levelSelect4;
 std::shared_ptr<SpriteSheet> Textures::m_levelSelect5;
 std::shared_ptr<SpriteSheet> Textures::m_prebattleUIBackground;
 std::shared_ptr<SpriteSheet> Textures::m_preBattleUIPlayButton;
-std::shared_ptr<SpriteSheet> Textures::m_preBattleUINextButton;
 std::shared_ptr<SpriteSheet> Textures::m_preBattleUIBackButton;
 std::shared_ptr<SpriteSheet> Textures::m_playerSelectIconYellow; 
 std::shared_ptr<SpriteSheet> Textures::m_playerSelectIconGreen;

@@ -33,7 +33,7 @@ private:
 	std::unique_ptr<Sprite> m_prebattleUIBackground;
 	std::unique_ptr<Sprite> m_playButton;
 	std::unique_ptr<Sprite> m_backButton;
-	std::unique_ptr<Sprite> m_nextButton;
+	std::unique_ptr<Sprite> m_done;
 
 	std::unique_ptr<Sprite> m_background;
 	std::unique_ptr<Sprite> m_quitButton;
@@ -54,7 +54,6 @@ private:
 	void selectBattleShip(const std::string& shipWindow, const std::string& windowSlider, const std::string& selectedShipWindow, const std::string& selectedWindowSlider, const HAPISPACE::VectorI& mouseData, const HAPISPACE::VectorI& windowTopLeft, const HAPISPACE::VectorI& selectedTopLeft, std::vector<EntityProperties>& entities, std::vector<EntityProperties*>& selectedEntities);
 	void deselectBattleShip(const std::string& selectedShipWindow, const std::string& selectedShipSlider, const HAPISPACE::VectorI& selectedWindowTopLeft, std::vector<EntityProperties*>& selectedEntities, const HAPISPACE::VectorI& mouseData);
 	void updateSelectedShips(const std::string& shipWindow, const HAPISPACE::VectorI& windowTopLeft, std::vector<EntityProperties>& entities, std::vector<EntityProperties*>& selectedEntities);
-
 	void onReset();
 
 	HAPISPACE::SliderLayout sliderLayout;
@@ -89,6 +88,7 @@ private:
 	std::unique_ptr<Sprite> m_addRangeButton;
 	std::unique_ptr<Sprite> m_upgradeBackButton;
 	std::string selectedMap = "Level1.tmx";
+	std::string selectedMapName = "Isle of Turtles";
 	bool shipSelectionTrigger{ false };
 	int getActivePlayerCount();
 	
