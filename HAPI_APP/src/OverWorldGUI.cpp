@@ -241,19 +241,53 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 		{
 			if (HAPI_Wrapper::isTranslated(m_playerSelectYellow, mouseData, 0))
 			{
-				m_playerSelectYellow->AdvanceToNextFrame();
+			//	m_playerSelectYellow->AdvanceToNextFrame();
+				if (m_playerSelectYellow->GetFrameNumber() == ePlayerSelect::eHuman)
+				{
+					m_playerSelectYellow->SetFrameNumber(ePlayerSelect::eNone);
+				}
+				else
+				{
+					m_playerSelectYellow->SetFrameNumber(ePlayerSelect::eHuman);
+				}
 			}
 			if (HAPI_Wrapper::isTranslated(m_playerSelectGreen, mouseData, 0))
 			{
-				m_playerSelectGreen->AdvanceToNextFrame();
+				//m_playerSelectGreen->AdvanceToNextFrame();
+				if (m_playerSelectGreen->GetFrameNumber() == ePlayerSelect::eHuman)
+				{
+					m_playerSelectGreen->SetFrameNumber(ePlayerSelect::eNone);
+				}
+				else
+				{
+					m_playerSelectGreen->SetFrameNumber(ePlayerSelect::eHuman);
+				}
 			}
+
+
 			if (HAPI_Wrapper::isTranslated(m_playerSelectRed, mouseData, 0))
 			{
-				m_playerSelectRed->AdvanceToNextFrame();
+				//m_playerSelectRed->AdvanceToNextFrame();
+				if (m_playerSelectRed->GetFrameNumber() == ePlayerSelect::eHuman)
+				{
+					m_playerSelectRed->SetFrameNumber(ePlayerSelect::eNone);
+				}
+				else
+				{
+					m_playerSelectRed->SetFrameNumber(ePlayerSelect::eHuman);
+				}
 			}
 			if (HAPI_Wrapper::isTranslated(m_playerSelectBlue, mouseData, 0))
 			{
-				m_playerSelectBlue->AdvanceToNextFrame();
+				//m_playerSelectBlue->AdvanceToNextFrame();
+				if (m_playerSelectBlue->GetFrameNumber() == ePlayerSelect::eHuman)
+				{
+					m_playerSelectBlue->SetFrameNumber(ePlayerSelect::eNone);
+				}
+				else
+				{
+					m_playerSelectBlue->SetFrameNumber(ePlayerSelect::eHuman);
+				}
 			}
 			if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
 			{
