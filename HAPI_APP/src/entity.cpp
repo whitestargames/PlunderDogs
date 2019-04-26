@@ -278,34 +278,34 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 	{
 	case EntityType::eCruiser:
 		m_movementPoints = 15;
-		m_healthMax = 15;
-		m_currentHealth = 15;
-		m_range = 6;
-		m_damage = 5;
+		m_healthMax = 7;
+		m_currentHealth = 7;
+		m_range = 5;
+		m_damage = 2;
 		m_weaponType = eWeaponType::eSideCannons;
 		break;
 	case EntityType::eBattleShip:
-		m_movementPoints = 10;
-		m_healthMax = 25;
-		m_currentHealth = 25;
+		m_movementPoints = 15;
+		m_healthMax = 8;
+		m_currentHealth = 8;
 		m_range = 2;
-		m_damage = 7;
+		m_damage = 2;
 		m_weaponType = eWeaponType::eShotGun;
 		break;
 	case EntityType::eDestroyer:
 		m_movementPoints = 20;
-		m_healthMax = 10;
-		m_currentHealth = 10;
+		m_healthMax = 6;
+		m_currentHealth = 6;
 		m_range = 6;
-		m_damage = 5;
+		m_damage = 3;
 		m_weaponType = eWeaponType::eFlamethrower;
 		break;
 	case EntityType::eGunBoat:
-		m_movementPoints = 8;
-		m_healthMax = 8;
-		m_currentHealth = 8;
-		m_range = 15;
-		m_damage = 9;
+		m_movementPoints = 10;
+		m_healthMax = 5;
+		m_currentHealth = 5;
+		m_range = 12;
+		m_damage = 2;
 		m_weaponType = eWeaponType::eStraightShot;
 		break;
 	}
