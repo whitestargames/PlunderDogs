@@ -179,7 +179,6 @@ void OverWorldGUI::render(Battle& battle)
 			//HAPI_Wrapper::render(m_battleMapBackground);
 			HAPI_Wrapper::render(m_background);
 			//HAPI_Wrapper::render(m_enemyTerritoryHexSheet);
-
 			HAPI_Wrapper::render(m_battleMapBackground);
 			HAPI_Wrapper::render(m_backButton);
 			HAPI_Wrapper::render(m_selectMapButtons1);
@@ -297,6 +296,10 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			}
 			if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
 			{
+				m_playerSelectYellow->SetFrameNumber(ePlayerSelect::eNone);
+				m_playerSelectGreen->SetFrameNumber(ePlayerSelect::eNone);
+				m_playerSelectRed->SetFrameNumber(ePlayerSelect::eNone);
+				m_playerSelectBlue->SetFrameNumber(ePlayerSelect::eNone);
 				CURRENT_WINDOW = OverWorldWindow::eMainMenu;
 			}
 			if (HAPI_Wrapper::isTranslated(m_done, mouseData, 0))
@@ -306,6 +309,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 				if (getActivePlayerCount() >=2)
 				{
 					CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
+				
 				}
 				
 		
@@ -402,6 +406,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			else if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
 			{
 				resetPlayer = true;
+
 				CURRENT_WINDOW = OverWorldWindow::ePlayerSelection;
 				UI.CloseWindow(FLEET_WINDOW);
 				UI.CloseWindow(BATTLE_FLEET_WINDOW);
@@ -804,6 +809,10 @@ void OverWorldGUI::reset(const std::vector<EntityProperties>& playerEntities)
 	HAPI_Wrapper::setPosition(m_playerSelectGreen, { 700, 300 });
 	HAPI_Wrapper::setPosition(m_playerSelectRed, { 1000, 300 });
 	HAPI_Wrapper::setPosition(m_playerSelectBlue, { 1300, 300 });
+	m_playerSelectYellow->SetFrameNumber(ePlayerSelect::eNone);
+	m_playerSelectGreen->SetFrameNumber(ePlayerSelect::eNone);
+	m_playerSelectRed->SetFrameNumber(ePlayerSelect::eNone);
+	m_playerSelectBlue->SetFrameNumber(ePlayerSelect::eNone);
 
 	
 	//adding the windows and sliders, also populates the fleet window with all current entities
