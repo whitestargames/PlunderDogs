@@ -729,7 +729,7 @@ BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*> 
 	m_spawnSprites()
 {
 	//Might change this - for now its two containers but looks confusing
-	m_spawnArea = map.getTileRadius(spawnPosition, range);
+	m_spawnArea = map.getTileRadius(spawnPosition, range, true);
 	m_spawnSprites.reserve(m_spawnArea.size());
 	for (int i = 0; i < m_spawnArea.size(); ++i)
 	{
@@ -857,10 +857,11 @@ void BattleUI::ShipPlacementPhase::onLeftClick(const InvalidPosition& invalidPos
 		if (m_player.empty())
 		{
 			battle.nextTurn();
-			
-			return;
 		}
-		m_currentSelectedEntity.m_currentSelectedEntity = m_player.back();
+		else
+		{
+			m_currentSelectedEntity.m_currentSelectedEntity = m_player.back();
+		}
 	}
 }
 

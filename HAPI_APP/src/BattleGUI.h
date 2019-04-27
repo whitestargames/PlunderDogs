@@ -34,8 +34,6 @@ public:
 	void OnMouseMove(const HAPI_TMouseData& mouseData);
 	void setMaxCameraOffset(std::pair<int, int> maxCameraOffset);
 
-	
-
 private:
 	BattleWindow m_currentBattleWindow;
 	std::pair<int, int> m_maxCameraOffset;

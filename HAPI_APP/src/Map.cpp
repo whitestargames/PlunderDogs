@@ -231,7 +231,7 @@ std::vector<Tile*> Map::getAdjacentTiles(intPair coord)
 	return result;
 }
 
-std::vector<Tile*> Map::getTileRadius(intPair coord, int range)
+std::vector<Tile*> Map::getTileRadius(intPair coord, int range, bool includeSource)
 {
 	if (range < 1)
 		HAPI_Sprites.UserMessage("getTileRadius range less than 1", "Map error");
@@ -242,9 +242,12 @@ std::vector<Tile*> Map::getTileRadius(intPair coord, int range)
 		reserveSize += 6 * i;
 	}
 	std::vector<Tile*> tileStore;
-
 	tileStore.reserve((size_t)reserveSize);
-
+	if (includeSource)
+	{
+		tileStore.push_back(getTile(coord));
+	}
+	
 	intPair cubeCoord(offsetToCube(coord));
 
 	for (int y = std::max(0, coord.second - range);
@@ -541,7 +544,7 @@ std::vector<const Tile*> Map::getAdjacentTiles(std::pair<int, int> coord) const
 	return result;
 }
 
-std::vector<const Tile*> Map::getTileRadius(std::pair<int, int> coord, int range) const
+std::vector<const Tile*> Map::getTileRadius(std::pair<int, int> coord, int range, bool includeSource) const
 {
 	if (range < 1)
 		HAPI_Sprites.UserMessage("getTileRadius range less than 1", "Map error");
@@ -552,8 +555,11 @@ std::vector<const Tile*> Map::getTileRadius(std::pair<int, int> coord, int range
 		reserveSize += 6 * i;
 	}
 	std::vector<const Tile*> tileStore;
-
 	tileStore.reserve((size_t)reserveSize);
+	if (includeSource)
+	{
+		tileStore.push_back(getTile(coord));
+	}
 
 	intPair cubeCoord(offsetToCube(coord));
 
