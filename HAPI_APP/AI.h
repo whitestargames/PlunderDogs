@@ -15,7 +15,7 @@ private:
 
 public:
 	void handleMovementPhase(Battle* battlePtr, Map* mapPtr, FactionName faction);
-	void handleShootingPhase(FactionName faction);
+	void handleShootingPhase(Battle* battlePtr, Map* mapPtr, FactionName faction);
 
 	AI();
 	~AI();
