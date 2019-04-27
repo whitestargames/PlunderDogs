@@ -325,6 +325,7 @@ void Battle::BattleManager::onRedShipDestroyed(std::vector<BattlePlayer>& player
 
 void Battle::BattleManager::elimatePlayer(FactionName factionName, std::vector<BattlePlayer>& players)
 {
+
 	auto iter = std::find_if(players.begin(), players.end(), [factionName](const auto& player) { return player.m_factionName == factionName; });
 	assert(iter != players.end());
 	if (m_yellowShipsDestroyed == static_cast<int>(iter->m_entities.size()))
