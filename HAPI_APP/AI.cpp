@@ -23,18 +23,18 @@ Tile* AI::findClosestEnemy(
 
 void AI::handleMovementPhase(Battle* battlePtr, Map* mapPtr, FactionName faction)
 {
-	std::vector<BattleEntity>* ships{ battlePtr->getFactionShips(faction) };
+	std::vector<std::unique_ptr<BattleEntity>> ships{ *battlePtr->getFactionShips(faction) };
 	//loop through all the ships in the faction
-	for (auto it = ships->begin(); it != ships->end(); it++)
+	for (int i = 0; i < ships.size(); i++)
 	{
 		//find the nearest enemy ship
 
-		Tile* enemyPosition{ findClosestEnemy(battlePtr, mapPtr, mapPtr->getTile(it->m_battleProperties.getCurrentPosition())) };
+		Tile* enemyPosition{ findClosestEnemy(battlePtr, mapPtr, mapPtr->getTile(ships[i])) };
 
 		//find the nearest tile and facing that can fire upon the chosen enemy ship
-		std::pair<Tile*, eDirection>  firingPosition{ findFiringPosition(enemyPosition,it->m_entityProperties.m_weaponType, it->m_entityProperties.m_range) };
+		std::pair<Tile*, eDirection>  firingPosition{ findFiringPosition(enemyPosition,ships[i]->m_entityProperties.m_weaponType, ships[i]->m_entityProperties.m_range) };
 		//move as far as possible on the path to the chosen position
-		attemptMove(mapPtr->getTile(it->m_battleProperties.getCurrentPosition), firingPosition);
+		attemptMove(mapPtr->getTile(ships[i]->m_battleProperties.getCurrentPosition), firingPosition);
 	}
 }
 
