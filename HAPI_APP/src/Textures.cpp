@@ -24,6 +24,7 @@ std::shared_ptr<SpriteSheet> Textures::m_nightHexTiles;
 std::shared_ptr<SpriteSheet> Textures::m_spawnHex;
 std::shared_ptr<SpriteSheet> Textures::m_selectedHex;
 std::shared_ptr<SpriteSheet> Textures::m_battleIcons;
+std::shared_ptr<SpriteSheet> Textures::m_endPhaseButtons;
 std::shared_ptr<SpriteSheet> Textures::m_pauseButton;
 std::shared_ptr<SpriteSheet> Textures::m_chickenButton;
 std::shared_ptr<SpriteSheet> Textures::m_pauseMenuBackground;
