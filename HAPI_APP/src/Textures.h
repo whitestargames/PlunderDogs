@@ -162,6 +162,13 @@ struct Textures
 			return false;
 		}
 
+		m_endPhaseButtons = HAPI_Wrapper::makeSpriteSheet("endPhaseButtons.png", 4);
+		if (!m_endPhaseButtons)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'endPhaseButtons.png'", "Texture Error");
+			return false;
+		}
+
 		m_pauseButton = HAPI_Wrapper::makeSpriteSheet("pauseButton.png",2);
 		if (!m_pauseButton)
 		{
@@ -391,6 +398,7 @@ struct Textures
 	static std::shared_ptr<SpriteSheet> m_spawnHex;
 	static std::shared_ptr<SpriteSheet> m_selectedHex;
 	static std::shared_ptr<SpriteSheet> m_battleIcons;
+	static std::shared_ptr<SpriteSheet> m_endPhaseButtons;
 	static std::shared_ptr<SpriteSheet> m_pauseButton;
 	static std::shared_ptr<SpriteSheet> m_chickenButton;
 	static std::shared_ptr<SpriteSheet> m_pauseMenuBackground;

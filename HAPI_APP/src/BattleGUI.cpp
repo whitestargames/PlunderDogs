@@ -17,7 +17,8 @@ BattleGUI::BattleGUI()
 	m_CompassPointer(HAPI_Sprites.MakeSprite(Textures::m_CompassPointer)),
 	m_CompassBackGround(HAPI_Sprites.MakeSprite(Textures::m_CompassBackGround)),
 	m_currentBattleWindow(BattleWindow::eCombat),
-	m_maxCameraOffset(0, 0)
+	m_maxCameraOffset(0, 0),
+	m_endPhaseButtons(HAPI_Sprites.MakeSprite(Textures::m_endPhaseButtons))
 {	
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onReset, this), "BattleGUI", GameEvent::eResetBattle);
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onRedWin, this), "BattleGUI", GameEvent::eOnRedWin);
@@ -26,20 +27,21 @@ BattleGUI::BattleGUI()
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onGreenWin, this), "BattleGUI", GameEvent::eOnGreenWin);
 
 	m_battleIcons->GetTransformComp().SetPosition({ 510, 890 });
-	m_pauseButton->GetTransformComp().SetPosition({ 1650, 140 });
+	m_endPhaseButtons->GetTransformComp().SetPosition({ 0, 968 });
+	m_pauseButton->GetTransformComp().SetPosition({ 1790, 30 });
 	m_chickenButton->GetTransformComp().SetPosition({ 1610, 840 });
 	m_CompassBackGround->GetTransformComp().SetOriginToCentreOfFrame();
-	m_CompassBackGround->GetTransformComp().SetPosition({ 240, 170 });
+	m_CompassBackGround->GetTransformComp().SetPosition({ 100, 100 });
 	m_CompassPointer->GetTransformComp().SetOrigin({ 21.5f,60 });
-	m_CompassPointer->GetTransformComp().SetPosition({ 240, 170 });
+	m_CompassPointer->GetTransformComp().SetPosition({ 100, 100 });
 	m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
-	m_activeFactionToken->GetTransformComp().SetPosition({ 1510,140 });// position just temp can be adjusted as needed
+	m_activeFactionToken->GetTransformComp().SetPosition({ 1690, 55 });
 
 	//pauseMenu
 	m_resumeButton->GetTransformComp().SetPosition({ 818, 387 });
 	m_quitButton->GetTransformComp().SetPosition({ 818, 517 });
 	//postBattle
-	m_postBattleBackground->GetTransformComp().SetPosition({ 360, 190 });
+	//m_postBattleBackground->GetTransformComp().SetPosition({ 360, 190 });
 	m_doneButton->GetTransformComp().SetPosition({ 820, 800 });
 }
 
@@ -65,7 +67,7 @@ void BattleGUI::render() const
 	m_CompassBackGround->Render(SCREEN_SURFACE);
 	m_CompassPointer->Render(SCREEN_SURFACE);
 	m_activeFactionToken->Render(SCREEN_SURFACE);
-
+	m_endPhaseButtons->Render(SCREEN_SURFACE);
 
 	switch (m_currentBattleWindow)
 	{
@@ -188,8 +190,9 @@ void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData)
 		{
 			m_currentBattleWindow = BattleWindow::ePause;//enables the pause menu
 		}
-					if (m_chickenButton->GetSpritesheet()->GetFrameRect(0).Translated(
-						m_chickenButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
+
+		if (m_chickenButton->GetSpritesheet()->GetFrameRect(0).Translated(
+			m_chickenButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
 		{
 			animationStartTime = HAPI_Sprites.GetTime();
 			shipSelected = true;
@@ -199,6 +202,20 @@ void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData)
 		{
 			shipSelected = false;
 		}
+
+		// ryan phase button stuff is here
+		/*if (m_endPhaseButtons->GetSpritesheet()->GetFrameRect(0).Translated(
+			m_endPhaseButtons->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
+		{
+			if (current phase is movement)
+			{
+			end movement phase
+			}
+			else if (current phase is attack)
+			{
+				end attack phase
+			}
+		}*/
 		break;
 	}
 	case BattleWindow::ePause:
@@ -244,24 +261,49 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 		}
 
 
+		// ryan the phase button stuff is here
+		//if (m_endPhaseButtons->GetSpritesheet()->GetFrameRect(0).Translated(m_endPhaseButtons->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//checks if mouse is over the phase button
+		//{
+		//	if (current phase is movement)
+		//	{
+		//		m_endPhaseButtons->SetFrameNumber(1);
+		//	}
+		//	else if (current phase is attack)
+		//	{
+		//		m_endPhaseButtons->SetFrameNumber(3);
+		//	}
+		//}
+		//else if (m_endPhaseButtons->GetFrameNumber() != 0 && m_endPhaseButtons->GetFrameNumber() != 2)//checks if the mouse is no longer over the phase button
+		//{
+		//	if (current phase is movement)
+		//	{
+		//		m_endPhaseButtons->SetFrameNumber(0);
+		//	}
+		//	else if (current phase is attack)
+		//	{
+		//		m_endPhaseButtons->SetFrameNumber(2);
+		//	}
+		//}
+
+
 		//moves the sprites when the mouse is on the edge of the screen
 		//only checks when mouse moves. if mouse doesnt move, it knows its still in the same spot and will keep scrolling without checking
 		pendingCameraMovement = VectorF{ 0,0 };
 
-		if (mouseData.x < 100)
+		if (mouseData.x < 50)
 		{
 			pendingCameraMovement += VectorF{ -1,0 };
 		}
-		else if (mouseData.x > 1500)
+		else if (mouseData.x > 1870)
 		{
 			pendingCameraMovement += VectorF{ 1,0 };
 		}
 
-		if (mouseData.y < 100)
+		if (mouseData.y < 50)
 		{
 			pendingCameraMovement += VectorF{ 0,-1 };
 		}
-		else if (mouseData.y > 800)
+		else if (mouseData.y > 1030)
 		{
 			pendingCameraMovement += VectorF{ 0,1 };
 		}
