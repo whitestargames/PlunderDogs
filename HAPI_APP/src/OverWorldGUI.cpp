@@ -325,16 +325,12 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				selectedMap = "Level1.tmx";
 				selectedMapName = "Isle of Turtles";
-				UI.OpenWindow(FLEET_WINDOW);
-				UI.OpenWindow(BATTLE_FLEET_WINDOW);// put different load map strings here
 			}
 			if (HAPI_Wrapper::isTranslated(m_selectMapButtons2, mouseData, 0))
 			{
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				selectedMap = "Level2.tmx";
 				selectedMapName = "Frozen Depths";
-				UI.OpenWindow(FLEET_WINDOW);
-				UI.OpenWindow(BATTLE_FLEET_WINDOW);
 			}
 
 			if (HAPI_Wrapper::isTranslated(m_selectMapButtons3, mouseData, 0))
@@ -342,8 +338,6 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				selectedMap = "Level3.tmx";
 				selectedMapName = "Sun Sand Cay";
-				UI.OpenWindow(FLEET_WINDOW);
-				UI.OpenWindow(BATTLE_FLEET_WINDOW);
 			}
 
 			if (HAPI_Wrapper::isTranslated(m_selectMapButtons4, mouseData, 0))
@@ -351,8 +345,6 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				selectedMap = "Level5.tmx";
 				selectedMapName = "Misty Mountains";
-				UI.OpenWindow(FLEET_WINDOW);
-				UI.OpenWindow(BATTLE_FLEET_WINDOW);
 			}
 
 			if (HAPI_Wrapper::isTranslated(m_selectMapButtons5, mouseData, 0))
@@ -360,10 +352,9 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				selectedMap = "Level6.tmx";
 				selectedMapName = "Krakens Den";
-				UI.OpenWindow(FLEET_WINDOW);
-				UI.OpenWindow(BATTLE_FLEET_WINDOW);
 			}
-
+			UI.OpenWindow(FLEET_WINDOW);
+			UI.OpenWindow(BATTLE_FLEET_WINDOW);
 			break;
 		}
 		//Play Button
@@ -785,7 +776,7 @@ void OverWorldGUI::reset(const std::vector<EntityProperties>& playerEntities)
 	UI.DeleteWindow(BATTLE_FLEET_WINDOW);
 	UI.DeleteWindow(UPGRADE_FLEET_WINDOW);
 
-	HAPI_Wrapper::setPosition(m_prebattleUIBackground, { 160, 90 });
+	
 	HAPI_Wrapper::setPosition(m_playButton, { 1310, 812 });
 	HAPI_Wrapper::setPosition(m_done, { 1310, 812 });
 	HAPI_Wrapper::setPosition(m_quitButton, { 1600, 812 });
