@@ -479,5 +479,6 @@ void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, 
 //BATTLE PLAYER
 BattlePlayer::BattlePlayer(FactionName name)
 	: m_entities(),
-	m_factionName(name)
+	m_factionName(name),
+	m_eliminated(false)
 {}

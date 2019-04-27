@@ -31,21 +31,6 @@ void Battle::setWindDirection(float deltaTime)
 	}
 }
 
-void Battle::onYellowShipDestroyed()
-{
-}
-
-void Battle::onBlueShipDestroyed()
-{
-}
-
-void Battle::onGreenShipDestroyed()
-{
-}
-
-void Battle::onRedShipDestroyed()
-{
-}
 
 Battle::Battle()
 	: m_players(),
@@ -151,7 +136,6 @@ void Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 		if (cIter != targetArea.cend())
 		{
 			auto& enemy = tileOnAttackPosition.m_entityOnTile;
-
 			enemy->m_battleProperties.takeDamage(enemy->m_entityProperties, player.m_entityProperties.m_damage, enemy->m_factionName);
 		}
 	}
@@ -273,33 +257,131 @@ BattlePhase Battle::getCurrentPhase() const
 
 FactionName Battle::getCurentFaction() const
 {
-	
 	return m_players[m_currentPlayerTurn].m_factionName;
 }
 
-Battle::BattleManager::BattleManager()
+void Battle::onYellowShipDestroyed()
 {
+	m_battleManager.onYellowShipDestroyed(m_players);
+}
 
+void Battle::onBlueShipDestroyed()
+{
+	m_battleManager.onBlueShipDestroyed(m_players);
+}
+
+void Battle::onGreenShipDestroyed()
+{
+	m_battleManager.onGreenShipDestroyed(m_players);
+}
+
+void Battle::onRedShipDestroyed()
+{
+	m_battleManager.onRedShipDestroyed(m_players);
+}
+
+Battle::BattleManager::BattleManager()
+	: m_yellowShipsDestroyed(0),
+	m_blueShipsDestroyed(0),
+	m_greenShipsDestroyed(0),
+	m_redShipsDestroyed(0)
+{
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleManager::onReset, this), "BattleManager", GameEvent::eResetBattle);
 }
 
 Battle::BattleManager::~BattleManager()
 {
+	GameEventMessenger::getInstance().unsubscribe("BattleManager", GameEvent::eResetBattle);
 }
 
-//void Battle::BattleManager::onYellowShipDestroyed()
-//{
-//	++m_yellowShipsDestroyed;
-//}
-//
-//void Battle::BattleManager::onBlueShipDestroyed()
-//{
-//	++m_blueShipedDestroyed;
-//}
-//
-//void Battle::BattleManager::onGreenShipDestroyed()
-//{
-//}
-//
-//void Battle::BattleManager::onRedShipDestroyed()
-//{
-//}
+void Battle::BattleManager::onYellowShipDestroyed(std::vector<BattlePlayer>& players)
+{
+	++m_yellowShipsDestroyed;
+	auto player = std::find_if(players.begin(), players.end(), [](const auto& player) { return player.m_factionName == FactionName::eYellow; });
+	assert(player != players.end());
+	if (m_yellowShipsDestroyed == static_cast<int>(player->m_entities.size()))
+	{
+		player->m_eliminated = true;
+		checkGameStatus(players);
+	}
+}
+
+void Battle::BattleManager::onBlueShipDestroyed(std::vector<BattlePlayer>& players)
+{
+	++m_blueShipsDestroyed;
+	auto player = std::find_if(players.begin(), players.end(), [](const auto& player) { return player.m_factionName == FactionName::eBlue; });
+	assert(player != players.end());
+	if (m_blueShipsDestroyed == static_cast<int>(player->m_entities.size()))
+	{
+		player->m_eliminated = true;
+		checkGameStatus(players);
+	}
+}
+
+void Battle::BattleManager::onGreenShipDestroyed(std::vector<BattlePlayer>& players)
+{
+	++m_greenShipsDestroyed;
+	auto player = std::find_if(players.begin(), players.end(), [](const auto& player) { return player.m_factionName == FactionName::eGreen; });
+	assert(player != players.end());
+	if (m_greenShipsDestroyed == static_cast<int>(player->m_entities.size()))
+	{
+		player->m_eliminated = true;
+		checkGameStatus(players);
+	}
+}
+
+void Battle::BattleManager::onRedShipDestroyed(std::vector<BattlePlayer>& players)
+{
+	++m_redShipsDestroyed;
+	auto player = std::find_if(players.begin(), players.end(), [](const auto& player) { return player.m_factionName == FactionName::eRed; });
+	assert(player != players.end());
+	if (m_redShipsDestroyed == static_cast<int>(player->m_entities.size()))
+	{
+		player->m_eliminated = true;
+		checkGameStatus(players);
+	}
+}
+
+void Battle::BattleManager::onReset()
+{
+	m_yellowShipsDestroyed = 0;
+	m_redShipsDestroyed = 0;
+	m_blueShipsDestroyed = 0;
+	m_greenShipsDestroyed = 0;
+}
+
+void Battle::BattleManager::checkGameStatus(const std::vector<BattlePlayer>& players)
+{
+	//Check to see if all players have been eliminated
+	int playersEliminated = 0;
+	for (const auto& player : players)
+	{
+		if (player.m_eliminated)
+		{
+			++playersEliminated;
+		}
+	}
+
+	//Last player standing - Player wins
+	if (playersEliminated == static_cast<int>(players.size()) - 1)
+	{
+		auto player = std::find_if(players.cbegin(), players.cend(), [](const auto& player) { return player.m_eliminated == false; });
+		assert(player != players.cend());
+		FactionName winningFaction = player->m_factionName;
+		switch (winningFaction)
+		{
+		case FactionName::eYellow:
+			GameEventMessenger::broadcast(GameEvent::eOnYellowWin);
+			break;
+		case FactionName::eBlue:
+			GameEventMessenger::broadcast(GameEvent::eOnBlueWin);
+			break;
+		case FactionName::eGreen:
+			GameEventMessenger::broadcast(GameEvent::eOnGreenWin);
+			break;
+		case FactionName::eRed:
+			GameEventMessenger::broadcast(GameEvent::eOnRedWin);
+			break;
+		}
+	}
+}

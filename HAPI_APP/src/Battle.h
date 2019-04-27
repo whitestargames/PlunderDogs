@@ -18,11 +18,20 @@ class Battle
 	public:
 		BattleManager();
 		~BattleManager();
+	
+		void onYellowShipDestroyed(std::vector<BattlePlayer>& players);
+		void onBlueShipDestroyed(std::vector<BattlePlayer>& players);
+		void onGreenShipDestroyed(std::vector<BattlePlayer>& players);
+		void onRedShipDestroyed(std::vector<BattlePlayer>& players);
 
 	private:
 		int m_yellowShipsDestroyed;
-		int m_blueShipedDestroyed;
+		int m_blueShipsDestroyed;
+		int m_greenShipsDestroyed;
+		int m_redShipsDestroyed;
+		void onReset();
 
+		void checkGameStatus(const std::vector<BattlePlayer>& players);
 	};
 
 public:
@@ -63,7 +72,6 @@ private:
 	void incrementPlayerTurn();
 	void setTimeOfDay(float deltaTime);
 	void setWindDirection(float deltaTime);
-
 
 	void onYellowShipDestroyed();
 	void onBlueShipDestroyed();

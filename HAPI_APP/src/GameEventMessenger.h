@@ -23,7 +23,11 @@ enum GameEvent
 	eYellowShipDestroyed,
 	eBlueShipDestroyed,
 	eGreenShipDestroyed,
-	eRedShipDestroyed
+	eRedShipDestroyed,
+	eOnRedWin,
+	eOnYellowWin,
+	eOnGreenWin,
+	eOnBlueWin
 };
 
 class Listener
