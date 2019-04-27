@@ -34,8 +34,8 @@ public:
 	void insertEntity(std::pair<int, int> startingPosition, eDirection startingDirection, const EntityProperties& entityProperties, FactionName factionName);
 	void nextTurn();
 
-	std::vector<std::unique_ptr<BattleEntity>>* getFactionShips(FactionName faction);
-	const std::vector<std::unique_ptr<BattleEntity>>* getFactionShips(FactionName faction) const;
+	std::vector<std::shared_ptr<BattleEntity>>* getFactionShips(FactionName faction);
+	const std::vector<std::shared_ptr<BattleEntity>>* getFactionShips(FactionName faction) const;
 private:
 	std::vector<BattlePlayer> m_players;
 	int m_currentPlayersTurn;
@@ -48,7 +48,7 @@ private:
 
 	void updateMovementPhase(float deltaTime);
 	void updateAttackPhase();
-	bool allEntitiesAttacked(std::vector<std::unique_ptr<BattleEntity>>& playerEntities) const;
+	bool allEntitiesAttacked(std::vector<std::shared_ptr<BattleEntity>>& playerEntities) const;
 	BattlePlayer& getPlayer(FactionName factionName);
 
 	void onReset();
