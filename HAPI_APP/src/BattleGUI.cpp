@@ -35,7 +35,7 @@ BattleGUI::BattleGUI()
 	m_CompassPointer->GetTransformComp().SetOrigin({ 21.5f,60 });
 	m_CompassPointer->GetTransformComp().SetPosition({ 100, 100 });
 	m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
-	m_activeFactionToken->GetTransformComp().SetPosition({ 1690, 55 });
+	m_activeFactionToken->GetTransformComp().SetPosition({ 960, 55 });
 
 	//pauseMenu
 	m_resumeButton->GetTransformComp().SetPosition({ 818, 387 });
@@ -82,7 +82,23 @@ void BattleGUI::render() const
 	{
 		m_postBattleBackground->Render(SCREEN_SURFACE);
 		m_doneButton->Render(SCREEN_SURFACE);
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(450, 400), HAPISPACE::Colour255::YELLOW, winningFaction + " Faction Wins ", 190, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+		if (winningFaction == "Red")
+		{
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(450, 400), HAPISPACE::Colour255::RED, winningFaction + " Faction Wins ", 190, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+		}
+		else if (winningFaction == "Green")
+		{
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(450, 400), HAPISPACE::Colour255::GREEN, winningFaction + " Faction Wins ", 190, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+		}
+		else if (winningFaction == "Yellow")
+		{
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(450, 400), HAPISPACE::Colour255::YELLOW, winningFaction + " Faction Wins ", 190, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+		}
+		else if (winningFaction == "Blue")
+		{
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(450, 400), HAPISPACE::Colour255::BLUE, winningFaction + " Faction Wins ", 190, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+		}
+		//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(450, 400), HAPISPACE::Colour255::YELLOW, winningFaction + " Faction Wins ", 190, {}, HAPISPACE::Colour255::BLACK, 2.5f);
 	}
 
 	}
@@ -342,6 +358,7 @@ void BattleGUI::setMaxCameraOffset(std::pair<int, int> maxCameraOffset)
 void BattleGUI::onReset()
 {
 	m_currentBattleWindow = BattleWindow::eCombat;
+	winningFaction = "";
 
 	m_battleIcons->GetTransformComp().SetPosition({ 510, 890 });
 	m_pauseButton->GetTransformComp().SetPosition({ 1650, 140 });
@@ -385,28 +402,24 @@ std::string BattleGUI::getWinningFactionName()
 
 void BattleGUI::onBlueWin()
 {
-	int i = 0;
 	winningFaction = getWinningFactionName();
 	m_currentBattleWindow = BattleWindow::ePostBattle;
 }
 
 void BattleGUI::onGreenWin()
 {
-	int i = 0;
 	winningFaction = getWinningFactionName();
 	m_currentBattleWindow = BattleWindow::ePostBattle;
 }
 
 void BattleGUI::onYellowWin()
 {
-	int i = 0;
 	winningFaction = getWinningFactionName();
 	m_currentBattleWindow = BattleWindow::ePostBattle;
 }
 
 void BattleGUI::onRedWin()
 {
-	int i = 0;
 	winningFaction = getWinningFactionName();
 	m_currentBattleWindow = BattleWindow::ePostBattle;
 }

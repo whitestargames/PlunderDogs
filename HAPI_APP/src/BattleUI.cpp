@@ -77,7 +77,7 @@ void BattleUI::renderUI() const
 	switch (m_battle.getCurrentPhase())
 	{
 	case BattlePhase::ShipPlacement:
-		assert(!m_playerShipPlacement.empty());
+		//assert(!m_playerShipPlacement.empty());
 		m_playerShipPlacement.front()->render(m_invalidPosition, m_battle.getMap());
 		break;
 
@@ -733,19 +733,32 @@ BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*> 
 	m_spawnSprites.reserve(m_spawnArea.size());
 	for (int i = 0; i < m_spawnArea.size(); ++i)
 	{
-		m_spawnSprites.push_back(HAPI_Sprites.MakeSprite(Textures::m_spawnHex));
-	}
-
-	for (int i = 0; i < m_spawnArea.size(); ++i)
-	{
+		std::unique_ptr<Sprite> sprite = HAPI_Sprites.MakeSprite(Textures::m_spawnHex);
 		auto screenPosition = map.getTileScreenPos(m_spawnArea[i]->m_tileCoordinate);
-		m_spawnSprites[i]->GetTransformComp().SetPosition({
-		(float)screenPosition.first + DRAW_OFFSET_X * map.getDrawScale() ,
-		(float)screenPosition.second + DRAW_OFFSET_Y * map.getDrawScale() });
-		m_spawnSprites[i]->GetTransformComp().SetOriginToCentreOfFrame();
+		sprite->GetTransformComp().SetPosition({
+		(float)screenPosition.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),
+		(float)screenPosition.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
+		sprite->GetTransformComp().SetOriginToCentreOfFrame();
+		//sprite->GetTransformComp().SetScaling({ 1.8f, 1.8f });
+
+		m_spawnSprites.push_back(std::move(sprite));
 	}
 
+	//for (int i = 0; i < m_spawnArea.size(); ++i)
+	//{
+	//	//const std::pair<int, int> tileTransform = map.getTileScreenPos(m_tile->m_tileCoordinate);
 
+	//	//m_sprite->GetTransformComp().SetPosition({
+	//	//static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
+	//	//static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
+
+	//	auto screenPosition = map.getTileScreenPos(m_spawnArea[i]->m_tileCoordinate);
+	//	m_spawnSprites[i]->GetTransformComp().SetPosition({
+	//	(float)screenPosition.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale() ,
+	//	(float)screenPosition.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
+	//	m_spawnSprites[i]->GetTransformComp().SetOriginToCentreOfFrame();
+	//	m_spawnSprites[i]->GetTransformComp().SetScaling({ 1.8f, 1.8f });
+	//}
 
 	m_currentSelectedEntity.m_currentSelectedEntity = m_player.back();
 }
@@ -757,25 +770,25 @@ bool BattleUI::ShipPlacementPhase::isCompleted() const
 
 void BattleUI::ShipPlacementPhase::render(const InvalidPosition& invalidPosition, const Map& map) const
 {
-	for (auto& i : m_spawnArea)
-	{
-		switch (map.getTimeOfDay())
-		{
-		case eTimeOfDay::eMorning:
-			i->m_daySprite->Render(SCREEN_SURFACE);
-			break;
-		case eTimeOfDay::eAfternoon:
-			i->m_aftersprite->Render(SCREEN_SURFACE);
-			break;
-		case eTimeOfDay::eEvening:
-			i->m_eveningSprite->Render(SCREEN_SURFACE);
-			break;
-		case eTimeOfDay::eNight:
-			i->m_nightSprite->Render(SCREEN_SURFACE);
-			break;
-		}
-		
-	}
+	//for (auto& i : m_spawnArea)
+	//{
+	//	switch (map.getTimeOfDay())
+	//	{
+	//	case eTimeOfDay::eMorning:
+	//		i->m_daySprite->Render(SCREEN_SURFACE);
+	//		break;
+	//	case eTimeOfDay::eAfternoon:
+	//		i->m_aftersprite->Render(SCREEN_SURFACE);
+	//		break;
+	//	case eTimeOfDay::eEvening:
+	//		i->m_eveningSprite->Render(SCREEN_SURFACE);
+	//		break;
+	//	case eTimeOfDay::eNight:
+	//		i->m_nightSprite->Render(SCREEN_SURFACE);
+	//		break;
+	//	}
+	//	
+	//}
 
 	if (m_currentSelectedEntity.m_currentSelectedEntity && !invalidPosition.m_activate)
 	{
@@ -786,6 +799,11 @@ void BattleUI::ShipPlacementPhase::render(const InvalidPosition& invalidPosition
 		static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
 
 		m_currentSelectedEntity.m_currentSelectedEntity->m_sprite->Render(SCREEN_SURFACE);
+	}
+
+	for (const auto& spawnHex : m_spawnSprites)
+	{
+		spawnHex->Render(SCREEN_SURFACE);
 	}
 }
 
@@ -950,7 +968,6 @@ void BattleUI::ParticleSystem::orient(eDirection entityDir)
 	{
 	case eNorth:
 		direction = eSouth;
-
 		break;
 	case eNorthEast:
 		direction = eSouthWest;

@@ -86,6 +86,7 @@ void Battle::render() const
 	
 	m_battleUI.renderParticles();
 	m_battleUI.renderGUI();
+	//m_battleUI.renderUI();
 }
 
 void Battle::update(float deltaTime)
