@@ -3,7 +3,7 @@
 constexpr int MAX_INT{ 2147483647 };
 
 const Tile* AI::findClosestEnemy(
-	const Battle* battlePtr, const Map* mapPtr, const BattleEntity* alliedShip, FactionName faction)
+	const Battle* battlePtr, const Map* mapPtr, const std::shared_ptr<BattleEntity> alliedShip, FactionName faction)
 {
 	const Tile* closestEnemy{ nullptr };
 	int closestDistance{ MAX_INT };
@@ -35,7 +35,7 @@ const Tile* AI::findClosestEnemy(
 
 void AI::handleMovementPhase(Battle* battlePtr, Map* mapPtr, FactionName faction)
 {
-	auto ships = battlePtr->getFactionShips(faction);
+	auto ships = *battlePtr->getFactionShips(faction);
 
 	//loop through all the ships in the faction
 	for (int i = 0; i < ships.size(); i++)
