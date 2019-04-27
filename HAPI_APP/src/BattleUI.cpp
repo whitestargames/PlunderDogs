@@ -189,7 +189,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 	}
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
-		m_gui.OnMouseLeftClick(mouseData);
+		m_gui.OnMouseLeftClick(mouseData, m_battle.getCurrentPhase());
 
 		switch (m_battle.getCurrentPhase())
 		{
@@ -294,7 +294,7 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 		return;
 	}
 
-	m_gui.OnMouseMove(mouseData);
+	m_gui.OnMouseMove(mouseData, m_battle.getCurrentPhase());
 
 	switch (m_battle.getCurrentPhase())
 	{

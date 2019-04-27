@@ -2,6 +2,7 @@
 #include "Utilities/Utilities.h"
 #include "Utilities/MapParser.h"
 #include "GameEventMessenger.h"
+#include "Battle.h"
 
 BattleGUI::BattleGUI()
 	:
@@ -179,7 +180,7 @@ void BattleGUI::updateFactionToken(int factionName)
 	m_activeFactionToken->SetFrameNumber(static_cast<int>(factionName));
 }
 
-void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData)
+void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData, BattlePhase currentBattlePhase)
 {
 	switch (m_currentBattleWindow)
 	{
@@ -204,18 +205,18 @@ void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData)
 		}
 
 		// ryan phase button stuff is here
-		/*if (m_endPhaseButtons->GetSpritesheet()->GetFrameRect(0).Translated(
+		if (m_endPhaseButtons->GetSpritesheet()->GetFrameRect(0).Translated(
 			m_endPhaseButtons->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 		{
-			if (current phase is movement)
+			if (currentBattlePhase == BattlePhase::Movement)
 			{
-			end movement phase
+				//end movement phase
 			}
-			else if (current phase is attack)
+			else if (currentBattlePhase == BattlePhase::Attack)
 			{
-				end attack phase
+				//end attack phase	
 			}
-		}*/
+		}
 		break;
 	}
 	case BattleWindow::ePause:
@@ -245,7 +246,7 @@ void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData)
 	}
 }
 
-void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData)
+void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData, BattlePhase currentBattlePhase)
 {
 	switch (m_currentBattleWindow)
 	{
@@ -262,28 +263,36 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 
 
 		// ryan the phase button stuff is here
-		//if (m_endPhaseButtons->GetSpritesheet()->GetFrameRect(0).Translated(m_endPhaseButtons->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//checks if mouse is over the phase button
-		//{
-		//	if (current phase is movement)
-		//	{
-		//		m_endPhaseButtons->SetFrameNumber(1);
-		//	}
-		//	else if (current phase is attack)
-		//	{
-		//		m_endPhaseButtons->SetFrameNumber(3);
-		//	}
-		//}
-		//else if (m_endPhaseButtons->GetFrameNumber() != 0 && m_endPhaseButtons->GetFrameNumber() != 2)//checks if the mouse is no longer over the phase button
-		//{
-		//	if (current phase is movement)
-		//	{
-		//		m_endPhaseButtons->SetFrameNumber(0);
-		//	}
-		//	else if (current phase is attack)
-		//	{
-		//		m_endPhaseButtons->SetFrameNumber(2);
-		//	}
-		//}
+		if (m_endPhaseButtons->GetSpritesheet()->GetFrameRect(0).Translated(m_endPhaseButtons->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//checks if mouse is over the phase button
+		{
+			if (currentBattlePhase == BattlePhase::Movement)
+			{
+				m_endPhaseButtons->SetFrameNumber(1);
+			}
+			else if (currentBattlePhase == BattlePhase::Attack)
+			{
+				m_endPhaseButtons->SetFrameNumber(3);
+			}
+			//if (current phase is movement)
+			//{
+			//	
+			//}
+			//else if (current phase is attack)
+			//{
+			//	
+			//}
+		}
+		else if (m_endPhaseButtons->GetFrameNumber() != 0 && m_endPhaseButtons->GetFrameNumber() != 2)//checks if the mouse is no longer over the phase button
+		{
+			if (currentBattlePhase == BattlePhase::Movement)
+			{
+				m_endPhaseButtons->SetFrameNumber(0);
+			}
+			else if (currentBattlePhase == BattlePhase::Attack)
+			{
+				m_endPhaseButtons->SetFrameNumber(2);
+			}
+		}
 
 
 		//moves the sprites when the mouse is on the edge of the screen
