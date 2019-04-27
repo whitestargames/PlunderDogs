@@ -175,6 +175,8 @@ void BattleGUI::updateFactionToken(int factionName)
 
 void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData)
 {
+	//snapCameraToPosition(m_maxCameraOffset);
+
 	switch (m_currentBattleWindow)
 	{
 	case BattleWindow::eCombat:
