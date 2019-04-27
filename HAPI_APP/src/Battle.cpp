@@ -384,12 +384,4 @@ void Battle::BattleManager::checkGameStatus(const std::vector<BattlePlayer>& pla
 			break;
 		}
 	}
-	//auto iter = std::find_if(players.begin(), players.end(), [factionName](const auto& player) { return player.m_factionName == factionName; });
-	//assert(iter != players.end());
-	//if (m_yellowShipsDestroyed == static_cast<int>(iter->m_entities.size()))
-	//{
-	//	iter->m_eliminated = true;
-	//	
-	//	
-	//}
 }
