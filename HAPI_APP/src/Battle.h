@@ -3,6 +3,7 @@
 #include "Global.h"
 #include "Map.h"
 #include "BattleUI.h"
+#include "entity.h"
 
 enum class BattlePhase
 {
@@ -28,10 +29,12 @@ public:
 	void moveEntityToPosition(BattleEntity& entity, const Tile& destination);
 	void moveEntityToPosition(BattleEntity& entity, const Tile& destination, eDirection endDirection);
 
+
 	void fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea);
 	void insertEntity(std::pair<int, int> startingPosition, eDirection startingDirection, const EntityProperties& entityProperties, FactionName factionName);
 	void nextTurn();
 
+	std::vector<BattleEntity>* getFactionShips(FactionName faction);
 private:
 	std::vector<BattlePlayer> m_players;
 	int m_currentPlayersTurn;

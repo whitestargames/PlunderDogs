@@ -9,12 +9,12 @@ class AI
 {
 private:
 	Tile* findClosestEnemy(const Tile* alliedShip) const;
-	Tile* getFiringPosition(const Tile* targetShip, eWeaponType weapon, int range) const;
+	std::pair<Tile*,eDirection> findFiringPosition(const Tile* targetShip, eWeaponType weapon, int range) const;
 	void attemptShot(const Tile* firingShip, const Tile* targetShip);
-	void attemptMove(Tile* currentTile, Tile* targetTile);
+	void attemptMove(Tile* currentTile, std::pair<Tile*, eDirection> targetTile);
 
 public:
-	void handleMovementPhase(FactionName faction);
+	void handleMovementPhase(Battle* battlePtr, Map* mapPtr, FactionName faction);
 	void handleShootingPhase(FactionName faction);
 
 	AI();

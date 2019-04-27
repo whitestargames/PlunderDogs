@@ -208,6 +208,20 @@ void Battle::nextTurn()
 
 }
 
+std::vector<BattleEntity>* Battle::getFactionShips(FactionName faction)
+{
+	std::vector<BattleEntity>* returnVariable{ nullptr };
+	for (auto it : m_players)
+	{
+		if (it.m_factionName == faction)
+		{
+			returnVariable = it.m_entities;
+			break;
+		}
+	}
+	return returnVariable;
+}
+
 void Battle::updateMovementPhase(float deltaTime)
 {
 	int totalAliveEntities = 0;
