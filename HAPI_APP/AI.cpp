@@ -5,7 +5,7 @@ constexpr int MAX_INT{ 2147483647 };
 const Tile* AI::findClosestEnemy(
 	const Battle* battlePtr, const Map* mapPtr, const std::unique_ptr<BattleEntity> alliedShip, FactionName faction)
 {
-	Tile* closestEnemy{ nullptr };
+	const Tile* closestEnemy{ nullptr };
 	int closestDistance{ MAX_INT };
 	std::pair<int, int> alliedPos{ 
 		mapPtr->getTileScreenPos(alliedShip->m_battleProperties.getCurrentPosition()) };
@@ -26,7 +26,7 @@ const Tile* AI::findClosestEnemy(
 			if (enemyDistance < closestDistance)
 			{
 				closestDistance = enemyDistance;
-				closestEnemy = factionShipList[j]->m_battleProperties.getCurrentPosition;
+				closestEnemy = mapPtr->getTile(factionShipList[j]->m_battleProperties.getCurrentPosition());
 			}
 		}
 	}
@@ -41,8 +41,8 @@ void AI::handleMovementPhase(Battle* battlePtr, Map* mapPtr, FactionName faction
 	for (int i = 0; i < ships.size(); i++)
 	{
 		//find the nearest enemy ship
-
-		Tile* enemyPosition{ findClosestEnemy(battlePtr, mapPtr, ships[i], faction) };
+		std::unique_ptr<BattleEntity> ship = ships[i]
+		Tile* enemyPosition{ findClosestEnemy(battlePtr, mapPtr, ship, faction) };
 
 		//find the nearest tile and facing that can fire upon the chosen enemy ship
 		std::pair<Tile*, eDirection>  firingPosition{ findFiringPosition(enemyPosition,ships[i]->m_entityProperties.m_weaponType, ships[i]->m_entityProperties.m_range) };
