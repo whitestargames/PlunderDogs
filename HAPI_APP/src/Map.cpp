@@ -262,7 +262,12 @@ std::vector<Tile*> Map::getTileRadius(intPair coord, int range, bool includeSour
 			{
 				if (cubeDistance(cubeCoord, offsetToCube(intPair(x, y))) <= range)
 				{
-					tileStore.push_back(getTile(intPair(x, y)));
+					Tile* tile = getTile(intPair(x, y));
+
+					if (tile && (tile->m_type == eTileType::eSea || tile->m_type == eTileType::eOcean))
+					{
+						tileStore.push_back(getTile(intPair(x, y)));
+					}
 				}
 			}
 		}
@@ -575,7 +580,11 @@ std::vector<const Tile*> Map::getTileRadius(std::pair<int, int> coord, int range
 			{
 				if (cubeDistance(cubeCoord, offsetToCube(intPair(x, y))) <= range)
 				{
-					tileStore.push_back(getTile(intPair(x, y)));
+					const Tile* tile = getTile(intPair(x, y));
+					if (tile && (tile->m_type == eTileType::eSea || tile->m_type == eTileType::eOcean))
+					{
+						tileStore.push_back(getTile(intPair(x, y)));
+					}
 				}
 			}
 		}
@@ -608,8 +617,17 @@ std::vector<const Tile*> Map::getTileLine(
 	for (int i = 0; i < range; i++)
 	{
 		if (pushBackTile)
+		{
 			pushBackTile = getAdjacentTiles(pushBackTile->m_tileCoordinate)[direction];
+		}
+		if (pushBackTile && (pushBackTile->m_entityOnTile) || (pushBackTile->m_type != eTileType::eSea && pushBackTile->m_type != eTileType::eOcean))
+		{
+			break;
+		}
+			
 		tileStore.emplace_back(pushBackTile);
+		//If line encounters an entity or colliding tile
+
 	}
 	return tileStore;
 }

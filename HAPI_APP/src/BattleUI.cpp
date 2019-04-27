@@ -10,7 +10,7 @@
 using namespace HAPISPACE;
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
-constexpr int SHIP_PLACEMENT_SPAWN_RANGE{ 3 };
+constexpr int SHIP_PLACEMENT_SPAWN_RANGE{ 5 };
 
 //
 //InvalidPositionSprite
