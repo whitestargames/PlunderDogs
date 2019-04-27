@@ -59,7 +59,9 @@ void BattleGUI::render() const
 	m_CompassPointer->Render(SCREEN_SURFACE);
 	m_activeFactionToken->Render(SCREEN_SURFACE);
 	m_endPhaseButtons->Render(SCREEN_SURFACE);
-
+	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 585), HAPISPACE::Colour255::RED, std::to_string(m_maxCameraOffset.first), 50);
+	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 685), HAPISPACE::Colour255::GREEN, std::to_string(m_maxCameraOffset.second), 50);
+	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(950, 685), HAPISPACE::Colour255::GREEN, std::to_string(CameraPositionOffset.second), 50);
 	switch (m_currentBattleWindow)
 	{
 	case BattleWindow::ePause:
@@ -127,13 +129,13 @@ void BattleGUI::update(eDirection windDirection)
 	{
 		//camera pan
 		if (!pendingCameraMovement.IsZero())
-		{
+		{			
 			CameraPositionOffset.first += pendingCameraMovement.x;//translates the camera position
 			CameraPositionOffset.second += pendingCameraMovement.y;
 
-			if (CameraPositionOffset.first < -150)//checks for if its reached any of the 4 boundries, need to change it to a width variable
+			if (CameraPositionOffset.first < -20)//checks for if its reached any of the 4 boundries, need to change it to a width variable
 			{
-				CameraPositionOffset.first = -150;
+				CameraPositionOffset.first = -20;
 			}
 			else if (CameraPositionOffset.first > m_maxCameraOffset.first)
 			{
@@ -144,9 +146,9 @@ void BattleGUI::update(eDirection windDirection)
 				CameraPositionOffset.first += pendingCameraMovement.x;
 			}
 
-			if (CameraPositionOffset.second < -200)
+			if (CameraPositionOffset.second < 0)
 			{
-				CameraPositionOffset.second = -200;
+				CameraPositionOffset.second = 0;
 			}
 			else if (CameraPositionOffset.second > m_maxCameraOffset.second)
 			{
@@ -251,7 +253,6 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 			m_pauseButton->SetFrameNumber(0);// sets it to the default sprite
 		}
 
-
 		// ryan the phase button stuff is here
 		//if (m_endPhaseButtons->GetSpritesheet()->GetFrameRect(0).Translated(m_endPhaseButtons->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//checks if mouse is over the phase button
 		//{
@@ -289,7 +290,7 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 		{
 			pendingCameraMovement += VectorF{ 1,0 };
 		}
-
+		
 		if (mouseData.y < 50)
 		{
 			pendingCameraMovement += VectorF{ 0,-1 };
@@ -298,7 +299,6 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 		{
 			pendingCameraMovement += VectorF{ 0,1 };
 		}
-
 		break;
 	}
 	case BattleWindow::ePause:
@@ -339,7 +339,15 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 
 void BattleGUI::setMaxCameraOffset(std::pair<int, int> maxCameraOffset)
 {
-	m_maxCameraOffset = std::pair<int, int>(maxCameraOffset.first * 28 - 150, maxCameraOffset.second * 32 - 150);
+	m_maxCameraOffset = std::pair<int, int>(maxCameraOffset.first * 48 - 1990, maxCameraOffset.second * 56 - 1050);
+	if (m_maxCameraOffset.first < 0)
+	{
+		m_maxCameraOffset.first = 0;
+	}
+	if (m_maxCameraOffset.second < 0)
+	{
+		m_maxCameraOffset.second = 0;
+	}
 }
 
 void BattleGUI::onReset()

@@ -325,6 +325,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				selectedMap = "Level1.tmx";
 				selectedMapName = "Isle of Turtles";
+				
 				UI.OpenWindow(FLEET_WINDOW);
 				UI.OpenWindow(BATTLE_FLEET_WINDOW);
 			}
@@ -1042,9 +1043,3 @@ void OverWorldGUI::updateSelectedShips(const std::string & shipWindow, const HAP
 		}
 	}
 }
-
-
-
-
-
-
