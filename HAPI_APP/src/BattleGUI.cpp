@@ -82,7 +82,7 @@ void BattleGUI::render() const
 	{
 		m_postBattleBackground->Render(SCREEN_SURFACE);
 		m_doneButton->Render(SCREEN_SURFACE);
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(500, 50), HAPISPACE::Colour255::YELLOW, winningFaction + " playerWon", 190, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(450, 400), HAPISPACE::Colour255::YELLOW, winningFaction + " Faction Wins ", 190, {}, HAPISPACE::Colour255::BLACK, 2.5f);
 	}
 
 	}
