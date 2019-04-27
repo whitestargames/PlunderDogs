@@ -8,10 +8,22 @@
 #include <utility>
 #include <algorithm>
 
+//enum FactionName
+//{
+//	eYellow = 0,
+//	eBlue,
+//	eGreen,
+//	eRed
+//};
+
 enum GameEvent
 {
 	eResetBattle = 0,
-	eNewTurn
+	eNewTurn,
+	eYellowShipDestroyed,
+	eBlueShipDestroyed,
+	eGreenShipDestroyed,
+	eRedShipDestroyed
 };
 
 class Listener

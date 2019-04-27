@@ -26,7 +26,6 @@ enum class EntityType
 struct Tile;
 struct Weapons;
 class Map;
-
 struct EntityProperties
 {
 	EntityProperties(FactionName factionName, EntityType entityType);

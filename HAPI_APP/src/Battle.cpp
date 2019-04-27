@@ -31,6 +31,22 @@ void Battle::setWindDirection(float deltaTime)
 	}
 }
 
+void Battle::onYellowShipDestroyed()
+{
+}
+
+void Battle::onBlueShipDestroyed()
+{
+}
+
+void Battle::onGreenShipDestroyed()
+{
+}
+
+void Battle::onRedShipDestroyed()
+{
+}
+
 Battle::Battle()
 	: m_players(),
 	m_currentPlayerTurn(static_cast<int>(FactionName::eYellow)),
@@ -41,11 +57,19 @@ Battle::Battle()
 	m_windTime(10)
 {
 	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onReset, this), "Battle", GameEvent::eResetBattle);
+	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onYellowShipDestroyed, this), "Battle", GameEvent::eYellowShipDestroyed);
+	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onRedShipDestroyed, this), "Battle", GameEvent::eRedShipDestroyed);
+	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onBlueShipDestroyed, this), "Battle", GameEvent::eBlueShipDestroyed);
+	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onGreenShipDestroyed, this), "Battle", GameEvent::eGreenShipDestroyed);
 }
 
 Battle::~Battle()
 {
 	GameEventMessenger::getInstance().unsubscribe("Battle", GameEvent::eResetBattle);
+	GameEventMessenger::getInstance().unsubscribe("Battle", GameEvent::eYellowShipDestroyed);
+	GameEventMessenger::getInstance().unsubscribe("Battle", GameEvent::eRedShipDestroyed);
+	GameEventMessenger::getInstance().unsubscribe("Battle", GameEvent::eBlueShipDestroyed);
+	GameEventMessenger::getInstance().unsubscribe("Battle", GameEvent::eGreenShipDestroyed);
 }
 
 void Battle::startBattle(const std::string & newMapName, std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& newPlayers)
@@ -252,3 +276,30 @@ FactionName Battle::getCurentFaction() const
 	
 	return m_players[m_currentPlayerTurn].m_factionName;
 }
+
+Battle::BattleManager::BattleManager()
+{
+
+}
+
+Battle::BattleManager::~BattleManager()
+{
+}
+
+//void Battle::BattleManager::onYellowShipDestroyed()
+//{
+//	++m_yellowShipsDestroyed;
+//}
+//
+//void Battle::BattleManager::onBlueShipDestroyed()
+//{
+//	++m_blueShipedDestroyed;
+//}
+//
+//void Battle::BattleManager::onGreenShipDestroyed()
+//{
+//}
+//
+//void Battle::BattleManager::onRedShipDestroyed()
+//{
+//}

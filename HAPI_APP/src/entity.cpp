@@ -237,10 +237,22 @@ void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int
 		entitySprite->SetFrameNumber(eShipSpriteFrame::eDead);
 		entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
 		m_isDead = true;
-		
+		switch (entityFaction)
+		{
+		case FactionName::eYellow :
+			GameEventMessenger::broadcast(GameEvent::eYellowShipDestroyed);
+			break;
+		case FactionName::eGreen :
+			GameEventMessenger::broadcast(GameEvent::eGreenShipDestroyed);
+			break;
+		case FactionName::eRed :
+			GameEventMessenger::broadcast(GameEvent::eRedShipDestroyed);
+			break;
+		case FactionName::eBlue :
+			GameEventMessenger::broadcast(GameEvent::eBlueShipDestroyed);
+			break;
+		}
 	}
-	
-	
 }
 
 void EntityBattleProperties::fireWeapon()

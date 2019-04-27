@@ -13,6 +13,18 @@ enum class BattlePhase
 
 class Battle
 {
+	class BattleManager
+	{
+	public:
+		BattleManager();
+		~BattleManager();
+
+	private:
+		int m_yellowShipsDestroyed;
+		int m_blueShipedDestroyed;
+
+	};
+
 public:
 	Battle();
 	~Battle();
@@ -40,6 +52,7 @@ private:
 	MoveCounter m_moveCounter;
 	Timer m_dayTime;
 	Timer m_windTime;
+	BattleManager m_battleManager;
 
 	void updateMovementPhase(float deltaTime);
 	void updateAttackPhase();
@@ -50,4 +63,10 @@ private:
 	void incrementPlayerTurn();
 	void setTimeOfDay(float deltaTime);
 	void setWindDirection(float deltaTime);
+
+
+	void onYellowShipDestroyed();
+	void onBlueShipDestroyed();
+	void onGreenShipDestroyed();
+	void onRedShipDestroyed();
 };
