@@ -10,7 +10,7 @@
 using namespace HAPISPACE;
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
-constexpr int SHIP_PLACEMENT_SPAWN_RANGE{ 3 };
+constexpr int SHIP_PLACEMENT_SPAWN_RANGE{ 5 };
 
 //
 //InvalidPositionSprite
@@ -58,11 +58,13 @@ BattleUI::BattleUI(Battle & battle)
 	m_fire(0.02, Textures::m_fire)
 {
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleUI::onReset, this), "BattleUI", GameEvent::eResetBattle);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleUI::onNewTurn, this), "BattleUI", GameEvent::eNewTurn);
 }
 
 BattleUI::~BattleUI()
 {
 	GameEventMessenger::getInstance().unsubscribe("BattleUI", GameEvent::eResetBattle);
+	GameEventMessenger::getInstance().unsubscribe("BattleUI", GameEvent::eNewTurn);
 }
 
 std::pair<int, int> BattleUI::getCameraPositionOffset() const
@@ -91,7 +93,6 @@ void BattleUI::renderUI() const
 	}
 
 	m_invalidPosition.render(m_battle.getMap());
-	
 }
 
 void BattleUI::renderParticles() const
@@ -127,27 +128,17 @@ void BattleUI::FactionUpdateGUI(FactionName faction)
 	m_gui.updateFactionToken(faction);
 }
 
-void BattleUI::newPhase()
-{
-	m_selectedTile.m_tile = nullptr;
-}
+//void BattleUI::newPhase()
+//{
+//	
+//}
+//
+//void BattleUI::newTurn(FactionName playersTurn)
+//{
+//
+//}
 
-void BattleUI::newTurn(FactionName playersTurn)
-{
-	if (m_battle.getCurrentPhase() == BattlePhase::ShipPlacement)
-	{
-		for (auto iter = m_playerShipPlacement.begin(); iter != m_playerShipPlacement.end(); ++iter)
-		{
-			if ((*iter)->isCompleted())
-			{
-				m_playerShipPlacement.erase(iter);
-				break;
-			}
-		}
-	}
-}
-
-void BattleUI::startShipPlacement(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players)
+void BattleUI::startShipPlacement(const std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players, Map& map)
 {
 	assert(m_battle.getCurrentPhase() == BattlePhase::ShipPlacement);
 	assert(m_playerShipPlacement.empty());
@@ -183,12 +174,10 @@ void BattleUI::startShipPlacement(std::vector<std::pair<FactionName, std::vector
 		}
 	}
 
-	auto spawnPositions = m_battle.getMap().getSpawnPositions();
-	//assert(spawnPositions.size() == players.size());
-	for (int i = 0; i < players.size(); ++i)
+	for (const auto& player : players)
 	{
 		m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>
-			(players[i].second, spawnPositions[i], SHIP_PLACEMENT_SPAWN_RANGE, m_battle.getMap(), players[i].first));
+			(player.second, map.getSpawnPosition(), SHIP_PLACEMENT_SPAWN_RANGE, m_battle.getMap(), player.first));
 	}
 }
 
@@ -255,6 +244,10 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 					//destination tile but the direction of the aformentioned movement.  In order for this to work the pathfinding must be capable of taking an eDirection as part of the
 					//function used by the battle to move the entity.
 					m_playerShipPlacement.front()->onLeftClick(m_invalidPosition, mouseMoveDirection.second, m_selectedTile.m_tile, m_battle);
+					if (m_playerShipPlacement.front()->isCompleted())
+					{
+						m_playerShipPlacement.pop_front();
+					}
 					//m_battle.moveEntityToPosition(*m_selectedTile.m_tile->m_entityOnTile, *m_battle.getMap().getTile(m_leftMouseDownPosition), mouseMoveDirection.second);
 				}
 				else
@@ -262,6 +255,10 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 					//This function call is to be used if the movement of the mouse during the move command is small enough to be considered unintended,
 					//in this case the ship should not rotate after reaching the destination.
 					m_playerShipPlacement.front()->onLeftClick(m_invalidPosition, eNorth, m_selectedTile.m_tile, m_battle);
+					if (m_playerShipPlacement.front()->isCompleted())
+					{
+						m_playerShipPlacement.pop_front();
+					}
 				}
 				break;
 			}
@@ -597,6 +594,11 @@ void BattleUI::onReset()
 	m_invalidPosition.m_activate = false;
 }
 
+void BattleUI::onNewTurn()
+{
+	m_selectedTile.m_tile = nullptr;
+}
+
 //Weapon Graph
 BattleUI::TargetArea::TargetArea()
 {
@@ -727,11 +729,11 @@ BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*> 
 	m_spawnSprites()
 {
 	//Might change this - for now its two containers but looks confusing
-	m_spawnArea = map.getTileRadius(spawnPosition, range);
+	m_spawnArea = map.getTileRadius(spawnPosition, range, true);
 	m_spawnSprites.reserve(m_spawnArea.size());
 	for (int i = 0; i < m_spawnArea.size(); ++i)
 	{
-		m_spawnSprites.push_back(std::make_unique<Sprite>(Textures::m_spawnHex));
+		m_spawnSprites.push_back(HAPI_Sprites.MakeSprite(Textures::m_spawnHex));
 	}
 
 	for (int i = 0; i < m_spawnArea.size(); ++i)
@@ -740,7 +742,10 @@ BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*> 
 		m_spawnSprites[i]->GetTransformComp().SetPosition({
 		(float)screenPosition.first + DRAW_OFFSET_X * map.getDrawScale() ,
 		(float)screenPosition.second + DRAW_OFFSET_Y * map.getDrawScale() });
+		m_spawnSprites[i]->GetTransformComp().SetOriginToCentreOfFrame();
 	}
+
+
 
 	m_currentSelectedEntity.m_currentSelectedEntity = m_player.back();
 }
@@ -852,10 +857,11 @@ void BattleUI::ShipPlacementPhase::onLeftClick(const InvalidPosition& invalidPos
 		if (m_player.empty())
 		{
 			battle.nextTurn();
-			
-			return;
 		}
-		m_currentSelectedEntity.m_currentSelectedEntity = m_player.back();
+		else
+		{
+			m_currentSelectedEntity.m_currentSelectedEntity = m_player.back();
+		}
 	}
 }
 
@@ -963,4 +969,9 @@ void BattleUI::ParticleSystem::orient(eDirection entityDir)
 		break;
 	}
 	m_particle->GetTransformComp().SetRotation(DEGREES_TO_RADIANS(static_cast<int>(direction) * 60 % 360));
+}
+
+std::pair<int, int> BattleUI::ShipPlacementPhase::getSpawnPosition() const
+{
+	return m_spawnPosition;
 }

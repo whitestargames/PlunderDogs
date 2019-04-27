@@ -72,6 +72,7 @@ class EntityBattleProperties
 
 public:
 	EntityBattleProperties(std::pair<int, int> startingPosition, eDirection startingDirection = eNorth);
+	~EntityBattleProperties();
 
 	eDirection getCurrentDirection() const;
 	bool isMovedToDestination() const;
@@ -89,8 +90,7 @@ public:
 	void moveEntity(Map& map, const Tile& tile, eDirection endDirection);
 	void takeDamage(EntityProperties& entityProperties, int damageAmount, FactionName entityFaction);
 	void fireWeapon();
-	void onNewTurn();
-
+	
 private:
 	std::pair<int, int> m_currentPosition;
 	std::deque<std::pair<eDirection, std::pair<int, int>>> m_pathToTile;
@@ -103,6 +103,7 @@ private:
 	bool m_isDead;
 
 	void handleRotation(EntityProperties& entityProperties);
+	void onNewTurn();
 };
 
 struct BattleEntity

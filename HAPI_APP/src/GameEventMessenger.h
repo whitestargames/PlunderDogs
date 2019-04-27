@@ -10,7 +10,8 @@
 
 enum GameEvent
 {
-	eResetBattle = 0
+	eResetBattle = 0,
+	eNewTurn
 };
 
 class Listener

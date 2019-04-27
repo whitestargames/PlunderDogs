@@ -33,7 +33,7 @@ void Battle::setWindDirection(float deltaTime)
 
 Battle::Battle()
 	: m_players(),
-	m_currentPlayersTurn(static_cast<int>(FactionName::eYellow)),
+	m_currentPlayerTurn(static_cast<int>(FactionName::eYellow)),
 	m_map(),
 	m_currentPhase(BattlePhase::ShipPlacement),
 	m_battleUI(*this),
@@ -58,7 +58,7 @@ void Battle::startBattle(const std::string & newMapName, std::vector<std::pair<F
 		m_players.emplace_back(player.first);
 	}
 
-	m_battleUI.startShipPlacement(newPlayers);
+	m_battleUI.startShipPlacement(newPlayers, m_map);
 	m_battleUI.loadGUI(m_map.getDimensions());
 }
 
@@ -138,82 +138,42 @@ void Battle::insertEntity(std::pair<int, int> startingPosition, eDirection start
 	assert(m_currentPhase == BattlePhase::ShipPlacement);
 
 	auto& player = getPlayer(factionName);
-	switch (factionName)
-	{
-	case FactionName::eYellow :
-		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName, startingDirection));
-		break;
-
-	case FactionName::eBlue:
-		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName, startingDirection));
-		break;
-	
-	case FactionName::eRed :
-		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName, startingDirection));
-		break;
-	
-	case FactionName::eGreen :
-		player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName, startingDirection));
-		break;
-	}
+	player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName, startingDirection));
 }
 
 void Battle::nextTurn()
 {
-	
 	m_moveCounter.m_counter = 0;
-
-	
-	
-	//Notify all players new turn has started
-
-	for (auto& player : m_players)
+	bool lastPlayer = false;
+	switch (m_currentPhase)
 	{
-		for (auto& entity : player.m_entities)
-		{
-			entity->m_battleProperties.onNewTurn();
-		}
-	}
-
-	//Handle ship placement phase
-	if (m_currentPhase == BattlePhase::ShipPlacement)
-	{
-
-		++m_currentPlayersTurn;
-		
-		if (m_currentPlayersTurn == static_cast<int>(m_players.size()))
+	case BattlePhase::ShipPlacement :
+		lastPlayer = (m_currentPlayerTurn == static_cast<int>(m_players.size()) - 1);
+		incrementPlayerTurn();
+		if (lastPlayer)
 		{
 			m_currentPhase = BattlePhase::Movement;
-			m_currentPlayersTurn = 0;
-			return;
+			m_currentPlayerTurn = 0;
 		}
-		m_battleUI.newTurn(getCurentFaction());
-	}
-
-	if (m_currentPhase == BattlePhase::Movement)
-	{
+		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
+		break;
+	case BattlePhase::Movement :
 		m_currentPhase = BattlePhase::Attack;
-	}
-	else if (m_currentPhase == BattlePhase::Attack)
-	{
+		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
+		break;
+	case BattlePhase::Attack :
 		m_currentPhase = BattlePhase::Movement;
-		++m_currentPlayersTurn;
-		
+		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
+		incrementPlayerTurn();
+		break;
 	}
-
-	if (m_currentPlayersTurn == m_players.size())
-	{
-		m_currentPlayersTurn = 0;
-		
-	}
-
 }
 
 void Battle::updateMovementPhase(float deltaTime)
 {
 	int totalAliveEntities = 0;
 	
-	for (auto& entity : m_players[m_currentPlayersTurn].m_entities)
+	for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
 	{
 		if (!entity->m_battleProperties.isDead())
 		{
@@ -230,9 +190,8 @@ void Battle::updateMovementPhase(float deltaTime)
 
 void Battle::updateAttackPhase()
 {
-	if (allEntitiesAttacked(m_players[m_currentPlayersTurn].m_entities))
-	{
-		
+	if (allEntitiesAttacked(m_players[m_currentPlayerTurn].m_entities))
+	{	
 		nextTurn();
 	}
 }
@@ -261,11 +220,21 @@ BattlePlayer & Battle::getPlayer(FactionName factionName)
 void Battle::onReset()
 {
 	m_currentPhase = BattlePhase::ShipPlacement;
-	m_currentPlayersTurn = static_cast<int>(FactionName::eYellow);
+	m_currentPlayerTurn = static_cast<int>(FactionName::eYellow);
 	m_dayTime.reset();
 	m_windTime.reset();
 	m_moveCounter.m_counter = 0;
 	m_players.clear();
+}
+
+void Battle::incrementPlayerTurn()
+{
+	++m_currentPlayerTurn;
+
+	if (m_currentPlayerTurn == static_cast<int>(m_players.size()))
+	{
+		m_currentPlayerTurn = 0;
+	}
 }
 
 const Map & Battle::getMap() const
@@ -281,5 +250,5 @@ BattlePhase Battle::getCurrentPhase() const
 FactionName Battle::getCurentFaction() const
 {
 	
-	return m_players[m_currentPlayersTurn].m_factionName;
+	return m_players[m_currentPlayerTurn].m_factionName;
 }

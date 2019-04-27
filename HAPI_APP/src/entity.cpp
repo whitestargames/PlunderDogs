@@ -2,6 +2,7 @@
 #include "Map.h"
 #include "Pathfinding.h"
 #include "Textures.h"
+#include "GameEventMessenger.h"
 
 constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
 constexpr size_t WEAPON_HIGHLIGHT_SIZE{ 200 };
@@ -19,7 +20,14 @@ EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosit
 	m_currentDirection(startingDirection),
 	m_weaponFired(false),
 	m_isDead(false)
-{}
+{
+	GameEventMessenger::getInstance().subscribe(std::bind(&EntityBattleProperties::onNewTurn, this), "EntityBattleProperties", GameEvent::eNewTurn);
+}
+
+EntityBattleProperties::~EntityBattleProperties()
+{
+	GameEventMessenger::getInstance().unsubscribe("EntityBattleProperties", GameEvent::eNewTurn);
+}
 
 eDirection EntityBattleProperties::getCurrentDirection() const
 {

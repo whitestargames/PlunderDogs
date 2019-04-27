@@ -33,7 +33,6 @@ public:
 	//void OnMouseScroll could be added
 	void OnMouseMove(const HAPI_TMouseData& mouseData);
 	void setMaxCameraOffset(std::pair<int, int> maxCameraOffset);
-	
 
 private:
 	BattleWindow m_currentBattleWindow;
@@ -60,5 +59,4 @@ private:
 	float cameraZoom = 1.0f;//variable to multiply scale by
 	std::pair<int, int> m_cameraPositionOffset;
 	void onReset();
-	
 };
