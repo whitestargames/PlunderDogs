@@ -333,16 +333,20 @@ void BattleGUI::onReset()
 
 void BattleGUI::onBlueWin()
 {
+	int i = 0;
 }
 
 void BattleGUI::onGreenWin()
 {
+	int i = 0;
 }
 
 void BattleGUI::onYellowWin()
 {
+	int i = 0;
 }
 
 void BattleGUI::onRedWin()
 {
+	int i = 0;
 }
