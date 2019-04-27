@@ -17,6 +17,7 @@ class Battle
 	{
 	public:
 		BattleManager();
+		~BattleManager();
 	
 		void onYellowShipDestroyed(std::vector<BattlePlayer>& players);
 		void onBlueShipDestroyed(std::vector<BattlePlayer>& players);
@@ -28,8 +29,9 @@ class Battle
 		int m_blueShipsDestroyed;
 		int m_greenShipsDestroyed;
 		int m_redShipsDestroyed;
+		void onReset();
 
-		void elimatePlayer(FactionName factionName, std::vector<BattlePlayer>& players);
+		void checkGameStatus(const std::vector<BattlePlayer>& players);
 	};
 
 public:
