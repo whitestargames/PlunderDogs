@@ -130,4 +130,5 @@ struct BattlePlayer
 
 	std::vector<std::unique_ptr<BattleEntity>> m_entities;
 	const FactionName m_factionName;
+	bool m_teamEliminated;
 };

@@ -20,6 +20,11 @@ BattleGUI::BattleGUI()
 	m_maxCameraOffset(0, 0)
 {	
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onReset, this), "BattleGUI", GameEvent::eResetBattle);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onRedWin, this), "BattleGUI", GameEvent::eOnRedWin);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onYellowWin, this), "BattleGUI", GameEvent::eOnYellowWin);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onBlueWin, this), "BattleGUI", GameEvent::eOnBlueWin);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onGreenWin, this), "BattleGUI", GameEvent::eOnGreenWin);
+
 	m_battleIcons->GetTransformComp().SetPosition({ 510, 890 });
 	m_pauseButton->GetTransformComp().SetPosition({ 1650, 140 });
 	m_chickenButton->GetTransformComp().SetPosition({ 1610, 840 });
@@ -41,6 +46,10 @@ BattleGUI::BattleGUI()
 BattleGUI::~BattleGUI()
 {
 	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eResetBattle);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eOnRedWin);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eOnYellowWin);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eOnGreenWin);
+	GameEventMessenger::getInstance().unsubscribe("BatleGUI", GameEvent::eOnBlueWin);
 }
 
 std::pair<int, int> BattleGUI::getCameraPositionOffset() const
@@ -320,4 +329,20 @@ void BattleGUI::onReset()
 	//postBattle
 	m_postBattleBackground->GetTransformComp().SetPosition({ 360, 190 });
 	m_doneButton->GetTransformComp().SetPosition({ 820, 800 });
+}
+
+void BattleGUI::onBlueWin()
+{
+}
+
+void BattleGUI::onGreenWin()
+{
+}
+
+void BattleGUI::onYellowWin()
+{
+}
+
+void BattleGUI::onRedWin()
+{
 }
