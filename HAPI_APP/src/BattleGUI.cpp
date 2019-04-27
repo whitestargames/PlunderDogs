@@ -59,7 +59,8 @@ void BattleGUI::render() const
 	m_CompassPointer->Render(SCREEN_SURFACE);
 	m_activeFactionToken->Render(SCREEN_SURFACE);
 	m_endPhaseButtons->Render(SCREEN_SURFACE);
-	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 585), HAPISPACE::Colour255::RED, std::to_string(m_maxCameraOffset.first), 50);
+	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 585), HAPISPACE::Colour255::RED, std::to_string(m_maxCameraOffset.first), 50);//Dont delete these until the panning has been fixed - Jack
+	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(950, 585), HAPISPACE::Colour255::RED, std::to_string(m_maxCameraOffset.first), 50);
 	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 685), HAPISPACE::Colour255::GREEN, std::to_string(m_maxCameraOffset.second), 50);
 	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(950, 685), HAPISPACE::Colour255::GREEN, std::to_string(CameraPositionOffset.second), 50);
 	switch (m_currentBattleWindow)
@@ -370,4 +371,12 @@ void BattleGUI::onReset()
 	//postBattle
 	m_postBattleBackground->GetTransformComp().SetPosition({ 360, 190 });
 	m_doneButton->GetTransformComp().SetPosition({ 820, 800 });
+}
+
+void BattleGUI::snapCameraToPosition(std::pair<int, int> maxCameraOffset)
+{
+	m_cameraPositionOffset.first = maxCameraOffset.first;
+	m_cameraPositionOffset.second = maxCameraOffset.second;
+	CameraPositionOffset.first = maxCameraOffset.first;
+	CameraPositionOffset.second = maxCameraOffset.second;
 }
