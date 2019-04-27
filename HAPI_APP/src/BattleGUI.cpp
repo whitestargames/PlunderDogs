@@ -49,7 +49,7 @@ BattleGUI::~BattleGUI()
 	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eOnRedWin);
 	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eOnYellowWin);
 	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eOnGreenWin);
-	GameEventMessenger::getInstance().unsubscribe("BatleGUI", GameEvent::eOnBlueWin);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eOnBlueWin);
 }
 
 std::pair<int, int> BattleGUI::getCameraPositionOffset() const

@@ -326,24 +326,25 @@ void Battle::BattleManager::onRedShipDestroyed(std::vector<BattlePlayer>& player
 void Battle::BattleManager::elimatePlayer(FactionName factionName, std::vector<BattlePlayer>& players)
 {
 	auto iter = std::find_if(players.begin(), players.end(), [factionName](const auto& player) { return player.m_factionName == factionName; });
-	assert(iter != m_players.end());
+	assert(iter != players.end());
 	if (m_yellowShipsDestroyed == static_cast<int>(iter->m_entities.size()))
 	{
-		iter->m_teamEliminated = true;
+		iter->m_eliminated = true;
 		
 		//Check to see if all players have been eliminated
 		int playersEliminated = 0;
 		for (const auto& player : players)
 		{
-			if (player.m_teamEliminated)
+			if (player.m_eliminated)
 			{
 				++playersEliminated;
 			}
 		}
 
+		//Last player standing - Player wins
 		if (playersEliminated == static_cast<int>(players.size()) - 1)
 		{
-			auto player = std::find_if(players.cbegin(), players.cend(), [](const auto& player) { return player.m_teamElimited == false; });
+			auto player = std::find_if(players.cbegin(), players.cend(), [](const auto& player) { return player.m_eliminated == false; });
 			assert(player != players.cend());
 			FactionName winningFaction = player->m_factionName;
 			switch (winningFaction)
