@@ -80,20 +80,9 @@ void BattleGUI::render() const
 	{
 		m_postBattleBackground->Render(SCREEN_SURFACE);
 		m_doneButton->Render(SCREEN_SURFACE);
-		if (victory)
-		{
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(595, 115), HAPISPACE::Colour255::GREEN, "VICTORY", 90);
-		}
-		else
-		{
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(615, 115), HAPISPACE::Colour255::RED, "DEFEAT", 90);
-		}
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 330), HAPISPACE::Colour255::BLACK, "KILLS: " "50G", 50);
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 415), HAPISPACE::Colour255::BLACK, "WIN BONUS: " "15G", 50);
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 500), HAPISPACE::Colour255::BLACK, "HEALTH BONUS: " "35G", 50);
-		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 585), HAPISPACE::Colour255::BLACK, "TOTAL: " "21G", 50);
-		break;
+		SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(500, 50), HAPISPACE::Colour255::YELLOW, winningFaction + " playerWon", 190, {}, HAPISPACE::Colour255::BLACK, 2.5f);
 	}
+
 	}
 }
 
@@ -218,10 +207,9 @@ void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData)
 	}
 	case BattleWindow::ePostBattle:
 	{
-		if (m_doneButton->GetSpritesheet()->GetFrameRect(0).Translated(
-			m_doneButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
+		if (m_doneButton->GetSpritesheet()->GetFrameRect(0).Translated(m_doneButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
 		{
-			//switch to overworld
+			GameEventMessenger::getInstance().broadcast(GameEvent::eResetBattle);
 		}
 		break;
 	}
@@ -331,22 +319,52 @@ void BattleGUI::onReset()
 	m_doneButton->GetTransformComp().SetPosition({ 820, 800 });
 }
 
+std::string BattleGUI::getWinningFactionName()
+{
+	std::string factionString{ " " };
+	if (m_activeFactionToken->GetFrameNumber() == FactionName::eRed)
+	{
+		factionString = "Red";
+	}
+	if (m_activeFactionToken->GetFrameNumber() == FactionName::eGreen)
+	{
+		factionString = "Green";
+	}
+	if (m_activeFactionToken->GetFrameNumber() == FactionName::eBlue)
+	{
+		factionString = "Blue";
+	}
+	if (m_activeFactionToken->GetFrameNumber() == FactionName::eYellow)
+	{
+		factionString = "Yellow";
+	}
+	return factionString;
+}
+
 void BattleGUI::onBlueWin()
 {
 	int i = 0;
+	winningFaction = getWinningFactionName();
+	m_currentBattleWindow = BattleWindow::ePostBattle;
 }
 
 void BattleGUI::onGreenWin()
 {
 	int i = 0;
+	winningFaction = getWinningFactionName();
+	m_currentBattleWindow = BattleWindow::ePostBattle;
 }
 
 void BattleGUI::onYellowWin()
 {
 	int i = 0;
+	winningFaction = getWinningFactionName();
+	m_currentBattleWindow = BattleWindow::ePostBattle;
 }
 
 void BattleGUI::onRedWin()
 {
 	int i = 0;
+	winningFaction = getWinningFactionName();
+	m_currentBattleWindow = BattleWindow::ePostBattle;
 }

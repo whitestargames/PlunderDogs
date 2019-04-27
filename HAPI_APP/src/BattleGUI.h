@@ -53,13 +53,16 @@ private:
 	bool shipSelected;
 	bool playAnimation;
 	int animationOffset = 100;
+	
 	bool victory = false;
+	std::string winningFaction{ "" };
 	VectorF pendingCameraMovement{ 0 };
 	std::pair<int, int> CameraPositionOffset;//camera offset that will be used by the map
 	float cameraZoom = 1.0f;//variable to multiply scale by
 	std::pair<int, int> m_cameraPositionOffset;
 	
 	void onReset();
+	std::string getWinningFactionName();
 	void onBlueWin();
 	void onGreenWin();
 	void onYellowWin();
