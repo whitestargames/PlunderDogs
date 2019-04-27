@@ -208,14 +208,28 @@ void Battle::nextTurn()
 
 }
 
-std::vector<BattleEntity>* Battle::getFactionShips(FactionName faction)
+std::vector<std::unique_ptr<BattleEntity>>* Battle::getFactionShips(FactionName faction)
 {
-	std::vector<BattleEntity>* returnVariable{ nullptr };
+	std::vector<std::unique_ptr<BattleEntity>>* returnVariable{ nullptr };
 	for (auto it : m_players)
 	{
 		if (it.m_factionName == faction)
 		{
-			returnVariable = it.m_entities;
+			returnVariable = &it.m_entities;
+			break;
+		}
+	}
+	return returnVariable;
+}
+
+const std::vector<std::unique_ptr<BattleEntity>>* Battle::getFactionShips(FactionName faction) const
+{
+	std::vector<std::unique_ptr<BattleEntity>>* returnVariable{ nullptr };
+	for (auto it : m_players)
+	{
+		if (it.m_factionName == faction)
+		{
+			returnVariable = &it.m_entities;
 			break;
 		}
 	}
