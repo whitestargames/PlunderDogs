@@ -141,6 +141,7 @@ void OverWorldGUI::render(Battle& battle)
 		case OverWorldWindow::ePlayerSelection:
 		{
 			m_playerSelectBackground->Render(SCREEN_SURFACE);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(500, 50), HAPISPACE::Colour255::YELLOW, "Player Selection", 190, {}, HAPISPACE::Colour255::BLACK, 2.5f);
 			m_playerSelectYellow->Render(SCREEN_SURFACE);
 			m_playerSelectGreen->Render(SCREEN_SURFACE);
 			m_playerSelectRed->Render(SCREEN_SURFACE);
@@ -799,10 +800,10 @@ void OverWorldGUI::reset(const std::vector<EntityProperties>& playerEntities)
 	HAPI_Wrapper::setPosition(m_selectMapButtons4, { 570, 370 });
 	HAPI_Wrapper::setPosition(m_selectMapButtons5, { 904, 720 });
 
-	HAPI_Wrapper::setPosition(m_playerSelectYellow, { 300, 300 });
-	HAPI_Wrapper::setPosition(m_playerSelectGreen, { 600, 300 });
-	HAPI_Wrapper::setPosition(m_playerSelectRed, { 900, 300 });
-	HAPI_Wrapper::setPosition(m_playerSelectBlue, { 1200, 300 });
+	HAPI_Wrapper::setPosition(m_playerSelectYellow, { 400, 300 });
+	HAPI_Wrapper::setPosition(m_playerSelectGreen, { 700, 300 });
+	HAPI_Wrapper::setPosition(m_playerSelectRed, { 1000, 300 });
+	HAPI_Wrapper::setPosition(m_playerSelectBlue, { 1300, 300 });
 
 	
 	//adding the windows and sliders, also populates the fleet window with all current entities
