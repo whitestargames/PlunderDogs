@@ -48,7 +48,8 @@ private:
 	std::unique_ptr<Sprite> m_activeFactionToken;
 	std::unique_ptr<Sprite> m_CompassPointer;
 	std::unique_ptr<Sprite> m_CompassBackGround;
-	
+	std::unique_ptr<Sprite> m_endPhaseButtons;
+
 	DWORD animationStartTime;
 	bool shipSelected;
 	bool playAnimation;
