@@ -57,8 +57,8 @@ private:
 	void onReset();
 
 	HAPISPACE::SliderLayout sliderLayout;
-	HAPISPACE::VectorI m_fleetWindowTopLeft{ HAPISPACE::VectorI(380, 600) };
-	HAPISPACE::VectorI m_battleFleetWindowTopLeft{ HAPISPACE::VectorI(380, 310) };
+	HAPISPACE::VectorI m_fleetWindowTopLeft{ HAPISPACE::VectorI(350, 600) };
+	HAPISPACE::VectorI m_battleFleetWindowTopLeft{ HAPISPACE::VectorI(350, 300) };
 	HAPISPACE::VectorI m_upgradeFleetWindowTopLeft{ HAPISPACE::VectorI(380,210) };
 
 	const int m_maxShips{ 6 };

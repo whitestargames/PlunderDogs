@@ -293,7 +293,7 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 }
 
 //ENTITY
-EntityProperties::EntityProperties(FactionName factionName, EntityType entityType) : m_upgradePoints(2), m_maxUpgradePoints(2), m_selectedSprite(HAPI_Sprites.MakeSprite(Textures::m_thing))
+EntityProperties::EntityProperties(FactionName factionName, EntityType entityType) : m_upgradePoints(4), m_maxUpgradePoints(4), m_selectedSprite(HAPI_Sprites.MakeSprite(Textures::m_thing))
 	
 {
 	//TODO: Currently not working as intended
@@ -307,6 +307,10 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 		m_currentHealth = 7;
 		m_range = 5;
 		m_damage = 2;
+		m_originalMovement = 15;
+		m_originalHealth = 7;
+		m_originalRange = 5;
+		m_originalDamage = 2;
 		m_weaponType = eWeaponType::eSideCannons;
 		break;
 	case EntityType::eBattleShip:
@@ -315,6 +319,10 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 		m_currentHealth = 8;
 		m_range = 2;
 		m_damage = 2;
+		m_originalMovement = 15;
+		m_originalHealth = 8;
+		m_originalRange = 2;
+		m_originalDamage = 2;
 		m_weaponType = eWeaponType::eShotGun;
 		break;
 	case EntityType::eDestroyer:
@@ -323,6 +331,10 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 		m_currentHealth = 6;
 		m_range = 6;
 		m_damage = 3;
+		m_originalMovement = 20;
+		m_originalHealth = 6;
+		m_originalRange = 6;
+		m_originalDamage = 3;
 		m_weaponType = eWeaponType::eFlamethrower;
 		break;
 	case EntityType::eGunBoat:
@@ -331,6 +343,10 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 		m_currentHealth = 5;
 		m_range = 12;
 		m_damage = 2;
+		m_originalMovement = 10;
+		m_originalHealth = 5;
+		m_originalRange = 12;
+		m_originalDamage = 2;
 		m_weaponType = eWeaponType::eStraightShot;
 		break;
 	}
