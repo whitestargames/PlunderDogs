@@ -31,10 +31,9 @@ void Battle::setWindDirection(float deltaTime)
 	}
 }
 
-
 Battle::Battle()
 	: m_players(),
-	m_currentPlayerTurn(static_cast<int>(FactionName::eYellow)),
+	m_currentPlayerTurn(0),
 	m_map(),
 	m_currentPhase(BattlePhase::ShipPlacement),
 	m_battleUI(*this),
@@ -46,6 +45,8 @@ Battle::Battle()
 	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onRedShipDestroyed, this), "Battle", GameEvent::eRedShipDestroyed);
 	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onBlueShipDestroyed, this), "Battle", GameEvent::eBlueShipDestroyed);
 	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onGreenShipDestroyed, this), "Battle", GameEvent::eGreenShipDestroyed);
+	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onEndMovementPhaseEarly, this), "Battle", GameEvent::eEndMovementPhaseEarly);
+	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onEndAttackPhaseEarly, this), "Battle", GameEvent::eEndAttackPhaseEarly);
 }
 
 Battle::~Battle()
@@ -55,6 +56,8 @@ Battle::~Battle()
 	GameEventMessenger::getInstance().unsubscribe("Battle", GameEvent::eRedShipDestroyed);
 	GameEventMessenger::getInstance().unsubscribe("Battle", GameEvent::eBlueShipDestroyed);
 	GameEventMessenger::getInstance().unsubscribe("Battle", GameEvent::eGreenShipDestroyed);
+	GameEventMessenger::getInstance().unsubscribe("Battle", GameEvent::eEndMovementPhaseEarly);
+	GameEventMessenger::getInstance().unsubscribe("Battle", GameEvent::eEndAttackPhaseEarly);
 }
 
 void Battle::startBattle(const std::string & newMapName, std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& newPlayers)
@@ -152,6 +155,7 @@ void Battle::insertEntity(std::pair<int, int> startingPosition, eDirection start
 void Battle::nextTurn()
 {
 	m_moveCounter.m_counter = 0;
+
 	bool lastPlayer = false;
 	switch (m_currentPhase)
 	{
@@ -168,10 +172,12 @@ void Battle::nextTurn()
 	case BattlePhase::Movement :
 		m_currentPhase = BattlePhase::Attack;
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
+		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringAttackPhase);
 		break;
 	case BattlePhase::Attack :
 		m_currentPhase = BattlePhase::Movement;
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
+		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringMovementPhase);
 		incrementPlayerTurn();
 		break;
 	}
@@ -228,7 +234,7 @@ BattlePlayer & Battle::getPlayer(FactionName factionName)
 void Battle::onReset()
 {
 	m_currentPhase = BattlePhase::ShipPlacement;
-	m_currentPlayerTurn = static_cast<int>(FactionName::eYellow);
+	m_currentPlayerTurn = 0;
 	m_dayTime.reset();
 	m_windTime.reset();
 	m_moveCounter.m_counter = 0;
@@ -278,6 +284,42 @@ void Battle::onGreenShipDestroyed()
 void Battle::onRedShipDestroyed()
 {
 	m_battleManager.onRedShipDestroyed(m_players);
+}
+
+void Battle::onEndMovementPhaseEarly()
+{
+	//FactionName currentPlayerTurn = static_cast<FactionName>(m_currentPlayerTurn);
+	//m_players[m_currentPlayerTurn].
+	//auto player = std::find_if(m_players.cbegin(), m_players.cend(), [currentPlayerTurn](const auto& player) { return player.m_factionName == currentPlayerTurn; });
+	//assert(player != m_players.cend());
+	bool actionBeingPerformed = false;
+	for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
+	{
+		if (entity->m_battleProperties.isMovedToDestination() && entity->m_battleProperties.isMoving())
+		{
+			actionBeingPerformed = true;
+		}
+	}
+
+	if (actionBeingPerformed)
+	{
+		GameEventMessenger::getInstance().broadcast(GameEvent::eUnableToSkipPhase);
+	}
+	else
+	{
+		m_moveCounter.m_counter = 0;
+		m_currentPhase = BattlePhase::Attack;
+		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
+		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringAttackPhase);
+	}
+}
+
+void Battle::onEndAttackPhaseEarly()
+{
+	m_currentPhase = BattlePhase::Movement;
+	GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
+	GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringMovementPhase);
+	incrementPlayerTurn();
 }
 
 Battle::BattleManager::BattleManager()
@@ -371,16 +413,16 @@ void Battle::BattleManager::checkGameStatus(const std::vector<BattlePlayer>& pla
 		switch (winningFaction)
 		{
 		case FactionName::eYellow:
-			GameEventMessenger::broadcast(GameEvent::eOnYellowWin);
+			GameEventMessenger::broadcast(GameEvent::eYellowWin);
 			break;
 		case FactionName::eBlue:
-			GameEventMessenger::broadcast(GameEvent::eOnBlueWin);
+			GameEventMessenger::broadcast(GameEvent::eBlueWin);
 			break;
 		case FactionName::eGreen:
-			GameEventMessenger::broadcast(GameEvent::eOnGreenWin);
+			GameEventMessenger::broadcast(GameEvent::eGreenWin);
 			break;
 		case FactionName::eRed:
-			GameEventMessenger::broadcast(GameEvent::eOnRedWin);
+			GameEventMessenger::broadcast(GameEvent::eRedWin);
 			break;
 		}
 	}

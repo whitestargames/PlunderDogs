@@ -55,7 +55,6 @@ private:
 	std::vector<BattlePlayer> m_players;
 	int m_currentPlayerTurn;
 	Map m_map;
-
 	BattlePhase m_currentPhase;
 	BattleUI m_battleUI;
 	MoveCounter m_moveCounter;
@@ -68,13 +67,15 @@ private:
 	bool allEntitiesAttacked(std::vector<std::unique_ptr<BattleEntity>>& playerEntities) const;
 	BattlePlayer& getPlayer(FactionName factionName);
 
-	void onReset();
 	void incrementPlayerTurn();
 	void setTimeOfDay(float deltaTime);
 	void setWindDirection(float deltaTime);
 
+	void onReset();
 	void onYellowShipDestroyed();
 	void onBlueShipDestroyed();
 	void onGreenShipDestroyed();
 	void onRedShipDestroyed();
+	void onEndMovementPhaseEarly();
+	void onEndAttackPhaseEarly();
 };

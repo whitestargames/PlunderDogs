@@ -54,6 +54,11 @@ bool EntityBattleProperties::isDead() const
 	return m_isDead;
 }
 
+bool EntityBattleProperties::isMoving() const
+{
+	return !m_pathToTile.empty();
+}
+
 //MOVEMENT PATH NODE
 EntityBattleProperties::MovementPath::PathNode::PathNode()
 	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),

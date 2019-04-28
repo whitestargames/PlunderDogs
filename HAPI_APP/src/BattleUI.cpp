@@ -774,7 +774,6 @@ void BattleUI::ShipPlacementPhase::render(const InvalidPosition& invalidPosition
 			i->m_nightSprite->Render(SCREEN_SURFACE);
 			break;
 		}
-		
 	}
 
 	if (m_currentSelectedEntity.m_currentSelectedEntity && !invalidPosition.m_activate)

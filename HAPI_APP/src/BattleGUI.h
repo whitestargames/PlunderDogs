@@ -65,4 +65,7 @@ private:
 	void onGreenWin();
 	void onYellowWin();
 	void onRedWin();
+	void onEnteringMovementPhase();
+	void onEnteringAttackPhase();
+	void onUnableToSkipPhase();
 };

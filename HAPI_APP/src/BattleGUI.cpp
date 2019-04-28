@@ -22,10 +22,13 @@ BattleGUI::BattleGUI()
 	m_endPhaseButtons(HAPI_Sprites.MakeSprite(Textures::m_endPhaseButtons))
 {	
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onReset, this), "BattleGUI", GameEvent::eResetBattle);
-	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onRedWin, this), "BattleGUI", GameEvent::eOnRedWin);
-	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onYellowWin, this), "BattleGUI", GameEvent::eOnYellowWin);
-	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onBlueWin, this), "BattleGUI", GameEvent::eOnBlueWin);
-	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onGreenWin, this), "BattleGUI", GameEvent::eOnGreenWin);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onRedWin, this), "BattleGUI", GameEvent::eRedWin);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onYellowWin, this), "BattleGUI", GameEvent::eYellowWin);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onBlueWin, this), "BattleGUI", GameEvent::eBlueWin);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onGreenWin, this), "BattleGUI", GameEvent::eGreenWin);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onEnteringMovementPhase, this), "BattleGUI", GameEvent::eEnteringMovementPhase);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onEnteringAttackPhase, this), "BattleGUI", GameEvent::eEnteringAttackPhase);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onUnableToSkipPhase, this), "BattleGUI", GameEvent::eUnableToSkipPhase);
 
 	m_battleIcons->GetTransformComp().SetPosition({ 510, 890 });
 	m_endPhaseButtons->GetTransformComp().SetPosition({ 0, 968 });
@@ -49,10 +52,13 @@ BattleGUI::BattleGUI()
 BattleGUI::~BattleGUI()
 {
 	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eResetBattle);
-	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eOnRedWin);
-	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eOnYellowWin);
-	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eOnGreenWin);
-	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eOnBlueWin);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eRedWin);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eYellowWin);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eGreenWin);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eBlueWin);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eEnteringMovementPhase);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eEnteringAttackPhase);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eUnableToSkipPhase);
 }
 
 std::pair<int, int> BattleGUI::getCameraPositionOffset() const
@@ -210,10 +216,12 @@ void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData, BattlePhase c
 		{
 			if (currentBattlePhase == BattlePhase::Movement)
 			{
+				GameEventMessenger::broadcast(GameEvent::eEndMovementPhaseEarly);
 				//end movement phase
 			}
 			else if (currentBattlePhase == BattlePhase::Attack)
 			{
+				GameEventMessenger::broadcast(GameEvent::eEndAttackPhaseEarly);
 				//end attack phase	
 			}
 		}
@@ -268,9 +276,11 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData, BattlePhase curren
 			if (currentBattlePhase == BattlePhase::Movement)
 			{
 				m_endPhaseButtons->SetFrameNumber(1);
+				
 			}
 			else if (currentBattlePhase == BattlePhase::Attack)
 			{
+				
 				m_endPhaseButtons->SetFrameNumber(3);
 			}
 			//if (current phase is movement)
@@ -384,20 +394,35 @@ void BattleGUI::onReset()
 
 void BattleGUI::onBlueWin()
 {
-	int i = 0;
+	
 }
 
 void BattleGUI::onGreenWin()
 {
-	int i = 0;
+
 }
 
 void BattleGUI::onYellowWin()
 {
-	int i = 0;
+	
 }
 
 void BattleGUI::onRedWin()
 {
-	int i = 0;
+	
+}
+
+void BattleGUI::onEnteringMovementPhase()
+{
+	m_endPhaseButtons->SetFrameNumber(0);
+}
+
+void BattleGUI::onEnteringAttackPhase()
+{
+	m_endPhaseButtons->SetFrameNumber(2);
+}
+
+void BattleGUI::onUnableToSkipPhase()
+{
+
 }
