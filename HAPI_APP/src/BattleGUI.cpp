@@ -40,6 +40,7 @@ BattleGUI::BattleGUI()
 	m_CompassPointer->GetTransformComp().SetPosition({ 100, 100 });
 	m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
 	m_activeFactionToken->GetTransformComp().SetPosition({ 960, 55 });
+	
 
 	//pauseMenu
 	m_resumeButton->GetTransformComp().SetPosition({ 818, 387 });
@@ -72,7 +73,30 @@ void BattleGUI::render(BattlePhase currentBattlePhase) const
 	//m_chickenButton->Render(SCREEN_SURFACE);
 	m_CompassBackGround->Render(SCREEN_SURFACE);
 	m_CompassPointer->Render(SCREEN_SURFACE);
-	m_activeFactionToken->Render(SCREEN_SURFACE);
+	//m_activeFactionToken->Render(SCREEN_SURFACE);
+
+	if (currentBattlePhase != BattlePhase::ShipPlacement)
+	{
+		if (m_activeFactionToken->GetFrameNumber() == FactionName::eRed)
+		{
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::RED, "Red Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+		}
+		else if (m_activeFactionToken->GetFrameNumber() == FactionName::eGreen)
+		{
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::GREEN, "Green Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+		}
+		else if (m_activeFactionToken->GetFrameNumber() == FactionName::eBlue)
+		{
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::BLUE, "Blue Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+		}
+		else if (m_activeFactionToken->GetFrameNumber() == FactionName::eYellow)
+		{
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::YELLOW, "Yellow Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+		}
+	}
+	
+	
+	
 	
 	if (currentBattlePhase != BattlePhase::ShipPlacement)
 	{
@@ -382,7 +406,9 @@ void BattleGUI::onReset()
 	m_CompassPointer->GetTransformComp().SetOrigin({ 21.5f,60 });
 	m_CompassPointer->GetTransformComp().SetPosition({ 240, 170 });
 	m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
-	m_activeFactionToken->GetTransformComp().SetPosition({ 1510,140 });// position just temp can be adjusted as needed
+	m_activeFactionToken->GetTransformComp().SetPosition({ 1510,140 });// position just temp can be adjusted as needed postiiton 900/100
+	
+
 
 	//pauseMenu
 	m_resumeButton->GetTransformComp().SetPosition({ 818, 387 });
