@@ -237,6 +237,8 @@ std::vector<Tile*> Map::getTileRadius(intPair coord, int range, bool includeSour
 		HAPI_Sprites.UserMessage("getTileRadius range less than 1", "Map error");
 	
 	int reserveSize{ 0 };
+	if (includeSource)
+		reserveSize++;
 	for (int i = 1; i <= range; i++)
 	{
 		reserveSize += 6 * i;
@@ -555,6 +557,8 @@ std::vector<const Tile*> Map::getTileRadius(std::pair<int, int> coord, int range
 		HAPI_Sprites.UserMessage("getTileRadius range less than 1", "Map error");
 
 	int reserveSize{ 0 };
+	if (includeSource)
+		reserveSize++;
 	for (int i = 1; i <= range; i++)
 	{
 		reserveSize += 6 * i;
