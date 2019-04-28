@@ -107,7 +107,6 @@ OverWorldGUI::OverWorldGUI()
 	m_addDamageButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2)),
 	m_addRangeButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2))
 {
-
 	m_background = std::make_unique<Sprite>(Textures::m_background);
 	HAPI_Wrapper::setPosition(m_background, { 0, 0 });
 	GameEventMessenger::getInstance().subscribe(std::bind(&OverWorldGUI::onReset, this), "OverWorldGUI", GameEvent::eResetBattle);
@@ -141,6 +140,7 @@ void OverWorldGUI::render(Battle& battle)
 		case OverWorldWindow::ePlayerSelection:
 		{
 			m_playerSelectBackground->Render(SCREEN_SURFACE);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(500, 50), HAPISPACE::Colour255::YELLOW, "Player Selection", 190, {}, HAPISPACE::Colour255::BLACK, 2.5f);
 			m_playerSelectYellow->Render(SCREEN_SURFACE);
 			m_playerSelectGreen->Render(SCREEN_SURFACE);
 			m_playerSelectRed->Render(SCREEN_SURFACE);
@@ -178,7 +178,6 @@ void OverWorldGUI::render(Battle& battle)
 			//HAPI_Wrapper::render(m_battleMapBackground);
 			HAPI_Wrapper::render(m_background);
 			//HAPI_Wrapper::render(m_enemyTerritoryHexSheet);
-
 			HAPI_Wrapper::render(m_battleMapBackground);
 			HAPI_Wrapper::render(m_backButton);
 			HAPI_Wrapper::render(m_selectMapButtons1);
@@ -296,6 +295,10 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			}
 			if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
 			{
+				m_playerSelectYellow->SetFrameNumber(ePlayerSelect::eNone);
+				m_playerSelectGreen->SetFrameNumber(ePlayerSelect::eNone);
+				m_playerSelectRed->SetFrameNumber(ePlayerSelect::eNone);
+				m_playerSelectBlue->SetFrameNumber(ePlayerSelect::eNone);
 				CURRENT_WINDOW = OverWorldWindow::eMainMenu;
 			}
 			if (HAPI_Wrapper::isTranslated(m_done, mouseData, 0))
@@ -305,6 +308,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 				if (getActivePlayerCount() >=2)
 				{
 					CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
+				
 				}
 				
 		
@@ -325,7 +329,6 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				selectedMap = "Level1.tmx";
 				selectedMapName = "Isle of Turtles";
-				
 				UI.OpenWindow(FLEET_WINDOW);
 				UI.OpenWindow(BATTLE_FLEET_WINDOW);
 			}
@@ -402,6 +405,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			else if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
 			{
 				resetPlayer = true;
+
 				CURRENT_WINDOW = OverWorldWindow::ePlayerSelection;
 				UI.CloseWindow(FLEET_WINDOW);
 				UI.CloseWindow(BATTLE_FLEET_WINDOW);
@@ -800,10 +804,14 @@ void OverWorldGUI::reset(const std::vector<EntityProperties>& playerEntities)
 	HAPI_Wrapper::setPosition(m_selectMapButtons4, { 570, 370 });
 	HAPI_Wrapper::setPosition(m_selectMapButtons5, { 904, 720 });
 
-	HAPI_Wrapper::setPosition(m_playerSelectYellow, { 300, 300 });
-	HAPI_Wrapper::setPosition(m_playerSelectGreen, { 600, 300 });
-	HAPI_Wrapper::setPosition(m_playerSelectRed, { 900, 300 });
-	HAPI_Wrapper::setPosition(m_playerSelectBlue, { 1200, 300 });
+	HAPI_Wrapper::setPosition(m_playerSelectYellow, { 400, 300 });
+	HAPI_Wrapper::setPosition(m_playerSelectGreen, { 700, 300 });
+	HAPI_Wrapper::setPosition(m_playerSelectRed, { 1000, 300 });
+	HAPI_Wrapper::setPosition(m_playerSelectBlue, { 1300, 300 });
+	m_playerSelectYellow->SetFrameNumber(ePlayerSelect::eNone);
+	m_playerSelectGreen->SetFrameNumber(ePlayerSelect::eNone);
+	m_playerSelectRed->SetFrameNumber(ePlayerSelect::eNone);
+	m_playerSelectBlue->SetFrameNumber(ePlayerSelect::eNone);
 
 	
 	//adding the windows and sliders, also populates the fleet window with all current entities
@@ -1043,3 +1051,9 @@ void OverWorldGUI::updateSelectedShips(const std::string & shipWindow, const HAP
 		}
 	}
 }
+
+
+
+
+
+

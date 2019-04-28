@@ -60,7 +60,7 @@ void BattleGUI::render() const
 	m_activeFactionToken->Render(SCREEN_SURFACE);
 	m_endPhaseButtons->Render(SCREEN_SURFACE);
 	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 585), HAPISPACE::Colour255::RED, std::to_string(m_maxCameraOffset.first), 50);//Dont delete these until the panning has been fixed - Jack
-	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(950, 585), HAPISPACE::Colour255::RED, std::to_string(m_maxCameraOffset.first), 50);
+	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(950, 585), HAPISPACE::Colour255::RED, std::to_string(CameraPositionOffset.first), 50);
 	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 685), HAPISPACE::Colour255::GREEN, std::to_string(m_maxCameraOffset.second), 50);
 	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(950, 685), HAPISPACE::Colour255::GREEN, std::to_string(CameraPositionOffset.second), 50);
 	switch (m_currentBattleWindow)
@@ -134,9 +134,9 @@ void BattleGUI::update(eDirection windDirection)
 			CameraPositionOffset.first += pendingCameraMovement.x;//translates the camera position
 			CameraPositionOffset.second += pendingCameraMovement.y;
 
-			if (CameraPositionOffset.first < -20)//checks for if its reached any of the 4 boundries, need to change it to a width variable
+			if (CameraPositionOffset.first < -120)//checks for if its reached any of the 4 boundries, need to change it to a width variable
 			{
-				CameraPositionOffset.first = -20;
+				CameraPositionOffset.first = -120;
 			}
 			else if (CameraPositionOffset.first > m_maxCameraOffset.first)
 			{
@@ -147,9 +147,9 @@ void BattleGUI::update(eDirection windDirection)
 				CameraPositionOffset.first += pendingCameraMovement.x;
 			}
 
-			if (CameraPositionOffset.second < 0)
+			if (CameraPositionOffset.second < -100)
 			{
-				CameraPositionOffset.second = 0;
+				CameraPositionOffset.second = -100;
 			}
 			else if (CameraPositionOffset.second > m_maxCameraOffset.second)
 			{
@@ -175,7 +175,8 @@ void BattleGUI::updateFactionToken(int factionName)
 
 void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData)
 {
-	//snapCameraToPosition(m_maxCameraOffset);
+
+	//snapCameraToPosition(std::pair<int, int>{ 15, 15 });
 
 	switch (m_currentBattleWindow)
 	{
@@ -342,7 +343,7 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 
 void BattleGUI::setMaxCameraOffset(std::pair<int, int> maxCameraOffset)
 {
-	m_maxCameraOffset = std::pair<int, int>(maxCameraOffset.first * 48 - 1990, maxCameraOffset.second * 56 - 1050);
+	m_maxCameraOffset = std::pair<int, int>(maxCameraOffset.first * 24 - 820, maxCameraOffset.second * 28 - 400);
 	if (m_maxCameraOffset.first < 0)
 	{
 		m_maxCameraOffset.first = 0;
@@ -375,10 +376,18 @@ void BattleGUI::onReset()
 	m_doneButton->GetTransformComp().SetPosition({ 820, 800 });
 }
 
-void BattleGUI::snapCameraToPosition(std::pair<int, int> maxCameraOffset)
+void BattleGUI::snapCameraToPosition(std::pair<int, int> snapLocation)//snaps the camera to be centered on a given tile
 {
-	m_cameraPositionOffset.first = maxCameraOffset.first;
-	m_cameraPositionOffset.second = maxCameraOffset.second;
-	CameraPositionOffset.first = maxCameraOffset.first;
-	CameraPositionOffset.second = maxCameraOffset.second;
+	snapLocation.first = snapLocation.first * 24 - 480;
+	snapLocation.second = snapLocation.second  * 28 - 270;
+	//Ensure values are within bounds
+	snapLocation.first = std::max(-120, snapLocation.first);
+	snapLocation.first = std::min(m_maxCameraOffset.first, snapLocation.first);
+	snapLocation.second = std::max(-100, snapLocation.second);
+	snapLocation.second = std::min(m_maxCameraOffset.second, snapLocation.second);
+
+	m_cameraPositionOffset.first = snapLocation.first;
+	m_cameraPositionOffset.second = snapLocation.second;
+	CameraPositionOffset.first = snapLocation.first;
+	CameraPositionOffset.second = snapLocation.second;
 }
