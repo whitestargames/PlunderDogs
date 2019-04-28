@@ -2,6 +2,7 @@
 #include "Utilities/Utilities.h"
 #include "Utilities/MapParser.h"
 #include "GameEventMessenger.h"
+#include "Battle.h"
 
 BattleGUI::BattleGUI()
 	:
@@ -21,10 +22,13 @@ BattleGUI::BattleGUI()
 	m_endPhaseButtons(HAPI_Sprites.MakeSprite(Textures::m_endPhaseButtons))
 {	
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onReset, this), "BattleGUI", GameEvent::eResetBattle);
-	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onRedWin, this), "BattleGUI", GameEvent::eOnRedWin);
-	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onYellowWin, this), "BattleGUI", GameEvent::eOnYellowWin);
-	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onBlueWin, this), "BattleGUI", GameEvent::eOnBlueWin);
-	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onGreenWin, this), "BattleGUI", GameEvent::eOnGreenWin);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onRedWin, this), "BattleGUI", GameEvent::eRedWin);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onYellowWin, this), "BattleGUI", GameEvent::eYellowWin);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onBlueWin, this), "BattleGUI", GameEvent::eBlueWin);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onGreenWin, this), "BattleGUI", GameEvent::eGreenWin);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onEnteringMovementPhase, this), "BattleGUI", GameEvent::eEnteringMovementPhase);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onEnteringAttackPhase, this), "BattleGUI", GameEvent::eEnteringAttackPhase);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onUnableToSkipPhase, this), "BattleGUI", GameEvent::eUnableToSkipPhase);
 
 	m_battleIcons->GetTransformComp().SetPosition({ 510, 890 });
 	m_endPhaseButtons->GetTransformComp().SetPosition({ 0, 968 });
@@ -48,10 +52,13 @@ BattleGUI::BattleGUI()
 BattleGUI::~BattleGUI()
 {
 	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eResetBattle);
-	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eOnRedWin);
-	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eOnYellowWin);
-	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eOnGreenWin);
-	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eOnBlueWin);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eRedWin);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eYellowWin);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eGreenWin);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eBlueWin);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eEnteringMovementPhase);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eEnteringAttackPhase);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eUnableToSkipPhase);
 }
 
 std::pair<int, int> BattleGUI::getCameraPositionOffset() const
@@ -184,7 +191,7 @@ void BattleGUI::updateFactionToken(int factionName)
 	m_activeFactionToken->SetFrameNumber(static_cast<int>(factionName));
 }
 
-void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData)
+void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData, BattlePhase currentBattlePhase)
 {
 	switch (m_currentBattleWindow)
 	{
@@ -209,18 +216,20 @@ void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData)
 		}
 
 		// ryan phase button stuff is here
-		/*if (m_endPhaseButtons->GetSpritesheet()->GetFrameRect(0).Translated(
+		if (m_endPhaseButtons->GetSpritesheet()->GetFrameRect(0).Translated(
 			m_endPhaseButtons->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 		{
-			if (current phase is movement)
+			if (currentBattlePhase == BattlePhase::Movement)
 			{
-			end movement phase
+				GameEventMessenger::broadcast(GameEvent::eEndMovementPhaseEarly);
+				//end movement phase
 			}
-			else if (current phase is attack)
+			else if (currentBattlePhase == BattlePhase::Attack)
 			{
-				end attack phase
+				GameEventMessenger::broadcast(GameEvent::eEndAttackPhaseEarly);
+				//end attack phase	
 			}
-		}*/
+		}
 		break;
 	}
 	case BattleWindow::ePause:
@@ -249,7 +258,7 @@ void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData)
 	}
 }
 
-void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData)
+void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData, BattlePhase currentBattlePhase)
 {
 	switch (m_currentBattleWindow)
 	{
@@ -266,28 +275,38 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData)
 
 
 		// ryan the phase button stuff is here
-		//if (m_endPhaseButtons->GetSpritesheet()->GetFrameRect(0).Translated(m_endPhaseButtons->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//checks if mouse is over the phase button
-		//{
-		//	if (current phase is movement)
-		//	{
-		//		m_endPhaseButtons->SetFrameNumber(1);
-		//	}
-		//	else if (current phase is attack)
-		//	{
-		//		m_endPhaseButtons->SetFrameNumber(3);
-		//	}
-		//}
-		//else if (m_endPhaseButtons->GetFrameNumber() != 0 && m_endPhaseButtons->GetFrameNumber() != 2)//checks if the mouse is no longer over the phase button
-		//{
-		//	if (current phase is movement)
-		//	{
-		//		m_endPhaseButtons->SetFrameNumber(0);
-		//	}
-		//	else if (current phase is attack)
-		//	{
-		//		m_endPhaseButtons->SetFrameNumber(2);
-		//	}
-		//}
+		if (m_endPhaseButtons->GetSpritesheet()->GetFrameRect(0).Translated(m_endPhaseButtons->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//checks if mouse is over the phase button
+		{
+			if (currentBattlePhase == BattlePhase::Movement)
+			{
+				m_endPhaseButtons->SetFrameNumber(1);
+				
+			}
+			else if (currentBattlePhase == BattlePhase::Attack)
+			{
+				
+				m_endPhaseButtons->SetFrameNumber(3);
+			}
+			//if (current phase is movement)
+			//{
+			//	
+			//}
+			//else if (current phase is attack)
+			//{
+			//	
+			//}
+		}
+		else if (m_endPhaseButtons->GetFrameNumber() != 0 && m_endPhaseButtons->GetFrameNumber() != 2)//checks if the mouse is no longer over the phase button
+		{
+			if (currentBattlePhase == BattlePhase::Movement)
+			{
+				m_endPhaseButtons->SetFrameNumber(0);
+			}
+			else if (currentBattlePhase == BattlePhase::Attack)
+			{
+				m_endPhaseButtons->SetFrameNumber(2);
+			}
+		}
 
 
 		//moves the sprites when the mouse is on the edge of the screen
@@ -422,4 +441,19 @@ void BattleGUI::onRedWin()
 {
 	winningFaction = getWinningFactionName();
 	m_currentBattleWindow = BattleWindow::ePostBattle;
+}
+
+void BattleGUI::onEnteringMovementPhase()
+{
+	m_endPhaseButtons->SetFrameNumber(0);
+}
+
+void BattleGUI::onEnteringAttackPhase()
+{
+	m_endPhaseButtons->SetFrameNumber(2);
+}
+
+void BattleGUI::onUnableToSkipPhase()
+{
+
 }

@@ -16,7 +16,7 @@ enum BattleWindow
 	ePause,
 	ePostBattle
 };
-
+enum class BattlePhase;
 class BattleGUI
 {
 public:
@@ -29,9 +29,9 @@ public:
 	void renderStats(EntityProperties& entityProperties) const;
 	void update(eDirection windDirection);
 	void updateFactionToken(int factionName);
-	void OnMouseLeftClick(const HAPI_TMouseData& mouseData);
+	void OnMouseLeftClick(const HAPI_TMouseData& mouseData, BattlePhase currentBattlePhase);
 	//void OnMouseScroll could be added
-	void OnMouseMove(const HAPI_TMouseData& mouseData);
+	void OnMouseMove(const HAPI_TMouseData& mouseData, BattlePhase currentBattlePhase);
 	void setMaxCameraOffset(std::pair<int, int> maxCameraOffset);
 
 private:
@@ -68,4 +68,7 @@ private:
 	void onGreenWin();
 	void onYellowWin();
 	void onRedWin();
+	void onEnteringMovementPhase();
+	void onEnteringAttackPhase();
+	void onUnableToSkipPhase();
 };

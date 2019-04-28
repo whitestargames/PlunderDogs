@@ -24,10 +24,15 @@ enum GameEvent
 	eBlueShipDestroyed,
 	eGreenShipDestroyed,
 	eRedShipDestroyed,
-	eOnRedWin,
-	eOnYellowWin,
-	eOnGreenWin,
-	eOnBlueWin
+	eRedWin,
+	eYellowWin,
+	eGreenWin,
+	eBlueWin,
+	eEnteringMovementPhase,
+	eEnteringAttackPhase,
+	eEndMovementPhaseEarly,
+	eEndAttackPhaseEarly,
+	eUnableToSkipPhase
 };
 
 class Listener

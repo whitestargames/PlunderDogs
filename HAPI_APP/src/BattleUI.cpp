@@ -189,7 +189,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 	}
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
-		m_gui.OnMouseLeftClick(mouseData);
+		m_gui.OnMouseLeftClick(mouseData, m_battle.getCurrentPhase());
 
 		switch (m_battle.getCurrentPhase())
 		{
@@ -294,7 +294,7 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 		return;
 	}
 
-	m_gui.OnMouseMove(mouseData);
+	m_gui.OnMouseMove(mouseData, m_battle.getCurrentPhase());
 
 	switch (m_battle.getCurrentPhase())
 	{
@@ -770,26 +770,6 @@ bool BattleUI::ShipPlacementPhase::isCompleted() const
 
 void BattleUI::ShipPlacementPhase::render(const InvalidPosition& invalidPosition, const Map& map) const
 {
-	//for (auto& i : m_spawnArea)
-	//{
-	//	switch (map.getTimeOfDay())
-	//	{
-	//	case eTimeOfDay::eMorning:
-	//		i->m_daySprite->Render(SCREEN_SURFACE);
-	//		break;
-	//	case eTimeOfDay::eAfternoon:
-	//		i->m_aftersprite->Render(SCREEN_SURFACE);
-	//		break;
-	//	case eTimeOfDay::eEvening:
-	//		i->m_eveningSprite->Render(SCREEN_SURFACE);
-	//		break;
-	//	case eTimeOfDay::eNight:
-	//		i->m_nightSprite->Render(SCREEN_SURFACE);
-	//		break;
-	//	}
-	//	
-	//}
-
 	if (m_currentSelectedEntity.m_currentSelectedEntity && !invalidPosition.m_activate)
 	{
 		const std::pair<int, int> tileTransform = map.getTileScreenPos(m_currentSelectedEntity.m_position);
