@@ -293,6 +293,7 @@ void Battle::onEndMovementPhaseEarly()
 	//m_players[m_currentPlayerTurn].
 	//auto player = std::find_if(m_players.cbegin(), m_players.cend(), [currentPlayerTurn](const auto& player) { return player.m_factionName == currentPlayerTurn; });
 	//assert(player != m_players.cend());
+
 	bool actionBeingPerformed = false;
 	for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
 	{
@@ -312,6 +313,10 @@ void Battle::onEndMovementPhaseEarly()
 		m_currentPhase = BattlePhase::Attack;
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringAttackPhase);
+		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
+		{
+			entity->m_battleProperties.clearMovementPath();
+		}
 	}
 }
 
