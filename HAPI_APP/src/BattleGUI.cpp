@@ -21,7 +21,7 @@ BattleGUI::BattleGUI()
 	m_maxCameraOffset(0, 0),
 	m_endPhaseButtons(HAPI_Sprites.MakeSprite(Textures::m_endPhaseButtons))
 {	
-	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onReset, this), "BattleGUI", GameEvent::eResetBattle);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onBattleReset, this), "BattleGUI", GameEvent::eResetBattle);
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onRedWin, this), "BattleGUI", GameEvent::eRedWin);
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onYellowWin, this), "BattleGUI", GameEvent::eYellowWin);
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onBlueWin, this), "BattleGUI", GameEvent::eBlueWin);
@@ -393,7 +393,7 @@ void BattleGUI::setMaxCameraOffset(std::pair<int, int> maxCameraOffset)
 	m_maxCameraOffset = std::pair<int, int>(maxCameraOffset.first * 28 - 150, maxCameraOffset.second * 32 - 150);
 }
 
-void BattleGUI::onReset()
+void BattleGUI::onBattleReset()
 {
 	m_currentBattleWindow = BattleWindow::eCombat;
 	winningFaction = "";

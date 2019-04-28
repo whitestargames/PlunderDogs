@@ -71,7 +71,7 @@ private:
 	void setTimeOfDay(float deltaTime);
 	void setWindDirection(float deltaTime);
 
-	void onReset();
+	void onResetBattle();
 	void onYellowShipDestroyed();
 	void onBlueShipDestroyed();
 	void onGreenShipDestroyed();

@@ -151,7 +151,7 @@ private:
 	void onMouseMoveAttackPhase();
 	TargetArea m_targetArea;
 
-	void onReset();
+	void onResetBattle();
 	void onNewTurn();
 
 	ParticleSystem m_explosion;

@@ -57,7 +57,7 @@ BattleUI::BattleUI(Battle & battle)
 	m_explosion(0.08, Textures::m_explosion),
 	m_fire(0.02, Textures::m_fire)
 {
-	GameEventMessenger::getInstance().subscribe(std::bind(&BattleUI::onReset, this), "BattleUI", GameEvent::eResetBattle);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleUI::onResetBattle, this), "BattleUI", GameEvent::eResetBattle);
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleUI::onNewTurn, this), "BattleUI", GameEvent::eNewTurn);
 }
 
@@ -587,7 +587,7 @@ void BattleUI::onMouseMoveAttackPhase()
 	}
 }
 
-void BattleUI::onReset()
+void BattleUI::onResetBattle()
 {
 	m_playerShipPlacement.clear();
 	m_targetArea.clearTargetArea();
