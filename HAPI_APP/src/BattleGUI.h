@@ -52,7 +52,7 @@ private:
 
 	DWORD animationStartTime;
 	bool shipSelected;
-	bool playAnimation;
+	bool playAnimation = false;
 	int animationOffset = 100;
 	
 	bool victory = false;

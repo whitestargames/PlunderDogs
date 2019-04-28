@@ -282,6 +282,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 			}
 			//Resetting the variables used as triggers
 			m_mouseDownTile = nullptr;
+			//TODO: Drop info box
 			m_selectedTile.m_tile = nullptr;
 			m_isMovingEntity = false;
 		}
@@ -302,9 +303,12 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 	case BattlePhase::ShipPlacement:
 	{
 		assert(!m_playerShipPlacement.empty());
-		if(!m_isMovingEntity)
+		if (!m_isMovingEntity)
+		{
 			m_selectedTile.m_tile = m_playerShipPlacement.front()->getTileOnMouse(
 				m_invalidPosition, m_selectedTile.m_tile, m_battle.getMap());
+			//TODO: Raise info box
+		}
 		break;
 	}
 	case BattlePhase::Movement:
@@ -384,6 +388,7 @@ void BattleUI::onLeftClickMovementPhase()
 	//Do not select killed entity
 	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_battleProperties.isDead())
 	{
+		//TODO: Drop info box
 		m_selectedTile.m_tile = nullptr;
 		return;
 	}
@@ -391,6 +396,7 @@ void BattleUI::onLeftClickMovementPhase()
 	//Clicking to where entity is moving to
 	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_battleProperties.isMovedToDestination())
 	{
+		//TODO: Drop info box
 		m_selectedTile.m_tile = nullptr;
 		return;
 	}
@@ -401,6 +407,7 @@ void BattleUI::onLeftClickMovementPhase()
 		if (m_selectedTile.m_tile->m_tileCoordinate == tileOnMouse->m_tileCoordinate)
 		{
 			m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.clearMovementPath();
+			//TODO: Drop info box
 			m_selectedTile.m_tile = nullptr;
 		}
 
@@ -408,6 +415,7 @@ void BattleUI::onLeftClickMovementPhase()
 		else if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
 		{
 			m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.clearMovementPath();
+			//TODO: Drop info box
 			m_selectedTile.m_tile = nullptr;
 		}
 
@@ -425,6 +433,7 @@ void BattleUI::onLeftClickMovementPhase()
 	{
 		if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_battleProperties.isDead())
 		{
+			//TODO: Drop info box
 			m_selectedTile.m_tile = nullptr;
 		}
 		//Do not select tile that contains wrong players entity
@@ -432,10 +441,12 @@ void BattleUI::onLeftClickMovementPhase()
 		{
 			if (tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
 			{
+				//TODO: Drop info box
 				m_selectedTile.m_tile = nullptr;
 			}
 			else
 			{
+				//TODO: Raise info box
 				m_selectedTile.m_tile = tileOnMouse;
 			}
 		}
@@ -451,7 +462,7 @@ void BattleUI::onRightClickMovementPhase()
 		m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.clearMovementPath();
 		m_invalidPosition.m_activate = false;
 	}
-
+	//TODO: Drop info box
 	m_selectedTile.m_tile = nullptr;
 }
 
@@ -470,6 +481,7 @@ void BattleUI::onLeftClickAttackPhase()
 	{
 		if (!tileOnMouse->m_entityOnTile->m_battleProperties.isWeaponFired())
 		{
+			//TODO: Raise info box
 			m_selectedTile.m_tile = tileOnMouse;
 		}
 	}
@@ -479,6 +491,7 @@ void BattleUI::onLeftClickAttackPhase()
 	{
 		m_targetArea.clearTargetArea();
 		m_invalidPosition.m_activate = false;
+		//TODO: Drop info box
 		m_selectedTile.m_tile = nullptr;
 		return;
 	}
@@ -488,6 +501,7 @@ void BattleUI::onLeftClickAttackPhase()
 	{
 		m_targetArea.clearTargetArea();
 		m_invalidPosition.m_activate = false;
+		//TODO: Drop info box
 		m_selectedTile.m_tile = nullptr;
 		return;
 	}
@@ -515,6 +529,7 @@ void BattleUI::onLeftClickAttackPhase()
 
 		//TODO: Might change this
 		m_targetArea.clearTargetArea();
+		//TODO: Drop info box
 		m_selectedTile.m_tile = nullptr;
 		m_invalidPosition.m_activate = false;
 		return;
@@ -527,6 +542,7 @@ void BattleUI::onLeftClickAttackPhase()
 	{
 		m_targetArea.clearTargetArea();
 		m_targetArea.generateTargetArea(m_battle.getMap(), *tileOnMouse);
+		//TODO: Raise info box
 		m_selectedTile.m_tile = tileOnMouse;
 		return;
 	}
@@ -537,7 +553,7 @@ void BattleUI::onLeftClickAttackPhase()
 	{
 		return;
 	}
-
+	//TODO: Raise info box
 	m_selectedTile.m_tile = tileOnMouse;
 	if (m_selectedTile.m_tile->m_entityOnTile && !m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.isWeaponFired())
 	{
@@ -547,6 +563,7 @@ void BattleUI::onLeftClickAttackPhase()
 
 void BattleUI::onRightClickAttackPhase()
 {
+	//TODO: Drop info box
 	m_selectedTile.m_tile = nullptr;
 	m_invalidPosition.m_activate = false;
 	m_targetArea.clearTargetArea();
@@ -589,6 +606,7 @@ void BattleUI::onMouseMoveAttackPhase()
 
 void BattleUI::onResetBattle()
 {
+	//TODO: reset other things
 	m_playerShipPlacement.clear();
 	m_targetArea.clearTargetArea();
 	m_selectedTile.m_tile = nullptr;
@@ -597,6 +615,7 @@ void BattleUI::onResetBattle()
 
 void BattleUI::onNewTurn()
 {
+	//TODO: Drop info box
 	m_selectedTile.m_tile = nullptr;
 }
 

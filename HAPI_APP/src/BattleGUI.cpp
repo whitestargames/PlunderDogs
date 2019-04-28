@@ -155,18 +155,18 @@ void BattleGUI::update(eDirection windDirection)
 	//m_CompassPointer->GetTransformComp().SetRotation(static_cast<float>(windDirection) * 0.333333 * 3.14159);
 	m_CompassPointer->GetTransformComp().SetRotation(DEGREES_TO_RADIANS(static_cast<int>(windDirection) *45 % 360));
 
-	//
-	//if (playAnimation)
-	//{
-	//	animationOffset = 100 - (HAPI_Sprites.GetTime() - animationStartTime);
-	//	if (animationOffset < 1)
-	//	{
-	//		playAnimation = false;
-	//		animationOffset = 0;
-	//	}
+	
+	if (playAnimation)
+	{
+		animationOffset = 280 - (HAPI_Sprites.GetTime() - animationStartTime);
+		if (animationOffset < 1)
+		{
+			playAnimation = false;
+			animationOffset = 0;
+		}
 
-	//	m_battleIcons->GetTransformComp().SetPosition({ 510, (890 + static_cast<float>(animationOffset)) });
-	//}
+		m_battleIcons->GetTransformComp().SetPosition({ 510, (890 + static_cast<float>(animationOffset)) });
+	}
 	
 
 	switch (m_currentBattleWindow)
@@ -332,20 +332,20 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData, BattlePhase curren
 		//only checks when mouse moves. if mouse doesnt move, it knows its still in the same spot and will keep scrolling without checking
 		pendingCameraMovement = VectorF{ 0,0 };
 
-		if (mouseData.x < 50)
+		if (mouseData.x < 100)
 		{
 			pendingCameraMovement += VectorF{ -1,0 };
 		}
-		else if (mouseData.x > 1870)
+		else if (mouseData.x > 1820)
 		{
 			pendingCameraMovement += VectorF{ 1,0 };
 		}
 
-		if (mouseData.y < 50)
+		if (mouseData.y < 100)
 		{
 			pendingCameraMovement += VectorF{ 0,-1 };
 		}
-		else if (mouseData.y > 1030)
+		else if (mouseData.y > 980)
 		{
 			pendingCameraMovement += VectorF{ 0,1 };
 		}
@@ -400,7 +400,7 @@ void BattleGUI::onBattleReset()
 
 	m_battleIcons->GetTransformComp().SetPosition({ 510, 890 });
 	m_pauseButton->GetTransformComp().SetPosition({ 1650, 140 });
-	m_chickenButton->GetTransformComp().SetPosition({ 1610, 840 });
+	//m_chickenButton->GetTransformComp().SetPosition({ 1610, 840 });
 	m_CompassBackGround->GetTransformComp().SetOriginToCentreOfFrame();
 	m_CompassBackGround->GetTransformComp().SetPosition({ 240, 170 });
 	m_CompassPointer->GetTransformComp().SetOrigin({ 21.5f,60 });

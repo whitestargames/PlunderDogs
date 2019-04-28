@@ -7,11 +7,13 @@
 std::vector<EntityProperties> assignEntities(FactionName name)
 {
 	std::vector<EntityProperties> entities;
-	for (int i = 0; i < 20; i++)
+	for (int i = 0; i < 4; i++)
 	{
-		EntityProperties newEntity(name, (EntityType)(rand()%4));
-
-		entities.push_back(newEntity);
+		for (int j = 0; j < 4; j++)
+		{
+			EntityProperties newEntity(name, (EntityType)(i));
+			entities.push_back(newEntity);
+		}
 	}
 	assert(!entities.empty());
 	return entities;
