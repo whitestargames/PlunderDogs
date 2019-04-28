@@ -16,6 +16,8 @@ const Tile* AI::findClosestEnemy(
 		const auto factionShipList = *battlePtr->getFactionShips(static_cast<FactionName>(i));
 		for (int j = 0; j < factionShipList.size(); j++)
 		{
+			if (factionShipList[j]->m_battleProperties.isDead)
+				continue;
 			//Find the distance^2 from the allied ship to the enemy ship, 
 			//then set closestEnemy to that enemy if it's the closest yet found
 			std::pair<int, int> enemyPos = mapPtr->getTileScreenPos(
