@@ -1,4 +1,6 @@
 #include "AI.h"
+#include "MouseSelection.h"
+#include <vector>
 
 constexpr int MAX_INT{ 2147483647 };
 
@@ -33,6 +35,62 @@ const Tile* AI::findClosestEnemy(
 		}
 	}
 	return closestEnemy;
+}
+//Support function for AI::findFiringPositions
+const Tile* firePosRadial(
+	Map* mapPtr, const Tile* targetShip, const Tile* alliedShip, int range)
+{
+	const Tile* closestTile{ alliedShip };
+	int closestDistance{ MAX_INT };
+	std::pair<int, int> alliedPos{ mapPtr->getTileScreenPos(alliedShip->m_tileCoordinate) };
+	//TODO: can't use const Tile* for some reason
+	std::vector<Tile*> availableTiles{ mapPtr->getTileRing(targetShip->m_tileCoordinate, range) };
+	for (Tile* it : availableTiles)
+	{
+		//Ensure it's a valid tile, if not skip this one
+		if ((it->m_type != eSea && it->m_type != eOcean) || !it)
+			continue;
+		//Determine distance
+		std::pair<int, int> tempPos = mapPtr->getTileScreenPos(it->m_tileCoordinate);
+		std::pair<int, int> diff(
+			{ tempPos.first - alliedPos.first, tempPos.second - alliedPos.second });
+		int tempDistance = diff.first * diff.first + diff.second * diff.second;
+		//If distance is smallest, set as new target tile
+		if (tempDistance < closestDistance)
+		{
+			closestDistance = tempDistance;
+			closestTile = it;
+		}
+	}
+	return closestTile;
+}
+
+std::pair<const Tile*, eDirection> AI::findFiringPosition(
+	Map* mapPtr, const Tile* targetShip, const Tile* alliedShip, eWeaponType weapon, int range)
+{
+	const Tile* closestTile{ alliedShip };
+	eDirection facingDirection{ eNorth };
+	switch (weapon)
+	{
+	case eSideCannons:
+	{
+		closestTile = firePosRadial(mapPtr, targetShip, alliedShip, range);
+		facingDirection = MouseSelection::calculateDirection(alliedShip, targetShip).second;
+	}
+	case eStraightShot:
+	{
+
+	}
+	case eShotgun:
+	{
+
+	}
+	case eFlamethrower:
+	{
+
+	}
+	}
+	return { closestTile, facingDirection };
 }
 
 void AI::handleMovementPhase(Battle* battlePtr, Map* mapPtr, FactionName faction)

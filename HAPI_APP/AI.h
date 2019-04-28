@@ -8,8 +8,10 @@
 namespace AI
 {
 //Internal use
+	//Finds closest living enemy, returns nullptr if none found
 	const Tile* findClosestEnemy(const Battle* battlePtr, const Map* mapPtr, const std::shared_ptr<BattleEntity> alliedShip, FactionName faction);
-	std::pair<Tile*,eDirection> findFiringPosition(const Tile* targetShip, eWeaponType weapon, int range);
+	//Finds nearest firing position to ship, if none are found will return the tile the ship is on
+	std::pair<const Tile*,eDirection> findFiringPosition(Map* mapPtr, const Tile* targetShip, const Tile* alliedShip, eWeaponType weapon, int range);
 	void attemptShot(const Tile* firingShip, const Tile* targetShip);
 	void attemptMove(Tile* currentTile, std::pair<Tile*, eDirection> targetTile);
 //External use

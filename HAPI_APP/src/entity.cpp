@@ -290,7 +290,7 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 		m_currentHealth = 25;
 		m_range = 2;
 		m_damage = 7;
-		m_weaponType = eWeaponType::eShotGun;
+		m_weaponType = eWeaponType::eShotgun;
 		break;
 	case EntityType::eDestroyer:
 		m_movementPoints = 20;
