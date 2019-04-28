@@ -8,6 +8,8 @@
 //TODO: Notify game Won 
 //TODO: Sniper directly facing a collidable tile - line still draws
 
+//CLEAR MOVEMENT UI WHEN ENDING PHASE EARLY
+
 using namespace HAPISPACE;
 
 float getDeltaTime(int frameStart, int lastFrameStart)
