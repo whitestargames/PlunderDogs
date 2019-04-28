@@ -621,14 +621,12 @@ std::vector<const Tile*> Map::getTileLine(
 			pushBackTile = getAdjacentTiles(pushBackTile->m_tileCoordinate)[direction];
 		}
 
-		tileStore.emplace_back(pushBackTile);
-
 		if (pushBackTile && (pushBackTile->m_entityOnTile) || (pushBackTile->m_type != eTileType::eSea && pushBackTile->m_type != eTileType::eOcean))
 		{
 			break;
 		}
 
-		
+		tileStore.emplace_back(pushBackTile);
 	}
 	return tileStore;
 }
