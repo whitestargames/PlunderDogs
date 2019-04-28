@@ -103,7 +103,8 @@ void BattleUI::renderParticles() const
 
 void BattleUI::renderGUI() const
 {
-	m_gui.render();
+	m_gui.render(m_battle.getCurrentPhase());
+
 	if (m_selectedTile.m_tile  != nullptr && m_selectedTile.m_tile->m_entityOnTile != nullptr)
 	{
 		m_gui.renderStats(m_selectedTile.m_tile->m_entityOnTile->m_entityProperties);

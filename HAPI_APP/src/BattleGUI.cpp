@@ -66,15 +66,18 @@ std::pair<int, int> BattleGUI::getCameraPositionOffset() const
 	return m_cameraPositionOffset;
 }
 
-void BattleGUI::render() const
+void BattleGUI::render(BattlePhase currentBattlePhase) const
 {
-
 	m_pauseButton->Render(SCREEN_SURFACE);
 	//m_chickenButton->Render(SCREEN_SURFACE);
 	m_CompassBackGround->Render(SCREEN_SURFACE);
 	m_CompassPointer->Render(SCREEN_SURFACE);
 	m_activeFactionToken->Render(SCREEN_SURFACE);
-	m_endPhaseButtons->Render(SCREEN_SURFACE);
+	
+	if (currentBattlePhase != BattlePhase::ShipPlacement)
+	{
+		m_endPhaseButtons->Render(SCREEN_SURFACE);
+	}
 
 	switch (m_currentBattleWindow)
 	{
@@ -287,14 +290,6 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData, BattlePhase curren
 				
 				m_endPhaseButtons->SetFrameNumber(3);
 			}
-			//if (current phase is movement)
-			//{
-			//	
-			//}
-			//else if (current phase is attack)
-			//{
-			//	
-			//}
 		}
 		else if (m_endPhaseButtons->GetFrameNumber() != 0 && m_endPhaseButtons->GetFrameNumber() != 2)//checks if the mouse is no longer over the phase button
 		{

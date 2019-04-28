@@ -25,7 +25,7 @@ public:
 
 	std::pair<int, int> getCameraPositionOffset() const;
 
-	void render() const;
+	void render(BattlePhase currentBattlePhase) const;
 	void renderStats(EntityProperties& entityProperties) const;
 	void update(eDirection windDirection);
 	void updateFactionToken(int factionName);
