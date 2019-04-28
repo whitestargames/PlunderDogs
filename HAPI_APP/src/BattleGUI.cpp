@@ -388,7 +388,6 @@ void BattleGUI::onReset()
 	m_resumeButton->GetTransformComp().SetPosition({ 818, 387 });
 	m_quitButton->GetTransformComp().SetPosition({ 818, 517 });
 	//postBattle
-	m_postBattleBackground->GetTransformComp().SetPosition({ 360, 190 });
 	m_doneButton->GetTransformComp().SetPosition({ 820, 800 });
 }
 
