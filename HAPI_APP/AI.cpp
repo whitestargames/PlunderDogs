@@ -42,7 +42,7 @@ void AI::handleMovementPhase(Battle* battlePtr, Map* mapPtr, FactionName faction
 	{
 		//find the nearest enemy ship
 
-		Tile* enemyPosition{ findClosestEnemy(battlePtr, mapPtr, ships[i], faction) };
+		const Tile* enemyPosition{ findClosestEnemy(battlePtr, mapPtr, ships[i], faction) };
 
 		//find the nearest tile and facing that can fire upon the chosen enemy ship
 		std::pair<Tile*, eDirection>  firingPosition{ findFiringPosition(enemyPosition,ships[i]->m_entityProperties.m_weaponType, ships[i]->m_entityProperties.m_range) };
