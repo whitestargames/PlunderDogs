@@ -81,7 +81,7 @@ enum eWeaponType
 {
 	eSideCannons = 0,
 	eStraightShot,
-	eShotGun, 
+	eShotgun, 
 	eFlamethrower
 };
 

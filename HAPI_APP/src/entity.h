@@ -124,6 +124,6 @@ struct BattlePlayer
 {
 	BattlePlayer(FactionName name);
 
-	std::vector<std::unique_ptr<BattleEntity>> m_entities;
+	std::vector<std::shared_ptr<BattleEntity>> m_entities;
 	const FactionName m_factionName;
 };

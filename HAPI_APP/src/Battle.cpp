@@ -208,9 +208,9 @@ void Battle::nextTurn()
 
 }
 
-std::vector<std::unique_ptr<BattleEntity>>* Battle::getFactionShips(FactionName faction)
+std::vector<std::shared_ptr<BattleEntity>>* Battle::getFactionShips(FactionName faction)
 {
-	std::vector<std::unique_ptr<BattleEntity>>* returnVariable{ nullptr };
+	std::vector<std::shared_ptr<BattleEntity>>* returnVariable{ nullptr };
 	for (auto it : m_players)
 	{
 		if (it.m_factionName == faction)
@@ -222,9 +222,9 @@ std::vector<std::unique_ptr<BattleEntity>>* Battle::getFactionShips(FactionName 
 	return returnVariable;
 }
 
-const std::vector<std::unique_ptr<BattleEntity>>* Battle::getFactionShips(FactionName faction) const
+const std::vector<std::shared_ptr<BattleEntity>>* Battle::getFactionShips(FactionName faction) const
 {
-	std::vector<std::unique_ptr<BattleEntity>>* returnVariable{ nullptr };
+	std::vector<std::shared_ptr<BattleEntity>>* returnVariable{ nullptr };
 	for (auto it : m_players)
 	{
 		if (it.m_factionName == faction)
@@ -264,7 +264,7 @@ void Battle::updateAttackPhase()
 	}
 }
 
-bool Battle::allEntitiesAttacked(std::vector<std::unique_ptr<BattleEntity>>& playerEntities) const
+bool Battle::allEntitiesAttacked(std::vector<std::shared_ptr<BattleEntity>>& playerEntities) const
 {
 	bool allEntitiesAttacked = true;
 	for (const auto& entity : playerEntities)
