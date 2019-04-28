@@ -107,7 +107,6 @@ OverWorldGUI::OverWorldGUI()
 	m_addDamageButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2)),
 	m_addRangeButton(HAPI_Sprites.MakeSprite(Utilities::getDataDirectory() + "addButton.png", 2))
 {
-
 	m_background = std::make_unique<Sprite>(Textures::m_background);
 	HAPI_Wrapper::setPosition(m_background, { 0, 0 });
 	GameEventMessenger::getInstance().subscribe(std::bind(&OverWorldGUI::onReset, this), "OverWorldGUI", GameEvent::eResetBattle);

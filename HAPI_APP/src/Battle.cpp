@@ -40,7 +40,7 @@ Battle::Battle()
 	m_dayTime(20.0f),
 	m_windTime(10)
 {
-	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onReset, this), "Battle", GameEvent::eResetBattle);
+	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onResetBattle, this), "Battle", GameEvent::eResetBattle);
 	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onYellowShipDestroyed, this), "Battle", GameEvent::eYellowShipDestroyed);
 	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onRedShipDestroyed, this), "Battle", GameEvent::eRedShipDestroyed);
 	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onBlueShipDestroyed, this), "Battle", GameEvent::eBlueShipDestroyed);
@@ -232,7 +232,7 @@ BattlePlayer & Battle::getPlayer(FactionName factionName)
 	return *cIter;
 }
 
-void Battle::onReset()
+void Battle::onResetBattle()
 {
 	m_currentPhase = BattlePhase::ShipPlacement;
 	m_currentPlayerTurn = 0;
@@ -293,6 +293,7 @@ void Battle::onEndMovementPhaseEarly()
 	//m_players[m_currentPlayerTurn].
 	//auto player = std::find_if(m_players.cbegin(), m_players.cend(), [currentPlayerTurn](const auto& player) { return player.m_factionName == currentPlayerTurn; });
 	//assert(player != m_players.cend());
+
 	bool actionBeingPerformed = false;
 	for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
 	{
@@ -312,6 +313,10 @@ void Battle::onEndMovementPhaseEarly()
 		m_currentPhase = BattlePhase::Attack;
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringAttackPhase);
+		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
+		{
+			entity->m_battleProperties.clearMovementPath();
+		}
 	}
 }
 

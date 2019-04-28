@@ -52,7 +52,7 @@ private:
 
 	DWORD animationStartTime;
 	bool shipSelected;
-	bool playAnimation;
+	bool playAnimation = false;
 	int animationOffset = 100;
 	
 	bool victory = false;
@@ -62,7 +62,7 @@ private:
 	float cameraZoom = 1.0f;//variable to multiply scale by
 	std::pair<int, int> m_cameraPositionOffset;
 	
-	void onReset();
+	void onBattleReset();
 	std::string getWinningFactionName();
 	void onBlueWin();
 	void onGreenWin();

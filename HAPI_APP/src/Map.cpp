@@ -624,7 +624,6 @@ std::vector<const Tile*> Map::getTileLine(
 		{
 			pushBackTile = getAdjacentTiles(pushBackTile->m_tileCoordinate)[direction];
 		}
-
 		//TODO: 
 		//if (pushBackTile && (pushBackTile->m_entityOnTile) || (pushBackTile->m_type != eTileType::eSea && pushBackTile->m_type != eTileType::eOcean))
 		//{

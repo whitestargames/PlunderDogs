@@ -21,7 +21,7 @@ BattleGUI::BattleGUI()
 	m_maxCameraOffset(0, 0),
 	m_endPhaseButtons(HAPI_Sprites.MakeSprite(Textures::m_endPhaseButtons))
 {	
-	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onReset, this), "BattleGUI", GameEvent::eResetBattle);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onBattleReset, this), "BattleGUI", GameEvent::eResetBattle);
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onRedWin, this), "BattleGUI", GameEvent::eRedWin);
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onYellowWin, this), "BattleGUI", GameEvent::eYellowWin);
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onBlueWin, this), "BattleGUI", GameEvent::eBlueWin);
@@ -40,6 +40,7 @@ BattleGUI::BattleGUI()
 	m_CompassPointer->GetTransformComp().SetPosition({ 100, 100 });
 	m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
 	m_activeFactionToken->GetTransformComp().SetPosition({ 960, 55 });
+	
 
 	//pauseMenu
 	m_resumeButton->GetTransformComp().SetPosition({ 818, 387 });
@@ -72,7 +73,30 @@ void BattleGUI::render(BattlePhase currentBattlePhase) const
 	//m_chickenButton->Render(SCREEN_SURFACE);
 	m_CompassBackGround->Render(SCREEN_SURFACE);
 	m_CompassPointer->Render(SCREEN_SURFACE);
-	m_activeFactionToken->Render(SCREEN_SURFACE);
+	//m_activeFactionToken->Render(SCREEN_SURFACE);
+
+	if (currentBattlePhase != BattlePhase::ShipPlacement)
+	{
+		if (m_activeFactionToken->GetFrameNumber() == FactionName::eRed)
+		{
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::RED, "Red Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+		}
+		else if (m_activeFactionToken->GetFrameNumber() == FactionName::eGreen)
+		{
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::GREEN, "Green Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+		}
+		else if (m_activeFactionToken->GetFrameNumber() == FactionName::eBlue)
+		{
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::BLUE, "Blue Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+		}
+		else if (m_activeFactionToken->GetFrameNumber() == FactionName::eYellow)
+		{
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::YELLOW, "Yellow Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+		}
+	}
+	
+	
+	
 	
 	if (currentBattlePhase != BattlePhase::ShipPlacement)
 	{
@@ -131,18 +155,18 @@ void BattleGUI::update(eDirection windDirection)
 	//m_CompassPointer->GetTransformComp().SetRotation(static_cast<float>(windDirection) * 0.333333 * 3.14159);
 	m_CompassPointer->GetTransformComp().SetRotation(DEGREES_TO_RADIANS(static_cast<int>(windDirection) *45 % 360));
 
-	//
-	//if (playAnimation)
-	//{
-	//	animationOffset = 100 - (HAPI_Sprites.GetTime() - animationStartTime);
-	//	if (animationOffset < 1)
-	//	{
-	//		playAnimation = false;
-	//		animationOffset = 0;
-	//	}
+	
+	if (playAnimation)
+	{
+		animationOffset = 280 - (HAPI_Sprites.GetTime() - animationStartTime);
+		if (animationOffset < 1)
+		{
+			playAnimation = false;
+			animationOffset = 0;
+		}
 
-	//	m_battleIcons->GetTransformComp().SetPosition({ 510, (890 + static_cast<float>(animationOffset)) });
-	//}
+		m_battleIcons->GetTransformComp().SetPosition({ 510, (890 + static_cast<float>(animationOffset)) });
+	}
 	
 
 	switch (m_currentBattleWindow)
@@ -308,20 +332,20 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData, BattlePhase curren
 		//only checks when mouse moves. if mouse doesnt move, it knows its still in the same spot and will keep scrolling without checking
 		pendingCameraMovement = VectorF{ 0,0 };
 
-		if (mouseData.x < 50)
+		if (mouseData.x < 100)
 		{
 			pendingCameraMovement += VectorF{ -1,0 };
 		}
-		else if (mouseData.x > 1870)
+		else if (mouseData.x > 1820)
 		{
 			pendingCameraMovement += VectorF{ 1,0 };
 		}
 
-		if (mouseData.y < 50)
+		if (mouseData.y < 100)
 		{
 			pendingCameraMovement += VectorF{ 0,-1 };
 		}
-		else if (mouseData.y > 1030)
+		else if (mouseData.y > 980)
 		{
 			pendingCameraMovement += VectorF{ 0,1 };
 		}
@@ -369,20 +393,22 @@ void BattleGUI::setMaxCameraOffset(std::pair<int, int> maxCameraOffset)
 	m_maxCameraOffset = std::pair<int, int>(maxCameraOffset.first * 28 - 150, maxCameraOffset.second * 32 - 150);
 }
 
-void BattleGUI::onReset()
+void BattleGUI::onBattleReset()
 {
 	m_currentBattleWindow = BattleWindow::eCombat;
 	winningFaction = "";
 
 	m_battleIcons->GetTransformComp().SetPosition({ 510, 890 });
 	m_pauseButton->GetTransformComp().SetPosition({ 1650, 140 });
-	m_chickenButton->GetTransformComp().SetPosition({ 1610, 840 });
+	//m_chickenButton->GetTransformComp().SetPosition({ 1610, 840 });
 	m_CompassBackGround->GetTransformComp().SetOriginToCentreOfFrame();
 	m_CompassBackGround->GetTransformComp().SetPosition({ 240, 170 });
 	m_CompassPointer->GetTransformComp().SetOrigin({ 21.5f,60 });
 	m_CompassPointer->GetTransformComp().SetPosition({ 240, 170 });
 	m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
-	m_activeFactionToken->GetTransformComp().SetPosition({ 1510,140 });// position just temp can be adjusted as needed
+	m_activeFactionToken->GetTransformComp().SetPosition({ 1510,140 });// position just temp can be adjusted as needed postiiton 900/100
+	
+
 
 	//pauseMenu
 	m_resumeButton->GetTransformComp().SetPosition({ 818, 387 });
