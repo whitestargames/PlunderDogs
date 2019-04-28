@@ -140,13 +140,9 @@ private:
 	InvalidPosition m_invalidPosition;
 	std::deque<std::unique_ptr<ShipPlacementPhase>> m_playerShipPlacement;
 
-	void onLeftClickDown(const HAPI_TMouseData & mouseData);
-	void onRightClickDown();
-	void onLeftClickUp();
-
 	//Movement Phase
 	void onMouseMoveMovementPhase();
-	void onLeftClickMovementPhase(const Tile& tileOnMouse);
+	void onLeftClickMovementPhase();
 	void onRightClickMovementPhase();
 
 	//Attack Phase
