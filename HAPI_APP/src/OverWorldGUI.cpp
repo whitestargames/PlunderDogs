@@ -139,6 +139,11 @@ void OverWorldGUI::render(Battle& battle)
 
 		case OverWorldWindow::ePlayerSelection:
 		{
+
+
+
+
+
 			m_playerSelectBackground->Render(SCREEN_SURFACE);
 			m_playerSelectYellow->Render(SCREEN_SURFACE);
 			m_playerSelectGreen->Render(SCREEN_SURFACE);
