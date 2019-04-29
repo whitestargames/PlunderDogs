@@ -6,7 +6,7 @@
 class Battle;
 struct Tile;
 class Map;
-class BattleEntity;
+struct BattleEntity;
 
 namespace AI
 {

@@ -142,6 +142,11 @@ std::pair<const Tile*, eDirection> findFiringPosition(
 	return { closestTile, static_cast<eDirection>(facingDirection) };
 }
 
+std::pair<const Tile*, eDirection> AI::findFiringPosition(Map * mapPtr, const Tile * targetShip, const Tile * alliedShip, eWeaponType weapon, int range)
+{
+	return std::pair<const Tile*, eDirection>();
+}
+
 void AI::attemptMove(Map* mapPtr, std::shared_ptr<BattleEntity> currentShip, std::pair<const Tile*, eDirection> targetTile)
 {
 	//Call generate path
@@ -261,4 +266,8 @@ void AI::handleShootingPhase(Battle* battlePtr, Map* mapPtr, FactionName faction
 		//check if the ship is able to fire upon any enemies and fire if possible
 		//attemptShot(ships[i]);
 	}
+}
+
+void AI::handleDeploymentPhase(Battle * battlePtr, Map * mapPtr, FactionName faction)
+{
 }

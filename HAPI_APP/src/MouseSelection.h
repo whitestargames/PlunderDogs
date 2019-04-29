@@ -10,7 +10,7 @@ namespace MouseSelection
 {
 constexpr double PI = 3.14159265;
 
-double radsToDeg(double angle) { return 180 * (angle / PI); }
+double radsToDeg(double angle);
 
 std::pair<int, int> coordToHexPos(std::pair<int, int> coord);
 

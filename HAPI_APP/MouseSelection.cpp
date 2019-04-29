@@ -2,6 +2,11 @@
 #include "Map.h"
 #include <cmath>
 
+double MouseSelection::radsToDeg(double angle) 
+{ 
+	return 180 * (angle / MouseSelection::PI); 
+}
+
 std::pair<int, int> MouseSelection::coordToHexPos(std::pair<int, int> coord)
 {
 	const float xPos = static_cast<float>(coord.first * 24);
