@@ -8,14 +8,6 @@
 #include <utility>
 #include <algorithm>
 
-//enum FactionName
-//{
-//	eYellow = 0,
-//	eBlue,
-//	eGreen,
-//	eRed
-//};
-
 enum GameEvent
 {
 	eResetBattle = 0,
@@ -46,7 +38,6 @@ public:
 	std::function<void(GameEvent)> m_listener;
 	std::string m_name;
 };
-
 
 class GameEventMessenger
 {

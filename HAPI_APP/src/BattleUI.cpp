@@ -377,6 +377,19 @@ void BattleUI::onLeftClickMovementPhase()
 		return;
 	}
 
+	if (!m_selectedTile.m_tile && tileOnMouse->m_entityOnTile)
+	{
+		m_selectedTile.m_tile = tileOnMouse;
+		return;
+	}
+
+	if (!m_selectedTile.m_tile && tileOnMouse->m_entityOnTile &&
+		tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
+	{
+		m_selectedTile.m_tile = tileOnMouse;
+		return;
+	}
+
 	//Invalid Location - Collidable tile
 	if (tileOnMouse->m_type != eTileType::eSea && tileOnMouse->m_type != eTileType::eOcean)
 	{
@@ -417,12 +430,17 @@ void BattleUI::onLeftClickMovementPhase()
 		else if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
 		{
 			m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.clearMovementPath();
-			//TODO: Drop info box
-			m_selectedTile.m_tile = nullptr;
+			m_selectedTile.m_tile = tileOnMouse;
+		}
+		else if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName == m_battle.getCurentFaction())
+		{
+			m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.clearMovementPath();
+			m_selectedTile.m_tile = tileOnMouse;
 		}
 
 		//Store data so Entity can move to new location
-		else if (m_selectedTile.m_tile->m_entityOnTile && (m_selectedTile.m_tile->m_tileCoordinate != tileOnMouse->m_tileCoordinate))
+		else if (m_selectedTile.m_tile->m_entityOnTile && (m_selectedTile.m_tile->m_tileCoordinate != tileOnMouse->m_tileCoordinate)
+			&& m_selectedTile.m_tile->m_entityOnTile->m_factionName == m_battle.getCurentFaction())
 		{
 			assert(m_selectedTile.m_tile->m_entityOnTile->m_factionName == m_battle.getCurentFaction());
 			m_mouseDownTile = tileOnMouse;
@@ -479,13 +497,21 @@ void BattleUI::onLeftClickAttackPhase()
 
 	//Select new entity that is on same team
 	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile && tileOnMouse->m_entityOnTile &&
-		(tileOnMouse->m_entityOnTile->m_factionName == m_selectedTile.m_tile->m_entityOnTile->m_factionName))
+		(tileOnMouse->m_entityOnTile->m_factionName == m_battle.getCurentFaction()))
 	{
 		if (!tileOnMouse->m_entityOnTile->m_battleProperties.isWeaponFired())
 		{
-			//TODO: Raise info box
+			m_targetArea.clearTargetArea();
+			m_targetArea.generateTargetArea(m_battle.getMap(), *tileOnMouse);
 			m_selectedTile.m_tile = tileOnMouse;
+			return;
 		}
+	}
+
+	if (!m_selectedTile.m_tile && tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
+	{
+		m_selectedTile.m_tile = tileOnMouse;
+		return;
 	}
 
 	//Do not fire on destroyed ship
@@ -526,14 +552,19 @@ void BattleUI::onLeftClickAttackPhase()
 			}
 			
 		}
-	
-		m_battle.fireEntityWeaponAtPosition(*m_selectedTile.m_tile->m_entityOnTile, *tileOnMouse, m_targetArea.m_targetArea);
 
-		//TODO: Might change this
-		m_targetArea.clearTargetArea();
-		//TODO: Drop info box
-		m_selectedTile.m_tile = nullptr;
-		m_invalidPosition.m_activate = false;
+		if (m_battle.fireEntityWeaponAtPosition(*m_selectedTile.m_tile->m_entityOnTile, *tileOnMouse, m_targetArea.m_targetArea))
+		{
+			m_targetArea.clearTargetArea();
+			m_selectedTile.m_tile = nullptr;
+			m_invalidPosition.m_activate = false;
+		}
+		else
+		{
+			m_selectedTile.m_tile = tileOnMouse;
+			m_targetArea.clearTargetArea();
+			m_invalidPosition.m_activate = false;
+		}
 		return;
 	}
 
@@ -553,12 +584,19 @@ void BattleUI::onLeftClickAttackPhase()
 	//Select new Entity to fire at something
 	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
 	{
+		m_selectedTile.m_tile = tileOnMouse;
 		return;
 	}
-	//TODO: Raise info box
-	m_selectedTile.m_tile = tileOnMouse;
-	if (m_selectedTile.m_tile->m_entityOnTile && !m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.isWeaponFired())
+
+	if (!m_selectedTile.m_tile && tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName == m_battle.getCurentFaction())
 	{
+		m_selectedTile.m_tile = tileOnMouse;
+	}
+
+	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile && !m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.isWeaponFired() &&
+		m_selectedTile.m_tile->m_entityOnTile->m_factionName == m_battle.getCurentFaction())
+	{
+		m_selectedTile.m_tile = tileOnMouse;
 		m_targetArea.generateTargetArea(m_battle.getMap(), *tileOnMouse);
 	}
 }

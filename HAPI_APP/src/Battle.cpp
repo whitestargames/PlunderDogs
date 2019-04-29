@@ -123,12 +123,11 @@ void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination,
 	entity.m_battleProperties.moveEntity(m_map, destination, endDirection);
 }
 
-void Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea)
+bool Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea)
 {
 	assert(m_currentPhase == BattlePhase::Attack);
 	assert(!player.m_battleProperties.isWeaponFired());
-	player.m_battleProperties.fireWeapon();
-
+	
 	//Disallow attacking same team
 	if (tileOnAttackPosition.m_entityOnTile && tileOnAttackPosition.m_entityOnTile->m_factionName != getCurentFaction()
 			&& !tileOnAttackPosition.m_entityOnTile->m_battleProperties.isDead())
@@ -141,8 +140,11 @@ void Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 		{
 			auto& enemy = tileOnAttackPosition.m_entityOnTile;
 			enemy->m_battleProperties.takeDamage(enemy->m_entityProperties, player.m_entityProperties.m_damage, enemy->m_factionName);
+			player.m_battleProperties.fireWeapon();
+			return true;
 		}
 	}
+	return false;
 }
 
 void Battle::insertEntity(std::pair<int, int> startingPosition, eDirection startingDirection, const EntityProperties& entityProperties, FactionName factionName)
