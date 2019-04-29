@@ -1,5 +1,6 @@
 #include "AI.h"
 #include "MouseSelection.h"
+#include "pathfinding.h"
 #include <vector>
 
 constexpr int MAX_INT{ 2147483647 };
@@ -140,7 +141,9 @@ std::pair<const Tile*, eDirection> findFiringPosition(
 
 void AI::attemptMove(std::shared_ptr<BattleEntity> currentShip, std::pair<const Tile*, eDirection> targetTile)
 {
+	//Call pathfinding for a path to target tile
 
+	//Loop calling moveEntity for each tile in the path end to start until one of them works
 }
 
 void AI::attemptShot(Battle* battlePtr, Map* mapPtr, std::shared_ptr<BattleEntity> firingShip)
