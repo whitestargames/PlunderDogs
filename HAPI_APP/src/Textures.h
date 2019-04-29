@@ -371,6 +371,35 @@ struct Textures
 			HAPI_Sprites.UserMessage("Connot Load: 'fire.xml'", "Texture Error");
 			return false;
 		}
+		
+		m_redSpawnHex = HAPI_Wrapper::makeSpriteSheet("spawnHexRed.png");
+		if (!m_redSpawnHex)
+		{
+			HAPI_Sprites.UserMessage("Connot Load: 'spawnHexRed.png'", "Texture Error");
+			return false;
+		}
+
+		m_blueSpawnHex = HAPI_Wrapper::makeSpriteSheet("spawnHexBlue.png");
+		if (!m_blueSpawnHex)
+		{
+			HAPI_Sprites.UserMessage("Connot Load: 'spawnHexBlue.png'", "Texture Error");
+			return false;
+		}
+
+		m_yellowSpawnHex = HAPI_Wrapper::makeSpriteSheet("spawnHexYellow.png");
+		if (!m_yellowSpawnHex)
+		{
+			HAPI_Sprites.UserMessage("Connot Load: 'spawnHexYellow.png'", "Texture Error");
+			return false;
+		}
+
+		m_greenSpawnHex = HAPI_Wrapper::makeSpriteSheet("spawnHexGreen.png");
+		if (!m_greenSpawnHex)
+		{
+			HAPI_Sprites.UserMessage("Connot Load: 'spawnHexGreen.png'", "Texture Error");
+			return false;
+		}
+
 		return true;
 	}
 
@@ -431,4 +460,8 @@ struct Textures
 	static std::shared_ptr<SpriteSheet> m_explosion;
 	static std::shared_ptr<SpriteSheet> m_fire;
 
+	static std::shared_ptr<SpriteSheet> m_redSpawnHex;
+	static std::shared_ptr<SpriteSheet> m_blueSpawnHex;
+	static std::shared_ptr<SpriteSheet> m_yellowSpawnHex;
+	static std::shared_ptr<SpriteSheet> m_greenSpawnHex;
 };

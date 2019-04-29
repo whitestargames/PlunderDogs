@@ -793,7 +793,23 @@ BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*> 
 	m_spawnSprites.reserve(m_spawnArea.size());
 	for (int i = 0; i < m_spawnArea.size(); ++i)
 	{
-		std::unique_ptr<Sprite> sprite = HAPI_Sprites.MakeSprite(Textures::m_spawnHex);
+		std::unique_ptr<Sprite> sprite;
+		switch (factionName)
+		{
+		case eYellow:
+			sprite = HAPI_Sprites.MakeSprite(Textures::m_yellowSpawnHex);
+			break;
+		case eBlue:
+			sprite = HAPI_Sprites.MakeSprite(Textures::m_blueSpawnHex);
+			break;
+		case eGreen:
+			sprite = HAPI_Sprites.MakeSprite(Textures::m_greenSpawnHex);
+			break;
+		case eRed:
+			sprite = HAPI_Sprites.MakeSprite(Textures::m_redSpawnHex);
+			break;
+		};
+
 		auto screenPosition = map.getTileScreenPos(m_spawnArea[i]->m_tileCoordinate);
 		sprite->GetTransformComp().SetPosition({
 		(float)screenPosition.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),

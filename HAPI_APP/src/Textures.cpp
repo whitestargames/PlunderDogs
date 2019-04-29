@@ -58,3 +58,7 @@ std::shared_ptr<SpriteSheet> Textures::m_background;
 std::shared_ptr<SpriteSheet> Textures::m_explosion;
 std::shared_ptr<SpriteSheet> Textures::m_fire;
 
+std::shared_ptr<SpriteSheet> Textures::m_redSpawnHex;
+std::shared_ptr<SpriteSheet> Textures::m_yellowSpawnHex;
+std::shared_ptr<SpriteSheet> Textures::m_greenSpawnHex;
+std::shared_ptr<SpriteSheet> Textures::m_blueSpawnHex;
