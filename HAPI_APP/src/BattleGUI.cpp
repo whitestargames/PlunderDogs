@@ -59,10 +59,10 @@ void BattleGUI::render() const
 	m_CompassPointer->Render(SCREEN_SURFACE);
 	m_activeFactionToken->Render(SCREEN_SURFACE);
 	m_endPhaseButtons->Render(SCREEN_SURFACE);
-	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 585), HAPISPACE::Colour255::RED, std::to_string(m_maxCameraOffset.first), 50);//Dont delete these until the panning has been fixed - Jack
-	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(950, 585), HAPISPACE::Colour255::RED, std::to_string(CameraPositionOffset.first), 50);
-	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 685), HAPISPACE::Colour255::GREEN, std::to_string(m_maxCameraOffset.second), 50);
-	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(950, 685), HAPISPACE::Colour255::GREEN, std::to_string(CameraPositionOffset.second), 50);
+	//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 585), HAPISPACE::Colour255::RED, std::to_string(m_maxCameraOffset.first), 50);//Dont delete these until the panning has been fixed - Jack
+	//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(950, 585), HAPISPACE::Colour255::RED, std::to_string(CameraPositionOffset.first), 50);
+	//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 685), HAPISPACE::Colour255::GREEN, std::to_string(m_maxCameraOffset.second), 50);
+	//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(950, 685), HAPISPACE::Colour255::GREEN, std::to_string(CameraPositionOffset.second), 50);
 	switch (m_currentBattleWindow)
 	{
 	case BattleWindow::ePause:
