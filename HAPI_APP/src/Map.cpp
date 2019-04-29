@@ -260,7 +260,7 @@ std::vector<Tile*> Map::getTileRadius(intPair coord, int range)
 	return tileStore;
 }
 
-std::vector< Tile*> Map::getTileCone(intPair coord, int range, eDirection direction)
+std::vector<Tile*> Map::getTileCone(intPair coord, int range, eDirection direction)
 {
 	if (range < 1)
 		HAPI_Sprites.UserMessage("getTileCone range less than 1", "Map error");
@@ -304,7 +304,7 @@ std::vector< Tile*> Map::getTileCone(intPair coord, int range, eDirection direct
 	return tileStore;
 }
 
-std::vector<const Tile*> Map::getTileCone(intPair coord, int range, eDirection direction) const
+std::vector<const Tile*> Map::cGetTileCone(intPair coord, int range, eDirection direction) const
 {
 	if (range < 1)
 		HAPI_Sprites.UserMessage("getTileCone range less than 1", "Map error");
@@ -335,9 +335,10 @@ std::vector<const Tile*> Map::getTileCone(intPair coord, int range, eDirection d
 					if (inCone(cubeCoord, tempCube, direction))
 					{
 						const Tile* tile = getTile(intPair(x, y));
+						//TODO: make this check occur only in a special case
 						if (tile && (tile->m_type == eTileType::eSea || tile->m_type == eTileType::eOcean))
 						{
-							tileStore.push_back(getTile(intPair(x, y)));
+							tileStore.push_back(tile);
 						}
 					}
 				}
@@ -500,7 +501,7 @@ const Tile * Map::getTile(std::pair<int, int> coordinate) const
 	return nullptr;
 }
 
-std::vector<const Tile*> Map::getAdjacentTiles(std::pair<int, int> coord) const
+std::vector<const Tile*> Map::cGetAdjacentTiles(std::pair<int, int> coord) const
 {
 	const size_t allAdjacentTiles = 6;
 	std::vector<const Tile*> result;
@@ -526,7 +527,7 @@ std::vector<const Tile*> Map::getAdjacentTiles(std::pair<int, int> coord) const
 	return result;
 }
 
-std::vector<const Tile*> Map::getTileRadius(std::pair<int, int> coord, int range) const
+std::vector<const Tile*> Map::cGetTileRadius(std::pair<int, int> coord, int range) const
 {
 	if (range < 1)
 		HAPI_Sprites.UserMessage("getTileRadius range less than 1", "Map error");
@@ -577,7 +578,7 @@ std::vector<Tile*> Map::getTileLine(
 	return tileStore;
 }
 
-std::vector<const Tile*> Map::getTileLine(
+std::vector<const Tile*> Map::cGetTileLine(
 	std::pair<int, int> coord, int range, eDirection direction)const
 {
 	std::vector<const Tile*> tileStore;
@@ -587,7 +588,7 @@ std::vector<const Tile*> Map::getTileLine(
 	for (int i = 0; i < range; i++)
 	{
 		if (pushBackTile)
-			pushBackTile = getAdjacentTiles(pushBackTile->m_tileCoordinate)[direction];
+			pushBackTile = cGetAdjacentTiles(pushBackTile->m_tileCoordinate)[direction];
 		tileStore.emplace_back(pushBackTile);
 	}
 	return tileStore;
@@ -623,7 +624,7 @@ std::vector<Tile*> Map::getTileRing(std::pair<int, int> coord, int range)
 	return tileStore;
 }
 
-std::vector<const Tile*> Map::getTileRing(std::pair<int, int> coord, int range) const
+std::vector<const Tile*> Map::cGetTileRing(std::pair<int, int> coord, int range) const
 {
 	if (range < 1)
 		HAPI_Sprites.UserMessage("getTileRing range less than 1", "Map error");

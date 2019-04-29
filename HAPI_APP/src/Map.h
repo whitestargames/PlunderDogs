@@ -94,21 +94,21 @@ public:
 	//An n = 1 version of getTileRadius for use in pathfinding, 
 	//returns nullptr for each tile out of bounds
 	std::vector<Tile*> getAdjacentTiles(std::pair<int, int> coord);
-	std::vector<const Tile*> getAdjacentTiles(std::pair<int, int> coord) const;
+	std::vector<const Tile*> cGetAdjacentTiles(std::pair<int, int> coord) const;
 	//Returns tiles in a radius around a given tile, skipping the tile itself
 	std::vector<Tile*> getTileRadius(std::pair<int, int> coord, int range);
-	std::vector<const Tile*> getTileRadius(std::pair<int, int> coord, int range) const;
+	std::vector<const Tile*> cGetTileRadius(std::pair<int, int> coord, int range) const;
 	//Returns tiles in two cones emanating from a given tile, skipping the tile itself
 	std::vector<Tile*> getTileCone(std::pair<int, int> coord, int range, eDirection direction);
-	std::vector<const Tile*> getTileCone(std::pair<int, int> coord, int range, eDirection direction)const;
+	std::vector<const Tile*> cGetTileCone(std::pair<int, int> coord, int range, eDirection direction)const;
 	//Returns tiles in a line from a given direction,
 	//An element in the vector will be nullptr if it accesses an invalid tile
 	std::vector<Tile*> getTileLine(std::pair<int, int> coord, int range, eDirection direction);
-	std::vector<const Tile*> getTileLine(std::pair<int, int> coord, int range, eDirection direction)const;
+	std::vector<const Tile*> cGetTileLine(std::pair<int, int> coord, int range, eDirection direction)const;
 	//Returns a ring of tiles at a certain radius from a specified tile
 	//An element in the vector will be nullptr if it accesses an invalid tile
 	std::vector<Tile*> getTileRing(std::pair<int, int> coord, int range);
-	std::vector<const Tile*> getTileRing(std::pair<int, int> coord, int range)const;
+	std::vector<const Tile*> cGetTileRing(std::pair<int, int> coord, int range)const;
 
 	//For finding the location on the screen a given tile is being drawn
 	std::pair<int, int> getTileScreenPos(std::pair<int, int> coord) const;

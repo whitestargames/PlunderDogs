@@ -226,7 +226,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 	{
 		if (m_isMovingEntity)
 		{
-			std::pair<double, eDirection> mouseMoveDirection{ calculateDirection(m_leftMouseDownPosition,HAPI_Wrapper::getMouseLocation()) };
+			std::pair<double, eDirection> mouseMoveDirection{ MouseSelection::calculateDirection(m_leftMouseDownPosition,HAPI_Wrapper::getMouseLocation()) };
 			switch (m_battle.getCurrentPhase())
 			{
 			case BattlePhase::ShipPlacement :
@@ -597,7 +597,7 @@ void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & sour
 	
 	if (source.m_entityOnTile->m_entityProperties.m_weaponType == eSideCannons)
 	{
-		m_targetArea = map.getTileCone(source.m_tileCoordinate,
+		m_targetArea = map.cGetTileCone(source.m_tileCoordinate,
 			source.m_entityOnTile->m_entityProperties.m_range, 
 			source.m_entityOnTile->m_battleProperties.getCurrentDirection());
 	
@@ -605,7 +605,7 @@ void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & sour
 
 	else if (source.m_entityOnTile->m_entityProperties.m_weaponType == eStraightShot)
 	{
-		m_targetArea = map.getTileLine(source.m_tileCoordinate, 
+		m_targetArea = map.cGetTileLine(source.m_tileCoordinate, 
 			source.m_entityOnTile->m_entityProperties.m_range, 
 			source.m_entityOnTile->m_battleProperties.getCurrentDirection());
 
@@ -614,7 +614,7 @@ void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & sour
 	else if (source.m_entityOnTile->m_entityProperties.m_weaponType == eShotgun)
 	{
 		// make so where ever the place presses get radius called talk adrais about size of that
-		m_targetArea = map.getTileRadius(source.m_tileCoordinate, 
+		m_targetArea = map.cGetTileRadius(source.m_tileCoordinate, 
 			source.m_entityOnTile->m_entityProperties.m_range);
 	}
 
@@ -642,7 +642,7 @@ void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & sour
 			directionOfFire = eSouthEast;
 			break;
 		}
-		m_targetArea = map.getTileLine(source.m_tileCoordinate,
+		m_targetArea = map.cGetTileLine(source.m_tileCoordinate,
 			source.m_entityOnTile->m_entityProperties.m_range, directionOfFire);
 	}
 	
@@ -694,7 +694,7 @@ BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*> 
 	m_spawnSprites()
 {
 	//Might change this - for now its two containers but looks confusing
-	m_spawnArea = map.getTileRadius(spawnPosition, range);
+	m_spawnArea = map.cGetTileRadius(spawnPosition, range);
 	m_spawnSprites.reserve(m_spawnArea.size());
 	for (int i = 0; i < m_spawnArea.size(); ++i)
 	{

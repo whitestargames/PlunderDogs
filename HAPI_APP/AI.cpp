@@ -9,8 +9,8 @@ const Tile* AI::findClosestEnemy(
 {
 	const Tile* closestEnemy{ nullptr };
 	int closestDistance{ MAX_INT };
-	std::pair<int, int> alliedPos{ 
-		mapPtr->getTileScreenPos(alliedShip->m_battleProperties.getCurrentPosition()) };
+	std::pair<int, int> alliedPos{ MouseSelection::coordToHexPos(
+		alliedShip->m_battleProperties.getCurrentPosition()) };
 	for (int i = 0; i < 4; i++)
 	{
 		if (i == static_cast<int>(faction))
@@ -18,11 +18,10 @@ const Tile* AI::findClosestEnemy(
 		const auto factionShipList = *battlePtr->getFactionShips(static_cast<FactionName>(i));
 		for (int j = 0; j < factionShipList.size(); j++)
 		{
-			if (factionShipList[j]->m_battleProperties.isDead)
-				continue;
+			if (factionShipList[j]->m_battleProperties.isDead()) continue;
 			//Find the distance^2 from the allied ship to the enemy ship, 
 			//then set closestEnemy to that enemy if it's the closest yet found
-			std::pair<int, int> enemyPos = mapPtr->getTileScreenPos(
+			std::pair<int, int> enemyPos = MouseSelection::coordToHexPos(
 				factionShipList[j]->m_battleProperties.getCurrentPosition());
 			std::pair<int, int> diff(
 				{ enemyPos.first - alliedPos.first, enemyPos.second - alliedPos.second });
@@ -36,22 +35,24 @@ const Tile* AI::findClosestEnemy(
 	}
 	return closestEnemy;
 }
-//Support function for AI::findFiringPositions. Finds the closest tile a specified distance away from a target tile
+//Support function for AI::findFiringPositions. 
+//Finds the closest tile a specified distance away from a target tile
 const Tile* firePosRadial(
 	Map* mapPtr, const Tile* targetShip, const Tile* alliedShip, int range)
 {
 	const Tile* closestTile{ alliedShip };
 	int closestDistance{ MAX_INT };
-	std::pair<int, int> alliedPos{ mapPtr->getTileScreenPos(alliedShip->m_tileCoordinate) };
+	std::pair<int, int> alliedPos{ MouseSelection::coordToHexPos(alliedShip->m_tileCoordinate) };
 	//TODO: can't use const Tile* for some reason
 	std::vector<Tile*> availableTiles{ mapPtr->getTileRing(targetShip->m_tileCoordinate, range) };
 	for (Tile* it : availableTiles)
 	{
 		//Ensure it's a valid tile, if not skip this one
-		if ((it->m_type != eSea && it->m_type != eOcean) || !it)
-			continue;
+		if (!it) continue;
+		if (it->m_type != eSea && it->m_type != eOcean) continue;
+		if (it->m_entityOnTile) continue;
 		//Determine distance
-		std::pair<int, int> tempPos = mapPtr->getTileScreenPos(it->m_tileCoordinate);
+		std::pair<int, int> tempPos = MouseSelection::coordToHexPos(it->m_tileCoordinate);
 		std::pair<int, int> diff(
 			{ tempPos.first - alliedPos.first, tempPos.second - alliedPos.second });
 		int tempDistance = diff.first * diff.first + diff.second * diff.second;
@@ -64,33 +65,77 @@ const Tile* firePosRadial(
 	}
 	return closestTile;
 }
+//Support function for AI::findFiringPositions. 
+//Finds the closest tile for line firing by projecting lines of length "range"
+const Tile* firePosLine(
+	Map* mapPtr, const Tile* targetShip, const Tile* alliedShip, int range)
+{
+	const Tile* closestTile{ alliedShip };
+	int closestDistance{ MAX_INT };
+	std::pair<int, int> alliedPos{ MouseSelection::coordToHexPos(alliedShip->m_tileCoordinate) };
+	//TODO: can't use const Tile* for some reason
+	std::vector<Tile*> availableTiles;
+	availableTiles.reserve(range);
+	//Iterate through all 6 possible lines
+	for (int i = 0; i < 6; i++)
+	{
+		availableTiles = mapPtr->getTileLine(targetShip->m_tileCoordinate, range, static_cast<eDirection>(i));
+		for (Tile* it : availableTiles)
+		{
+			//Ensure it's a valid tile, if not skip this one
+			if (!it) continue;
+			if (it->m_type != eSea && it->m_type != eOcean) continue;
+			if (it->m_entityOnTile) continue;
+			//Determine distance
+			std::pair<int, int> tempPos = MouseSelection::coordToHexPos(it->m_tileCoordinate);
+			std::pair<int, int> diff(
+				{ tempPos.first - alliedPos.first, tempPos.second - alliedPos.second });
+			int tempDistance = diff.first * diff.first + diff.second * diff.second;
+			//If distance is smallest, set as new target tile
+			if (tempDistance < closestDistance)
+			{
+				closestDistance = tempDistance;
+				closestTile = it;
+			}
+		}
+	}
+	return closestTile;
+}
 
-std::pair<const Tile*, eDirection> AI::findFiringPosition(
+std::pair<const Tile*, eDirection> findFiringPosition(
 	Map* mapPtr, const Tile* targetShip, const Tile* alliedShip, eWeaponType weapon, int range)
 {
 	const Tile* closestTile{ alliedShip };
-	eDirection facingDirection{ eNorth };
+	int facingDirection{ 0 };
 	switch (weapon)
 	{
 	case eSideCannons:
 	{
 		closestTile = firePosRadial(mapPtr, targetShip, alliedShip, range);
-		facingDirection = MouseSelection::calculateDirection(alliedShip, targetShip).second;
+		facingDirection = static_cast<int>(MouseSelection::calculateDirection(alliedShip, targetShip).second);
+		facingDirection++;
+		if (facingDirection > 5) 
+			facingDirection -= 6;
 	}
 	case eStraightShot:
 	{
-
+		closestTile = firePosLine(mapPtr, targetShip, alliedShip, range);
+		facingDirection = static_cast<int>(MouseSelection::calculateDirection(alliedShip, targetShip).second);
 	}
 	case eShotgun:
 	{
-
+		closestTile = firePosRadial(mapPtr, targetShip, alliedShip, range);
+		facingDirection = static_cast<int>(MouseSelection::calculateDirection(alliedShip, targetShip).second);
 	}
 	case eFlamethrower:
 	{
-
+		facingDirection = static_cast<int>(MouseSelection::calculateDirection(alliedShip, targetShip).second);
+		facingDirection += 3;
+		if (facingDirection > 5)
+			facingDirection -= 6;
 	}
 	}
-	return { closestTile, facingDirection };
+	return { closestTile, static_cast<eDirection>(facingDirection) };
 }
 
 void AI::handleMovementPhase(Battle* battlePtr, Map* mapPtr, FactionName faction)

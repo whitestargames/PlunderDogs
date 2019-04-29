@@ -63,8 +63,8 @@ std::pair<double, eDirection> calculateDirection(std::pair<int, int> startLocati
 
 std::pair<int, int> coordToHexPos(std::pair<int, int> coord)
 {
-	const float xPos = static_cast<float>(coord.first * 32) * 3 / 4;
-	const float yPos = static_cast<float>((((1 + coord.first) % 2) + 2 * coord.second)* 28) / 2;
+	const float xPos = static_cast<float>(coord.first * 24);
+	const float yPos = static_cast<float>((((1 + coord.first) % 2) + 2 * coord.second)* 14);
 	return { xPos, yPos };
 }
 

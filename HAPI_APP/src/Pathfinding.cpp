@@ -165,7 +165,7 @@ std::deque<std::pair<eDirection, std::pair<int, int>>> PathFinding::getPathToTil
 		closedList[i][j] = true;
 		if (isValid(i, j, sizeX, sizeY))
 		{
-			std::vector<const Tile*> adjacentCells = map.getAdjacentTiles(std::pair<int, int>(i, j));
+			std::vector<const Tile*> adjacentCells = map.cGetAdjacentTiles(std::pair<int, int>(i, j));
 
 			double successorG = 0.0, successorH = 0.0, successorF = 0.0;
 			
