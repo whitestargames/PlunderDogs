@@ -24,11 +24,7 @@ enum GameEvent
 	eEnteringAttackPhase,
 	eEndMovementPhaseEarly,
 	eEndAttackPhaseEarly,
-	eUnableToSkipPhase,
-	eBeginningRedTurn,
-	eBeginningGreenTurn,
-	eBeginningYellowTurn,
-	eBeginningBlueTurn
+	eUnableToSkipPhase
 };
 
 class Listener

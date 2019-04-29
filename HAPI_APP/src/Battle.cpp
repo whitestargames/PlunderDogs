@@ -172,35 +172,32 @@ void Battle::nextTurn()
 		}
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;
+		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
+		{
+			entity->m_battleProperties.enableAction();
+		}
 		break;
 	case BattlePhase::Movement :
 		m_currentPhase = BattlePhase::Attack;
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringAttackPhase);
 		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;
+		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
+		{
+			entity->m_battleProperties.enableAction();
+		}
 		break;
 	case BattlePhase::Attack :
 		m_currentPhase = BattlePhase::Movement;
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringMovementPhase);
-		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;
+		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
+		{
+			entity->m_battleProperties.disableAction();
+		}
 		incrementPlayerTurn();
-		break;
-	}
+		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;
 
-	switch(currentPlayer)
-	{
-	case FactionName::eBlue :
-		GameEventMessenger::broadcast(GameEvent::eBeginningBlueTurn);
-		break;
-	case FactionName::eYellow :
-		GameEventMessenger::broadcast(GameEvent::eBeginningYellowTurn);
-		break;
-	case FactionName::eRed :
-		GameEventMessenger::broadcast(GameEvent::eBeginningRedTurn);
-		break;
-	case FactionName::eGreen :
-		GameEventMessenger::broadcast(GameEvent::eBeginningGreenTurn);
 		break;
 	}
 }
@@ -337,6 +334,7 @@ void Battle::onEndMovementPhaseEarly()
 		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
 		{
 			entity->m_battleProperties.clearMovementPath();
+			entity->m_battleProperties.enableAction();
 		}
 	}
 }
@@ -346,7 +344,18 @@ void Battle::onEndAttackPhaseEarly()
 	m_currentPhase = BattlePhase::Movement;
 	GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 	GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringMovementPhase);
+	
+	for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
+	{
+		entity->m_battleProperties.disableAction();
+	}
+
 	incrementPlayerTurn();
+
+	for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
+	{
+		entity->m_battleProperties.enableAction();
+	}
 }
 
 Battle::BattleManager::BattleManager()

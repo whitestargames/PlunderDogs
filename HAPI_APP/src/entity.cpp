@@ -24,19 +24,11 @@ EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosit
 	m_actionSprite(factionName)
 {
 	GameEventMessenger::getInstance().subscribe(std::bind(&EntityBattleProperties::onNewTurn, this), "EntityBattleProperties", GameEvent::eNewTurn);
-	GameEventMessenger::getInstance().subscribe(std::bind(&EntityBattleProperties::onBeginningBlueTurn, this), "EntityBattleProperties", GameEvent::eBeginningBlueTurn);
-	GameEventMessenger::getInstance().subscribe(std::bind(&EntityBattleProperties::onBeginningYellowTurn, this), "EntityBattleProperties", GameEvent::eBeginningYellowTurn);
-	GameEventMessenger::getInstance().subscribe(std::bind(&EntityBattleProperties::onBeginningRedTurn, this), "EntityBattleProperties", GameEvent::eBeginningRedTurn);
-	GameEventMessenger::getInstance().subscribe(std::bind(&EntityBattleProperties::onBeginningGreenTurn, this), "EntityBattleProperties", GameEvent::eBeginningGreenTurn);
 }
 
 EntityBattleProperties::~EntityBattleProperties()
 {
 	GameEventMessenger::getInstance().unsubscribe("EntityBattleProperties", GameEvent::eNewTurn);
-	GameEventMessenger::getInstance().unsubscribe("EntityBattleProperties", GameEvent::eBeginningBlueTurn);
-	GameEventMessenger::getInstance().unsubscribe("EntityBattleProperties", GameEvent::eBeginningYellowTurn);
-	GameEventMessenger::getInstance().unsubscribe("EntityBattleProperties", GameEvent::eBeginningRedTurn);
-	GameEventMessenger::getInstance().unsubscribe("EntityBattleProperties", GameEvent::eBeginningGreenTurn);
 }
 
 eDirection EntityBattleProperties::getCurrentDirection() const
@@ -187,6 +179,19 @@ void EntityBattleProperties::clearMovementPath()
 	m_movementPath.clearPath();
 }
 
+void EntityBattleProperties::enableAction()
+{
+	if (!m_isDead)
+	{
+		m_actionSprite.active = true;
+	}
+}
+
+void EntityBattleProperties::disableAction()
+{
+	m_actionSprite.active = false;
+}
+
 void EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 {
 	if (!m_movedToDestination)
@@ -255,6 +260,7 @@ void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int
 		entitySprite->SetFrameNumber(eShipSpriteFrame::eDead);
 		entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
 		m_isDead = true;
+		m_actionSprite.active = false;
 		switch (entityFaction)
 		{
 		case FactionName::eYellow :
@@ -276,44 +282,13 @@ void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int
 void EntityBattleProperties::fireWeapon()
 {
 	m_weaponFired = true;
+	m_actionSprite.active = false;
 }
 
 void EntityBattleProperties::onNewTurn()
 {
 	m_movedToDestination = false;
 	m_weaponFired = false;
-}
-
-void EntityBattleProperties::onBeginningYellowTurn()
-{
-	if (m_factionName == FactionName::eYellow)
-	{
-		m_actionSprite.active = true;
-	}
-}
-
-void EntityBattleProperties::onBeginningRedTurn()
-{
-	if (m_factionName == FactionName::eRed)
-	{
-		m_actionSprite.active = true;
-	}
-}
-
-void EntityBattleProperties::onBeginningGreenTurn()
-{
-	if (m_factionName == FactionName::eGreen)
-	{
-		m_actionSprite.active = true;
-	}
-}
-
-void EntityBattleProperties::onBeginningBlueTurn()
-{
-	if (m_factionName == FactionName::eBlue)
-	{
-		m_actionSprite.active = true;
-	}
 }
 
 void EntityBattleProperties::handleRotation(EntityProperties& entityProperties)

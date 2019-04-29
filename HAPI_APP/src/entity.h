@@ -99,6 +99,9 @@ public:
 	void generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
 	void clearMovementPath();
 
+	void enableAction();
+	void disableAction();
+
 	void moveEntity(Map& map, const Tile& tile);
 	void moveEntity(Map& map, const Tile& tile, eDirection endDirection);
 	void takeDamage(EntityProperties& entityProperties, int damageAmount, FactionName entityFaction);
@@ -118,10 +121,6 @@ private:
 
 	void handleRotation(EntityProperties& entityProperties);
 	void onNewTurn();
-	void onBeginningYellowTurn();
-	void onBeginningRedTurn();
-	void onBeginningGreenTurn();
-	void onBeginningBlueTurn();
 };
 
 struct BattleEntity
