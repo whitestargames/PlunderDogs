@@ -221,7 +221,7 @@ void BattleGUI::update(eDirection windDirection)
 
 void BattleGUI::updateFactionToken(int factionName)
 {
-	m_activeFactionToken->SetFrameNumber(static_cast<int>(factionName));
+	m_activeFactionToken->SetFrameNumber(factionName);
 }
 
 void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData, BattlePhase currentBattlePhase)
