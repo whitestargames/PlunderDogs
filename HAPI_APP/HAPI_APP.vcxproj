@@ -171,6 +171,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AI.cpp" />
+    <ClCompile Include="MouseSelection.cpp" />
     <ClCompile Include="src\BattleGUI.cpp" />
     <ClCompile Include="src\Battle.cpp" />
     <ClCompile Include="src\BattleUI.cpp" />

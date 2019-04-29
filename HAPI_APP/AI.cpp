@@ -1,10 +1,10 @@
+#include <vector>
 #include "AI.h"
 #include "MouseSelection.h"
 #include "pathfinding.h"
 #include "Battle.h"
 #include "Map.h"
 #include "entity.h"
-#include <vector>
 
 constexpr int MAX_INT{ 2147483647 };
 

@@ -4,6 +4,7 @@
 #include "Global.h"
 
 class Battle;
+struct Tile;
 class Map;
 class BattleEntity;
 
