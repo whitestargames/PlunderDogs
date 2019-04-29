@@ -501,10 +501,6 @@ void BattleUI::onLeftClickAttackPhase()
 		m_selectedTile.m_tile = tileOnMouse;
 		return;
 	}
-	else if (!m_selectedTile.m_tile && tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName == m_battle.getCurentFaction())
-	{
-		m_selectedTile.m_tile = tileOnMouse;
-	}
 
 	//Do not fire on destroyed ship
 	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_battleProperties.isDead())
@@ -543,12 +539,18 @@ void BattleUI::onLeftClickAttackPhase()
 			
 		}
 	
-		m_battle.fireEntityWeaponAtPosition(*m_selectedTile.m_tile->m_entityOnTile, *tileOnMouse, m_targetArea.m_targetArea);
-
-		//TODO: Might change this
-		m_targetArea.clearTargetArea();
-		m_selectedTile.m_tile = nullptr;
-		m_invalidPosition.m_activate = false;
+		if (m_battle.fireEntityWeaponAtPosition(*m_selectedTile.m_tile->m_entityOnTile, *tileOnMouse, m_targetArea.m_targetArea))
+		{
+			m_targetArea.clearTargetArea();
+			m_selectedTile.m_tile = nullptr;
+			m_invalidPosition.m_activate = false;
+		}
+		else
+		{
+			m_selectedTile.m_tile = tileOnMouse;
+			m_targetArea.clearTargetArea();
+			m_invalidPosition.m_activate = false;
+		}
 		return;
 	}
 
@@ -571,7 +573,11 @@ void BattleUI::onLeftClickAttackPhase()
 		return;
 	}
 
-	
+	if (!m_selectedTile.m_tile && tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName == m_battle.getCurentFaction())
+	{
+		m_selectedTile.m_tile = tileOnMouse;
+	}
+
 	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile && !m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.isWeaponFired() &&
 		m_selectedTile.m_tile->m_entityOnTile->m_factionName == m_battle.getCurentFaction())
 	{
