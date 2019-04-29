@@ -96,16 +96,13 @@ void BattleGUI::render(BattlePhase currentBattlePhase) const
 		}
 	}
 	
-	
-	
-	
 	if (currentBattlePhase != BattlePhase::ShipPlacement)
 	{
 		m_endPhaseButtons->Render(SCREEN_SURFACE);
 	}
 
 
-	m_activeFactionToken->Render(SCREEN_SURFACE);
+	//m_activeFactionToken->Render(SCREEN_SURFACE);
 	m_endPhaseButtons->Render(SCREEN_SURFACE);
 	//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 585), HAPISPACE::Colour255::RED, std::to_string(m_maxCameraOffset.first), 50);//Dont delete these until the panning has been fixed - Jack
 	//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(950, 585), HAPISPACE::Colour255::RED, std::to_string(CameraPositionOffset.first), 50);
@@ -353,7 +350,7 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData, BattlePhase curren
 		}
 
 
-		if (mouseData.y < 100)
+		//if (mouseData.y < 100)
 
 		
 		if (mouseData.y < 50)
@@ -498,7 +495,7 @@ void BattleGUI::onEnteringAttackPhase()
 
 void BattleGUI::onUnableToSkipPhase()
 {
-
+}
 
 void BattleGUI::snapCameraToPosition(std::pair<int, int> snapLocation)//snaps the camera to be centered on a given tile
 {
