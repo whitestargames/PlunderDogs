@@ -33,6 +33,7 @@ public:
 	//void OnMouseScroll could be added
 	void OnMouseMove(const HAPI_TMouseData& mouseData, BattlePhase currentBattlePhase);
 	void setMaxCameraOffset(std::pair<int, int> maxCameraOffset);
+	void snapCameraToPosition(std::pair<int, int> snapLocation);
 
 private:
 	BattleWindow m_currentBattleWindow;
