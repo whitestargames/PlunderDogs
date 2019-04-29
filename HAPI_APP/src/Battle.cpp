@@ -79,9 +79,9 @@ void Battle::render() const
 	m_map.drawMap();
 	m_battleUI.renderUI();
 
-	for (auto& player : m_players)
+	for (const auto& player : m_players)
 	{
-		for (auto& entity : player.m_entities)
+		for (const auto& entity : player.m_entities)
 		{
 			entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
 		}
@@ -89,7 +89,6 @@ void Battle::render() const
 	
 	m_battleUI.renderParticles();
 	m_battleUI.renderGUI();
-	//m_battleUI.renderUI();
 }
 
 void Battle::update(float deltaTime)
@@ -127,7 +126,7 @@ bool Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 {
 	assert(m_currentPhase == BattlePhase::Attack);
 	assert(!player.m_battleProperties.isWeaponFired());
-	player.m_battleProperties.fireWeapon();
+	
 
 	//Disallow attacking same team
 	if (tileOnAttackPosition.m_entityOnTile && tileOnAttackPosition.m_entityOnTile->m_factionName != getCurentFaction()
@@ -139,6 +138,7 @@ bool Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 		//Enemy within range of weapon
 		if (cIter != targetArea.cend())
 		{
+			player.m_battleProperties.fireWeapon();
 			auto& enemy = tileOnAttackPosition.m_entityOnTile;
 			enemy->m_battleProperties.takeDamage(enemy->m_entityProperties, player.m_entityProperties.m_damage, enemy->m_factionName);
 			

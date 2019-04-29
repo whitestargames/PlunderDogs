@@ -46,7 +46,6 @@ OverWorld::~OverWorld()
 
 void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
 {
-
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
 		if (OverWorldGUI::CURRENT_WINDOW == eLevelSelection)
@@ -81,8 +80,6 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 			m_currentPlayer = 0;
 			return;
 		}
-		
-		
 	}
 	if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
@@ -97,14 +94,11 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData & mouseData)
 
 void OverWorld::render()
 {
-
 	m_GUI.render(m_battle);
-
 }
 
 void OverWorld::update(float deltaTime)
 {
-
 	if (m_startBattle)
 	{
 		startBattle();
@@ -114,9 +108,6 @@ void OverWorld::update(float deltaTime)
 	{
 		m_battle.update(deltaTime);
 	}
-
-	
-	
 }
 
 void OverWorld::startBattle()
@@ -127,7 +118,7 @@ void OverWorld::startBattle()
 		OverWorldGUI::CURRENT_WINDOW = eBattle;
 		
 		std::vector<std::pair<FactionName, std::vector<EntityProperties*>>> playersInBattle;
-		for (auto& player : m_players)
+		for (const auto& player : m_players)
 		{
 			std::pair<FactionName, std::vector<EntityProperties*>> p;
 			p.first = player.m_factionName;
@@ -146,7 +137,6 @@ void OverWorld::startBattle()
 		m_startBattle = false;
 	}
 }
-
 
 void OverWorld::onReset()
 {

@@ -70,8 +70,6 @@ std::string OverWorldGUI::getSelectedMap()
 	return selectedMap;
 }
 
-
-
 OverWorldGUI::OverWorldGUI()
 	: m_battleMapBackground(std::make_unique<Sprite>(Textures::m_levelSelectBackground)),
 	m_selectMapButtons1(std::make_unique<Sprite>(Textures::m_levelSelect1)),
@@ -115,7 +113,6 @@ OverWorldGUI::OverWorldGUI()
 OverWorldGUI::~OverWorldGUI()
 {
 	GameEventMessenger::getInstance().unsubscribe("OverWorldGUI", GameEvent::eResetBattle);
-
 }
 
 void OverWorldGUI::render(Battle& battle)
@@ -1049,9 +1046,3 @@ void OverWorldGUI::updateSelectedShips(const std::string & shipWindow, const HAP
 		}
 	}
 }
-
-
-
-
-
-
