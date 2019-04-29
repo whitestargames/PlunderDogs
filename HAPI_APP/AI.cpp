@@ -170,7 +170,7 @@ void AI::attemptShot(Battle* battlePtr, Map* mapPtr, std::shared_ptr<BattleEntit
 	}
 	case eShotgun:
 	{
-		firingArea = mapPtr->cGetTileRadius(firingShip->m_battleProperties.getCurrentPosition, firingShip->m_entityProperties.m_range);
+		firingArea = mapPtr->cGetTileRadius(firingShip->m_battleProperties.getCurrentPosition(), firingShip->m_entityProperties.m_range);
 		for (int i = 0; i < firingArea.size(); i++)
 		{
 			if (!firingArea[i]->m_entityOnTile) continue;
@@ -197,7 +197,7 @@ void AI::attemptShot(Battle* battlePtr, Map* mapPtr, std::shared_ptr<BattleEntit
 			break;
 		}
 			
-		firingArea = mapPtr->cGetTileLine(firingShip->m_battleProperties.getCurrentPosition, firingShip->m_entityProperties.m_range, backwardsDirection);
+		firingArea = mapPtr->cGetTileLine(firingShip->m_battleProperties.getCurrentPosition(), firingShip->m_entityProperties.m_range, backwardsDirection);
 		for (int i = 0; i < firingArea.size(); i++)
 		{
 			if (!firingArea[i]->m_entityOnTile) continue;
@@ -221,7 +221,7 @@ void AI::handleMovementPhase(Battle* battlePtr, Map* mapPtr, FactionName faction
 		const Tile* enemyPosition{ findClosestEnemy(battlePtr, mapPtr, ships[i], faction) };
 
 		//find the nearest tile and facing that can fire upon the chosen enemy ship
-		std::pair<const Tile*, eDirection>  firingPosition{ findFiringPosition(
+		std::pair<const Tile*, eDirection>  firingPosition{ AI::findFiringPosition(
 			mapPtr, 
 			enemyPosition, 
 			mapPtr->getTile(ships[i]->m_battleProperties.getCurrentPosition()), 
