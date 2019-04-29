@@ -1,9 +1,11 @@
 #pragma once
 
+#include <memory>
 #include "Global.h"
-#include "Battle.h"
-#include "Map.h"
-#include "entity.h"
+
+class Battle;
+class Map;
+class BattleEntity;
 
 namespace AI
 {
