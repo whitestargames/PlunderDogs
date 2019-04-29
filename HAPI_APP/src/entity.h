@@ -57,7 +57,7 @@ class EntityBattleProperties
 		MovementPath();
 
 		void render(const Map& map) const;
-		void generatePath(const Map& map, const Tile& source, const Tile& destination);
+		int generatePath(const Map& map, const Tile& source, const Tile& destination);
 		void eraseNode(std::pair<int, int> position, const Map& map);
 		void clearPath();
 
@@ -78,13 +78,14 @@ public:
 	void update(float deltaTime, const Map& map, EntityProperties& entityProperties, MoveCounter& gameCounter);
 	void render(std::shared_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
 
-	void generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
+	int generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
 	void clearMovementPath();
 
 	bool moveEntity(Map& map, const Tile& tile);
 	bool moveEntity(Map& map, const Tile& tile, eDirection endDirection);
 	void takeDamage(EntityProperties& entityProperties, int damageAmount, FactionName entityFaction);
 	void fireWeapon();
+	void setMoved();
 	void onNewTurn();
 
 private:

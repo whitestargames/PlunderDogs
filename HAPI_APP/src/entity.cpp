@@ -86,7 +86,7 @@ void EntityBattleProperties::MovementPath::render(const Map& map) const
 	}
 }
 
-void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Tile& source, const Tile& destination)
+int EntityBattleProperties::MovementPath::generatePath(const Map& map, const Tile& source, const Tile& destination)
 {
 	auto pathToTile = PathFinding::getPathToTile(map, source.m_tileCoordinate, destination.m_tileCoordinate);
 	if (pathToTile.empty())
@@ -129,7 +129,7 @@ void EntityBattleProperties::MovementPath::generatePath(const Map& map, const Ti
 		}
 		else
 		{
-			return;
+			return i;
 		}
 	}
 }
@@ -154,9 +154,9 @@ void EntityBattleProperties::MovementPath::clearPath()
 	}
 }
 
-void EntityBattleProperties::generateMovementGraph(const Map & map, const Tile & source, const Tile & destination)
+int EntityBattleProperties::generateMovementGraph(const Map & map, const Tile & source, const Tile & destination)
 {
-	m_movementPath.generatePath(map, source, destination);
+	return m_movementPath.generatePath(map, source, destination);
 }
 
 void EntityBattleProperties::clearMovementPath()
@@ -242,6 +242,11 @@ void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int
 void EntityBattleProperties::fireWeapon()
 {
 	m_weaponFired = true;
+}
+
+void EntityBattleProperties::setMoved()
+{
+	m_movedToDestination = true;
 }
 
 void EntityBattleProperties::onNewTurn()

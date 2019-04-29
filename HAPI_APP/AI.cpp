@@ -139,11 +139,18 @@ std::pair<const Tile*, eDirection> findFiringPosition(
 	return { closestTile, static_cast<eDirection>(facingDirection) };
 }
 
-void AI::attemptMove(std::shared_ptr<BattleEntity> currentShip, std::pair<const Tile*, eDirection> targetTile)
+void AI::attemptMove(Map* mapPtr, std::shared_ptr<BattleEntity> currentShip, std::pair<const Tile*, eDirection> targetTile)
 {
-	//Call pathfinding for a path to target tile
-
+	//Call generate path
+	Tile* tile{ mapPtr->getTile(currentShip->m_battleProperties.getCurrentPosition()) };
+	int pathLength = currentShip->m_battleProperties.generateMovementGraph(*mapPtr, *tile, *targetTile.first);
 	//Loop calling moveEntity for each tile in the path end to start until one of them works
+	for (pathLength; pathLength > 0; pathLength--)
+	{
+		if (currentShip->m_battleProperties.moveEntity(*mapPtr, *targetTile.first, targetTile.second))
+			break;
+	}
+	currentShip->m_battleProperties.setMoved();
 }
 
 void AI::attemptShot(Battle* battlePtr, Map* mapPtr, std::shared_ptr<BattleEntity> firingShip)
@@ -233,7 +240,7 @@ void AI::handleMovementPhase(Battle* battlePtr, Map* mapPtr, FactionName faction
 			ships[i]->m_entityProperties.m_range) };
 
 		//move as far as possible on the path to the chosen position
-		attemptMove(ships[i], firingPosition);
+		attemptMove(mapPtr, ships[i], firingPosition);
 	}
 }
 
