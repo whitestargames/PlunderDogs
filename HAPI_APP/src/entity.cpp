@@ -164,7 +164,7 @@ void EntityBattleProperties::clearMovementPath()
 	m_movementPath.clearPath();
 }
 
-void EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
+bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 {
 	if (!m_movedToDestination)
 	{
@@ -174,15 +174,17 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 			m_pathToTile = pathToTile;
 			map.moveEntity(m_currentPosition, pathToTile.back().second);
 			m_movedToDestination = true;
+			return true;
 		}
 		else
 		{
 			clearMovementPath();
+			return false;
 		}
 	}
 }
 
-void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection endDirection)
+bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection endDirection)
 {
 	if (!m_movedToDestination)
 	{
@@ -195,10 +197,12 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection e
 			m_pathToTile = pathToTile;
 			map.moveEntity(m_currentPosition, pathToTile.back().second);
 			m_movedToDestination = true;
+			return true;
 		}
 		else
 		{
 			clearMovementPath();
+			return false;
 		}
 	}
 }

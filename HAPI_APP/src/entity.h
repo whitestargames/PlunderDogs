@@ -81,8 +81,8 @@ public:
 	void generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
 	void clearMovementPath();
 
-	void moveEntity(Map& map, const Tile& tile);
-	void moveEntity(Map& map, const Tile& tile, eDirection endDirection);
+	bool moveEntity(Map& map, const Tile& tile);
+	bool moveEntity(Map& map, const Tile& tile, eDirection endDirection);
 	void takeDamage(EntityProperties& entityProperties, int damageAmount, FactionName entityFaction);
 	void fireWeapon();
 	void onNewTurn();

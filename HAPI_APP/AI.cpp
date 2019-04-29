@@ -217,6 +217,7 @@ void AI::handleMovementPhase(Battle* battlePtr, Map* mapPtr, FactionName faction
 	//loop through all the ships in the faction
 	for (int i = 0; i < ships.size(); i++)
 	{
+		if (ships[i]->m_battleProperties.isDead()) continue;
 		//find the nearest enemy ship
 		const Tile* enemyPosition{ findClosestEnemy(battlePtr, mapPtr, ships[i], faction) };
 
