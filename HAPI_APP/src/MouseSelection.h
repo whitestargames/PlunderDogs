@@ -1,6 +1,10 @@
 #pragma once
 
+#include "Global.h"
 #include <cmath>    //asin()
+#include <utility>
+
+struct Tile;
 
 namespace MouseSelection
 {
