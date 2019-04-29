@@ -488,6 +488,19 @@ void BattleUI::onRightClickMovementPhase()
 
 void BattleUI::onLeftClickAttackPhase()
 {
+	//assert(m_battle.getCurrentPhase() == BattlePhase::Attack);
+	//const Tile* tileOnMouse = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
+	//if (!tileOnMouse || !tileOnMouse->m_entityOnTile)
+	//{
+	//	if (m_selectedTile.m_tile)
+	//	{
+	//		m_targetArea.clearTargetArea();
+	//	}
+	//	m_selectedTile.m_tile = nullptr;
+	//	m_invalidPosition.m_activate = false;
+	//	return;
+	//}
+
 	assert(m_battle.getCurrentPhase() == BattlePhase::Attack);
 	const Tile* tileOnMouse = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 	if (!tileOnMouse)
@@ -550,20 +563,13 @@ void BattleUI::onLeftClickAttackPhase()
 				m_explosion.setPosition(tileOnMouse->m_entityOnTile->m_battleProperties.getCurrentPosition());
 				m_explosion.m_isEmitting = true;
 			}
+
 		}
 
-		if (m_battle.fireEntityWeaponAtPosition(*m_selectedTile.m_tile->m_entityOnTile, *tileOnMouse, m_targetArea.m_targetArea))
-		{
-			m_targetArea.clearTargetArea();
-			m_selectedTile.m_tile = nullptr;
-			m_invalidPosition.m_activate = false;
-		}
-		else
-		{
-			m_selectedTile.m_tile = tileOnMouse;
-			m_targetArea.clearTargetArea();
-			m_invalidPosition.m_activate = false;
-		}
+		m_battle.fireEntityWeaponAtPosition(*m_selectedTile.m_tile->m_entityOnTile, *tileOnMouse, m_targetArea.m_targetArea);
+		m_targetArea.clearTargetArea();
+		m_selectedTile.m_tile = nullptr;
+		m_invalidPosition.m_activate = false;
 		return;
 	}
 

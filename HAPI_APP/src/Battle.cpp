@@ -197,7 +197,10 @@ void Battle::nextTurn()
 		}
 		incrementPlayerTurn();
 		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;
-
+		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
+		{
+			entity->m_battleProperties.enableAction();
+		}
 		break;
 	}
 }
