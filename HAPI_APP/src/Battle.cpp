@@ -127,7 +127,8 @@ bool Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 {
 	assert(m_currentPhase == BattlePhase::Attack);
 	assert(!player.m_battleProperties.isWeaponFired());
-	
+	player.m_battleProperties.fireWeapon();
+
 	//Disallow attacking same team
 	if (tileOnAttackPosition.m_entityOnTile && tileOnAttackPosition.m_entityOnTile->m_factionName != getCurentFaction()
 			&& !tileOnAttackPosition.m_entityOnTile->m_battleProperties.isDead())
@@ -140,7 +141,7 @@ bool Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 		{
 			auto& enemy = tileOnAttackPosition.m_entityOnTile;
 			enemy->m_battleProperties.takeDamage(enemy->m_entityProperties, player.m_entityProperties.m_damage, enemy->m_factionName);
-			player.m_battleProperties.fireWeapon();
+			
 			return true;
 		}
 	}
@@ -158,7 +159,7 @@ void Battle::insertEntity(std::pair<int, int> startingPosition, eDirection start
 void Battle::nextTurn()
 {
 	m_moveCounter.m_counter = 0;
-
+	FactionName currentPlayer;
 	bool lastPlayer = false;
 	switch (m_currentPhase)
 	{
@@ -168,20 +169,38 @@ void Battle::nextTurn()
 		if (lastPlayer)
 		{
 			m_currentPhase = BattlePhase::Movement;
-			m_currentPlayerTurn = 0;
 		}
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
+		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;
 		break;
 	case BattlePhase::Movement :
 		m_currentPhase = BattlePhase::Attack;
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringAttackPhase);
+		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;
 		break;
 	case BattlePhase::Attack :
 		m_currentPhase = BattlePhase::Movement;
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringMovementPhase);
+		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;
 		incrementPlayerTurn();
+		break;
+	}
+
+	switch(currentPlayer)
+	{
+	case FactionName::eBlue :
+		GameEventMessenger::broadcast(GameEvent::eBeginningBlueTurn);
+		break;
+	case FactionName::eYellow :
+		GameEventMessenger::broadcast(GameEvent::eBeginningYellowTurn);
+		break;
+	case FactionName::eRed :
+		GameEventMessenger::broadcast(GameEvent::eBeginningRedTurn);
+		break;
+	case FactionName::eGreen :
+		GameEventMessenger::broadcast(GameEvent::eBeginningGreenTurn);
 		break;
 	}
 }

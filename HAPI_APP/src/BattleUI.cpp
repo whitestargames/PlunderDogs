@@ -550,7 +550,6 @@ void BattleUI::onLeftClickAttackPhase()
 				m_explosion.setPosition(tileOnMouse->m_entityOnTile->m_battleProperties.getCurrentPosition());
 				m_explosion.m_isEmitting = true;
 			}
-			
 		}
 
 		if (m_battle.fireEntityWeaponAtPosition(*m_selectedTile.m_tile->m_entityOnTile, *tileOnMouse, m_targetArea.m_targetArea))

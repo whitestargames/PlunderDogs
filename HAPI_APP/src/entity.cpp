@@ -10,8 +10,9 @@ constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
 
 //ENTITY BATTLE PROPERTIES
-EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosition, eDirection startingDirection)
-	: m_currentPosition(startingPosition),
+EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosition, FactionName factionName, eDirection startingDirection)
+	: m_factionName(factionName),
+	m_currentPosition(startingPosition),
 	m_pathToTile(),
 	m_movementTimer(0.35f),
 	m_movedToDestination(false),
@@ -19,14 +20,23 @@ EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosit
 	m_movementPathSize(0),
 	m_currentDirection(startingDirection),
 	m_weaponFired(false),
-	m_isDead(false)
+	m_isDead(false),
+	m_actionSprite(factionName)
 {
 	GameEventMessenger::getInstance().subscribe(std::bind(&EntityBattleProperties::onNewTurn, this), "EntityBattleProperties", GameEvent::eNewTurn);
+	GameEventMessenger::getInstance().subscribe(std::bind(&EntityBattleProperties::onBeginningBlueTurn, this), "EntityBattleProperties", GameEvent::eBeginningBlueTurn);
+	GameEventMessenger::getInstance().subscribe(std::bind(&EntityBattleProperties::onBeginningYellowTurn, this), "EntityBattleProperties", GameEvent::eBeginningYellowTurn);
+	GameEventMessenger::getInstance().subscribe(std::bind(&EntityBattleProperties::onBeginningRedTurn, this), "EntityBattleProperties", GameEvent::eBeginningRedTurn);
+	GameEventMessenger::getInstance().subscribe(std::bind(&EntityBattleProperties::onBeginningGreenTurn, this), "EntityBattleProperties", GameEvent::eBeginningGreenTurn);
 }
 
 EntityBattleProperties::~EntityBattleProperties()
 {
 	GameEventMessenger::getInstance().unsubscribe("EntityBattleProperties", GameEvent::eNewTurn);
+	GameEventMessenger::getInstance().unsubscribe("EntityBattleProperties", GameEvent::eBeginningBlueTurn);
+	GameEventMessenger::getInstance().unsubscribe("EntityBattleProperties", GameEvent::eBeginningYellowTurn);
+	GameEventMessenger::getInstance().unsubscribe("EntityBattleProperties", GameEvent::eBeginningRedTurn);
+	GameEventMessenger::getInstance().unsubscribe("EntityBattleProperties", GameEvent::eBeginningGreenTurn);
 }
 
 eDirection EntityBattleProperties::getCurrentDirection() const
@@ -187,6 +197,7 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 			m_pathToTile = pathToTile;
 			map.moveEntity(m_currentPosition, pathToTile.back().second);
 			m_movedToDestination = true;
+			m_actionSprite.active = false;
 		}
 		else
 		{
@@ -208,6 +219,8 @@ void EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection e
 			m_pathToTile = pathToTile;
 			map.moveEntity(m_currentPosition, pathToTile.back().second);
 			m_movedToDestination = true;
+			m_actionSprite.active = false;
+			
 		}
 		else
 		{
@@ -269,6 +282,38 @@ void EntityBattleProperties::onNewTurn()
 {
 	m_movedToDestination = false;
 	m_weaponFired = false;
+}
+
+void EntityBattleProperties::onBeginningYellowTurn()
+{
+	if (m_factionName == FactionName::eYellow)
+	{
+		m_actionSprite.active = true;
+	}
+}
+
+void EntityBattleProperties::onBeginningRedTurn()
+{
+	if (m_factionName == FactionName::eRed)
+	{
+		m_actionSprite.active = true;
+	}
+}
+
+void EntityBattleProperties::onBeginningGreenTurn()
+{
+	if (m_factionName == FactionName::eGreen)
+	{
+		m_actionSprite.active = true;
+	}
+}
+
+void EntityBattleProperties::onBeginningBlueTurn()
+{
+	if (m_factionName == FactionName::eBlue)
+	{
+		m_actionSprite.active = true;
+	}
 }
 
 void EntityBattleProperties::handleRotation(EntityProperties& entityProperties)
@@ -450,10 +495,9 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 	m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 }
 
-
 BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map, FactionName playerName, eDirection startingDirection)
 	: m_entityProperties(entityProperties),
-	m_battleProperties(startingPosition, startingDirection),
+	m_battleProperties(startingPosition, playerName, startingDirection),
 	m_factionName(playerName)
 {
 	m_entityProperties.m_sprite->GetTransformComp().SetRotation(DEGREES_TO_RADIANS(startingDirection * 60 % 360));
@@ -495,6 +539,7 @@ void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, 
 
 	sprite->Render(SCREEN_SURFACE);
 	m_movementPath.render(map);
+	m_actionSprite.render(map, m_currentPosition);
 }
 
 //BATTLE PLAYER
@@ -503,3 +548,39 @@ BattlePlayer::BattlePlayer(FactionName name)
 	m_factionName(name),
 	m_eliminated(false)
 {}
+
+EntityBattleProperties::ActionSprite::ActionSprite(FactionName factionName)
+	: sprite(),
+	active(false)
+{
+	switch (factionName)
+	{
+	case FactionName::eYellow :
+		sprite = HAPI_Sprites.MakeSprite(Textures::m_yellowSpawnHex);
+		break;
+	case FactionName::eBlue :
+		sprite = HAPI_Sprites.MakeSprite(Textures::m_blueSpawnHex);
+		break;
+	case FactionName::eGreen :
+		sprite = HAPI_Sprites.MakeSprite(Textures::m_greenSpawnHex);
+		break;
+	case FactionName::eRed :
+		sprite = HAPI_Sprites.MakeSprite(Textures::m_redSpawnHex);
+		break;
+	}
+
+	sprite->GetTransformComp().SetOriginToCentreOfFrame();
+	sprite->GetTransformComp().SetScaling({ 2.f, 2.f });
+}
+
+void EntityBattleProperties::ActionSprite::render(const Map& map, std::pair<int, int> currentEntityPosition) const
+{
+	if (active)
+	{
+		auto screenPosition = map.getTileScreenPos(currentEntityPosition);
+		sprite->GetTransformComp().SetPosition({
+		(float)screenPosition.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale() ,
+		(float)screenPosition.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
+		sprite->Render(SCREEN_SURFACE);
+	}
+}

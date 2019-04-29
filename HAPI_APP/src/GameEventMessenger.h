@@ -24,7 +24,11 @@ enum GameEvent
 	eEnteringAttackPhase,
 	eEndMovementPhaseEarly,
 	eEndAttackPhaseEarly,
-	eUnableToSkipPhase
+	eUnableToSkipPhase,
+	eBeginningRedTurn,
+	eBeginningGreenTurn,
+	eBeginningYellowTurn,
+	eBeginningBlueTurn
 };
 
 class Listener
@@ -64,10 +68,11 @@ public:
 	static void broadcast(GameEvent message)
 	{
 		auto iter = m_listeners.find(message);
-		if (iter == m_listeners.cend())
-		{
-			return;
-		}
+		assert(iter != m_listeners.cend());
+		//if (iter == m_listeners.cend())
+		//{
+		//	return;
+		//}
 
 		for (const auto& listener : iter->second)
 		{
