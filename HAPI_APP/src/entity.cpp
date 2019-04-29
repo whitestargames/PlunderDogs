@@ -91,7 +91,7 @@ int EntityBattleProperties::MovementPath::generatePath(const Map& map, const Til
 	auto pathToTile = PathFinding::getPathToTile(map, source.m_tileCoordinate, destination.m_tileCoordinate);
 	if (pathToTile.empty())
 	{
-		return;
+		return 0;
 	}
 
 	clearPath();
