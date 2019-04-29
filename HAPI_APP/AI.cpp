@@ -106,7 +106,7 @@ const Tile* firePosLine(
 	return closestTile;
 }
 
-std::pair<const Tile*, eDirection> findFiringPosition(
+std::pair<const Tile*, eDirection> AI::findFiringPosition(
 	Map* mapPtr, const Tile* targetShip, const Tile* alliedShip, eWeaponType weapon, int range)
 {
 	const Tile* closestTile{ alliedShip };
@@ -140,11 +140,6 @@ std::pair<const Tile*, eDirection> findFiringPosition(
 	}
 	}
 	return { closestTile, static_cast<eDirection>(facingDirection) };
-}
-
-std::pair<const Tile*, eDirection> AI::findFiringPosition(Map * mapPtr, const Tile * targetShip, const Tile * alliedShip, eWeaponType weapon, int range)
-{
-	return std::pair<const Tile*, eDirection>();
 }
 
 void AI::attemptMove(Map* mapPtr, std::shared_ptr<BattleEntity> currentShip, std::pair<const Tile*, eDirection> targetTile)
