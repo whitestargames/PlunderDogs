@@ -10,7 +10,7 @@
 using namespace HAPISPACE;
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
-constexpr int SHIP_PLACEMENT_SPAWN_RANGE{ 5 };
+constexpr int SHIP_PLACEMENT_SPAWN_RANGE{ 3 };
 
 //
 //InvalidPositionSprite
@@ -799,26 +799,26 @@ BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*> 
 		(float)screenPosition.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),
 		(float)screenPosition.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
 		sprite->GetTransformComp().SetOriginToCentreOfFrame();
-		//sprite->GetTransformComp().SetScaling({ 1.8f, 1.8f });
+		sprite->GetTransformComp().SetScaling({ 2.f, 2.f });
 
 		m_spawnSprites.push_back(std::move(sprite));
 	}
 
-	//for (int i = 0; i < m_spawnArea.size(); ++i)
-	//{
-	//	//const std::pair<int, int> tileTransform = map.getTileScreenPos(m_tile->m_tileCoordinate);
+	for (int i = 0; i < m_spawnArea.size(); ++i)
+	{
+		//const std::pair<int, int> tileTransform = map.getTileScreenPos(m_tile->m_tileCoordinate);
 
-	//	//m_sprite->GetTransformComp().SetPosition({
-	//	//static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
-	//	//static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
+		//m_sprite->GetTransformComp().SetPosition({
+		//static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
+		//static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
 
-	//	auto screenPosition = map.getTileScreenPos(m_spawnArea[i]->m_tileCoordinate);
-	//	m_spawnSprites[i]->GetTransformComp().SetPosition({
-	//	(float)screenPosition.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale() ,
-	//	(float)screenPosition.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
-	//	m_spawnSprites[i]->GetTransformComp().SetOriginToCentreOfFrame();
-	//	m_spawnSprites[i]->GetTransformComp().SetScaling({ 1.8f, 1.8f });
-	//}
+		auto screenPosition = map.getTileScreenPos(m_spawnArea[i]->m_tileCoordinate);
+		m_spawnSprites[i]->GetTransformComp().SetPosition({
+		(float)screenPosition.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale() ,
+		(float)screenPosition.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
+		m_spawnSprites[i]->GetTransformComp().SetOriginToCentreOfFrame();
+		m_spawnSprites[i]->GetTransformComp().SetScaling({ 2.f, 2.f });
+	}
 
 	m_currentSelectedEntity.m_currentSelectedEntity = m_player.back();
 }
@@ -841,10 +841,27 @@ void BattleUI::ShipPlacementPhase::render(const InvalidPosition& invalidPosition
 		m_currentSelectedEntity.m_currentSelectedEntity->m_sprite->Render(SCREEN_SURFACE);
 	}
 
-	for (const auto& spawnHex : m_spawnSprites)
+	for (int i = 0; i < m_spawnSprites.size(); ++i)
 	{
-		spawnHex->Render(SCREEN_SURFACE);
+		const std::pair<int, int> tileTransform = map.getTileScreenPos(m_spawnArea[i]->m_tileCoordinate);
+
+		m_spawnSprites[i]->GetTransformComp().SetPosition({
+		static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
+		static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
+
+		m_spawnSprites[i]->Render(SCREEN_SURFACE);
 	}
+
+	//for (const auto& spawnHex : m_spawnSprites)
+	//{
+	//	const std::pair<int, int> tileTransform = map.getTileScreenPos(m_currentSelectedEntity.m_position);
+
+	//	m_currentSelectedEntity.m_currentSelectedEntity->m_sprite->GetTransformComp().SetPosition({
+	//	static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
+	//	static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
+
+	//	spawnHex->Render(SCREEN_SURFACE);
+	//}
 }
 
 const Tile* BattleUI::ShipPlacementPhase::getTileOnMouse(InvalidPosition& invalidPosition, const Tile* currentTileSelected, const Map& map)
