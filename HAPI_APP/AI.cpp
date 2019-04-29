@@ -263,8 +263,9 @@ void AI::handleShootingPhase(Battle* battlePtr, Map* mapPtr, FactionName faction
 	//loop through all the ships in the faction
 	for (int i = 0; i < ships.size(); i++)
 	{
+		if (ships[i]->m_battleProperties.isDead()) continue;
 		//check if the ship is able to fire upon any enemies and fire if possible
-		//attemptShot(ships[i]);
+		attemptShot(battlePtr, mapPtr, ships[i]);
 	}
 }
 
