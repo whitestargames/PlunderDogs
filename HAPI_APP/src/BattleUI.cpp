@@ -724,7 +724,6 @@ void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & sour
 		{
 		case eNorth:
 			directionOfFire = eSouth;
-			
 			break;
 		case eNorthEast:
 			directionOfFire = eSouthWest;
