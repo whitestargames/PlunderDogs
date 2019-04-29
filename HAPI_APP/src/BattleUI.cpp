@@ -175,11 +175,28 @@ void BattleUI::startShipPlacement(const std::vector<std::pair<FactionName, std::
 		}
 	}
 
-	for (const auto& player : players)
+
+	std::pair<int, int> firstSpawnPosition = map.getSpawnPosition();
+	for (int i = 0; i < players.size(); ++i)
 	{
-		m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>
-			(player.second, map.getSpawnPosition(), SHIP_PLACEMENT_SPAWN_RANGE, m_battle.getMap(), player.first));
+		if (i == 0)
+		{
+			m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>
+				(players[i].second, firstSpawnPosition, SHIP_PLACEMENT_SPAWN_RANGE, m_battle.getMap(), players[i].first));
+		}
+		else
+		{
+			m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>
+				(players[i].second, map.getSpawnPosition(), SHIP_PLACEMENT_SPAWN_RANGE, m_battle.getMap(), players[i].first));
+		}
 	}
+
+	m_gui.snapCameraToPosition(firstSpawnPosition);
+
+	//for (const auto& player : players)
+	//{
+
+	//}
 }
 
 void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
