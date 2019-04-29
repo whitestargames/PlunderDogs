@@ -2,6 +2,13 @@
 #include "Map.h"
 #include <cmath>
 
+std::pair<int, int> MouseSelection::coordToHexPos(std::pair<int, int> coord)
+{
+	const float xPos = static_cast<float>(coord.first * 24);
+	const float yPos = static_cast<float>((((1 + coord.first) % 2) + 2 * coord.second) * 14);
+	return { xPos, yPos };
+}
+
 std::pair<double, eDirection> MouseSelection::calculateDirection(std::pair<int, int> startLocation, std::pair<int, int> endLocation)
 {
 	std::pair<double, double> distance{ endLocation.first - startLocation.first, endLocation.second - startLocation.second }; // Calculates the distance vector of the line between the start and end point.
@@ -53,13 +60,6 @@ std::pair<double, eDirection> MouseSelection::calculateDirection(std::pair<int, 
 		}
 	}
 	return returnVariable;
-}
-
-std::pair<int, int> MouseSelection::coordToHexPos(std::pair<int, int> coord)
-{
-	const float xPos = static_cast<float>(coord.first * 24);
-	const float yPos = static_cast<float>((((1 + coord.first) % 2) + 2 * coord.second) * 14);
-	return { xPos, yPos };
 }
 
 std::pair<double, eDirection> MouseSelection::calculateDirection(const Tile* startLocation, const Tile* endLocation)
