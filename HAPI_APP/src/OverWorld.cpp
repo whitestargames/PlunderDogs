@@ -49,9 +49,16 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
 		if (OverWorldGUI::CURRENT_WINDOW == eLevelSelection)
+			// put bool to stop this triggering more than once only wants to trigger on first enter
 		{
-			m_GUI.setActivePlayers(m_players);
-			onReset();
+			if (m_GUI.getLeftPlayerSelectionTrig())
+			{
+				m_GUI.setActivePlayers(m_players);
+				onReset();
+				m_GUI.setLeftPlayerSelectionTrig (false);
+				
+			}
+		// create bool which triggers if leaving selection into map or leaving map into fleat
 		}
 
 		bool selectNextPlayer = false;

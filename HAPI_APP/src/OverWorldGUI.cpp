@@ -115,6 +115,16 @@ OverWorldGUI::~OverWorldGUI()
 	GameEventMessenger::getInstance().unsubscribe("OverWorldGUI", GameEvent::eResetBattle);
 }
 
+bool OverWorldGUI::getLeftPlayerSelectionTrig()
+{
+	return leftPlayerSelectionTrig;
+}
+
+void OverWorldGUI::setLeftPlayerSelectionTrig(bool trigger)
+{
+	leftPlayerSelectionTrig = trigger;
+}
+
 void OverWorldGUI::render(Battle& battle)
 {
 	SCREEN_SURFACE->Clear();
@@ -305,6 +315,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 				if (getActivePlayerCount() >=2)
 				{
 					CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
+					leftPlayerSelectionTrig = true;
 				
 				}
 				
@@ -317,8 +328,8 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 		{
 			if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
 			{
-			
-			CURRENT_WINDOW = OverWorldWindow::ePlayerSelection;
+				leftPlayerSelectionTrig = false;
+				CURRENT_WINDOW = OverWorldWindow::ePlayerSelection;
 			}
 
 			if (HAPI_Wrapper::isTranslated(m_selectMapButtons1, mouseData, 0))

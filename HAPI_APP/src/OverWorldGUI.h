@@ -91,6 +91,7 @@ private:
 	std::string selectedMapName = "Isle of Turtles";
 	bool shipSelectionTrigger{ false };
 	int getActivePlayerCount();
+	bool leftPlayerSelectionTrig{ false };
 	
 	
 
@@ -102,7 +103,8 @@ public:
 	static OverWorldWindow CURRENT_WINDOW;
 	OverWorldGUI();
 	~OverWorldGUI();
-	
+	bool getLeftPlayerSelectionTrig();
+	void setLeftPlayerSelectionTrig(bool trigger);
 	void onLeftClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer, bool& selectNextPlayer,bool& resetPlayer);
 	void onRightClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer);
 	void onMouseMove(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer);
