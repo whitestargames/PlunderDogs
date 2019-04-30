@@ -8,6 +8,14 @@
 #include <utility>
 #include <algorithm>
 
+//enum FactionName
+//{
+//	eYellow = 0,
+//	eBlue,
+//	eGreen,
+//	eRed
+//};
+
 enum GameEvent
 {
 	eResetBattle = 0,
@@ -39,6 +47,7 @@ public:
 	std::string m_name;
 };
 
+
 class GameEventMessenger
 {
 public:
@@ -64,7 +73,10 @@ public:
 	static void broadcast(GameEvent message)
 	{
 		auto iter = m_listeners.find(message);
-		assert(iter != m_listeners.cend());
+		if (iter == m_listeners.cend())
+		{
+			return;
+		}
 
 		for (const auto& listener : iter->second)
 		{

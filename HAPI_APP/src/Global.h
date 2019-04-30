@@ -98,8 +98,8 @@ enum eWeaponType
 
 enum eTimeOfDay
 {
-	eMorning = 0,
-	eAfternoon,
-	eEvening,
-	eNight
+	eMorning = 0, //20 seconds
+	eAfternoon, //7.5 seconds
+	eEvening,  //7.5 seconds
+	eNight // 20 seconds
 };

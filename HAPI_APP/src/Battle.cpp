@@ -79,9 +79,9 @@ void Battle::render() const
 	m_map.drawMap();
 	m_battleUI.renderUI();
 
-	for (const auto& player : m_players)
+	for (auto& player : m_players)
 	{
-		for (const auto& entity : player.m_entities)
+		for (auto& entity : player.m_entities)
 		{
 			entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
 		}
@@ -89,6 +89,7 @@ void Battle::render() const
 	
 	m_battleUI.renderParticles();
 	m_battleUI.renderGUI();
+	//m_battleUI.renderUI();
 }
 
 void Battle::update(float deltaTime)
@@ -122,11 +123,11 @@ void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination,
 	entity.m_battleProperties.moveEntity(m_map, destination, endDirection);
 }
 
-bool Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea)
+void Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea)
 {
 	assert(m_currentPhase == BattlePhase::Attack);
 	assert(!player.m_battleProperties.isWeaponFired());
-	
+	player.m_battleProperties.fireWeapon();
 
 	//Disallow attacking same team
 	if (tileOnAttackPosition.m_entityOnTile && tileOnAttackPosition.m_entityOnTile->m_factionName != getCurentFaction()
@@ -138,14 +139,10 @@ bool Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 		//Enemy within range of weapon
 		if (cIter != targetArea.cend())
 		{
-			player.m_battleProperties.fireWeapon();
 			auto& enemy = tileOnAttackPosition.m_entityOnTile;
 			enemy->m_battleProperties.takeDamage(enemy->m_entityProperties, player.m_entityProperties.m_damage, enemy->m_factionName);
-			
-			return true;
 		}
 	}
-	return false;
 }
 
 void Battle::insertEntity(std::pair<int, int> startingPosition, eDirection startingDirection, const EntityProperties& entityProperties, FactionName factionName)
@@ -159,7 +156,7 @@ void Battle::insertEntity(std::pair<int, int> startingPosition, eDirection start
 void Battle::nextTurn()
 {
 	m_moveCounter.m_counter = 0;
-	FactionName currentPlayer;
+
 	bool lastPlayer = false;
 	switch (m_currentPhase)
 	{
@@ -169,38 +166,20 @@ void Battle::nextTurn()
 		if (lastPlayer)
 		{
 			m_currentPhase = BattlePhase::Movement;
+			m_currentPlayerTurn = 0;
 		}
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
-		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;
-		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
-		{
-			entity->m_battleProperties.enableAction();
-		}
 		break;
 	case BattlePhase::Movement :
 		m_currentPhase = BattlePhase::Attack;
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringAttackPhase);
-		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;
-		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
-		{
-			entity->m_battleProperties.enableAction();
-		}
 		break;
 	case BattlePhase::Attack :
 		m_currentPhase = BattlePhase::Movement;
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringMovementPhase);
-		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
-		{
-			entity->m_battleProperties.disableAction();
-		}
 		incrementPlayerTurn();
-		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;
-		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
-		{
-			entity->m_battleProperties.enableAction();
-		}
 		break;
 	}
 }
@@ -337,7 +316,6 @@ void Battle::onEndMovementPhaseEarly()
 		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
 		{
 			entity->m_battleProperties.clearMovementPath();
-			entity->m_battleProperties.enableAction();
 		}
 	}
 }
@@ -347,18 +325,7 @@ void Battle::onEndAttackPhaseEarly()
 	m_currentPhase = BattlePhase::Movement;
 	GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 	GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringMovementPhase);
-	
-	for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
-	{
-		entity->m_battleProperties.disableAction();
-	}
-
 	incrementPlayerTurn();
-
-	for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
-	{
-		entity->m_battleProperties.enableAction();
-	}
 }
 
 Battle::BattleManager::BattleManager()

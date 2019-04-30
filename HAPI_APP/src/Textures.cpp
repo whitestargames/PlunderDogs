@@ -1,6 +1,7 @@
 #include "Textures.h"
 
 std::shared_ptr<SpriteSheet> Textures::m_mouseCrossHair;
+std::shared_ptr<SpriteSheet> Textures::m_shipMovement;
 std::shared_ptr<SpriteSheet> Textures::m_levelSelectBackground;
 std::shared_ptr<SpriteSheet> Textures::m_enemyTerritoryHexSheet;
 std::shared_ptr<SpriteSheet> Textures::m_levelSelect1;
@@ -58,7 +59,3 @@ std::shared_ptr<SpriteSheet> Textures::m_background;
 std::shared_ptr<SpriteSheet> Textures::m_explosion;
 std::shared_ptr<SpriteSheet> Textures::m_fire;
 
-std::shared_ptr<SpriteSheet> Textures::m_redSpawnHex;
-std::shared_ptr<SpriteSheet> Textures::m_yellowSpawnHex;
-std::shared_ptr<SpriteSheet> Textures::m_greenSpawnHex;
-std::shared_ptr<SpriteSheet> Textures::m_blueSpawnHex;

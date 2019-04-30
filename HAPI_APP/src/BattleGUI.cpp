@@ -3,6 +3,7 @@
 #include "Utilities/MapParser.h"
 #include "GameEventMessenger.h"
 #include "Battle.h"
+#include "AudioPlayer.h"
 
 BattleGUI::BattleGUI()
 	:
@@ -73,7 +74,6 @@ void BattleGUI::render(BattlePhase currentBattlePhase) const
 	//m_chickenButton->Render(SCREEN_SURFACE);
 	m_CompassBackGround->Render(SCREEN_SURFACE);
 	m_CompassPointer->Render(SCREEN_SURFACE);
-
 	//m_activeFactionToken->Render(SCREEN_SURFACE);
 
 	if (currentBattlePhase != BattlePhase::ShipPlacement)
@@ -96,18 +96,13 @@ void BattleGUI::render(BattlePhase currentBattlePhase) const
 		}
 	}
 	
+	
+	
+	
 	if (currentBattlePhase != BattlePhase::ShipPlacement)
 	{
 		m_endPhaseButtons->Render(SCREEN_SURFACE);
 	}
-
-
-	//m_activeFactionToken->Render(SCREEN_SURFACE);
-	m_endPhaseButtons->Render(SCREEN_SURFACE);
-	//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 585), HAPISPACE::Colour255::RED, std::to_string(m_maxCameraOffset.first), 50);//Dont delete these until the panning has been fixed - Jack
-	//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(950, 585), HAPISPACE::Colour255::RED, std::to_string(CameraPositionOffset.first), 50);
-	//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 685), HAPISPACE::Colour255::GREEN, std::to_string(m_maxCameraOffset.second), 50);
-	//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(950, 685), HAPISPACE::Colour255::GREEN, std::to_string(CameraPositionOffset.second), 50);
 
 	switch (m_currentBattleWindow)
 	{
@@ -181,13 +176,13 @@ void BattleGUI::update(eDirection windDirection)
 	{
 		//camera pan
 		if (!pendingCameraMovement.IsZero())
-		{			
+		{
 			CameraPositionOffset.first += pendingCameraMovement.x;//translates the camera position
 			CameraPositionOffset.second += pendingCameraMovement.y;
 
-			if (CameraPositionOffset.first < -120)//checks for if its reached any of the 4 boundries, need to change it to a width variable
+			if (CameraPositionOffset.first < -150)//checks for if its reached any of the 4 boundries, need to change it to a width variable
 			{
-				CameraPositionOffset.first = -120;
+				CameraPositionOffset.first = -150;
 			}
 			else if (CameraPositionOffset.first > m_maxCameraOffset.first)
 			{
@@ -198,9 +193,9 @@ void BattleGUI::update(eDirection windDirection)
 				CameraPositionOffset.first += pendingCameraMovement.x;
 			}
 
-			if (CameraPositionOffset.second < -100)
+			if (CameraPositionOffset.second < -200)
 			{
-				CameraPositionOffset.second = -100;
+				CameraPositionOffset.second = -200;
 			}
 			else if (CameraPositionOffset.second > m_maxCameraOffset.second)
 			{
@@ -226,9 +221,6 @@ void BattleGUI::updateFactionToken(int factionName)
 
 void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData, BattlePhase currentBattlePhase)
 {
-
-	//snapCameraToPosition(std::pair<int, int>{ 15, 15 });
-
 	switch (m_currentBattleWindow)
 	{
 	case BattleWindow::eCombat:
@@ -279,6 +271,7 @@ void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData, BattlePhase c
 			m_quitButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the resume button
 		{
 			GameEventMessenger::getInstance().broadcast(GameEvent::eResetBattle);
+			AudioPlayer::getInstance().stopSound("battle theme");
 			//m_currentBattleWindow = BattleWindow::ePostBattle;//disables the pause menu
 		}
 		break;
@@ -308,6 +301,7 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData, BattlePhase curren
 		{
 			m_pauseButton->SetFrameNumber(0);// sets it to the default sprite
 		}
+
 
 		// ryan the phase button stuff is here
 		if (m_endPhaseButtons->GetSpritesheet()->GetFrameRect(0).Translated(m_endPhaseButtons->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//checks if mouse is over the phase button
@@ -349,11 +343,7 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData, BattlePhase curren
 			pendingCameraMovement += VectorF{ 1,0 };
 		}
 
-
-		//if (mouseData.y < 100)
-
-		
-		if (mouseData.y < 50)
+		if (mouseData.y < 100)
 		{
 			pendingCameraMovement += VectorF{ 0,-1 };
 		}
@@ -361,6 +351,7 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData, BattlePhase curren
 		{
 			pendingCameraMovement += VectorF{ 0,1 };
 		}
+
 		break;
 	}
 	case BattleWindow::ePause:
@@ -401,15 +392,7 @@ void BattleGUI::OnMouseMove(const HAPI_TMouseData& mouseData, BattlePhase curren
 
 void BattleGUI::setMaxCameraOffset(std::pair<int, int> maxCameraOffset)
 {
-	m_maxCameraOffset = std::pair<int, int>(maxCameraOffset.first * 24 - 820, maxCameraOffset.second * 28 - 400);
-	if (m_maxCameraOffset.first < 0)
-	{
-		m_maxCameraOffset.first = 0;
-	}
-	if (m_maxCameraOffset.second < 0)
-	{
-		m_maxCameraOffset.second = 0;
-	}
+	m_maxCameraOffset = std::pair<int, int>(maxCameraOffset.first * 28 - 150, maxCameraOffset.second * 32 - 150);
 }
 
 void BattleGUI::onBattleReset()
@@ -435,7 +418,6 @@ void BattleGUI::onBattleReset()
 	//postBattle
 	m_doneButton->GetTransformComp().SetPosition({ 820, 800 });
 }
-
 
 std::string BattleGUI::getWinningFactionName()
 {
@@ -495,20 +477,5 @@ void BattleGUI::onEnteringAttackPhase()
 
 void BattleGUI::onUnableToSkipPhase()
 {
-}
 
-void BattleGUI::snapCameraToPosition(std::pair<int, int> snapLocation)//snaps the camera to be centered on a given tile
-{
-	snapLocation.first = snapLocation.first * 24 - 480;
-	snapLocation.second = snapLocation.second  * 28 - 270;
-	//Ensure values are within bounds
-	snapLocation.first = std::max(-120, snapLocation.first);
-	snapLocation.first = std::min(m_maxCameraOffset.first, snapLocation.first);
-	snapLocation.second = std::max(-100, snapLocation.second);
-	snapLocation.second = std::min(m_maxCameraOffset.second, snapLocation.second);
-
-	m_cameraPositionOffset.first = snapLocation.first;
-	m_cameraPositionOffset.second = snapLocation.second;
-	CameraPositionOffset.first = snapLocation.first;
-	CameraPositionOffset.second = snapLocation.second;
 }

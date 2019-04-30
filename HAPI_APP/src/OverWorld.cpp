@@ -46,19 +46,13 @@ OverWorld::~OverWorld()
 
 void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
 {
+
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
 		if (OverWorldGUI::CURRENT_WINDOW == eLevelSelection)
-			// put bool to stop this triggering more than once only wants to trigger on first enter
 		{
-			if (m_GUI.getLeftPlayerSelectionTrig())
-			{
-				m_GUI.setActivePlayers(m_players);
-				onReset();
-				m_GUI.setLeftPlayerSelectionTrig (false);
-				
-			}
-		// create bool which triggers if leaving selection into map or leaving map into fleat
+			m_GUI.setActivePlayers(m_players);
+			onReset();
 		}
 
 		bool selectNextPlayer = false;
@@ -87,6 +81,8 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 			m_currentPlayer = 0;
 			return;
 		}
+		
+		
 	}
 	if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
@@ -101,11 +97,14 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData & mouseData)
 
 void OverWorld::render()
 {
+
 	m_GUI.render(m_battle);
+
 }
 
 void OverWorld::update(float deltaTime)
 {
+
 	if (m_startBattle)
 	{
 		startBattle();
@@ -115,6 +114,9 @@ void OverWorld::update(float deltaTime)
 	{
 		m_battle.update(deltaTime);
 	}
+
+	
+	
 }
 
 void OverWorld::startBattle()
@@ -125,7 +127,7 @@ void OverWorld::startBattle()
 		OverWorldGUI::CURRENT_WINDOW = eBattle;
 		
 		std::vector<std::pair<FactionName, std::vector<EntityProperties*>>> playersInBattle;
-		for (const auto& player : m_players)
+		for (auto& player : m_players)
 		{
 			std::pair<FactionName, std::vector<EntityProperties*>> p;
 			p.first = player.m_factionName;
@@ -144,6 +146,7 @@ void OverWorld::startBattle()
 		m_startBattle = false;
 	}
 }
+
 
 void OverWorld::onReset()
 {

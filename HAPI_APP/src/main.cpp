@@ -1,5 +1,6 @@
 #include "OverWorld.h"
 #include "Textures.h"
+#include "AudioPlayer.h"
 
 //TODO: AUDIO PLAYER
 //TODO: Target area appearing on land
@@ -29,6 +30,8 @@ void HAPI_Sprites_Main()
 		return;
 	}
 
+	AudioPlayer::getInstance().registerSound("pirate_theme.wav", "main menu");
+	AudioPlayer::getInstance().registerSound("Blackmoor Tides Loop.wav", "battle theme");
 	HAPI_Sprites.SetShowFPS(true);
 	HAPI_Sprites.LimitFrameRate(150);
 

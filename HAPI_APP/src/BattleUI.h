@@ -55,6 +55,7 @@ class BattleUI : public IHapiSpritesInputListener
 		void run(float deltaTime, const Map& map);
 		void render() const;
 		void orient(eDirection direction);
+		
 	};
 
 	class ShipPlacementPhase

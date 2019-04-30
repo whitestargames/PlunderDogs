@@ -3,6 +3,7 @@
 #include "OverWorld.h"
 #include "Utilities/Utilities.h"
 #include "GameEventMessenger.h"
+#include "AudioPlayer.h"
 
 OverWorldWindow OverWorldGUI::CURRENT_WINDOW = OverWorldWindow::eMainMenu;
 
@@ -70,6 +71,8 @@ std::string OverWorldGUI::getSelectedMap()
 	return selectedMap;
 }
 
+
+
 OverWorldGUI::OverWorldGUI()
 	: m_battleMapBackground(std::make_unique<Sprite>(Textures::m_levelSelectBackground)),
 	m_selectMapButtons1(std::make_unique<Sprite>(Textures::m_levelSelect1)),
@@ -108,21 +111,15 @@ OverWorldGUI::OverWorldGUI()
 	m_background = std::make_unique<Sprite>(Textures::m_background);
 	HAPI_Wrapper::setPosition(m_background, { 0, 0 });
 	GameEventMessenger::getInstance().subscribe(std::bind(&OverWorldGUI::onReset, this), "OverWorldGUI", GameEvent::eResetBattle);
+	
+
+	//AudioPlayer::getInstance().playSound("main menu");
 }
 
 OverWorldGUI::~OverWorldGUI()
 {
 	GameEventMessenger::getInstance().unsubscribe("OverWorldGUI", GameEvent::eResetBattle);
-}
 
-bool OverWorldGUI::getLeftPlayerSelectionTrig()
-{
-	return leftPlayerSelectionTrig;
-}
-
-void OverWorldGUI::setLeftPlayerSelectionTrig(bool trigger)
-{
-	leftPlayerSelectionTrig = trigger;
 }
 
 void OverWorldGUI::render(Battle& battle)
@@ -139,6 +136,8 @@ void OverWorldGUI::render(Battle& battle)
 			m_quitButton->Render(SCREEN_SURFACE);
 			HAPI_Sprites.ChangeFontFromFile("data/RAPSCALL.TTF");
 			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1380, 50), HAPISPACE::Colour255::YELLOW, "Plunder\n Dogs", 190, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+			
+			AudioPlayer::getInstance().playSound("main menu");
 			
 			break;
 		}
@@ -176,6 +175,8 @@ void OverWorldGUI::render(Battle& battle)
 		}
 		case OverWorldWindow::eBattle:
 		{
+			AudioPlayer::getInstance().stopSound("main menu");
+			AudioPlayer::getInstance().playSound("battle theme");
 			battle.render();
 			break;
 		}
@@ -315,7 +316,6 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 				if (getActivePlayerCount() >=2)
 				{
 					CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
-					leftPlayerSelectionTrig = true;
 				
 				}
 				
@@ -328,8 +328,8 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 		{
 			if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
 			{
-				leftPlayerSelectionTrig = false;
-				CURRENT_WINDOW = OverWorldWindow::ePlayerSelection;
+			
+			CURRENT_WINDOW = OverWorldWindow::ePlayerSelection;
 			}
 
 			if (HAPI_Wrapper::isTranslated(m_selectMapButtons1, mouseData, 0))
@@ -1057,3 +1057,9 @@ void OverWorldGUI::updateSelectedShips(const std::string & shipWindow, const HAP
 		}
 	}
 }
+
+
+
+
+
+

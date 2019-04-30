@@ -6,6 +6,7 @@
 #include "Timer.h"
 #include "Global.h"
 
+
 struct MoveCounter
 {
 	MoveCounter()
@@ -48,16 +49,6 @@ struct EntityProperties
 
 class EntityBattleProperties
 {
-	struct ActionSprite
-	{
-		ActionSprite(FactionName factionName);
-
-		void render(const Map& map, std::pair<int, int> currentEntityPosition) const;
-
-		std::unique_ptr<Sprite> sprite;
-		bool active;
-	};
-
 	class MovementPath
 	{
 		struct PathNode
@@ -83,9 +74,9 @@ class EntityBattleProperties
 	};
 
 public:
-	EntityBattleProperties(std::pair<int, int> startingPosition, FactionName factionName, eDirection startingDirection = eNorth);
+	EntityBattleProperties(std::pair<int, int> startingPosition, eDirection startingDirection = eNorth);
 	~EntityBattleProperties();
-	const FactionName m_factionName;
+
 	eDirection getCurrentDirection() const;
 	bool isMovedToDestination() const;
 	std::pair<int, int> getCurrentPosition() const;
@@ -98,9 +89,6 @@ public:
 
 	void generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
 	void clearMovementPath();
-
-	void enableAction();
-	void disableAction();
 
 	void moveEntity(Map& map, const Tile& tile);
 	void moveEntity(Map& map, const Tile& tile, eDirection endDirection);
@@ -117,7 +105,6 @@ private:
 	bool m_weaponFired;
 	bool m_movedToDestination;
 	bool m_isDead;
-	ActionSprite m_actionSprite;
 
 	void handleRotation(EntityProperties& entityProperties);
 	void onNewTurn();

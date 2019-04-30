@@ -10,7 +10,7 @@
 using namespace HAPISPACE;
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
-constexpr int SHIP_PLACEMENT_SPAWN_RANGE{ 3 };
+constexpr int SHIP_PLACEMENT_SPAWN_RANGE{ 5 };
 
 //
 //InvalidPositionSprite
@@ -377,19 +377,6 @@ void BattleUI::onLeftClickMovementPhase()
 		return;
 	}
 
-	if (!m_selectedTile.m_tile && tileOnMouse->m_entityOnTile)
-	{
-		m_selectedTile.m_tile = tileOnMouse;
-		return;
-	}
-
-	if (!m_selectedTile.m_tile && tileOnMouse->m_entityOnTile &&
-		tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
-	{
-		m_selectedTile.m_tile = tileOnMouse;
-		return;
-	}
-
 	//Invalid Location - Collidable tile
 	if (tileOnMouse->m_type != eTileType::eSea && tileOnMouse->m_type != eTileType::eOcean)
 	{
@@ -430,17 +417,12 @@ void BattleUI::onLeftClickMovementPhase()
 		else if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
 		{
 			m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.clearMovementPath();
-			m_selectedTile.m_tile = tileOnMouse;
-		}
-		else if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName == m_battle.getCurentFaction())
-		{
-			m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.clearMovementPath();
-			m_selectedTile.m_tile = tileOnMouse;
+			//TODO: Drop info box
+			m_selectedTile.m_tile = nullptr;
 		}
 
 		//Store data so Entity can move to new location
-		else if (m_selectedTile.m_tile->m_entityOnTile && (m_selectedTile.m_tile->m_tileCoordinate != tileOnMouse->m_tileCoordinate)
-			&& m_selectedTile.m_tile->m_entityOnTile->m_factionName == m_battle.getCurentFaction())
+		else if (m_selectedTile.m_tile->m_entityOnTile && (m_selectedTile.m_tile->m_tileCoordinate != tileOnMouse->m_tileCoordinate))
 		{
 			assert(m_selectedTile.m_tile->m_entityOnTile->m_factionName == m_battle.getCurentFaction());
 			m_mouseDownTile = tileOnMouse;
@@ -488,19 +470,6 @@ void BattleUI::onRightClickMovementPhase()
 
 void BattleUI::onLeftClickAttackPhase()
 {
-	//assert(m_battle.getCurrentPhase() == BattlePhase::Attack);
-	//const Tile* tileOnMouse = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
-	//if (!tileOnMouse || !tileOnMouse->m_entityOnTile)
-	//{
-	//	if (m_selectedTile.m_tile)
-	//	{
-	//		m_targetArea.clearTargetArea();
-	//	}
-	//	m_selectedTile.m_tile = nullptr;
-	//	m_invalidPosition.m_activate = false;
-	//	return;
-	//}
-
 	assert(m_battle.getCurrentPhase() == BattlePhase::Attack);
 	const Tile* tileOnMouse = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 	if (!tileOnMouse)
@@ -510,21 +479,13 @@ void BattleUI::onLeftClickAttackPhase()
 
 	//Select new entity that is on same team
 	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile && tileOnMouse->m_entityOnTile &&
-		(tileOnMouse->m_entityOnTile->m_factionName == m_battle.getCurentFaction()))
+		(tileOnMouse->m_entityOnTile->m_factionName == m_selectedTile.m_tile->m_entityOnTile->m_factionName))
 	{
 		if (!tileOnMouse->m_entityOnTile->m_battleProperties.isWeaponFired())
 		{
-			m_targetArea.clearTargetArea();
-			m_targetArea.generateTargetArea(m_battle.getMap(), *tileOnMouse);
+			//TODO: Raise info box
 			m_selectedTile.m_tile = tileOnMouse;
-			return;
 		}
-	}
-
-	if (!m_selectedTile.m_tile && tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
-	{
-		m_selectedTile.m_tile = tileOnMouse;
-		return;
 	}
 
 	//Do not fire on destroyed ship
@@ -563,11 +524,14 @@ void BattleUI::onLeftClickAttackPhase()
 				m_explosion.setPosition(tileOnMouse->m_entityOnTile->m_battleProperties.getCurrentPosition());
 				m_explosion.m_isEmitting = true;
 			}
-
+			
 		}
-
+	
 		m_battle.fireEntityWeaponAtPosition(*m_selectedTile.m_tile->m_entityOnTile, *tileOnMouse, m_targetArea.m_targetArea);
+
+		//TODO: Might change this
 		m_targetArea.clearTargetArea();
+		//TODO: Drop info box
 		m_selectedTile.m_tile = nullptr;
 		m_invalidPosition.m_activate = false;
 		return;
@@ -589,19 +553,12 @@ void BattleUI::onLeftClickAttackPhase()
 	//Select new Entity to fire at something
 	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
 	{
-		m_selectedTile.m_tile = tileOnMouse;
 		return;
 	}
-
-	if (!m_selectedTile.m_tile && tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName == m_battle.getCurentFaction())
+	//TODO: Raise info box
+	m_selectedTile.m_tile = tileOnMouse;
+	if (m_selectedTile.m_tile->m_entityOnTile && !m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.isWeaponFired())
 	{
-		m_selectedTile.m_tile = tileOnMouse;
-	}
-
-	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile && !m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.isWeaponFired() &&
-		m_selectedTile.m_tile->m_entityOnTile->m_factionName == m_battle.getCurentFaction())
-	{
-		m_selectedTile.m_tile = tileOnMouse;
 		m_targetArea.generateTargetArea(m_battle.getMap(), *tileOnMouse);
 	}
 }
@@ -724,6 +681,7 @@ void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & sour
 		{
 		case eNorth:
 			directionOfFire = eSouth;
+			
 			break;
 		case eNorthEast:
 			directionOfFire = eSouthWest;
@@ -797,48 +755,32 @@ BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*> 
 	m_spawnSprites.reserve(m_spawnArea.size());
 	for (int i = 0; i < m_spawnArea.size(); ++i)
 	{
-		std::unique_ptr<Sprite> sprite;
-		switch (factionName)
-		{
-		case eYellow:
-			sprite = HAPI_Sprites.MakeSprite(Textures::m_yellowSpawnHex);
-			break;
-		case eBlue:
-			sprite = HAPI_Sprites.MakeSprite(Textures::m_blueSpawnHex);
-			break;
-		case eGreen:
-			sprite = HAPI_Sprites.MakeSprite(Textures::m_greenSpawnHex);
-			break;
-		case eRed:
-			sprite = HAPI_Sprites.MakeSprite(Textures::m_redSpawnHex);
-			break;
-		};
-
+		std::unique_ptr<Sprite> sprite = HAPI_Sprites.MakeSprite(Textures::m_spawnHex);
 		auto screenPosition = map.getTileScreenPos(m_spawnArea[i]->m_tileCoordinate);
 		sprite->GetTransformComp().SetPosition({
 		(float)screenPosition.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),
 		(float)screenPosition.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
 		sprite->GetTransformComp().SetOriginToCentreOfFrame();
-		sprite->GetTransformComp().SetScaling({ 2.f, 2.f });
+		//sprite->GetTransformComp().SetScaling({ 1.8f, 1.8f });
 
 		m_spawnSprites.push_back(std::move(sprite));
 	}
 
-	for (int i = 0; i < m_spawnArea.size(); ++i)
-	{
-		//const std::pair<int, int> tileTransform = map.getTileScreenPos(m_tile->m_tileCoordinate);
+	//for (int i = 0; i < m_spawnArea.size(); ++i)
+	//{
+	//	//const std::pair<int, int> tileTransform = map.getTileScreenPos(m_tile->m_tileCoordinate);
 
-		//m_sprite->GetTransformComp().SetPosition({
-		//static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
-		//static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
+	//	//m_sprite->GetTransformComp().SetPosition({
+	//	//static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
+	//	//static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
 
-		auto screenPosition = map.getTileScreenPos(m_spawnArea[i]->m_tileCoordinate);
-		m_spawnSprites[i]->GetTransformComp().SetPosition({
-		(float)screenPosition.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale() ,
-		(float)screenPosition.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
-		m_spawnSprites[i]->GetTransformComp().SetOriginToCentreOfFrame();
-		m_spawnSprites[i]->GetTransformComp().SetScaling({ 2.f, 2.f });
-	}
+	//	auto screenPosition = map.getTileScreenPos(m_spawnArea[i]->m_tileCoordinate);
+	//	m_spawnSprites[i]->GetTransformComp().SetPosition({
+	//	(float)screenPosition.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale() ,
+	//	(float)screenPosition.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
+	//	m_spawnSprites[i]->GetTransformComp().SetOriginToCentreOfFrame();
+	//	m_spawnSprites[i]->GetTransformComp().SetScaling({ 1.8f, 1.8f });
+	//}
 
 	m_currentSelectedEntity.m_currentSelectedEntity = m_player.back();
 }
@@ -861,27 +803,10 @@ void BattleUI::ShipPlacementPhase::render(const InvalidPosition& invalidPosition
 		m_currentSelectedEntity.m_currentSelectedEntity->m_sprite->Render(SCREEN_SURFACE);
 	}
 
-	for (int i = 0; i < m_spawnSprites.size(); ++i)
+	for (const auto& spawnHex : m_spawnSprites)
 	{
-		const std::pair<int, int> tileTransform = map.getTileScreenPos(m_spawnArea[i]->m_tileCoordinate);
-
-		m_spawnSprites[i]->GetTransformComp().SetPosition({
-		static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
-		static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
-
-		m_spawnSprites[i]->Render(SCREEN_SURFACE);
+		spawnHex->Render(SCREEN_SURFACE);
 	}
-
-	//for (const auto& spawnHex : m_spawnSprites)
-	//{
-	//	const std::pair<int, int> tileTransform = map.getTileScreenPos(m_currentSelectedEntity.m_position);
-
-	//	m_currentSelectedEntity.m_currentSelectedEntity->m_sprite->GetTransformComp().SetPosition({
-	//	static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
-	//	static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
-
-	//	spawnHex->Render(SCREEN_SURFACE);
-	//}
 }
 
 const Tile* BattleUI::ShipPlacementPhase::getTileOnMouse(InvalidPosition& invalidPosition, const Tile* currentTileSelected, const Map& map)
