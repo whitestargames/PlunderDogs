@@ -161,7 +161,7 @@ void AI::attemptMove(Map& map, std::shared_ptr<BattleEntity> currentShip, std::p
 		if (currentShip->m_battleProperties.moveEntity(map, *attemptedDest, pathToTile[pathLength].first))
 			break;
 	}
-	currentShip->m_battleProperties.setMoved();
+	currentShip->m_battleProperties.setDestination();
 }
 
 void AI::attemptShot(Battle& battlePtr, const Map& mapPtr, std::shared_ptr<BattleEntity> firingShip)
@@ -242,7 +242,7 @@ void AI::handleMovementPhase(const Battle& battle, Map& map, BattlePlayer& battl
 		const Tile* enemyPosition{ findClosestEnemy(battle, map, ships[i]->m_battleProperties.getCurrentPosition(), battlePlayer.m_factionName) };
 		if (!enemyPosition)
 		{
-			ships[i]->m_battleProperties.setMoved();
+			ships[i]->m_battleProperties.setDestination();
 			continue;
 		}
 		//find the nearest tile and facing that can fire upon the chosen enemy ship

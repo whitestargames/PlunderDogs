@@ -6,14 +6,6 @@
 #include "Timer.h"
 #include "Global.h"
 
-struct MoveCounter
-{
-	MoveCounter()
-		: m_counter(0)
-	{}
-
-	int m_counter;
-};
 enum class EntityType
 {
 	eCruiser,
@@ -85,15 +77,17 @@ class EntityBattleProperties
 public:
 	EntityBattleProperties(std::pair<int, int> startingPosition, FactionName factionName, eDirection startingDirection = eNorth);
 	~EntityBattleProperties();
-	const FactionName m_factionName;
+	
 	eDirection getCurrentDirection() const;
-	bool isMovedToDestination() const;
+	//bool isMovedToDestination() const;
 	std::pair<int, int> getCurrentPosition() const;
 	bool isWeaponFired() const;
 	bool isDead() const;
-	bool isMoving() const;
+	//bool isMoving() const;
+	bool isMovingToDestination() const;
+	bool isDestinationSet() const;
 
-	void update(float deltaTime, const Map& map, EntityProperties& entityProperties, MoveCounter& gameCounter);
+	void update(float deltaTime, const Map& map, EntityProperties& entityProperties);
 	void render(std::shared_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
 
 	int generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
@@ -103,7 +97,7 @@ public:
 	bool moveEntity(Map& map, const Tile& tile, eDirection endDirection);
 	void takeDamage(EntityProperties& entityProperties, int damageAmount, FactionName entityFaction);
 	void fireWeapon();
-	void setMoved();
+	void setDestination();
 	void onNewTurn();
 
 	void enableAction();
@@ -116,9 +110,12 @@ private:
 	int m_movementPathSize;
 	eDirection m_currentDirection;
 	bool m_weaponFired;
-	bool m_movedToDestination;
+	//bool m_movedToDestination;
 	bool m_isDead;
 	ActionSprite m_actionSprite;
+	bool m_movingToDestination;
+	bool m_destinationSet;
+
 
 	void handleRotation(EntityProperties& entityProperties);
 };

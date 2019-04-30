@@ -62,7 +62,6 @@ private:
 	Map m_map;
 	BattlePhase m_currentPhase;
 	BattleUI m_battleUI;
-	MoveCounter m_moveCounter;
 	Timer m_dayTime;
 	Timer m_windTime;
 	BattleManager m_battleManager;

@@ -4,24 +4,48 @@
 #include "Textures.h"
 #include "GameEventMessenger.h"
 
+constexpr float MOVEMENT_ANIMATION_TIME(0.35f);
 constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
 constexpr size_t WEAPON_HIGHLIGHT_SIZE{ 200 };
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
 
+//std::pair<int, int> m_currentPosition;
+//std::deque<std::pair<eDirection, std::pair<int, int>>> m_pathToTile;
+//Timer m_movementTimer;
+//MovementPath m_movementPath;
+//int m_movementPathSize;
+//eDirection m_currentDirection;
+//bool m_weaponFired;
+////bool m_movedToDestination;
+//bool m_isDead;
+//ActionSprite m_actionSprite;
+//bool m_movingToDestination;
+//bool m_destinationSet;
+
 //ENTITY BATTLE PROPERTIES
 EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosition, FactionName factionName, eDirection startingDirection)
-	: m_factionName(factionName),
-	m_currentPosition(startingPosition),
+	:  m_currentPosition(startingPosition),
 	m_pathToTile(),
-	m_movementTimer(0.35f),
-	m_movedToDestination(false),
+	m_movementTimer(MOVEMENT_ANIMATION_TIME),
 	m_movementPath(),
 	m_movementPathSize(0),
 	m_currentDirection(startingDirection),
 	m_weaponFired(false),
 	m_isDead(false),
-	m_actionSprite(factionName)
+	m_actionSprite(factionName),
+	m_movingToDestination(false),
+	m_destinationSet(false)
+	//m_factionName(factionName),
+	//m_currentPosition(startingPosition),
+	//m_pathToTile(),
+	//m_movementTimer(0.35f),
+	//m_movementPath(),
+	//m_movementPathSize(0),
+	//m_currentDirection(startingDirection),
+	//m_weaponFired(false),
+	//m_isDead(false),
+	//m_actionSprite(factionName)
 {
 	GameEventMessenger::getInstance().subscribe(std::bind(&EntityBattleProperties::onNewTurn, this), "EntityBattleProperties", GameEvent::eNewTurn);
 }
@@ -36,10 +60,10 @@ eDirection EntityBattleProperties::getCurrentDirection() const
 	return m_currentDirection;
 }
 
-bool EntityBattleProperties::isMovedToDestination() const
-{
-	return m_movedToDestination;
-}
+//bool EntityBattleProperties::isMovedToDestination() const
+//{
+//	return m_movedToDestination;
+//}
 
 std::pair<int, int> EntityBattleProperties::getCurrentPosition() const
 {
@@ -56,9 +80,19 @@ bool EntityBattleProperties::isDead() const
 	return m_isDead;
 }
 
-bool EntityBattleProperties::isMoving() const
+//bool EntityBattleProperties::isMoving() const
+//{
+//	return !m_pathToTile.empty();
+//}
+
+bool EntityBattleProperties::isMovingToDestination() const
 {
-	return !m_pathToTile.empty();
+	return m_movingToDestination;
+}
+
+bool EntityBattleProperties::isDestinationSet() const
+{
+	return m_destinationSet;
 }
 
 //MOVEMENT PATH NODE
@@ -194,14 +228,15 @@ void EntityBattleProperties::disableAction()
 
 bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 {
-	if (!m_movedToDestination)
+	if (!m_destinationSet)
 	{
 		auto pathToTile = PathFinding::getPathToTile(map, m_currentPosition, tile.m_tileCoordinate);
 		if (!pathToTile.empty() && pathToTile.size() <= m_movementPathSize + 1)
 		{
 			m_pathToTile = pathToTile;
 			map.moveEntity(m_currentPosition, pathToTile.back().second);
-			m_movedToDestination = true;
+			m_destinationSet = true;
+			m_movingToDestination = true;
 			m_actionSprite.active = false;
 			return true;
 		}
@@ -215,7 +250,7 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 
 bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection endDirection)
 {
-	if (!m_movedToDestination)
+	if (!m_destinationSet)
 	{
 		auto pathToTile = PathFinding::getPathToTile(map, m_currentPosition, tile.m_tileCoordinate);
 		if (!pathToTile.empty() && pathToTile.size() <= m_movementPathSize + 1)
@@ -225,7 +260,8 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection e
 
 			m_pathToTile = pathToTile;
 			map.moveEntity(m_currentPosition, pathToTile.back().second);
-			m_movedToDestination = true;
+			m_destinationSet = true;
+			m_movingToDestination = true;
 			m_actionSprite.active = false;
 			return true;
 		}
@@ -288,15 +324,17 @@ void EntityBattleProperties::fireWeapon()
 	m_actionSprite.active = false;
 }
 
-void EntityBattleProperties::setMoved()
+void EntityBattleProperties::setDestination()
 {
-	m_movedToDestination = true;
+	m_destinationSet = true;
 }
 
 void EntityBattleProperties::onNewTurn()
 {
-	m_movedToDestination = false;
+	//m_movedToDestination = false;
 	m_weaponFired = false;
+	m_destinationSet = false;
+	m_movingToDestination = false;
 }
 
 void EntityBattleProperties::handleRotation(EntityProperties& entityProperties)
@@ -487,8 +525,16 @@ BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const EntityPro
 	map.insertEntity(*this);
 }
 
-void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProperties& entityProperties, MoveCounter& moveCounter)
+void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProperties& entityProperties)
 {	
+	//bool m_movingToDestination = false;
+	//bool m_reachedDestination = false;
+	//if (!m_movingToDestination && m_reachedDestination)
+	//{
+	//	return true;
+	//}
+	//
+
 	if (!m_pathToTile.empty())
 	{
 		m_movementTimer.update(deltaTime);
@@ -503,7 +549,8 @@ void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProp
 
 			if (m_pathToTile.empty())
 			{
-				++moveCounter.m_counter;
+				m_movingToDestination = false;
+				clearMovementPath();
 			}
 		}
 	}

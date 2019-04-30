@@ -159,11 +159,8 @@ void Battle::insertEntity(std::pair<int, int> startingPosition, eDirection start
 
 void Battle::nextTurn()
 {
-	m_moveCounter.m_counter = 0;
 	FactionName currentPlayer;
 	bool lastPlayer = false;
-
-
 	switch (m_currentPhase)
 	{
 	case BattlePhase::ShipPlacement :
@@ -207,7 +204,7 @@ void Battle::nextTurn()
 		{
 			entity->m_battleProperties.enableAction();
 		}
-		AI::handleMovementPhase(*this, m_map, m_players[m_currentPlayerTurn]);
+		//AI::handleMovementPhase(*this, m_map, m_players[m_currentPlayerTurn]);
 		break;
 	}
 }
@@ -248,21 +245,27 @@ const std::vector<std::shared_ptr<BattleEntity>>& Battle::getFactionShips(Factio
 
 void Battle::updateMovementPhase(float deltaTime)
 {
-	int totalAliveEntities = 0;
-	
 	for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
 	{
-		if (!entity->m_battleProperties.isDead())
+		if (entity->m_battleProperties.isDead())
+			continue;
+		entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties);
+	}
+	for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
+	{
+		if (entity->m_battleProperties.isDead())
+			continue;
+		if (!entity->m_battleProperties.isDestinationSet())
 		{
-			++totalAliveEntities;
+			return;
 		}
-		entity->m_battleProperties.update(deltaTime, m_map, entity->m_entityProperties, m_moveCounter);
+		if (entity->m_battleProperties.isMovingToDestination())
+		{
+			return;
+		}
 	}
 
-	if (m_moveCounter.m_counter >= totalAliveEntities)
-	{
-		nextTurn();
-	}
+	nextTurn();
 }
 
 void Battle::updateAttackPhase()
@@ -300,7 +303,6 @@ void Battle::onResetBattle()
 	m_currentPlayerTurn = 0;
 	m_dayTime.reset();
 	m_windTime.reset();
-	m_moveCounter.m_counter = 0;
 	m_players.clear();
 }
 
@@ -359,10 +361,14 @@ void Battle::onEndMovementPhaseEarly()
 	bool actionBeingPerformed = false;
 	for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
 	{
-		if (entity->m_battleProperties.isMovedToDestination() && entity->m_battleProperties.isMoving())
+		if (entity->m_battleProperties.isMovingToDestination())
 		{
 			actionBeingPerformed = true;
 		}
+		//if (entity->m_battleProperties.isMovedToDestination() && entity->m_battleProperties.isMoving())
+		//{
+		//	actionBeingPerformed = true;
+		//}
 	}
 
 	if (actionBeingPerformed)
@@ -371,7 +377,6 @@ void Battle::onEndMovementPhaseEarly()
 	}
 	else
 	{
-		m_moveCounter.m_counter = 0;
 		m_currentPhase = BattlePhase::Attack;
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringAttackPhase);

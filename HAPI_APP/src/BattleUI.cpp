@@ -342,7 +342,10 @@ void BattleUI::onMouseMoveMovementPhase()
 		return;
 	}
 
-	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile && !m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.isMovedToDestination())
+	//!isMovingToDestination && !reachedDestination
+	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile &&  
+		!m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.isMovingToDestination() &&
+		!m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.isDestinationSet())
 	{
 		const Tile* tile = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 		if (!tile)
@@ -409,7 +412,7 @@ void BattleUI::onLeftClickMovementPhase()
 	}
 
 	//Clicking to where entity is moving to
-	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_battleProperties.isMovedToDestination())
+	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_battleProperties.isDestinationSet())
 	{
 		//TODO: Drop info box
 		m_selectedTile.m_tile = nullptr;
