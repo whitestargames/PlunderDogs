@@ -185,7 +185,7 @@ void Battle::nextTurn()
 		{
 			entity->m_battleProperties.enableAction();
 		}
-		AI::handleShootingPhase(*this, m_map, m_players[m_currentPlayerTurn]);
+		//AI::handleShootingPhase(*this, m_map, m_players[m_currentPlayerTurn]);
 		//TODO: if AI player
 		
 		break;
@@ -203,7 +203,7 @@ void Battle::nextTurn()
 		{
 			entity->m_battleProperties.enableAction();
 		}
-		AI::handleMovementPhase(*this, m_map, m_players[m_currentPlayerTurn]);
+		//AI::handleMovementPhase(*this, m_map, m_players[m_currentPlayerTurn]);
 		//TODO: if AI player
 		break;
 	}

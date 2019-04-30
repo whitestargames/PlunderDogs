@@ -515,7 +515,7 @@ void Map::onReset()
 	m_drawScale = 2;
 
 	m_windDirection = eNorth;
-	m_windStrength = 0.4;
+	m_windStrength = 0.0;//TODO: reset this
 	m_timeOfDay = eMorning;
 	m_spawnPositions.clear();
 }
