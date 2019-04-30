@@ -496,6 +496,7 @@ void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProp
 			if (m_pathToTile.empty())
 			{
 				++moveCounter.m_counter;
+				clearMovementPath();
 			}
 		}
 	}
