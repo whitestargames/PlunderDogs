@@ -48,7 +48,6 @@ const Tile* firePosRadial(const Map& map, const Tile* targetShip, const Tile* al
 	const Tile* closestTile{ alliedShip };
 	int closestDistance{ INT_MAX };
 	std::pair<int, int> alliedPos{ MouseSelection::coordToHexPos(alliedShip->m_tileCoordinate) };
-	//TODO: can't use const Tile* for some reason
 	std::vector<const Tile*> availableTiles{ map.cGetTileRing(targetShip->m_tileCoordinate, range) };
 	for (const Tile* it : availableTiles)
 	{
@@ -115,7 +114,7 @@ std::pair<const Tile*, eDirection> AI::findFiringPosition(const Map& map, const 
 	case eSideCannons:
 	{
 		closestTile = firePosRadial(map, targetShip, alliedShip, range);
-		facingDirection = MouseSelection::calculateDirection(alliedShip, targetShip).second;
+		facingDirection = MouseSelection::calculateDirection(closestTile, targetShip).second;
 		switch (facingDirection)
 		{
 		case eNorth: facingDirection = eNorthEast;
@@ -136,19 +135,19 @@ std::pair<const Tile*, eDirection> AI::findFiringPosition(const Map& map, const 
 	case eStraightShot:
 	{
 		closestTile = firePosLine(map, targetShip, alliedShip, range);
-		facingDirection = MouseSelection::calculateDirection(alliedShip, targetShip).second;
+		facingDirection = MouseSelection::calculateDirection(closestTile, targetShip).second;
 		break;
 	}
 	case eShotgun:
 	{
 		closestTile = firePosRadial(map, targetShip, alliedShip, range);
-		facingDirection = MouseSelection::calculateDirection(alliedShip, targetShip).second;
+		facingDirection = MouseSelection::calculateDirection(closestTile, targetShip).second;
 		break;
 	}
 	case eFlamethrower:
 	{
 		closestTile = firePosLine(map, targetShip, alliedShip, range);
-		facingDirection = MouseSelection::calculateDirection(alliedShip, targetShip).second;
+		facingDirection = MouseSelection::calculateDirection(closestTile, targetShip).second;
 		switch(facingDirection)
 		{
 		case eNorth: facingDirection = eSouth;
@@ -183,7 +182,7 @@ void AI::attemptMove(Map& map, std::shared_ptr<BattleEntity> currentShip, std::p
 	for (int pathLength = currentShip->m_battleProperties.generateMovementGraph(map, *tile, *targetTile.first) - 1; pathLength > 0; pathLength--)
 	{
 		const Tile* attemptedDest = map.getTile(pathToTile[pathLength].second);
-		if (currentShip->m_battleProperties.moveEntity(map, *attemptedDest, pathToTile[pathLength].first))
+		if (currentShip->m_battleProperties.moveEntity(map, *attemptedDest, targetTile.second))
 			break;
 	}
 	currentShip->m_battleProperties.setDestination();

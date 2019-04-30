@@ -127,7 +127,6 @@ bool Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 {
 	assert(m_currentPhase == BattlePhase::Attack);
 	assert(!player.m_battleProperties.isWeaponFired());
-	
 
 	//Disallow attacking same team
 	if (tileOnAttackPosition.m_entityOnTile && tileOnAttackPosition.m_entityOnTile->m_factionName != getCurentFaction()

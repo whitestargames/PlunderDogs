@@ -9,8 +9,8 @@ double MouseSelection::radsToDeg(double angle)
 
 std::pair<int, int> MouseSelection::coordToHexPos(std::pair<int, int> coord)
 {
-	const float xPos = static_cast<float>(coord.first * 24);
-	const float yPos = static_cast<float>((((1 + coord.first) % 2) + 2 * coord.second) * 14);
+	const float xPos = static_cast<float>(coord.first * 12);
+	const float yPos = static_cast<float>((((1 + coord.first) % 2) + 2 * coord.second) * 7);
 	return { xPos, yPos };
 }
 
@@ -38,7 +38,7 @@ std::pair<double, eDirection> MouseSelection::calculateDirection(std::pair<int, 
 			return returnVariable;
 		}
 		double angle;
-		if (distance.first > 0)	                                                                               // Calculating the angle between the verticle and the distance vector.
+		if (distance.first > 0)																					// Calculating the angle between the verticle and the distance vector.
 		{
 			angle = 90 + MouseSelection::radsToDeg(atan(distance.second / distance.first));
 		}
@@ -46,7 +46,7 @@ std::pair<double, eDirection> MouseSelection::calculateDirection(std::pair<int, 
 		{
 			angle = 270 + MouseSelection::radsToDeg(atan(distance.second / distance.first));
 		}
-		int tmp{ (int)(angle + 30) / 60 };																		   // This calculation is just to manipulate the angle into a number that makes the switch case more convenient.
+		int tmp{ (int)(angle + 30) / 60 };																		// This calculation is just to manipulate the angle into a number that makes the switch case more convenient.
 
 		switch (tmp)
 		{
@@ -85,10 +85,10 @@ std::pair<double, eDirection> MouseSelection::calculateDirection(const Tile* sta
 		{
 			if (distance.second > 0)
 			{
-				returnVariable.second = eSouthEast;
+				returnVariable.second = eSouth;
 				return returnVariable;
 			}
-			else returnVariable.second = eNorthWest;
+			else returnVariable.second = eNorth;
 			return returnVariable;
 		}
 		double angle;
@@ -105,11 +105,17 @@ std::pair<double, eDirection> MouseSelection::calculateDirection(const Tile* sta
 		switch (tmp)
 		{
 		case 0: returnVariable.second = eNorth;
+			break;
 		case 1: returnVariable.second = eNorthEast;
+			break;
 		case 2: returnVariable.second = eSouthEast;
+			break;
 		case 3: returnVariable.second = eSouth;
+			break;
 		case 4: returnVariable.second = eSouthWest;
+			break;
 		case 5: returnVariable.second = eNorthWest;
+			break;
 		}
 	}
 	return returnVariable;
