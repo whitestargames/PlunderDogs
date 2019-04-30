@@ -1,5 +1,6 @@
 #include "OverWorld.h"
 #include "Textures.h"
+#include "AudioPlayer.h"
 
 //TODO: AUDIO PLAYER
 //TODO: Target area appearing on land
@@ -23,6 +24,7 @@ void HAPI_Sprites_Main()
 	if (!HAPI_Sprites.Initialise(windowSize.first, windowSize.second, "Plunder Dogs", eHSEnableUI))
 		return;
 
+	AudioPlayer::getInstance().registerSound("Blackmoor Tides Loop.wav", "Menu Theme");
 	if (!Textures::loadAllTextures())
 	{
 		HAPI_Sprites.UserMessage("Could not pre-load all textures", "Texture Error");

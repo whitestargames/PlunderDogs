@@ -3,6 +3,7 @@
 #include "OverWorld.h"
 #include "Utilities/Utilities.h"
 #include "GameEventMessenger.h"
+#include "AudioPlayer.h"
 
 OverWorldWindow OverWorldGUI::CURRENT_WINDOW = OverWorldWindow::eMainMenu;
 
@@ -133,7 +134,8 @@ void OverWorldGUI::render(Battle& battle)
 			m_quitButton->Render(SCREEN_SURFACE);
 			HAPI_Sprites.ChangeFontFromFile("data/RAPSCALL.TTF");
 			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1380, 50), HAPISPACE::Colour255::YELLOW, "Plunder\n Dogs", 190, {}, HAPISPACE::Colour255::BLACK, 2.5f);
-			
+			AudioPlayer::getInstance().playSound("Menu Theme");
+
 			break;
 		}
 	
