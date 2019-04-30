@@ -199,30 +199,39 @@ void AI::attemptShot(Battle& battlePtr, const Map& mapPtr, std::shared_ptr<Battl
 		firingArea = mapPtr.cGetTileCone(firingShip->m_battleProperties.getCurrentPosition(), firingShip->m_entityProperties.m_range, firingShip->m_battleProperties.getCurrentDirection());
 		for (int i = 0; i < firingArea.size(); i++)
 		{
+			if (!firingArea[i]) continue;
 			if (!firingArea[i]->m_entityOnTile) continue;
 			if (firingArea[i]->m_entityOnTile->m_factionName == firingShip->m_factionName || firingArea[i]->m_entityOnTile->m_battleProperties.isDead()) continue;
 			battlePtr.fireEntityWeaponAtPosition(*firingShip, *firingArea[i], firingArea);
+			break;
 		}
+		break;
 	}
 	case eStraightShot:
 	{
 		firingArea = mapPtr.cGetTileLine(firingShip->m_battleProperties.getCurrentPosition(), firingShip->m_entityProperties.m_range, firingShip->m_battleProperties.getCurrentDirection());
 		for (int i = 0; i < firingArea.size(); i++)
 		{
+			if (!firingArea[i]) continue;
 			if (!firingArea[i]->m_entityOnTile) continue;
 			if (firingArea[i]->m_entityOnTile->m_factionName == firingShip->m_factionName || firingArea[i]->m_entityOnTile->m_battleProperties.isDead()) continue;
 			battlePtr.fireEntityWeaponAtPosition(*firingShip, *firingArea[i], firingArea);
+			break;
 		}
+		break;
 	}
 	case eShotgun:
 	{
 		firingArea = mapPtr.cGetTileRadius(firingShip->m_battleProperties.getCurrentPosition(), firingShip->m_entityProperties.m_range);
 		for (int i = 0; i < firingArea.size(); i++)
 		{
+			if (!firingArea[i]) continue;
 			if (!firingArea[i]->m_entityOnTile) continue;
 			if (firingArea[i]->m_entityOnTile->m_factionName == firingShip->m_factionName || firingArea[i]->m_entityOnTile->m_battleProperties.isDead()) continue;
 			battlePtr.fireEntityWeaponAtPosition(*firingShip, *firingArea[i], firingArea);
+			break;
 		}
+		break;
 	}
 	case eFlamethrower:
 	{
@@ -246,10 +255,13 @@ void AI::attemptShot(Battle& battlePtr, const Map& mapPtr, std::shared_ptr<Battl
 		firingArea = mapPtr.cGetTileLine(firingShip->m_battleProperties.getCurrentPosition(), firingShip->m_entityProperties.m_range, backwardsDirection);
 		for (int i = 0; i < firingArea.size(); i++)
 		{
+			if (!firingArea[i]) continue;
 			if (!firingArea[i]->m_entityOnTile) continue;
 			if (firingArea[i]->m_entityOnTile->m_factionName == firingShip->m_factionName || firingArea[i]->m_entityOnTile->m_battleProperties.isDead()) continue;
 			battlePtr.fireEntityWeaponAtPosition(*firingShip, *firingArea[i], firingArea);
+			break;
 		}
+		break;
 	}
 	}
 	firingShip->m_battleProperties.fireWeapon();

@@ -186,7 +186,7 @@ void Battle::nextTurn()
 		{
 			entity->m_battleProperties.enableAction();
 		}
-		//AI::handleShootingPhase(this, m_map, currentPlayer);
+		AI::handleShootingPhase(*this, m_map, m_players[m_currentPlayerTurn]);
 		//TODO: if AI player
 		
 		break;
@@ -204,7 +204,8 @@ void Battle::nextTurn()
 		{
 			entity->m_battleProperties.enableAction();
 		}
-		//AI::handleMovementPhase(*this, m_map, m_players[m_currentPlayerTurn]);
+		AI::handleMovementPhase(*this, m_map, m_players[m_currentPlayerTurn]);
+		//TODO: if AI player
 		break;
 	}
 }
@@ -338,11 +339,6 @@ void Battle::onRedShipDestroyed()
 
 void Battle::onEndMovementPhaseEarly()
 {
-	//FactionName currentPlayerTurn = static_cast<FactionName>(m_currentPlayerTurn);
-	//m_players[m_currentPlayerTurn].
-	//auto player = std::find_if(m_players.cbegin(), m_players.cend(), [currentPlayerTurn](const auto& player) { return player.m_factionName == currentPlayerTurn; });
-	//assert(player != m_players.cend());
-
 	bool actionBeingPerformed = false;
 	for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
 	{
@@ -350,12 +346,7 @@ void Battle::onEndMovementPhaseEarly()
 		{
 			actionBeingPerformed = true;
 		}
-		//if (entity->m_battleProperties.isMovedToDestination() && entity->m_battleProperties.isMoving())
-		//{
-		//	actionBeingPerformed = true;
-		//}
 	}
-
 	if (actionBeingPerformed)
 	{
 		GameEventMessenger::getInstance().broadcast(GameEvent::eUnableToSkipPhase);
