@@ -6,21 +6,20 @@
 #include "Map.h"
 #include "entity.h"
 
-constexpr int MAX_INT{ 2147483647 };
-
-const Tile* AI::findClosestEnemy(
-	const Battle* battlePtr, const Map* mapPtr, const std::shared_ptr<BattleEntity> alliedShip, FactionName ourFaction)
+const Tile* AI::findClosestEnemy(const Battle& battle, const Map& map, std::pair<int, int> alliedShipPosition, FactionName ourFaction)
 {
 	const Tile* closestEnemy{ nullptr };
-	int closestDistance{ MAX_INT };
+	int closestDistance{ INT_MAX };
 	std::pair<int, int> alliedPos{ MouseSelection::coordToHexPos(
-		alliedShip->m_battleProperties.getCurrentPosition()) };
-	auto activeFactions = battlePtr->getAllFactions();
+		alliedShipPosition) };
+	auto activeFactions = battle.getAllFactions();
 	for (FactionName i : activeFactions)
 	{
 		if (i == static_cast<int>(ourFaction))
 			continue;
-		const auto& factionShipList = battlePtr->getFactionShips(static_cast<FactionName>(i));
+
+		const auto& factionShipList = battle.getFactionShips(static_cast<FactionName>(i));
+
 		for (int j = 0; j < factionShipList.size(); j++)
 		{
 			if (factionShipList[j]->m_battleProperties.isDead()) continue;
@@ -28,13 +27,15 @@ const Tile* AI::findClosestEnemy(
 			//then set closestEnemy to that enemy if it's the closest yet found
 			std::pair<int, int> enemyPos = MouseSelection::coordToHexPos(
 				factionShipList[j]->m_battleProperties.getCurrentPosition());
+
 			std::pair<int, int> diff(
 				{ enemyPos.first - alliedPos.first, enemyPos.second - alliedPos.second });
 			int enemyDistance = diff.first * diff.first + diff.second * diff.second;
+			
 			if (enemyDistance < closestDistance)
 			{
 				closestDistance = enemyDistance;
-				closestEnemy = mapPtr->getTile(factionShipList[j]->m_battleProperties.getCurrentPosition());
+				closestEnemy = map.getTile(factionShipList[j]->m_battleProperties.getCurrentPosition());
 			}
 		}
 	}
@@ -42,15 +43,14 @@ const Tile* AI::findClosestEnemy(
 }
 //Support function for AI::findFiringPositions. 
 //Finds the closest tile a specified distance away from a target tile
-const Tile* firePosRadial(
-	Map* mapPtr, const Tile* targetShip, const Tile* alliedShip, int range)
+const Tile* firePosRadial(const Map& map, const Tile* targetShip, const Tile* alliedShip, int range)
 {
 	const Tile* closestTile{ alliedShip };
-	int closestDistance{ MAX_INT };
+	int closestDistance{ INT_MAX };
 	std::pair<int, int> alliedPos{ MouseSelection::coordToHexPos(alliedShip->m_tileCoordinate) };
 	//TODO: can't use const Tile* for some reason
-	std::vector<Tile*> availableTiles{ mapPtr->getTileRing(targetShip->m_tileCoordinate, range) };
-	for (Tile* it : availableTiles)
+	std::vector<const Tile*> availableTiles{ map.cGetTileRing(targetShip->m_tileCoordinate, range) };
+	for (const Tile* it : availableTiles)
 	{
 		//Ensure it's a valid tile, if not skip this one
 		if (!it) continue;
@@ -72,20 +72,19 @@ const Tile* firePosRadial(
 }
 //Support function for AI::findFiringPositions. 
 //Finds the closest tile for line firing by projecting lines of length "range"
-const Tile* firePosLine(
-	Map* mapPtr, const Tile* targetShip, const Tile* alliedShip, int range)
+const Tile* firePosLine(const Map& map, const Tile* targetShip, const Tile* alliedShip, int range)
 {
 	const Tile* closestTile{ alliedShip };
-	int closestDistance{ MAX_INT };
+	int closestDistance{ INT_MAX };
 	std::pair<int, int> alliedPos{ MouseSelection::coordToHexPos(alliedShip->m_tileCoordinate) };
 	//TODO: can't use const Tile* for some reason
-	std::vector<Tile*> availableTiles;
+	std::vector<const Tile*> availableTiles;
 	availableTiles.reserve(range);
 	//Iterate through all 6 possible lines
 	for (int i = 0; i < 6; i++)
 	{
-		availableTiles = mapPtr->getTileLine(targetShip->m_tileCoordinate, range, static_cast<eDirection>(i));
-		for (Tile* it : availableTiles)
+		availableTiles = map.cGetTileLine(targetShip->m_tileCoordinate, range, static_cast<eDirection>(i));
+		for (const Tile* it : availableTiles)
 		{
 			//Ensure it's a valid tile, if not skip this one
 			if (!it) continue;
@@ -107,8 +106,7 @@ const Tile* firePosLine(
 	return closestTile;
 }
 
-std::pair<const Tile*, eDirection> AI::findFiringPosition(
-	Map* mapPtr, const Tile* targetShip, const Tile* alliedShip, eWeaponType weapon, int range)
+std::pair<const Tile*, eDirection> AI::findFiringPosition(const Map& map, const Tile* targetShip, const Tile* alliedShip, eWeaponType weapon, int range)
 {
 	const Tile* closestTile{ alliedShip };
 	int facingDirection{ 0 };
@@ -116,7 +114,7 @@ std::pair<const Tile*, eDirection> AI::findFiringPosition(
 	{
 	case eSideCannons:
 	{
-		closestTile = firePosRadial(mapPtr, targetShip, alliedShip, range);
+		closestTile = firePosRadial(map, targetShip, alliedShip, range);
 		facingDirection = static_cast<int>(MouseSelection::calculateDirection(alliedShip, targetShip).second);
 		facingDirection++;
 		if (facingDirection > 5) 
@@ -125,13 +123,13 @@ std::pair<const Tile*, eDirection> AI::findFiringPosition(
 	}
 	case eStraightShot:
 	{
-		closestTile = firePosLine(mapPtr, targetShip, alliedShip, range);
+		closestTile = firePosLine(map, targetShip, alliedShip, range);
 		facingDirection = static_cast<int>(MouseSelection::calculateDirection(alliedShip, targetShip).second);
 		break;
 	}
 	case eShotgun:
 	{
-		closestTile = firePosRadial(mapPtr, targetShip, alliedShip, range);
+		closestTile = firePosRadial(map, targetShip, alliedShip, range);
 		facingDirection = static_cast<int>(MouseSelection::calculateDirection(alliedShip, targetShip).second);
 		break;
 	}
@@ -147,59 +145,58 @@ std::pair<const Tile*, eDirection> AI::findFiringPosition(
 	return { closestTile, static_cast<eDirection>(facingDirection) };
 }
 
-void AI::attemptMove(
-	Map* mapPtr, std::shared_ptr<BattleEntity> currentShip, std::pair<const Tile*, eDirection> targetTile)
+void AI::attemptMove(Map& map, std::shared_ptr<BattleEntity> currentShip, std::pair<const Tile*, eDirection> targetTile)
 {
 	//Call generate path
-	Tile* tile{ mapPtr->getTile(currentShip->m_battleProperties.getCurrentPosition()) };
-	int pathLength = currentShip->m_battleProperties.generateMovementGraph(*mapPtr, *tile, *targetTile.first);
+	const Tile* tile{ map.getTile(currentShip->m_battleProperties.getCurrentPosition()) };
+	int pathLength = currentShip->m_battleProperties.generateMovementGraph(map, *tile, *targetTile.first);
 	auto pathToTile = PathFinding::getPathToTile(
-		*mapPtr,
+		map,
 		currentShip->m_battleProperties.getCurrentPosition(),
 		targetTile.first->m_tileCoordinate);
 	//Loop calling moveEntity for each tile in the path end to start until one of them works
 	for (pathLength; pathLength > 0; pathLength--)
 	{
-		const Tile* attemptedDest = mapPtr->getTile(pathToTile[pathLength].second);
-		if (currentShip->m_battleProperties.moveEntity(*mapPtr, *attemptedDest, pathToTile[pathLength].first))
+		const Tile* attemptedDest = map.getTile(pathToTile[pathLength].second);
+		if (currentShip->m_battleProperties.moveEntity(map, *attemptedDest, pathToTile[pathLength].first))
 			break;
 	}
 	currentShip->m_battleProperties.setMoved();
 }
 
-void AI::attemptShot(Battle* battlePtr, Map* mapPtr, std::shared_ptr<BattleEntity> firingShip)
+void AI::attemptShot(Battle& battlePtr, const Map& mapPtr, std::shared_ptr<BattleEntity> firingShip)
 {
 	std::vector< const Tile*> firingArea;
 	switch (firingShip->m_entityProperties.m_weaponType)
 	{
 	case eSideCannons:
 	{
-		firingArea = mapPtr->cGetTileCone(firingShip->m_battleProperties.getCurrentPosition(), firingShip->m_entityProperties.m_range, firingShip->m_battleProperties.getCurrentDirection());
+		firingArea = mapPtr.cGetTileCone(firingShip->m_battleProperties.getCurrentPosition(), firingShip->m_entityProperties.m_range, firingShip->m_battleProperties.getCurrentDirection());
 		for (int i = 0; i < firingArea.size(); i++)
 		{
 			if (!firingArea[i]->m_entityOnTile) continue;
 			if (firingArea[i]->m_entityOnTile->m_factionName == firingShip->m_factionName || firingArea[i]->m_entityOnTile->m_battleProperties.isDead()) continue;
-			battlePtr->fireEntityWeaponAtPosition(*firingShip, *firingArea[i], firingArea);
+			battlePtr.fireEntityWeaponAtPosition(*firingShip, *firingArea[i], firingArea);
 		}
 	}
 	case eStraightShot:
 	{
-		firingArea = mapPtr->cGetTileLine(firingShip->m_battleProperties.getCurrentPosition(), firingShip->m_entityProperties.m_range, firingShip->m_battleProperties.getCurrentDirection());
+		firingArea = mapPtr.cGetTileLine(firingShip->m_battleProperties.getCurrentPosition(), firingShip->m_entityProperties.m_range, firingShip->m_battleProperties.getCurrentDirection());
 		for (int i = 0; i < firingArea.size(); i++)
 		{
 			if (!firingArea[i]->m_entityOnTile) continue;
 			if (firingArea[i]->m_entityOnTile->m_factionName == firingShip->m_factionName || firingArea[i]->m_entityOnTile->m_battleProperties.isDead()) continue;
-			battlePtr->fireEntityWeaponAtPosition(*firingShip, *firingArea[i], firingArea);
+			battlePtr.fireEntityWeaponAtPosition(*firingShip, *firingArea[i], firingArea);
 		}
 	}
 	case eShotgun:
 	{
-		firingArea = mapPtr->cGetTileRadius(firingShip->m_battleProperties.getCurrentPosition(), firingShip->m_entityProperties.m_range);
+		firingArea = mapPtr.cGetTileRadius(firingShip->m_battleProperties.getCurrentPosition(), firingShip->m_entityProperties.m_range);
 		for (int i = 0; i < firingArea.size(); i++)
 		{
 			if (!firingArea[i]->m_entityOnTile) continue;
 			if (firingArea[i]->m_entityOnTile->m_factionName == firingShip->m_factionName || firingArea[i]->m_entityOnTile->m_battleProperties.isDead()) continue;
-			battlePtr->fireEntityWeaponAtPosition(*firingShip, *firingArea[i], firingArea);
+			battlePtr.fireEntityWeaponAtPosition(*firingShip, *firingArea[i], firingArea);
 		}
 	}
 	case eFlamethrower:
@@ -221,19 +218,19 @@ void AI::attemptShot(Battle* battlePtr, Map* mapPtr, std::shared_ptr<BattleEntit
 			break;
 		}
 			
-		firingArea = mapPtr->cGetTileLine(firingShip->m_battleProperties.getCurrentPosition(), firingShip->m_entityProperties.m_range, backwardsDirection);
+		firingArea = mapPtr.cGetTileLine(firingShip->m_battleProperties.getCurrentPosition(), firingShip->m_entityProperties.m_range, backwardsDirection);
 		for (int i = 0; i < firingArea.size(); i++)
 		{
 			if (!firingArea[i]->m_entityOnTile) continue;
 			if (firingArea[i]->m_entityOnTile->m_factionName == firingShip->m_factionName || firingArea[i]->m_entityOnTile->m_battleProperties.isDead()) continue;
-			battlePtr->fireEntityWeaponAtPosition(*firingShip, *firingArea[i], firingArea);
+			battlePtr.fireEntityWeaponAtPosition(*firingShip, *firingArea[i], firingArea);
 		}
 	}
 	}
 	firingShip->m_battleProperties.fireWeapon();
 }
 
-void AI::handleMovementPhase(Battle* battlePtr, Map* mapPtr, BattlePlayer& battlePlayer)
+void AI::handleMovementPhase(const Battle& battle, Map& map, BattlePlayer& battlePlayer)
 {
 	auto& ships = battlePlayer.m_entities;
 
@@ -242,7 +239,7 @@ void AI::handleMovementPhase(Battle* battlePtr, Map* mapPtr, BattlePlayer& battl
 	{
 		if (ships[i]->m_battleProperties.isDead()) continue;
 		//find the nearest enemy ship
-		const Tile* enemyPosition{ findClosestEnemy(battlePtr, mapPtr, ships[i], battlePlayer.m_factionName) };
+		const Tile* enemyPosition{ findClosestEnemy(battle, map, ships[i]->m_battleProperties.getCurrentPosition(), battlePlayer.m_factionName) };
 		if (!enemyPosition)
 		{
 			ships[i]->m_battleProperties.setMoved();
@@ -250,29 +247,29 @@ void AI::handleMovementPhase(Battle* battlePtr, Map* mapPtr, BattlePlayer& battl
 		}
 		//find the nearest tile and facing that can fire upon the chosen enemy ship
 		std::pair<const Tile*, eDirection>  firingPosition{ AI::findFiringPosition(
-			mapPtr, 
+			map, 
 			enemyPosition, 
-			mapPtr->getTile(ships[i]->m_battleProperties.getCurrentPosition()), 
+			map.getTile(ships[i]->m_battleProperties.getCurrentPosition()), 
 			static_cast<eWeaponType>(ships[i]->m_entityProperties.m_weaponType), 
 			ships[i]->m_entityProperties.m_range) };
 
 		//move as far as possible on the path to the chosen position
-		attemptMove(mapPtr, ships[i], firingPosition);
+		attemptMove(map, ships[i], firingPosition);
 	}
 }
 
-void AI::handleShootingPhase(Battle* battlePtr, Map* mapPtr, FactionName faction)
+void AI::handleShootingPhase(Battle& battle, const Map& map, BattlePlayer& player)
 {
-	auto& ships = battlePtr->getFactionShips(faction);
 	//loop through all the ships in the faction
-	for (int i = 0; i < ships.size(); i++)
+	for (int i = 0; i < player.m_entities.size(); i++)
 	{
-		if (ships[i]->m_battleProperties.isDead()) continue;
+		if (player.m_entities[i]->m_battleProperties.isDead()) continue;
 		//check if the ship is able to fire upon any enemies and fire if possible
-		attemptShot(battlePtr, mapPtr, ships[i]);
+		attemptShot(battle, map, player.m_entities[i]);
 	}
 }
 
-void AI::handleDeploymentPhase(Battle * battlePtr, Map * mapPtr, FactionName faction)
+void AI::handleDeploymentPhase(Battle& battlePtr, Map& mapPtr, BattlePlayer& player)
 {
+
 }
