@@ -30,7 +30,7 @@ BattleGUI::BattleGUI()
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onEnteringAttackPhase, this), "BattleGUI", GameEvent::eEnteringAttackPhase);
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onUnableToSkipPhase, this), "BattleGUI", GameEvent::eUnableToSkipPhase);
 
-	m_battleIcons->GetTransformComp().SetPosition({ 510, 890 });
+	m_battleIcons->GetTransformComp().SetPosition({ 510, 782 });
 	m_endPhaseButtons->GetTransformComp().SetPosition({ 100, 868 });
 	m_pauseButton->GetTransformComp().SetPosition({ 1790, 30 });
 	m_chickenButton->GetTransformComp().SetPosition({ 1610, 840 });
@@ -147,13 +147,13 @@ void BattleGUI::render(BattlePhase currentBattlePhase) const
 
 void BattleGUI::renderStats(EntityProperties & entityProperties) const
 {
-	m_battleIcons->GetTransformComp().SetPosition({ 510, (800 + static_cast<float>(animationOffset)) });
+	m_battleIcons->GetTransformComp().SetPosition({ 510, (782 + static_cast<float>(animationOffset)) });
 	m_battleIcons->Render(SCREEN_SURFACE);
 
-	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(600, (815 + animationOffset)), HAPISPACE::Colour255::BLACK, "  "+std::to_string(entityProperties.m_currentHealth) , 44);
-	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(860, (815 + animationOffset)), HAPISPACE::Colour255::BLACK, std::to_string(entityProperties.m_range), 44);
-	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1060, (815 + animationOffset)), HAPISPACE::Colour255::BLACK, std::to_string(entityProperties.m_movementPoints), 44);
-	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1295, (815 + animationOffset)), HAPISPACE::Colour255::BLACK, std::to_string(entityProperties.m_damage), 44);
+	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(600, (797 + animationOffset)), HAPISPACE::Colour255::BLACK, "  "+std::to_string(entityProperties.m_currentHealth) , 44);
+	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(860, (797 + animationOffset)), HAPISPACE::Colour255::BLACK, std::to_string(entityProperties.m_range), 44);
+	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1060, (797 + animationOffset)), HAPISPACE::Colour255::BLACK, std::to_string(entityProperties.m_movementPoints), 44);
+	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1295, (797 + animationOffset)), HAPISPACE::Colour255::BLACK, std::to_string(entityProperties.m_damage), 44);
 
 }
 
@@ -418,7 +418,7 @@ void BattleGUI::onBattleReset()
 	m_currentBattleWindow = BattleWindow::eCombat;
 	winningFaction = "";
 
-	m_battleIcons->GetTransformComp().SetPosition({ 510, 890 });
+	m_battleIcons->GetTransformComp().SetPosition({ 510, 782 });
 	m_pauseButton->GetTransformComp().SetPosition({ 1650, 140 });
 	//m_chickenButton->GetTransformComp().SetPosition({ 1610, 840 });
 	m_CompassBackGround->GetTransformComp().SetOriginToCentreOfFrame();
