@@ -15,6 +15,14 @@ constexpr int UPGRADE_WINDOW_OBJECTHEIGHT = 300;
 constexpr int UPGRADE_WINDOW_WIDTH = 200;
 constexpr int UPGRADE_WINDOW_HEIGHT = 600;
 
+//Upgrade values//RANGE 2 ATTACK 4
+// MAX UPGRADE CURRENTLY 4
+constexpr int UPGRADE_COST_HEALTH = 1;
+constexpr int UPGRADE_COST_RANGE = 2;
+constexpr int UPGRADE_COST_MOVEMENT = 1;
+constexpr int UPGRADE_COST_DAMAGE= 4;
+
+
 int OverWorldGUI::getActivePlayerCount()
 {
 	int playerCount = 0;
@@ -137,7 +145,7 @@ void OverWorldGUI::render(Battle& battle)
 			m_background->Render(SCREEN_SURFACE);
 			m_playButton->Render(SCREEN_SURFACE);
 			m_quitButton->Render(SCREEN_SURFACE);
-			HAPI_Sprites.ChangeFontFromFile("data/RAPSCALL.TTF");
+			HAPI_Sprites.ChangeFontFromFile("data/RAPSCALL.TTF"); 
 			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1380, 50), HAPISPACE::Colour255::YELLOW, "Plunder\n Dogs", 190, {}, HAPISPACE::Colour255::BLACK, 2.5f);
 			
 			break;
@@ -199,15 +207,16 @@ void OverWorldGUI::render(Battle& battle)
 		{
 			m_upgradesScreenBackground->Render(SCREEN_SURFACE);
 
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1330, 240), HAPISPACE::Colour255::BLACK, "36", 50);//draw text gold
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1270, 360), HAPISPACE::Colour255::BLACK, "BUY", 50);
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1270, 405), HAPISPACE::Colour255::BLACK, "SHIPS", 50);
+			
+
 			if (m_currentlySelected != nullptr)
 			{
 				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(870, 240), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_currentHealth), 50);
 				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(870, 370), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_movementPoints), 50);
 				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(870, 500), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_damage), 50);
 				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(870, 630), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_range), 50);
+				
+
 				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 760), HAPISPACE::Colour255::BLACK, "UPGRADES: " + std::to_string(m_currentlySelected->m_upgradePoints), 50);
 			}
 			else
@@ -225,6 +234,11 @@ void OverWorldGUI::render(Battle& battle)
 			m_addMovementButton->Render(SCREEN_SURFACE);
 			m_addDamageButton->Render(SCREEN_SURFACE);
 			m_addRangeButton->Render(SCREEN_SURFACE);
+			// showing upgrade cost 
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1125, 240), HAPISPACE::Colour255::BLACK, std::to_string(UPGRADE_COST_HEALTH), 50);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1125, 370), HAPISPACE::Colour255::BLACK, std::to_string(UPGRADE_COST_MOVEMENT), 50);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1125, 500), HAPISPACE::Colour255::BLACK, std::to_string(UPGRADE_COST_DAMAGE), 50);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1125, 630), HAPISPACE::Colour255::BLACK, std::to_string(UPGRADE_COST_RANGE), 50);
 			break;
 		}
 	}
@@ -319,7 +333,6 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 				
 				}
 				
-		
 			}
 			break;
 
@@ -437,9 +450,9 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 				//health+
 				if (m_currentlySelected != nullptr)
 				{
-					if (m_currentlySelected->m_upgradePoints > 0)
+					if (m_currentlySelected->m_upgradePoints >= UPGRADE_COST_HEALTH)
 					{
-						m_currentlySelected->m_upgradePoints--;
+						m_currentlySelected->m_upgradePoints -= UPGRADE_COST_HEALTH;
 						m_currentlySelected->m_healthMax++;
 						m_currentlySelected->m_currentHealth++;
 					}
@@ -450,9 +463,9 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 				//movement+
 				if (m_currentlySelected != nullptr)
 				{
-					if (m_currentlySelected->m_upgradePoints > 0)
+					if (m_currentlySelected->m_upgradePoints >= UPGRADE_COST_MOVEMENT)
 					{
-						m_currentlySelected->m_upgradePoints--;
+						m_currentlySelected->m_upgradePoints -= UPGRADE_COST_MOVEMENT;
 						m_currentlySelected->m_movementPoints++;
 					}
 				}
@@ -462,9 +475,9 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 				//damage+
 				if (m_currentlySelected != nullptr)
 				{
-					if (m_currentlySelected->m_upgradePoints > 3)
+					if (m_currentlySelected->m_upgradePoints >= UPGRADE_COST_DAMAGE)
 					{
-						m_currentlySelected->m_upgradePoints -= 4;
+						m_currentlySelected->m_upgradePoints -= UPGRADE_COST_DAMAGE;
 						m_currentlySelected->m_damage++;
 					}
 				}
@@ -474,9 +487,9 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 				//range+
 				if (m_currentlySelected != nullptr)
 				{
-					if (m_currentlySelected->m_upgradePoints > 1)
+					if (m_currentlySelected->m_upgradePoints >= UPGRADE_COST_RANGE)
 					{
-						m_currentlySelected->m_upgradePoints-=2;
+						m_currentlySelected->m_upgradePoints-= UPGRADE_COST_RANGE;
 						m_currentlySelected->m_range++;
 					}
 				}
@@ -490,7 +503,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 					{
 						m_currentlySelected->m_currentHealth--;
 						m_currentlySelected->m_healthMax--;
-						m_currentlySelected->m_upgradePoints++;
+						m_currentlySelected->m_upgradePoints += UPGRADE_COST_HEALTH;
 					}
 				}
 			}
@@ -502,7 +515,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 					if (m_currentlySelected->m_upgradePoints < m_currentlySelected->m_maxUpgradePoints && m_currentlySelected->m_movementPoints > m_currentlySelected->m_originalMovement)
 					{
 						m_currentlySelected->m_movementPoints--;
-						m_currentlySelected->m_upgradePoints++;
+						m_currentlySelected->m_upgradePoints += UPGRADE_COST_MOVEMENT;
 					}
 				}
 			}
@@ -514,7 +527,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 					if (m_currentlySelected->m_upgradePoints < m_currentlySelected->m_maxUpgradePoints - 3 && m_currentlySelected->m_damage > m_currentlySelected->m_originalDamage)
 					{
 						m_currentlySelected->m_damage--;
-						m_currentlySelected->m_upgradePoints+=4;
+						m_currentlySelected->m_upgradePoints+= UPGRADE_COST_DAMAGE;
 					}
 				}
 			}
@@ -526,7 +539,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 					if (m_currentlySelected->m_upgradePoints < m_currentlySelected->m_maxUpgradePoints - 1 && m_currentlySelected->m_range > m_currentlySelected->m_originalRange)
 					{
 						m_currentlySelected->m_range--;
-						m_currentlySelected->m_upgradePoints+=2;
+						m_currentlySelected->m_upgradePoints+= UPGRADE_COST_RANGE;
 					}
 				}
 			}

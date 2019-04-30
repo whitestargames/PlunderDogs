@@ -31,7 +31,7 @@ BattleGUI::BattleGUI()
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onUnableToSkipPhase, this), "BattleGUI", GameEvent::eUnableToSkipPhase);
 
 	m_battleIcons->GetTransformComp().SetPosition({ 510, 890 });
-	m_endPhaseButtons->GetTransformComp().SetPosition({ 0, 968 });
+	m_endPhaseButtons->GetTransformComp().SetPosition({ 100, 868 });
 	m_pauseButton->GetTransformComp().SetPosition({ 1790, 30 });
 	m_chickenButton->GetTransformComp().SetPosition({ 1610, 840 });
 	m_CompassBackGround->GetTransformComp().SetOriginToCentreOfFrame();
@@ -73,6 +73,7 @@ void BattleGUI::render(BattlePhase currentBattlePhase) const
 	//m_chickenButton->Render(SCREEN_SURFACE);
 	m_CompassBackGround->Render(SCREEN_SURFACE);
 	m_CompassPointer->Render(SCREEN_SURFACE);
+	SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(50, 150), HAPISPACE::Colour255::CYAN, "Wind", 50, {}, HAPISPACE::Colour255::BLACK, 2.5f);
 
 	//m_activeFactionToken->Render(SCREEN_SURFACE);
 
