@@ -88,7 +88,6 @@ void BattleUI::renderUI() const
 	
 	case BattlePhase::Attack:
 		m_selectedTile.render(m_battle.getMap());
-		m_targetArea.render(m_battle.getMap());
 		
 		break;
 	}
@@ -98,6 +97,7 @@ void BattleUI::renderUI() const
 
 void BattleUI::renderParticles() const
 {
+	m_targetArea.render(m_battle.getMap());
 	m_explosion.render();
 	m_fire.render();
 }

@@ -418,6 +418,8 @@ void Battle::BattleManager::checkGameStatus(const std::vector<BattlePlayer>& pla
 		auto player = std::find_if(players.cbegin(), players.cend(), [](const auto& player) { return player.m_eliminated == false; });
 		assert(player != players.cend());
 		FactionName winningFaction = player->m_factionName;
+		AudioPlayer::getInstance().stopSound("battle theme");
+		AudioPlayer::getInstance().playSound("win");
 		switch (winningFaction)
 		{
 		case FactionName::eYellow:
