@@ -115,7 +115,8 @@ int EntityBattleProperties::MovementPath::generatePath(const Map& map, const Til
 	int movementPointsUsed = 0;
 	int prevDir = source.m_entityOnTile->m_battleProperties.m_currentDirection;
 	//Don't interact with path from source.
-	for (int i = 1; i < pathToTile.size(); ++i)
+	int i = 1;
+	for (i ; i < pathToTile.size(); ++i)
 	{
 		++movementPointsUsed;
 
@@ -147,6 +148,7 @@ int EntityBattleProperties::MovementPath::generatePath(const Map& map, const Til
 			return i;
 		}
 	}
+	return i;
 }
 
 void EntityBattleProperties::MovementPath::eraseNode(std::pair<int, int> position, const Map& map)

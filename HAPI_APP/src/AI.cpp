@@ -109,53 +109,78 @@ const Tile* firePosLine(const Map& map, const Tile* targetShip, const Tile* alli
 std::pair<const Tile*, eDirection> AI::findFiringPosition(const Map& map, const Tile* targetShip, const Tile* alliedShip, eWeaponType weapon, int range)
 {
 	const Tile* closestTile{ alliedShip };
-	int facingDirection{ 0 };
+	eDirection facingDirection{ eNorth };
 	switch (weapon)
 	{
 	case eSideCannons:
 	{
 		closestTile = firePosRadial(map, targetShip, alliedShip, range);
-		facingDirection = static_cast<int>(MouseSelection::calculateDirection(alliedShip, targetShip).second);
-		facingDirection++;
-		if (facingDirection > 5) 
-			facingDirection -= 6;
+		facingDirection = MouseSelection::calculateDirection(alliedShip, targetShip).second;
+		switch (facingDirection)
+		{
+		case eNorth: facingDirection = eNorthEast;
+			break;
+		case eNorthEast: facingDirection = eSouthEast;
+			break;
+		case eSouthEast: facingDirection = eSouth;
+			break;
+		case eSouth: facingDirection = eSouthWest;
+			break;
+		case eSouthWest: facingDirection = eNorthWest;
+			break;
+		case eNorthWest: facingDirection = eNorth;
+			break;
+		}
 		break;
 	}
 	case eStraightShot:
 	{
 		closestTile = firePosLine(map, targetShip, alliedShip, range);
-		facingDirection = static_cast<int>(MouseSelection::calculateDirection(alliedShip, targetShip).second);
+		facingDirection = MouseSelection::calculateDirection(alliedShip, targetShip).second;
 		break;
 	}
 	case eShotgun:
 	{
 		closestTile = firePosRadial(map, targetShip, alliedShip, range);
-		facingDirection = static_cast<int>(MouseSelection::calculateDirection(alliedShip, targetShip).second);
+		facingDirection = MouseSelection::calculateDirection(alliedShip, targetShip).second;
 		break;
 	}
 	case eFlamethrower:
 	{
-		facingDirection = static_cast<int>(MouseSelection::calculateDirection(alliedShip, targetShip).second);
-		facingDirection += 3;
-		if (facingDirection > 5)
-			facingDirection -= 6;
+		closestTile = firePosLine(map, targetShip, alliedShip, range);
+		facingDirection = MouseSelection::calculateDirection(alliedShip, targetShip).second;
+		switch(facingDirection)
+		{
+		case eNorth: facingDirection = eSouth;
+			break;
+		case eNorthEast: facingDirection = eSouthWest;
+			break;
+		case eSouthEast: facingDirection = eNorthWest;
+			break;
+		case eSouth: facingDirection = eNorth;
+			break;
+		case eSouthWest: facingDirection = eNorthEast;
+			break;
+		case eNorthWest: facingDirection = eSouthEast;
+			break;
+		}
 		break;
 	}
 	}
-	return { closestTile, static_cast<eDirection>(facingDirection) };
+	return { closestTile, facingDirection };
 }
 
 void AI::attemptMove(Map& map, std::shared_ptr<BattleEntity> currentShip, std::pair<const Tile*, eDirection> targetTile)
 {
 	//Call generate path
 	const Tile* tile{ map.getTile(currentShip->m_battleProperties.getCurrentPosition()) };
-	int pathLength = currentShip->m_battleProperties.generateMovementGraph(map, *tile, *targetTile.first);
+	//int pathLength = currentShip->m_battleProperties.generateMovementGraph(map, *tile, *targetTile.first);
 	auto pathToTile = PathFinding::getPathToTile(
 		map,
 		currentShip->m_battleProperties.getCurrentPosition(),
 		targetTile.first->m_tileCoordinate);
 	//Loop calling moveEntity for each tile in the path end to start until one of them works
-	for (pathLength; pathLength > 0; pathLength--)
+	for (int pathLength = currentShip->m_battleProperties.generateMovementGraph(map, *tile, *targetTile.first) - 1; pathLength > 0; pathLength--)
 	{
 		const Tile* attemptedDest = map.getTile(pathToTile[pathLength].second);
 		if (currentShip->m_battleProperties.moveEntity(map, *attemptedDest, pathToTile[pathLength].first))
