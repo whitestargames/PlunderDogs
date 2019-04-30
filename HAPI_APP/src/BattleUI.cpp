@@ -175,7 +175,6 @@ void BattleUI::startShipPlacement(const std::vector<std::pair<FactionName, std::
 		}
 	}
 
-
 	std::pair<int, int> firstSpawnPosition = map.getSpawnPosition();
 	for (int i = 0; i < players.size(); ++i)
 	{
@@ -191,11 +190,10 @@ void BattleUI::startShipPlacement(const std::vector<std::pair<FactionName, std::
 		}
 	}
 
-	m_gui.snapCameraToPosition(firstSpawnPosition);
+	///m_gui.snapCameraToPosition(firstSpawnPosition);
 
 	//for (const auto& player : players)
 	//{
-
 	//}
 }
 

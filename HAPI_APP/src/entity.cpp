@@ -518,9 +518,10 @@ void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, 
 }
 
 //BATTLE PLAYER
-BattlePlayer::BattlePlayer(FactionName name)
+BattlePlayer::BattlePlayer(FactionName name, std::pair<int, int> spawnPosition)
 	: m_entities(),
 	m_factionName(name),
+	m_spawnPosition(spawnPosition),
 	m_eliminated(false)
 {}
 

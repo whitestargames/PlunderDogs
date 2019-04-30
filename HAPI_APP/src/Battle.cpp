@@ -67,7 +67,7 @@ void Battle::startBattle(const std::string & newMapName, std::vector<std::pair<F
 
 	for (auto& player : newPlayers)
 	{
-		m_players.emplace_back(player.first);
+		m_players.emplace_back(player.first, m_map.getSpawnPosition());
 	}
 
 	m_battleUI.startShipPlacement(newPlayers, m_map);

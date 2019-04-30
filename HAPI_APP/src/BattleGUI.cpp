@@ -80,19 +80,19 @@ void BattleGUI::render(BattlePhase currentBattlePhase) const
 	{
 		if (m_activeFactionToken->GetFrameNumber() == FactionName::eRed)
 		{
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::RED, "Red Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::RED, "Red Team", 50, {}, HAPISPACE::Colour255::BLACK, 2.f);
 		}
 		else if (m_activeFactionToken->GetFrameNumber() == FactionName::eGreen)
 		{
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::GREEN, "Green Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::GREEN, "Green Team", 50, {}, HAPISPACE::Colour255::BLACK, 2.f);
 		}
 		else if (m_activeFactionToken->GetFrameNumber() == FactionName::eBlue)
 		{
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::BLUE, "Blue Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::BLUE, "Blue Team", 50, {}, HAPISPACE::Colour255::BLACK, 2.f);
 		}
 		else if (m_activeFactionToken->GetFrameNumber() == FactionName::eYellow)
 		{
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::YELLOW, "Yellow Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::YELLOW, "Yellow Team", 50, {}, HAPISPACE::Colour255::BLACK, 2.f);
 		}
 	}
 	
@@ -511,4 +511,5 @@ void BattleGUI::snapCameraToPosition(std::pair<int, int> snapLocation)//snaps th
 	m_cameraPositionOffset.second = snapLocation.second;
 	CameraPositionOffset.first = snapLocation.first;
 	CameraPositionOffset.second = snapLocation.second;
+	int i = 0;
 }

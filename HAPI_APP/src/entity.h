@@ -144,9 +144,10 @@ struct Player
 
 struct BattlePlayer
 {
-	BattlePlayer(FactionName name);
+	BattlePlayer(FactionName name, std::pair<int, int> spawnPosition);
 
 	std::vector<std::unique_ptr<BattleEntity>> m_entities;
 	const FactionName m_factionName;
+	const std::pair<int, int> m_spawnPosition;
 	bool m_eliminated;
 };
