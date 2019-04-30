@@ -142,7 +142,8 @@ std::pair<const Tile*, eDirection> AI::findFiringPosition(
 	return { closestTile, static_cast<eDirection>(facingDirection) };
 }
 
-void AI::attemptMove(Map* mapPtr, std::shared_ptr<BattleEntity> currentShip, std::pair<const Tile*, eDirection> targetTile)
+void AI::attemptMove(
+	Map* mapPtr, std::shared_ptr<BattleEntity> currentShip, std::pair<const Tile*, eDirection> targetTile)
 {
 	//Call generate path
 	Tile* tile{ mapPtr->getTile(currentShip->m_battleProperties.getCurrentPosition()) };
