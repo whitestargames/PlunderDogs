@@ -418,16 +418,15 @@ void BattleGUI::onBattleReset()
 	winningFaction = "";
 
 	m_battleIcons->GetTransformComp().SetPosition({ 510, 890 });
-	m_pauseButton->GetTransformComp().SetPosition({ 1650, 140 });
+	m_endPhaseButtons->GetTransformComp().SetPosition({ 0, 968 });
+	m_pauseButton->GetTransformComp().SetPosition({ 1790, 30 });
 	//m_chickenButton->GetTransformComp().SetPosition({ 1610, 840 });
 	m_CompassBackGround->GetTransformComp().SetOriginToCentreOfFrame();
-	m_CompassBackGround->GetTransformComp().SetPosition({ 240, 170 });
+	m_CompassBackGround->GetTransformComp().SetPosition({ 100, 100 });
 	m_CompassPointer->GetTransformComp().SetOrigin({ 21.5f,60 });
-	m_CompassPointer->GetTransformComp().SetPosition({ 240, 170 });
+	m_CompassPointer->GetTransformComp().SetPosition({ 100, 100 });
 	m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
-	m_activeFactionToken->GetTransformComp().SetPosition({ 1510,140 });// position just temp can be adjusted as needed postiiton 900/100
-	
-
+	m_activeFactionToken->GetTransformComp().SetPosition({ 960,55 });// position just temp can be adjusted as needed postiiton 900/100
 
 	//pauseMenu
 	m_resumeButton->GetTransformComp().SetPosition({ 818, 387 });
