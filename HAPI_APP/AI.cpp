@@ -245,7 +245,7 @@ void AI::handleMovementPhase(Battle* battlePtr, Map* mapPtr, FactionName faction
 			mapPtr, 
 			enemyPosition, 
 			mapPtr->getTile(ships[i]->m_battleProperties.getCurrentPosition()), 
-			ships[i]->m_entityProperties.m_weaponType, 
+			static_cast<eWeaponType>(ships[i]->m_entityProperties.m_weaponType), 
 			ships[i]->m_entityProperties.m_range) };
 
 		//move as far as possible on the path to the chosen position
