@@ -139,40 +139,46 @@ void BattleUI::FactionUpdateGUI(FactionName faction)
 //
 //}
 
-void BattleUI::startShipPlacement(const std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players, Map& map)
+void BattleUI::startShipPlacement(const std::vector<Player>& newPlayers, Map& map)
 {
 	assert(m_battle.getCurrentPhase() == BattlePhase::ShipPlacement);
 	assert(m_playerShipPlacement.empty());
 
 	//TODO: Change this at some point
-	for (auto& player : players)
+	for (auto& player : newPlayers)
 	{
-		for (auto& entity : player.second)
+		for (auto& entity : player.m_entities)
 		{
-			switch (player.first)
+			switch (player.m_factionName)
 			{
 			case FactionName::eYellow:
 				//entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthYellow);
-				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
-				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });
+				entity.m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
+				entity.m_sprite->GetTransformComp().SetScaling({ 1, 1 });
 				break;
 			case FactionName::eBlue:
 				//entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthBlue);
-				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
-				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });
+				entity.m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
+				entity.m_sprite->GetTransformComp().SetScaling({ 1, 1 });
 				break;
 			case FactionName::eRed:
 				//entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthRed);
-				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
-				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });
+				entity.m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
+				entity.m_sprite->GetTransformComp().SetScaling({ 1, 1 });
 				break;
 			case FactionName::eGreen:
 				//entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthGreen);
-				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
-				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });
+				entity.m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
+				entity.m_sprite->GetTransformComp().SetScaling({ 1, 1 });
 				break;
 			}
 		}
+	}
+
+	for (auto& player : newPlayers)
+	{
+		m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>
+			(player.m_entities, map.getSpawnPosition(), SHIP_PLACEMENT_SPAWN_RANGE, m_battle.getMap(), player.m_factionName));
 	}
 
 	std::pair<int, int> firstSpawnPosition = map.getSpawnPosition();
@@ -185,16 +191,11 @@ void BattleUI::startShipPlacement(const std::vector<std::pair<FactionName, std::
 		}
 		else
 		{
-			m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>
-				(players[i].second, map.getSpawnPosition(), SHIP_PLACEMENT_SPAWN_RANGE, m_battle.getMap(), players[i].first));
+		
 		}
 	}
 
-	///m_gui.snapCameraToPosition(firstSpawnPosition);
-
-	//for (const auto& player : players)
-	//{
-	//}
+	m_gui.snapCameraToPosition(firstSpawnPosition);
 }
 
 void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
@@ -265,6 +266,11 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 					if (m_playerShipPlacement.front()->isCompleted())
 					{
 						m_playerShipPlacement.pop_front();
+						if (!m_playerShipPlacement.empty())
+						{
+							//TODO:: Snap to new screen position
+							m_gui.snapCameraToPosition(m_playerShipPlacement.front()->getSpawnPosition());
+						}
 					}
 					//m_battle.moveEntityToPosition(*m_selectedTile.m_tile->m_entityOnTile, *m_battle.getMap().getTile(m_leftMouseDownPosition), mouseMoveDirection.second);
 				}
@@ -276,6 +282,12 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 					if (m_playerShipPlacement.front()->isCompleted())
 					{
 						m_playerShipPlacement.pop_front();
+						if (!m_playerShipPlacement.empty())
+						{
+							//TODO: Snap to new screen position
+							m_gui.snapCameraToPosition(m_playerShipPlacement.front()->getSpawnPosition());
+							
+						}
 					}
 				}
 				break;

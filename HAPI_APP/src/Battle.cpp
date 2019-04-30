@@ -60,17 +60,28 @@ Battle::~Battle()
 	GameEventMessenger::getInstance().unsubscribe("Battle", GameEvent::eEndAttackPhaseEarly);
 }
 
-void Battle::startBattle(const std::string & newMapName, std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& newPlayers)
+void Battle::startBattle(const std::string & newMapName, std::vector<Player>& newPlayers)
 {
+	assert(!newPlayers.empty());
 	assert(m_players.empty());
 	m_map.loadmap(newMapName);
 
 	for (auto& player : newPlayers)
 	{
-		m_players.emplace_back(player.first, m_map.getSpawnPosition());
+		m_players.emplace_back(player.m_factionName, m_map.getSpawnPosition(), player.m_type);
 	}
 
-	m_battleUI.startShipPlacement(newPlayers, m_map);
+	
+	for (auto& player : newPlayers)
+	{
+		if (player.m_type == ePlayerType::eHuman)
+		{
+
+		}
+	}
+	
+	//m_battleUI.startShipPlacement(newPlayers., m_map);
+
 	m_battleUI.loadGUI(m_map.getDimensions());
 }
 
