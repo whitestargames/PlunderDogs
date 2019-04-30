@@ -1,6 +1,7 @@
 #include "Battle.h"
 #include "Utilities/MapParser.h"
 #include "GameEventMessenger.h"
+#include "AI.h"
 
 using namespace HAPISPACE;
 
@@ -186,6 +187,8 @@ void Battle::nextTurn()
 		{
 			entity->m_battleProperties.enableAction();
 		}
+		//TODO: if AI player
+		AI::handleShootingPhase(this, &m_map, currentPlayer);
 		break;
 	case BattlePhase::Attack :
 		m_currentPhase = BattlePhase::Movement;
@@ -201,6 +204,7 @@ void Battle::nextTurn()
 		{
 			entity->m_battleProperties.enableAction();
 		}
+		AI::handleMovementPhase(this, &m_map, currentPlayer);
 		break;
 	}
 }

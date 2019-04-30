@@ -120,16 +120,19 @@ std::pair<const Tile*, eDirection> AI::findFiringPosition(
 		facingDirection++;
 		if (facingDirection > 5) 
 			facingDirection -= 6;
+		break;
 	}
 	case eStraightShot:
 	{
 		closestTile = firePosLine(mapPtr, targetShip, alliedShip, range);
 		facingDirection = static_cast<int>(MouseSelection::calculateDirection(alliedShip, targetShip).second);
+		break;
 	}
 	case eShotgun:
 	{
 		closestTile = firePosRadial(mapPtr, targetShip, alliedShip, range);
 		facingDirection = static_cast<int>(MouseSelection::calculateDirection(alliedShip, targetShip).second);
+		break;
 	}
 	case eFlamethrower:
 	{
@@ -137,6 +140,7 @@ std::pair<const Tile*, eDirection> AI::findFiringPosition(
 		facingDirection += 3;
 		if (facingDirection > 5)
 			facingDirection -= 6;
+		break;
 	}
 	}
 	return { closestTile, static_cast<eDirection>(facingDirection) };
@@ -223,7 +227,6 @@ void AI::attemptShot(Battle* battlePtr, Map* mapPtr, std::shared_ptr<BattleEntit
 			if (firingArea[i]->m_entityOnTile->m_factionName == firingShip->m_factionName || firingArea[i]->m_entityOnTile->m_battleProperties.isDead()) continue;
 			battlePtr->fireEntityWeaponAtPosition(*firingShip, *firingArea[i], firingArea);
 		}
-		
 	}
 	}
 	firingShip->m_battleProperties.fireWeapon();
