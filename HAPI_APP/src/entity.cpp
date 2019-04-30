@@ -146,29 +146,29 @@ int EntityBattleProperties::MovementPath::generatePath(const Map& map, const Til
 	clearPath();
 
 	int bonusMove = 0;
-	int movementPointsUsed = 0;
+	float movementPointsUsed = 0;
 	int prevDir = source.m_entityOnTile->m_battleProperties.m_currentDirection;
+	float windStrength = map.getWindStrength();
+	int windDirection = static_cast<int>(map.getWindDirection());
 	//Don't interact with path from source.
 	int i = 1;
 	for (i ; i < pathToTile.size(); ++i)
 	{
-		++movementPointsUsed;
+		movementPointsUsed += 1;
 
 		int pathDir = pathToTile[i].first;
 		int movementCost = getDirectionCost(prevDir, pathDir);
 		prevDir = pathDir;
 
-		movementPointsUsed += movementCost;
+		movementPointsUsed += static_cast<float>(movementCost);
 
-		if (prevDir == map.getWindDirection() && bonusMove == 0)
+		if (prevDir == windDirection)
 		{
-			bonusMove = static_cast<int>(source.m_entityOnTile->m_entityProperties.m_movementPoints * map.getWindStrength());
-			movementPointsUsed -= bonusMove;
+			movementPointsUsed -= windStrength;
 		}
 
 		source.m_entityOnTile->m_battleProperties.m_movementPathSize = i;
-		if (movementPointsUsed <=
-			source.m_entityOnTile->m_entityProperties.m_movementPoints)
+		if ((static_cast<float>(source.m_entityOnTile->m_entityProperties.m_movementPoints) - movementPointsUsed) >= 1)
 		{
 			auto tileScreenPosition = map.getTileScreenPos(pathToTile[i].second);
 			m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
@@ -355,7 +355,6 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 	{
 		return 0;
 	}
-
 	//number of direction % difference between the new and old directions
 	return (static_cast<int>(eDirection::Max) % diff) + 1;
 }

@@ -500,7 +500,7 @@ Map::Map() :
 	m_data(),
 	m_drawOffset(intPair(10, 60)),
 	m_windDirection(eNorth),
-	m_windStrength(0),//TODO: reset this
+	m_windStrength(0.4),
 	m_drawScale(2),
 	m_timeOfDay(eMorning)
 {
@@ -515,7 +515,7 @@ void Map::onReset()
 	m_drawScale = 2;
 
 	m_windDirection = eNorth;
-	m_windStrength = 0;//TODO: reset this
+	m_windStrength = 0.4;
 	m_timeOfDay = eMorning;
 	m_spawnPositions.clear();
 }
