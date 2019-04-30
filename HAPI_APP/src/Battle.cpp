@@ -169,13 +169,13 @@ void Battle::nextTurn()
 		if (lastPlayer)
 		{
 			m_currentPhase = BattlePhase::Movement;
+			for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
+			{
+				entity->m_battleProperties.enableAction();
+			}
 		}
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;
-		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
-		{
-			entity->m_battleProperties.enableAction();
-		}
 		break;
 	case BattlePhase::Movement :
 		m_currentPhase = BattlePhase::Attack;
