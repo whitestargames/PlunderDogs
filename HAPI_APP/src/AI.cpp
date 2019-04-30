@@ -18,15 +18,15 @@ const Tile* AI::findClosestEnemy(const Battle& battle, const Map& map, std::pair
 		if (i == static_cast<int>(ourFaction))
 			continue;
 
-		const auto& factionShipList = battle.getFactionShips(static_cast<FactionName>(i));
+		const auto& factionShips = battle.getPlayer(static_cast<FactionName>(i)).m_entities;
 
-		for (int j = 0; j < factionShipList.size(); j++)
+		for (int j = 0; j < factionShips.size(); j++)
 		{
-			if (factionShipList[j]->m_battleProperties.isDead()) continue;
+			if (factionShips[j]->m_battleProperties.isDead()) continue;
 			//Find the distance^2 from the allied ship to the enemy ship, 
 			//then set closestEnemy to that enemy if it's the closest yet found
 			std::pair<int, int> enemyPos = MouseSelection::coordToHexPos(
-				factionShipList[j]->m_battleProperties.getCurrentPosition());
+				factionShips[j]->m_battleProperties.getCurrentPosition());
 
 			std::pair<int, int> diff(
 				{ enemyPos.first - alliedPos.first, enemyPos.second - alliedPos.second });
@@ -35,7 +35,7 @@ const Tile* AI::findClosestEnemy(const Battle& battle, const Map& map, std::pair
 			if (enemyDistance < closestDistance)
 			{
 				closestDistance = enemyDistance;
-				closestEnemy = map.getTile(factionShipList[j]->m_battleProperties.getCurrentPosition());
+				closestEnemy = map.getTile(factionShips[j]->m_battleProperties.getCurrentPosition());
 			}
 		}
 	}
