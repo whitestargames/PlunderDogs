@@ -52,8 +52,10 @@ public:
 	void insertEntity(std::pair<int, int> startingPosition, eDirection startingDirection, const EntityProperties& entityProperties, FactionName factionName);
 	void nextTurn();
 
-	std::vector<std::shared_ptr<BattleEntity>>* getFactionShips(FactionName faction);
-	const std::vector<std::shared_ptr<BattleEntity>>* getFactionShips(FactionName faction) const;
+	std::vector<FactionName> getAllFactions() const;
+
+	std::vector<std::shared_ptr<BattleEntity>>& getFactionShips(FactionName faction);
+	const std::vector<std::shared_ptr<BattleEntity>>& getFactionShips(FactionName faction) const;
 private:
 	std::vector<BattlePlayer> m_players;
 	int m_currentPlayerTurn;

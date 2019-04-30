@@ -69,6 +69,8 @@ std::pair<double, eDirection> MouseSelection::calculateDirection(std::pair<int, 
 
 std::pair<double, eDirection> MouseSelection::calculateDirection(const Tile* startLocation, const Tile* endLocation)
 {
+	if (!startLocation || !endLocation)
+		return { 0.0 , eNorth };
 	// Calculating the distance vector of the line between the start and end point
 	std::pair<int, int> startPos{ MouseSelection::coordToHexPos(startLocation->m_tileCoordinate) };
 	std::pair<int, int> endPos{ MouseSelection::coordToHexPos(endLocation->m_tileCoordinate) };

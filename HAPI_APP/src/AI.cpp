@@ -9,17 +9,18 @@
 constexpr int MAX_INT{ 2147483647 };
 
 const Tile* AI::findClosestEnemy(
-	const Battle* battlePtr, const Map* mapPtr, const std::shared_ptr<BattleEntity> alliedShip, FactionName faction)
+	const Battle* battlePtr, const Map* mapPtr, const std::shared_ptr<BattleEntity> alliedShip, FactionName ourFaction)
 {
 	const Tile* closestEnemy{ nullptr };
 	int closestDistance{ MAX_INT };
 	std::pair<int, int> alliedPos{ MouseSelection::coordToHexPos(
 		alliedShip->m_battleProperties.getCurrentPosition()) };
-	for (int i = 0; i < 4; i++)
+	auto activeFactions = battlePtr->getAllFactions();
+	for (FactionName i : activeFactions)
 	{
-		if (i == static_cast<int>(faction))
+		if (i == static_cast<int>(ourFaction))
 			continue;
-		const auto factionShipList = *battlePtr->getFactionShips(static_cast<FactionName>(i));
+		const auto& factionShipList = battlePtr->getFactionShips(static_cast<FactionName>(i));
 		for (int j = 0; j < factionShipList.size(); j++)
 		{
 			if (factionShipList[j]->m_battleProperties.isDead()) continue;
@@ -232,17 +233,21 @@ void AI::attemptShot(Battle* battlePtr, Map* mapPtr, std::shared_ptr<BattleEntit
 	firingShip->m_battleProperties.fireWeapon();
 }
 
-void AI::handleMovementPhase(Battle* battlePtr, Map* mapPtr, FactionName faction)
+void AI::handleMovementPhase(Battle* battlePtr, Map* mapPtr, BattlePlayer& battlePlayer)
 {
-	auto ships = *battlePtr->getFactionShips(faction);
+	auto& ships = battlePlayer.m_entities;
 
 	//loop through all the ships in the faction
 	for (int i = 0; i < ships.size(); i++)
 	{
 		if (ships[i]->m_battleProperties.isDead()) continue;
 		//find the nearest enemy ship
-		const Tile* enemyPosition{ findClosestEnemy(battlePtr, mapPtr, ships[i], faction) };
-
+		const Tile* enemyPosition{ findClosestEnemy(battlePtr, mapPtr, ships[i], battlePlayer.m_factionName) };
+		if (!enemyPosition)
+		{
+			ships[i]->m_battleProperties.setMoved();
+			continue;
+		}
 		//find the nearest tile and facing that can fire upon the chosen enemy ship
 		std::pair<const Tile*, eDirection>  firingPosition{ AI::findFiringPosition(
 			mapPtr, 
@@ -258,7 +263,7 @@ void AI::handleMovementPhase(Battle* battlePtr, Map* mapPtr, FactionName faction
 
 void AI::handleShootingPhase(Battle* battlePtr, Map* mapPtr, FactionName faction)
 {
-	auto ships = *battlePtr->getFactionShips(faction);
+	auto& ships = battlePtr->getFactionShips(faction);
 	//loop through all the ships in the faction
 	for (int i = 0; i < ships.size(); i++)
 	{

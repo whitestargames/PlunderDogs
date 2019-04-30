@@ -162,6 +162,8 @@ void Battle::nextTurn()
 	m_moveCounter.m_counter = 0;
 	FactionName currentPlayer;
 	bool lastPlayer = false;
+
+
 	switch (m_currentPhase)
 	{
 	case BattlePhase::ShipPlacement :
@@ -187,8 +189,9 @@ void Battle::nextTurn()
 		{
 			entity->m_battleProperties.enableAction();
 		}
-		//TODO: if AI player
 		AI::handleShootingPhase(this, &m_map, currentPlayer);
+		//TODO: if AI player
+		
 		break;
 	case BattlePhase::Attack :
 		m_currentPhase = BattlePhase::Movement;
@@ -204,37 +207,43 @@ void Battle::nextTurn()
 		{
 			entity->m_battleProperties.enableAction();
 		}
-		AI::handleMovementPhase(this, &m_map, currentPlayer);
+		AI::handleMovementPhase(this, &m_map, m_players[m_currentPlayerTurn]);
 		break;
 	}
 }
 
-std::vector<std::shared_ptr<BattleEntity>>* Battle::getFactionShips(FactionName faction)
+std::vector<FactionName> Battle::getAllFactions() const
 {
-	std::vector<std::shared_ptr<BattleEntity>>* returnVariable{ nullptr };
-	for (auto it : m_players)
+	std::vector<FactionName> lol;
+	for (auto& player : m_players)
 	{
-		if (it.m_factionName == faction)
-		{
-			returnVariable = &it.m_entities;
-			break;
-		}
+		lol.emplace_back(player.m_factionName);
 	}
-	return returnVariable;
+
+	assert(!lol.empty());
+	return lol;
 }
 
-const std::vector<std::shared_ptr<BattleEntity>>* Battle::getFactionShips(FactionName faction) const
+std::vector<std::shared_ptr<BattleEntity>>& Battle::getFactionShips(FactionName faction)
 {
-	std::vector<std::shared_ptr<BattleEntity>>* returnVariable{ nullptr };
 	for (auto it : m_players)
 	{
 		if (it.m_factionName == faction)
 		{
-			returnVariable = &it.m_entities;
-			break;
+			return it.m_entities;
 		}
 	}
-	return returnVariable;
+}
+
+const std::vector<std::shared_ptr<BattleEntity>>& Battle::getFactionShips(FactionName faction) const
+{
+	for (auto it : m_players)
+	{
+		if (it.m_factionName == faction)
+		{
+			return it.m_entities;
+		}
+	}
 }
 
 void Battle::updateMovementPhase(float deltaTime)
@@ -376,21 +385,24 @@ void Battle::onEndMovementPhaseEarly()
 
 void Battle::onEndAttackPhaseEarly()
 {
-	m_currentPhase = BattlePhase::Movement;
-	GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
-	GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringMovementPhase);
-	
-	for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
-	{
-		entity->m_battleProperties.disableAction();
-	}
+	nextTurn();
+	//m_currentPhase = BattlePhase::Movement;
+	//GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
+	//GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringMovementPhase);
+	//
+	//for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
+	//{
+	//	entity->m_battleProperties.disableAction();
+	//}
 
-	incrementPlayerTurn();
+	//incrementPlayerTurn();
 
-	for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
-	{
-		entity->m_battleProperties.enableAction();
-	}
+	//for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
+	//{
+	//	entity->m_battleProperties.enableAction();
+	//}
+
+	//AI::handleMovementPhase(this, &m_map, m_players[m_currentPlayerTurn]);
 }
 
 Battle::BattleManager::BattleManager()
