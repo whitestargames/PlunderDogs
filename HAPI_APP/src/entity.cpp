@@ -370,51 +370,51 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 	switch (entityType)
 	{
 	case EntityType::eCruiser:
-		m_movementPoints = 15;
-		m_healthMax = 7;
-		m_currentHealth = 7;
-		m_range = 5;
-		m_damage = 2;
 		m_originalMovement = 15;
 		m_originalHealth = 7;
 		m_originalRange = 5;
 		m_originalDamage = 2;
+		m_movementPoints = m_originalMovement;
+		m_healthMax = m_originalHealth;
+		m_currentHealth = m_healthMax;
+		m_range = m_originalRange;
+		m_damage = m_originalDamage;
 		m_weaponType = eWeaponType::eSideCannons;
 		break;
 	case EntityType::eBattleShip:
-		m_movementPoints = 15;
-		m_healthMax = 8;
-		m_currentHealth = 8;
-		m_range = 2;
-		m_damage = 2;
 		m_originalMovement = 15;
 		m_originalHealth = 8;
 		m_originalRange = 2;
 		m_originalDamage = 2;
+		m_movementPoints = m_originalMovement;
+		m_healthMax = m_originalHealth;
+		m_currentHealth = m_healthMax;
+		m_range = m_originalRange;
+		m_damage = m_originalDamage;
 		m_weaponType = eWeaponType::eShotgun;
 		break;
 	case EntityType::eDestroyer:
-		m_movementPoints = 20;
-		m_healthMax = 6;
-		m_currentHealth = 6;
-		m_range = 6;
-		m_damage = 3;
 		m_originalMovement = 20;
 		m_originalHealth = 6;
 		m_originalRange = 6;
 		m_originalDamage = 3;
+		m_movementPoints = m_originalMovement;
+		m_healthMax = m_originalHealth;
+		m_currentHealth = m_healthMax;
+		m_range = m_originalRange;
+		m_damage = m_originalDamage;
 		m_weaponType = eWeaponType::eFlamethrower;
 		break;
 	case EntityType::eGunBoat:
-		m_movementPoints = 10;
-		m_healthMax = 5;
-		m_currentHealth = 5;
-		m_range = 12;
-		m_damage = 2;
 		m_originalMovement = 10;
 		m_originalHealth = 5;
 		m_originalRange = 12;
 		m_originalDamage = 2;
+		m_movementPoints = m_originalMovement;
+		m_healthMax = m_originalHealth;
+		m_currentHealth = m_healthMax;
+		m_range = m_originalRange;
+		m_damage = m_originalDamage;
 		m_weaponType = eWeaponType::eStraightShot;
 		break;
 	}
