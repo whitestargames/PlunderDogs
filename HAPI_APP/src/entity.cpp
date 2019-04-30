@@ -369,7 +369,7 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 	
 	switch (entityType)
 	{
-	case EntityType::eCruiser:
+	case EntityType::eFrigate:
 		m_originalHealth = 12;
 		m_originalDamage = 4;
 		m_originalMovement = 8;
@@ -382,7 +382,7 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 		m_damage = m_originalDamage;
 		m_weaponType = eWeaponType::eSideCannons;
 		break;
-	case EntityType::eBattleShip:
+	case EntityType::eTurtle:
 		m_originalHealth = 20;
 		m_originalDamage = 2;
 		m_originalMovement = 8;
@@ -395,7 +395,7 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 		m_damage = m_originalDamage;
 		m_weaponType = eWeaponType::eShotgun;
 		break;
-	case EntityType::eDestroyer:
+	case EntityType::eFire:
 		m_originalHealth = 8;
 		m_originalDamage = 6;
 		m_originalMovement = 10;
@@ -408,11 +408,11 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 		m_damage = m_originalDamage;
 		m_weaponType = eWeaponType::eFlamethrower;
 		break;
-	case EntityType::eGunBoat:
+	case EntityType::eSniper:
 		m_originalHealth = 8;
 		m_originalDamage = 4;
 		m_originalMovement = 6;
-		m_originalRange = 12;
+		m_originalRange = 10;
 
 		m_movementPoints = m_originalMovement;
 		m_healthMax = m_originalHealth;
@@ -428,18 +428,18 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 	case FactionName::eYellow:
 		switch (entityType)
 		{
-		case EntityType::eCruiser:
+		case EntityType::eFrigate:
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_yellowShipSideCannons));
 			break;
-		case EntityType::eBattleShip:
+		case EntityType::eTurtle:
 
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_yellowShipBomb));
 			break;
-		case EntityType::eDestroyer:
+		case EntityType::eFire:
 
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_yellowShipMelee));
 			break;
-		case EntityType::eGunBoat:
+		case EntityType::eSniper:
 
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_yellowShipSnipe));
 			break;
@@ -451,19 +451,19 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 	case FactionName::eBlue:
 		switch (entityType)
 		{
-		case EntityType::eCruiser:
+		case EntityType::eFrigate:
 
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_blueShipSideCannons));
 			break;
-		case EntityType::eBattleShip:
+		case EntityType::eTurtle:
 
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_blueShipBomb));
 			break;
-		case EntityType::eDestroyer:
+		case EntityType::eFire:
 
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_blueShipMelee));
 			break;
-		case EntityType::eGunBoat:
+		case EntityType::eSniper:
 
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_blueShipSnipe));
 			break;
@@ -474,19 +474,19 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 	case FactionName::eRed:
 		switch (entityType)
 		{
-		case EntityType::eCruiser:
+		case EntityType::eFrigate:
 
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_redShipSideCannons));
 			break;
-		case EntityType::eBattleShip:
+		case EntityType::eTurtle:
 
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_redShipBomb));
 			break;
-		case EntityType::eDestroyer:
+		case EntityType::eFire:
 
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_redShipMelee));
 			break;
-		case EntityType::eGunBoat:
+		case EntityType::eSniper:
 
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_redShipSnipe));
 			break;
@@ -498,19 +498,19 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 	case FactionName::eGreen:
 		switch (entityType)
 		{
-		case EntityType::eCruiser:
+		case EntityType::eFrigate:
 
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_greenShipSideCannons));
 			break;
-		case EntityType::eBattleShip:
+		case EntityType::eTurtle:
 
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_greenShipBomb));
 			break;
-		case EntityType::eDestroyer:
+		case EntityType::eFire:
 
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_greenShipMelee));
 			break;
-		case EntityType::eGunBoat:
+		case EntityType::eSniper:
 
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_greenShipSnipe));
 			break;

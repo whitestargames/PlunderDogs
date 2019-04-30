@@ -8,10 +8,10 @@
 
 enum class EntityType
 {
-	eCruiser,
-	eBattleShip,
-	eDestroyer,
-	eGunBoat
+	eFrigate,
+	eTurtle,
+	eFire,
+	eSniper
 };
 
 struct Tile;
