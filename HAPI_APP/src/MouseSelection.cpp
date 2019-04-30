@@ -85,9 +85,11 @@ std::pair<double, eDirection> MouseSelection::calculateDirection(const Tile* sta
 		{
 			if (distance.second > 0)
 			{
+				//Changed from SouthEast
 				returnVariable.second = eSouth;
 				return returnVariable;
 			}
+			//Changed from NorthWest
 			else returnVariable.second = eNorth;
 			return returnVariable;
 		}
