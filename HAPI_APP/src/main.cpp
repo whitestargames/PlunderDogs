@@ -21,7 +21,7 @@ float getDeltaTime(int frameStart, int lastFrameStart)
 void HAPI_Sprites_Main()
 {
 	std::pair<int, int> windowSize(1920, 1080);
-	if (!HAPI_Sprites.Initialise(windowSize.first, windowSize.second, "Plunder Dogs", eHSEnableUI))
+	if (!HAPI_Sprites.Initialise(windowSize.first, windowSize.second, "Plunder Dogs", eHSEnableUI|eHSFullscreen))
 		return;
 
 	if (!Textures::loadAllTextures())
