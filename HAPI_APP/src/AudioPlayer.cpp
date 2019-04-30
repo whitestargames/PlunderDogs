@@ -15,7 +15,7 @@ void AudioPlayer::playSound(const std::string & soundName)
 	if (!m_soundList[soundName].m_isPlaying)
 	{
 		HAPI_Sprites.PlayStreamedMedia(Utilities::getDataDirectory() + m_soundList[soundName].m_soundName,
-			HAPISPACE::SoundOptions::HAPI_TSoundOptions(1, false), m_soundList[soundName].m_instanceId);
+			HAPISPACE::SoundOptions::HAPI_TSoundOptions(0.6, false), m_soundList[soundName].m_instanceId);
 		
 
 		m_soundList[soundName].m_isPlaying = true;
@@ -34,7 +34,8 @@ void AudioPlayer::stopSound(const std::string & soundName)
 {
 	if (m_soundList[soundName].m_isPlaying)
 	{
-		HAPI_Sprites.StopSound(m_soundList[soundName].m_instanceId, true);
+		
+		HAPI_Sprites.StopStreamedMedia(m_soundList[soundName].m_instanceId);
 		m_soundList[soundName].m_isPlaying = false;
 	}
 	
