@@ -69,6 +69,13 @@ struct Tile
 
 class Map
 {
+	struct SpawnPosition
+	{
+		SpawnPosition(std::pair<int, int> spawnPosition);
+
+		std::pair<int, int> position;
+		bool inUse;
+	};
 private:
 	std::pair<int, int> m_mapDimensions;
 	float m_windStrength;
@@ -77,7 +84,7 @@ private:
 	float m_drawScale;
 	std::pair<int, int> m_drawOffset;
 	std::vector<Tile> m_data;
-	std::vector<std::pair<int, int>> m_spawnPositions;
+	std::vector<SpawnPosition> m_spawnPositions;
 	eTimeOfDay m_timeOfDay;
 
 	std::pair<int, int> offsetToCube(std::pair<int, int> offset) const;
@@ -96,20 +103,21 @@ public:
 	std::vector<Tile*> getAdjacentTiles(std::pair<int, int> coord);
 	std::vector<const Tile*> cGetAdjacentTiles(std::pair<int, int> coord) const;
 	//Returns tiles in a radius around a given tile, skipping the tile itself
-	std::vector<Tile*> getTileRadius(std::pair<int, int> coord, int range);
-	std::vector<const Tile*> cGetTileRadius(std::pair<int, int> coord, int range) const;
+	std::vector<Tile*> getTileRadius(std::pair<int, int> coord, int range, bool avoidInvalid = false, bool includeSource = false);
+	std::vector<const Tile*> cGetTileRadius(std::pair<int, int> coord, int range, bool avoidInvalid = false, bool includeSource = false) const;
 	//Returns tiles in two cones emanating from a given tile, skipping the tile itself
-	std::vector<Tile*> getTileCone(std::pair<int, int> coord, int range, eDirection direction);
-	std::vector<const Tile*> cGetTileCone(std::pair<int, int> coord, int range, eDirection direction)const;
+	std::vector<Tile*> getTileCone(std::pair<int, int> coord, int range, eDirection direction, bool avoidInvalid = false);
+	std::vector<const Tile*> cGetTileCone(std::pair<int, int> coord, int range, eDirection direction, bool avoidInvalid = false)const;
 	//Returns tiles in a line from a given direction,
 	//An element in the vector will be nullptr if it accesses an invalid tile
-	std::vector<Tile*> getTileLine(std::pair<int, int> coord, int range, eDirection direction);
-	std::vector<const Tile*> cGetTileLine(std::pair<int, int> coord, int range, eDirection direction)const;
+	std::vector<Tile*> getTileLine(std::pair<int, int> coord, int range, eDirection direction, bool avoidInvalid = false);
+	std::vector<const Tile*> cGetTileLine(std::pair<int, int> coord, int range, eDirection direction, bool avoidInvalid = false)const;
 	//Returns a ring of tiles at a certain radius from a specified tile
 	//An element in the vector will be nullptr if it accesses an invalid tile
 	std::vector<Tile*> getTileRing(std::pair<int, int> coord, int range);
 	std::vector<const Tile*> cGetTileRing(std::pair<int, int> coord, int range)const;
 
+	std::pair<int, int> getSpawnPosition();
 	//For finding the location on the screen a given tile is being drawn
 	std::pair<int, int> getTileScreenPos(std::pair<int, int> coord) const;
 
@@ -140,8 +148,8 @@ public:
 
 	eDirection getWindDirection() const { return m_windDirection; }
 	void setWindDirection(eDirection direction) { m_windDirection = direction; }
-
-	std::vector<std::pair<int, int>> getSpawnPositions() const { return m_spawnPositions; }
+	//TODO: Find out what this is
+	//std::vector<std::pair<int, int>> getSpawnPositions() const { return m_spawnPositions; }
 
 	void loadmap(const std::string& mapName);
 

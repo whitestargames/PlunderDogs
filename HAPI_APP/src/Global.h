@@ -22,9 +22,19 @@ enum eDirection
 enum OverWorldWindow
 {
 	eBattle = 0,
-	ePreBattle,
+	eMainMenu,
+	eShipSelection,
 	eLevelSelection,
+	ePlayerSelection, 
 	eUpgrade
+
+};
+
+enum ePlayerSelect
+{
+	eNone = 0,
+	eHuman,
+	eAi,
 };
 
 enum eTileType

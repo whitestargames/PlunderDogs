@@ -14,9 +14,28 @@ enum class BattlePhase
 
 class Battle
 {
+	class BattleManager
+	{
+	public:
+		BattleManager();
+		~BattleManager();
+	
+		void onYellowShipDestroyed(std::vector<BattlePlayer>& players);
+		void onBlueShipDestroyed(std::vector<BattlePlayer>& players);
+		void onGreenShipDestroyed(std::vector<BattlePlayer>& players);
+		void onRedShipDestroyed(std::vector<BattlePlayer>& players);
+
+	private:
+		int m_yellowShipsDestroyed;
+		int m_blueShipsDestroyed;
+		int m_greenShipsDestroyed;
+		int m_redShipsDestroyed;
+		void onReset();
+
+		void checkGameStatus(const std::vector<BattlePlayer>& players);
+	};
+
 public:
-	void setTimeOfDay(float deltaTime);
-	void setWindDirectoin(float deltaTime);
 	Battle();
 	~Battle();
 	const Map& getMap() const;
@@ -29,8 +48,7 @@ public:
 	void moveEntityToPosition(BattleEntity& entity, const Tile& destination);
 	void moveEntityToPosition(BattleEntity& entity, const Tile& destination, eDirection endDirection);
 
-
-	void fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea);
+	bool fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea);
 	void insertEntity(std::pair<int, int> startingPosition, eDirection startingDirection, const EntityProperties& entityProperties, FactionName factionName);
 	void nextTurn();
 
@@ -38,18 +56,29 @@ public:
 	const std::vector<std::shared_ptr<BattleEntity>>* getFactionShips(FactionName faction) const;
 private:
 	std::vector<BattlePlayer> m_players;
-	int m_currentPlayersTurn;
+	int m_currentPlayerTurn;
 	Map m_map;
 	BattlePhase m_currentPhase;
 	BattleUI m_battleUI;
 	MoveCounter m_moveCounter;
 	Timer m_dayTime;
 	Timer m_windTime;
+	BattleManager m_battleManager;
 
 	void updateMovementPhase(float deltaTime);
 	void updateAttackPhase();
 	bool allEntitiesAttacked(std::vector<std::shared_ptr<BattleEntity>>& playerEntities) const;
 	BattlePlayer& getPlayer(FactionName factionName);
 
-	void onReset();
+	void incrementPlayerTurn();
+	void setTimeOfDay(float deltaTime);
+	void setWindDirection(float deltaTime);
+
+	void onResetBattle();
+	void onYellowShipDestroyed();
+	void onBlueShipDestroyed();
+	void onGreenShipDestroyed();
+	void onRedShipDestroyed();
+	void onEndMovementPhaseEarly();
+	void onEndAttackPhaseEarly();
 };

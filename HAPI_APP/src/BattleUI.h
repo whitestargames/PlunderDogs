@@ -3,6 +3,7 @@
 #include "BattleGUI.h"
 #include "entity.h"
 #include <vector>
+#include <deque>
 
 struct EntityProperties;
 struct Tile;
@@ -41,6 +42,21 @@ class BattleUI : public IHapiSpritesInputListener
 		std::pair<int, int> m_position;
 	};
 
+	struct ParticleSystem
+	{
+		std::pair<float, float> m_position;
+		Timer m_lifeSpan;
+		std::unique_ptr<HAPISPACE::Sprite> m_particle;
+		int m_frameNum = 0;
+		bool m_isEmitting;
+
+		ParticleSystem(float lifespan, std::shared_ptr<HAPISPACE::SpriteSheet> texture);
+		void setPosition(std::pair<int, int> position);
+		void run(float deltaTime, const Map& map);
+		void render() const;
+		void orient(eDirection direction);
+	};
+
 	class ShipPlacementPhase
 	{
 		struct CurrentSelectedEntity
@@ -57,6 +73,8 @@ class BattleUI : public IHapiSpritesInputListener
 		ShipPlacementPhase(std::vector<EntityProperties*> player,
 			std::pair<int, int> spawnPosition, int range, const Map& map, FactionName factionName);
 
+		std::pair<int, int> getSpawnPosition() const;
+
 		bool isCompleted() const;
 		void render(const InvalidPosition& invalidPosition, const Map& map) const;
 
@@ -69,6 +87,7 @@ class BattleUI : public IHapiSpritesInputListener
 		CurrentSelectedEntity m_currentSelectedEntity;
 		std::vector<const Tile*> m_spawnArea;
 		std::vector<std::unique_ptr<Sprite>> m_spawnSprites;
+		std::pair<int, int> m_spawnPosition;
 	};
 
 	struct CurrentSelectedTile
@@ -89,13 +108,18 @@ public:
 	std::pair<int, int> getCameraPositionOffset() const;
 
 	void renderUI() const;
+	void renderParticles() const;
 	void renderGUI() const;
 	void loadGUI(std::pair<int, int> mapDimensions);
-	void update();
+
+	void update(float deltaTime);
+
 	void FactionUpdateGUI(FactionName faction);//tempName
-	void newPhase();
-	void newTurn(FactionName playersTurn);
-	void startShipPlacement(std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players);
+
+	//void newPhase();
+	//void newTurn(FactionName playersTurn);
+
+	void startShipPlacement(const std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players, Map& map);
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
@@ -113,7 +137,7 @@ private:
 	const Tile* m_mouseDownTile;
 	BattleGUI m_gui;
 	InvalidPosition m_invalidPosition;
-	std::vector<std::unique_ptr<ShipPlacementPhase>> m_playerShipPlacement;
+	std::deque<std::unique_ptr<ShipPlacementPhase>> m_playerShipPlacement;
 
 	//Movement Phase
 	void onMouseMoveMovementPhase();
@@ -125,5 +149,10 @@ private:
 	void onRightClickAttackPhase();
 	void onMouseMoveAttackPhase();
 	TargetArea m_targetArea;
-	void onReset();
+
+	void onResetBattle();
+	void onNewTurn();
+
+	ParticleSystem m_explosion;
+	ParticleSystem m_fire;
 };

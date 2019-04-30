@@ -5,17 +5,20 @@
 #include <assert.h>
 #include "Utilities.h"
 
-
-MapDetails::MapDetails(std::pair<int, int> mapSize, const std::vector<std::vector<int>>& tileData)
+MapDetails::MapDetails(std::pair<int, int> mapSize, std::vector<std::vector<int>>&& tileData,
+	std::vector<std::pair<int, int>>&& spawnPositions)
 	: mapDimensions(mapSize),
-	tileData(tileData)
+	tileData(std::move(tileData)),
+	m_spawnPositions(std::move(spawnPositions))
 {}
 
 std::vector<std::vector<int>> parseTileData(const TiXmlElement& rootElement, const std::pair<int, int> mapSize);
 std::pair<int, int> parseMapSize(const TiXmlElement& rootElement);
+std::pair<int, int> parseTileSize(const TiXmlElement& rootElement);
 std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElement, std::pair<int, int> mapSize);
+std::vector<std::pair<int, int>> parseSpawnPositions(const TiXmlElement & rootElement, std::pair<int, int> tileSize);
 
-MapDetails MapParser::parseMap(const std::string& name)
+MapDetails MapParser::parseMapDetails(const std::string& name)
 {
 	TiXmlDocument mapFile;
 	bool mapLoaded = mapFile.LoadFile(Utilities::getDataDirectory() + name);
@@ -23,8 +26,11 @@ MapDetails MapParser::parseMap(const std::string& name)
 
 	const auto& rootElement = mapFile.RootElement();
 	std::pair<int, int> mapSize = parseMapSize(*rootElement);
+	std::pair<int, int> tileSize = parseTileSize(*rootElement);
+	std::vector<std::vector<int>> tileData = parseTileData(*rootElement, mapSize);
+	std::vector<std::pair<int, int>> spawnPositions = parseSpawnPositions(*rootElement, tileSize);
 
-	return MapDetails(mapSize, parseTileData(*rootElement, mapSize));
+	return MapDetails(mapSize, std::move(tileData), std::move(spawnPositions));
 }
 
 std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElement, std::pair<int, int> mapSize)
@@ -65,14 +71,6 @@ std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElem
 	return tileData;
 }
 
-std::pair<int, int> parseMapSize(const TiXmlElement& rootElement)
-{
-	std::pair<int, int> mapSize;
-	rootElement.Attribute("width", &mapSize.first);
-	rootElement.Attribute("height", &mapSize.second);
-	return mapSize;
-}
-
 std::vector<std::vector<int>> parseTileData(const TiXmlElement & rootElement, const std::pair<int, int> mapSize)
 {
 	std::vector<std::vector<int>> tileData;
@@ -89,4 +87,47 @@ std::vector<std::vector<int>> parseTileData(const TiXmlElement & rootElement, co
 
 	assert(!tileData.empty());
 	return tileData;
+}
+
+std::pair<int, int> parseMapSize(const TiXmlElement & rootElement)
+{
+	std::pair<int, int> mapSize(0, 0);
+	rootElement.Attribute("width", &mapSize.first);
+	rootElement.Attribute("height", &mapSize.second);
+	assert(mapSize.first != 0 && mapSize.second != 0);
+	return mapSize;
+}
+
+std::pair<int, int> parseTileSize(const TiXmlElement & rootElement)
+{
+	std::pair<int, int> tileSize(0, 0);
+	rootElement.Attribute("tilewidth", &tileSize.first);
+	rootElement.Attribute("tileheight", &tileSize.second);
+	assert(tileSize.first != 0 && tileSize.second != 0);
+	return tileSize;
+}
+
+std::vector<std::pair<int, int>> parseSpawnPositions(const TiXmlElement & rootElement, std::pair<int, int> tileSize)
+{
+	std::vector<std::pair<int, int>> entityStartingPositions;
+	for (const auto* entityElementRoot = rootElement.FirstChildElement(); entityElementRoot != nullptr; entityElementRoot = entityElementRoot->NextSiblingElement())
+	{
+		if (entityElementRoot->Value() != std::string("objectgroup") || entityElementRoot->Attribute("name") != std::string("SpawnPositionLayer"))
+		{
+			continue;
+		}
+
+		for (const auto* entityElement = entityElementRoot->FirstChildElement(); entityElement != nullptr; entityElement = entityElement->NextSiblingElement())
+		{
+			std::pair<int, int> startingPosition;
+			entityElement->Attribute("x", &startingPosition.first);
+			entityElement->Attribute("y", &startingPosition.second);
+			//startingPosition.second -= tileSize; //Tiled Hack
+			startingPosition.first /= tileSize.first;
+			startingPosition.second /= tileSize.second;
+			entityStartingPositions.push_back(startingPosition);
+		}
+	}
+	assert(!entityStartingPositions.empty());
+	return entityStartingPositions;
 }

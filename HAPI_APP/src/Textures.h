@@ -16,19 +16,80 @@ struct Textures
 			return false;
 		}
 
-		m_battleMapBackground = HAPI_Wrapper::makeSpriteSheet("TempBattleMapBackground.png");
-		if (!m_battleMapBackground)
-		{
-			HAPI_Sprites.UserMessage("Cannot Load : 'TempBattleMapBackground.png'", "Texture Error");
-		}
-
 		m_enemyTerritoryHexSheet = HAPI_Wrapper::makeSpriteSheet("EnemyTerritoryHexSheet.png", 2);
 		if (!m_enemyTerritoryHexSheet)
 		{
-			HAPI_Sprites.UserMessage("Cannot Load : 'dsdasdasdasdasdasdasdasml'", "Texture Error");
+			HAPI_Sprites.UserMessage("Cannot Load : 'EnemyTerritoryHexSheet.png'", "Texture Error");
 			return false;
 		}
 
+		m_levelSelectBackground = HAPI_Wrapper::makeSpriteSheet("levelSelectBackground.png");
+		if (!m_levelSelectBackground)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'levelSelectBackground.png'", "Texture Error");
+		}
+
+		m_levelSelect1 = HAPI_Wrapper::makeSpriteSheet("level1Button.png", 2);
+		if (!m_levelSelect1)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'level1Button.png'", "Texture Error");
+			return false;
+		}
+		m_levelSelect2 = HAPI_Wrapper::makeSpriteSheet("level2Button.png", 2);
+		if (!m_levelSelect2)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'level2Button.png'", "Texture Error");
+			return false;
+		}
+		m_levelSelect3 = HAPI_Wrapper::makeSpriteSheet("level3Button.png", 2);
+		if (!m_levelSelect3)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'level3Button.png'", "Texture Error");
+			return false;
+		}
+		m_levelSelect4 = HAPI_Wrapper::makeSpriteSheet("level4Button.png", 2);
+		if (!m_levelSelect4)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'level4Button.png'", "Texture Error");
+			return false;
+		}
+		m_levelSelect5 = HAPI_Wrapper::makeSpriteSheet("level5Button.png", 2);
+		if (!m_levelSelect5)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'level5Button.png'", "Texture Error");
+			return false;
+		}
+	
+		m_playerSelectIconYellow = HAPI_Wrapper::makeSpriteSheet("yellowSelectBtn.png", 3);
+		if (!m_playerSelectIconYellow)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'yellowSelectBtn.png'", "Texture Error");
+			return false;
+		}
+		m_playerSelectIconGreen = HAPI_Wrapper::makeSpriteSheet("greenSelectBtn.png", 3);
+		if (!m_playerSelectIconGreen)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'greenSelectBtn.png'", "Texture Error");
+			return false;
+		}
+		m_playerSelectIconRed = HAPI_Wrapper::makeSpriteSheet("redSelectBtn.png", 3);
+		if (!m_playerSelectIconRed)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'redSelectBtn.png'", "Texture Error");
+			return false;
+		}
+		m_playerSelectIconBlue = HAPI_Wrapper::makeSpriteSheet("blueSelectBtn.png", 3);
+		if (!m_playerSelectIconBlue)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'blueSelectBtn.png'", "Texture Error");
+			return false;
+		}
+		m_playerSelectBackground = HAPI_Wrapper::makeSpriteSheet("playerSelectBackground.png");
+		if (!m_playerSelectBackground)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'playerSelectBackground.png'", "Texture Error");
+			return false;
+		}
 		m_prebattleUIBackground = HAPI_Wrapper::makeSpriteSheet("PrebattleUI.png");
 		if (!m_prebattleUIBackground)
 		{
@@ -49,6 +110,7 @@ struct Textures
 			HAPI_Sprites.UserMessage("Cannot Load : 'PrebattleUIBackButton.png'", "Texture Error");
 			return false;
 		}
+
 
 		m_thing = HAPI_Wrapper::makeSpriteSheet("thing.png");
 		if (!m_thing)
@@ -97,6 +159,13 @@ struct Textures
 		if (!m_battleIcons)
 		{
 			HAPI_Sprites.UserMessage("Cannot Load : 'battleIcons.png'", "Texture Error");
+			return false;
+		}
+
+		m_endPhaseButtons = HAPI_Wrapper::makeSpriteSheet("endPhaseButtons.png", 4);
+		if (!m_endPhaseButtons)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'endPhaseButtons.png'", "Texture Error");
 			return false;
 		}
 
@@ -280,17 +349,73 @@ struct Textures
 			HAPI_Sprites.UserMessage("Connot Load: 'shipYellowSnipe.xml'", "Texture Error");
 			return false;
 		}
+
 		m_background = HAPI_Wrapper::makeSpriteSheet("background.jpg");
 		if (!m_background)
 		{
+			HAPI_Sprites.UserMessage("Connot Load: 'background.jpg'", "Texture Error");
 			return false;
 		}
+
+
+		m_explosion = HAPI_Wrapper::loadSpriteSheet("explosion.xml");
+		if (!m_explosion)
+		{
+			HAPI_Sprites.UserMessage("Connot Load: 'explosion.xml'", "Texture Error");
+			return false;
+		}
+
+		m_fire = HAPI_Wrapper::loadSpriteSheet("fire.xml");
+		if (!m_fire)
+		{
+			HAPI_Sprites.UserMessage("Connot Load: 'fire.xml'", "Texture Error");
+			return false;
+		}
+		
+		m_redSpawnHex = HAPI_Wrapper::makeSpriteSheet("spawnHexRed.png");
+		if (!m_redSpawnHex)
+		{
+			HAPI_Sprites.UserMessage("Connot Load: 'spawnHexRed.png'", "Texture Error");
+			return false;
+		}
+
+		m_blueSpawnHex = HAPI_Wrapper::makeSpriteSheet("spawnHexBlue.png");
+		if (!m_blueSpawnHex)
+		{
+			HAPI_Sprites.UserMessage("Connot Load: 'spawnHexBlue.png'", "Texture Error");
+			return false;
+		}
+
+		m_yellowSpawnHex = HAPI_Wrapper::makeSpriteSheet("spawnHexYellow.png");
+		if (!m_yellowSpawnHex)
+		{
+			HAPI_Sprites.UserMessage("Connot Load: 'spawnHexYellow.png'", "Texture Error");
+			return false;
+		}
+
+		m_greenSpawnHex = HAPI_Wrapper::makeSpriteSheet("spawnHexGreen.png");
+		if (!m_greenSpawnHex)
+		{
+			HAPI_Sprites.UserMessage("Connot Load: 'spawnHexGreen.png'", "Texture Error");
+			return false;
+		}
+
 		return true;
 	}
 
 	static std::shared_ptr<SpriteSheet> m_mouseCrossHair;
-	static std::shared_ptr<SpriteSheet> m_battleMapBackground;
 	static std::shared_ptr<SpriteSheet> m_enemyTerritoryHexSheet;
+	static std::shared_ptr<SpriteSheet> m_levelSelectBackground;
+	static std::shared_ptr<SpriteSheet> m_levelSelect1;
+	static std::shared_ptr<SpriteSheet> m_levelSelect2;
+	static std::shared_ptr<SpriteSheet> m_levelSelect3;
+	static std::shared_ptr<SpriteSheet> m_levelSelect4;
+	static std::shared_ptr<SpriteSheet> m_levelSelect5;
+	static std::shared_ptr<SpriteSheet> m_playerSelectIconYellow;
+	static std::shared_ptr<SpriteSheet> m_playerSelectIconGreen;
+	static std::shared_ptr<SpriteSheet> m_playerSelectIconRed;
+	static std::shared_ptr<SpriteSheet> m_playerSelectIconBlue;
+	static std::shared_ptr<SpriteSheet> m_playerSelectBackground;
 	static std::shared_ptr<SpriteSheet> m_prebattleUIBackground;
 	static std::shared_ptr<SpriteSheet> m_preBattleUIPlayButton;
 	static std::shared_ptr<SpriteSheet> m_preBattleUIBackButton;
@@ -302,6 +427,7 @@ struct Textures
 	static std::shared_ptr<SpriteSheet> m_spawnHex;
 	static std::shared_ptr<SpriteSheet> m_selectedHex;
 	static std::shared_ptr<SpriteSheet> m_battleIcons;
+	static std::shared_ptr<SpriteSheet> m_endPhaseButtons;
 	static std::shared_ptr<SpriteSheet> m_pauseButton;
 	static std::shared_ptr<SpriteSheet> m_chickenButton;
 	static std::shared_ptr<SpriteSheet> m_pauseMenuBackground;
@@ -329,5 +455,13 @@ struct Textures
 	static std::shared_ptr<SpriteSheet> m_yellowShipMelee;
 	static std::shared_ptr<SpriteSheet> m_yellowShipSnipe;
 
+
 	static std::shared_ptr<SpriteSheet> m_background;
+	static std::shared_ptr<SpriteSheet> m_explosion;
+	static std::shared_ptr<SpriteSheet> m_fire;
+
+	static std::shared_ptr<SpriteSheet> m_redSpawnHex;
+	static std::shared_ptr<SpriteSheet> m_blueSpawnHex;
+	static std::shared_ptr<SpriteSheet> m_yellowSpawnHex;
+	static std::shared_ptr<SpriteSheet> m_greenSpawnHex;
 };

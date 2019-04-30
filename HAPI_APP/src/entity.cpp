@@ -2,6 +2,7 @@
 #include "Map.h"
 #include "Pathfinding.h"
 #include "Textures.h"
+#include "GameEventMessenger.h"
 
 constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
 constexpr size_t WEAPON_HIGHLIGHT_SIZE{ 200 };
@@ -9,8 +10,9 @@ constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
 
 //ENTITY BATTLE PROPERTIES
-EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosition, eDirection startingDirection)
-	: m_currentPosition(startingPosition),
+EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosition, FactionName factionName, eDirection startingDirection)
+	: m_factionName(factionName),
+	m_currentPosition(startingPosition),
 	m_pathToTile(),
 	m_movementTimer(0.35f),
 	m_movedToDestination(false),
@@ -18,8 +20,16 @@ EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosit
 	m_movementPathSize(0),
 	m_currentDirection(startingDirection),
 	m_weaponFired(false),
-	m_isDead(false)
-{}
+	m_isDead(false),
+	m_actionSprite(factionName)
+{
+	GameEventMessenger::getInstance().subscribe(std::bind(&EntityBattleProperties::onNewTurn, this), "EntityBattleProperties", GameEvent::eNewTurn);
+}
+
+EntityBattleProperties::~EntityBattleProperties()
+{
+	GameEventMessenger::getInstance().unsubscribe("EntityBattleProperties", GameEvent::eNewTurn);
+}
 
 eDirection EntityBattleProperties::getCurrentDirection() const
 {
@@ -44,6 +54,11 @@ bool EntityBattleProperties::isWeaponFired() const
 bool EntityBattleProperties::isDead() const
 {
 	return m_isDead;
+}
+
+bool EntityBattleProperties::isMoving() const
+{
+	return !m_pathToTile.empty();
 }
 
 //MOVEMENT PATH NODE
@@ -164,6 +179,19 @@ void EntityBattleProperties::clearMovementPath()
 	m_movementPath.clearPath();
 }
 
+void EntityBattleProperties::enableAction()
+{
+	if (!m_isDead)
+	{
+		m_actionSprite.active = true;
+	}
+}
+
+void EntityBattleProperties::disableAction()
+{
+	m_actionSprite.active = false;
+}
+
 bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 {
 	if (!m_movedToDestination)
@@ -174,6 +202,7 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 			m_pathToTile = pathToTile;
 			map.moveEntity(m_currentPosition, pathToTile.back().second);
 			m_movedToDestination = true;
+			m_actionSprite.active = false;
 			return true;
 		}
 		else
@@ -197,6 +226,7 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection e
 			m_pathToTile = pathToTile;
 			map.moveEntity(m_currentPosition, pathToTile.back().second);
 			m_movedToDestination = true;
+			m_actionSprite.active = false;
 			return true;
 		}
 		else
@@ -233,15 +263,29 @@ void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int
 		entitySprite->SetFrameNumber(eShipSpriteFrame::eDead);
 		entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
 		m_isDead = true;
-		
+		m_actionSprite.active = false;
+		switch (entityFaction)
+		{
+		case FactionName::eYellow :
+			GameEventMessenger::broadcast(GameEvent::eYellowShipDestroyed);
+			break;
+		case FactionName::eGreen :
+			GameEventMessenger::broadcast(GameEvent::eGreenShipDestroyed);
+			break;
+		case FactionName::eRed :
+			GameEventMessenger::broadcast(GameEvent::eRedShipDestroyed);
+			break;
+		case FactionName::eBlue :
+			GameEventMessenger::broadcast(GameEvent::eBlueShipDestroyed);
+			break;
+		}
 	}
-	
-	
 }
 
 void EntityBattleProperties::fireWeapon()
 {
 	m_weaponFired = true;
+	m_actionSprite.active = false;
 }
 
 void EntityBattleProperties::setMoved()
@@ -277,7 +321,7 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 }
 
 //ENTITY
-EntityProperties::EntityProperties(FactionName factionName, EntityType entityType)
+EntityProperties::EntityProperties(FactionName factionName, EntityType entityType) : m_upgradePoints(4), m_maxUpgradePoints(4), m_selectedSprite(HAPI_Sprites.MakeSprite(Textures::m_thing))
 	
 {
 	//TODO: Currently not working as intended
@@ -287,34 +331,50 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 	{
 	case EntityType::eCruiser:
 		m_movementPoints = 15;
-		m_healthMax = 15;
-		m_currentHealth = 10;
-		m_range = 6;
-		m_damage = 5;
+		m_healthMax = 7;
+		m_currentHealth = 7;
+		m_range = 5;
+		m_damage = 2;
+		m_originalMovement = 15;
+		m_originalHealth = 7;
+		m_originalRange = 5;
+		m_originalDamage = 2;
 		m_weaponType = eWeaponType::eSideCannons;
 		break;
 	case EntityType::eBattleShip:
-		m_movementPoints = 10;
-		m_healthMax = 25;
-		m_currentHealth = 25;
+		m_movementPoints = 15;
+		m_healthMax = 8;
+		m_currentHealth = 8;
 		m_range = 2;
-		m_damage = 7;
+		m_damage = 2;
+		m_originalMovement = 15;
+		m_originalHealth = 8;
+		m_originalRange = 2;
+		m_originalDamage = 2;
 		m_weaponType = eWeaponType::eShotgun;
 		break;
 	case EntityType::eDestroyer:
 		m_movementPoints = 20;
-		m_healthMax = 10;
-		m_currentHealth = 10;
+		m_healthMax = 6;
+		m_currentHealth = 6;
 		m_range = 6;
-		m_damage = 5;
+		m_damage = 3;
+		m_originalMovement = 20;
+		m_originalHealth = 6;
+		m_originalRange = 6;
+		m_originalDamage = 3;
 		m_weaponType = eWeaponType::eFlamethrower;
 		break;
 	case EntityType::eGunBoat:
-		m_movementPoints = 8;
-		m_healthMax = 8;
-		m_currentHealth = 8;
-		m_range = 15;
-		m_damage = 9;
+		m_movementPoints = 10;
+		m_healthMax = 5;
+		m_currentHealth = 5;
+		m_range = 12;
+		m_damage = 2;
+		m_originalMovement = 10;
+		m_originalHealth = 5;
+		m_originalRange = 12;
+		m_originalDamage = 2;
 		m_weaponType = eWeaponType::eStraightShot;
 		break;
 	}
@@ -418,10 +478,9 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 	m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
 }
 
-
 BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const EntityProperties& entityProperties, Map& map, FactionName playerName, eDirection startingDirection)
 	: m_entityProperties(entityProperties),
-	m_battleProperties(startingPosition, startingDirection),
+	m_battleProperties(startingPosition, playerName, startingDirection),
 	m_factionName(playerName)
 {
 	m_entityProperties.m_sprite->GetTransformComp().SetRotation(DEGREES_TO_RADIANS(startingDirection * 60 % 360));
@@ -463,10 +522,48 @@ void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, 
 
 	sprite->Render(SCREEN_SURFACE);
 	m_movementPath.render(map);
+	m_actionSprite.render(map, m_currentPosition);
 }
 
 //BATTLE PLAYER
 BattlePlayer::BattlePlayer(FactionName name)
 	: m_entities(),
-	m_factionName(name)
+	m_factionName(name),
+	m_eliminated(false)
 {}
+
+EntityBattleProperties::ActionSprite::ActionSprite(FactionName factionName)
+	: sprite(),
+	active(false)
+{
+	switch (factionName)
+	{
+	case FactionName::eYellow :
+		sprite = HAPI_Sprites.MakeSprite(Textures::m_yellowSpawnHex);
+		break;
+	case FactionName::eBlue :
+		sprite = HAPI_Sprites.MakeSprite(Textures::m_blueSpawnHex);
+		break;
+	case FactionName::eGreen :
+		sprite = HAPI_Sprites.MakeSprite(Textures::m_greenSpawnHex);
+		break;
+	case FactionName::eRed :
+		sprite = HAPI_Sprites.MakeSprite(Textures::m_redSpawnHex);
+		break;
+	}
+
+	sprite->GetTransformComp().SetOriginToCentreOfFrame();
+	sprite->GetTransformComp().SetScaling({ 2.f, 2.f });
+}
+
+void EntityBattleProperties::ActionSprite::render(const Map& map, std::pair<int, int> currentEntityPosition) const
+{
+	if (active)
+	{
+		auto screenPosition = map.getTileScreenPos(currentEntityPosition);
+		sprite->GetTransformComp().SetPosition({
+		(float)screenPosition.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale() ,
+		(float)screenPosition.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
+		sprite->Render(SCREEN_SURFACE);
+	}
+}

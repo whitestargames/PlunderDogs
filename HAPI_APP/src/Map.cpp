@@ -8,12 +8,19 @@
 #include "Textures.h"
 #include "GameEventMessenger.h"
 #include "Utilities/MapParser.h"
+#include <algorithm>
 
 typedef std::pair<int, int> intPair;
 
 constexpr int FRAME_HEIGHT{ 28 };
 constexpr float FRAME_CENTRE_X{ 15.5 };
 constexpr float FRAME_CENTRE_Y{ 32.5 };
+
+//SpawnPosition
+Map::SpawnPosition::SpawnPosition(std::pair<int, int> spawnPosition)
+	: position(spawnPosition),
+	inUse(false)
+{}
 
 void Map::drawMap() const 
 {
@@ -224,20 +231,25 @@ std::vector<Tile*> Map::getAdjacentTiles(intPair coord)
 	return result;
 }
 
-std::vector<Tile*> Map::getTileRadius(intPair coord, int range)
+std::vector<Tile*> Map::getTileRadius(intPair coord, int range, bool avoidInvalid, bool includeSource)
 {
 	if (range < 1)
 		HAPI_Sprites.UserMessage("getTileRadius range less than 1", "Map error");
 	
 	int reserveSize{ 0 };
+	if (includeSource)
+		reserveSize++;
 	for (int i = 1; i <= range; i++)
 	{
 		reserveSize += 6 * i;
 	}
 	std::vector<Tile*> tileStore;
-
 	tileStore.reserve((size_t)reserveSize);
-
+	if (includeSource)
+	{
+		tileStore.push_back(getTile(coord));
+	}
+	
 	intPair cubeCoord(offsetToCube(coord));
 
 	for (int y = std::max(0, coord.second - range);
@@ -252,7 +264,20 @@ std::vector<Tile*> Map::getTileRadius(intPair coord, int range)
 			{
 				if (cubeDistance(cubeCoord, offsetToCube(intPair(x, y))) <= range)
 				{
-					tileStore.push_back(getTile(intPair(x, y)));
+					Tile* pushBackTile = getTile(intPair(x, y));
+					if (!pushBackTile)
+						continue;
+					if (avoidInvalid)
+					{
+						if (!((pushBackTile->m_entityOnTile) || (pushBackTile->m_type != eTileType::eSea && pushBackTile->m_type != eTileType::eOcean)))
+						{
+							tileStore.push_back(getTile(intPair(x, y)));
+						}
+					}
+					else
+					{
+						tileStore.push_back(getTile(intPair(x, y)));
+					}
 				}
 			}
 		}
@@ -260,7 +285,7 @@ std::vector<Tile*> Map::getTileRadius(intPair coord, int range)
 	return tileStore;
 }
 
-std::vector<Tile*> Map::getTileCone(intPair coord, int range, eDirection direction)
+std::vector<Tile*> Map::getTileCone(intPair coord, int range, eDirection direction, bool avoidInvalid)
 {
 	if (range < 1)
 		HAPI_Sprites.UserMessage("getTileCone range less than 1", "Map error");
@@ -290,9 +315,17 @@ std::vector<Tile*> Map::getTileCone(intPair coord, int range, eDirection directi
 				{
 					if (inCone(cubeCoord, tempCube, direction))
 					{
-						Tile* tile = getTile(intPair(x, y));
-
-						if (tile && (tile->m_type == eTileType::eSea || tile->m_type == eTileType::eOcean))
+						Tile* pushBackTile = getTile(intPair(x, y));
+						if (!pushBackTile)
+							continue;
+						if (avoidInvalid)
+						{
+							if (!((pushBackTile->m_entityOnTile) || (pushBackTile->m_type != eTileType::eSea && pushBackTile->m_type != eTileType::eOcean)))
+							{
+								tileStore.push_back(getTile(intPair(x, y)));
+							}
+						}
+						else
 						{
 							tileStore.push_back(getTile(intPair(x, y)));
 						}
@@ -304,7 +337,7 @@ std::vector<Tile*> Map::getTileCone(intPair coord, int range, eDirection directi
 	return tileStore;
 }
 
-std::vector<const Tile*> Map::cGetTileCone(intPair coord, int range, eDirection direction) const
+std::vector<const Tile*> Map::cGetTileCone(intPair coord, int range, eDirection direction, bool avoidInvalid) const
 {
 	if (range < 1)
 		HAPI_Sprites.UserMessage("getTileCone range less than 1", "Map error");
@@ -334,11 +367,19 @@ std::vector<const Tile*> Map::cGetTileCone(intPair coord, int range, eDirection 
 				{
 					if (inCone(cubeCoord, tempCube, direction))
 					{
-						const Tile* tile = getTile(intPair(x, y));
-						//TODO: make this check occur only in a special case
-						if (tile && (tile->m_type == eTileType::eSea || tile->m_type == eTileType::eOcean))
+						const Tile* pushBackTile = getTile(intPair(x, y));
+						if (!pushBackTile)
+							continue;
+						if (avoidInvalid)
 						{
-							tileStore.push_back(tile);
+							if (!((pushBackTile->m_entityOnTile) || (pushBackTile->m_type != eTileType::eSea && pushBackTile->m_type != eTileType::eOcean)))
+							{
+								tileStore.push_back(getTile(intPair(x, y)));
+							}
+						}
+						else
+						{
+							tileStore.push_back(getTile(intPair(x, y)));
 						}
 					}
 				}
@@ -423,15 +464,13 @@ intPair Map::getMouseClickCoord(intPair mouseCoord) const
 
 void Map::loadmap(const std::string & mapName)
 {
-	MapDetails mapDetails = MapParser::parseMap(mapName);
+	MapDetails mapDetails = MapParser::parseMapDetails(mapName);
 	m_mapDimensions = mapDetails.mapDimensions;
 	m_data.reserve(m_mapDimensions.first * m_mapDimensions.second);
-
-	//TODO: Will be loaded in through Tiled
-	m_spawnPositions.emplace_back(11, 6);
-	m_spawnPositions.emplace_back(8, 18);
-	m_spawnPositions.emplace_back(28, 28);
-	m_spawnPositions.emplace_back(20, 10);
+	for (auto spawnPosition : mapDetails.m_spawnPositions)
+	{
+		m_spawnPositions.push_back(spawnPosition);
+	}
 
 	for (int y = 0; y < m_mapDimensions.second; y++)
 	{
@@ -527,19 +566,24 @@ std::vector<const Tile*> Map::cGetAdjacentTiles(std::pair<int, int> coord) const
 	return result;
 }
 
-std::vector<const Tile*> Map::cGetTileRadius(std::pair<int, int> coord, int range) const
+std::vector<const Tile*> Map::cGetTileRadius(std::pair<int, int> coord, int range, bool avoidInvalid, bool includeSource) const
 {
 	if (range < 1)
 		HAPI_Sprites.UserMessage("getTileRadius range less than 1", "Map error");
 
 	int reserveSize{ 0 };
+	if (includeSource)
+		reserveSize++;
 	for (int i = 1; i <= range; i++)
 	{
 		reserveSize += 6 * i;
 	}
 	std::vector<const Tile*> tileStore;
-
 	tileStore.reserve((size_t)reserveSize);
+	if (includeSource)
+	{
+		tileStore.push_back(getTile(coord));
+	}
 
 	intPair cubeCoord(offsetToCube(coord));
 
@@ -555,7 +599,20 @@ std::vector<const Tile*> Map::cGetTileRadius(std::pair<int, int> coord, int rang
 			{
 				if (cubeDistance(cubeCoord, offsetToCube(intPair(x, y))) <= range)
 				{
-					tileStore.push_back(getTile(intPair(x, y)));
+					const Tile* pushBackTile = getTile(intPair(x, y));
+					if (!pushBackTile)
+						continue;
+					if (avoidInvalid)
+					{
+						if (!((pushBackTile->m_entityOnTile) || (pushBackTile->m_type != eTileType::eSea && pushBackTile->m_type != eTileType::eOcean)))
+						{
+							tileStore.push_back(getTile(intPair(x, y)));
+						}
+					}
+					else
+					{
+						tileStore.push_back(getTile(intPair(x, y)));
+					}
 				}
 			}
 		}
@@ -564,31 +621,40 @@ std::vector<const Tile*> Map::cGetTileRadius(std::pair<int, int> coord, int rang
 }
 
 std::vector<Tile*> Map::getTileLine(
-	std::pair<int, int> coord, int range, eDirection direction)
+	std::pair<int, int> coord, int range, eDirection direction, bool avoidInvalid)
 {
 	std::vector<Tile*> tileStore;
 	tileStore.reserve(range);
 	Tile* pushBackTile{ getTile(coord) };
 	for (int i = 0; i < range; i++)
 	{
-		if (pushBackTile)
-			pushBackTile = getAdjacentTiles(pushBackTile->m_tileCoordinate)[direction];
+		if (!pushBackTile)
+			continue;
+		pushBackTile = getAdjacentTiles(pushBackTile->m_tileCoordinate)[direction];
+		if (avoidInvalid && (pushBackTile && ((pushBackTile->m_entityOnTile) || (pushBackTile->m_type != eTileType::eSea && pushBackTile->m_type != eTileType::eOcean))))
+		{
+			break;
+		}
 		tileStore.emplace_back(pushBackTile);
 	}
 	return tileStore;
 }
 
 std::vector<const Tile*> Map::cGetTileLine(
-	std::pair<int, int> coord, int range, eDirection direction)const
+	std::pair<int, int> coord, int range, eDirection direction, bool avoidInvalid)const
 {
 	std::vector<const Tile*> tileStore;
 	tileStore.reserve(range);
 	const Tile* pushBackTile{ getTile(coord) };
-	assert(pushBackTile);
 	for (int i = 0; i < range; i++)
 	{
-		if (pushBackTile)
-			pushBackTile = cGetAdjacentTiles(pushBackTile->m_tileCoordinate)[direction];
+		if (!pushBackTile)
+			continue;
+		pushBackTile = cGetAdjacentTiles(pushBackTile->m_tileCoordinate)[direction]; 
+		if (avoidInvalid && (pushBackTile && ((pushBackTile->m_entityOnTile) || (pushBackTile->m_type != eTileType::eSea && pushBackTile->m_type != eTileType::eOcean))))
+		{
+			break;
+		}
 		tileStore.emplace_back(pushBackTile);
 	}
 	return tileStore;
@@ -652,4 +718,25 @@ std::vector<const Tile*> Map::cGetTileRing(std::pair<int, int> coord, int range)
 		}
 	}
 	return tileStore;
+}
+
+std::pair<int, int> Map::getSpawnPosition()
+{
+	//Make sure all spawn positions aren't in use
+	assert(std::find_if(m_spawnPositions.cbegin(), m_spawnPositions.cend(),
+		[](const auto& spawnPosition) { return spawnPosition.inUse == false; }) != m_spawnPositions.cend());
+
+	bool validSpawnPositionFound = false;
+	std::pair<int, int> spawnPosition;
+	while (!validSpawnPositionFound)
+	{
+		int randNumb = Utilities::getRandomNumber(0, static_cast<int>(m_spawnPositions.size()) - 1);
+		if (!m_spawnPositions[randNumb].inUse)
+		{
+			m_spawnPositions[randNumb].inUse = true;
+			spawnPosition = m_spawnPositions[randNumb].position;
+			validSpawnPositionFound = true;
+		}
+	}
+	return spawnPosition;
 }

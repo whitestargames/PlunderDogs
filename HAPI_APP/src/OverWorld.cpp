@@ -7,11 +7,13 @@
 std::vector<EntityProperties> assignEntities(FactionName name)
 {
 	std::vector<EntityProperties> entities;
-	for (int i = 0; i < 20; i++)
+	for (int i = 0; i < 4; i++)
 	{
-		EntityProperties newEntity(name, (EntityType)(rand()%4));
-
-		entities.push_back(newEntity);
+		for (int j = 0; j < 4; j++)
+		{
+			EntityProperties newEntity(name, (EntityType)(i));
+			entities.push_back(newEntity);
+		}
 	}
 	assert(!entities.empty());
 	return entities;
@@ -33,9 +35,6 @@ OverWorld::OverWorld()
 {
 	GameEventMessenger::getInstance().subscribe(std::bind(&OverWorld::onReset, this), "OverWorld", GameEvent::eResetBattle);
 	m_players.emplace_back(FactionName::eYellow);
-	m_players.emplace_back(FactionName::eBlue);
-	m_players.emplace_back(FactionName::eGreen);
-	m_players.emplace_back(FactionName::eRed);
 	
 	m_GUI.reset(m_players[m_currentPlayer].m_entities);
 }
@@ -49,8 +48,22 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 {
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
+		if (OverWorldGUI::CURRENT_WINDOW == eLevelSelection)
+			// put bool to stop this triggering more than once only wants to trigger on first enter
+		{
+			if (m_GUI.getLeftPlayerSelectionTrig())
+			{
+				m_GUI.setActivePlayers(m_players);
+				onReset();
+				m_GUI.setLeftPlayerSelectionTrig (false);
+				
+			}
+		// create bool which triggers if leaving selection into map or leaving map into fleat
+		}
+
 		bool selectNextPlayer = false;
-		m_GUI.onLeftClick(mouseData, m_players[m_currentPlayer], selectNextPlayer);
+		bool resetPlayer = false;
+		m_GUI.onLeftClick(mouseData, m_players[m_currentPlayer], selectNextPlayer, resetPlayer);
 		if (selectNextPlayer && m_currentPlayer <= static_cast<int>(m_players.size()) - 1)
 		{
 			++m_currentPlayer;
@@ -60,13 +73,20 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 				m_GUI.reset(m_players[m_currentPlayer].m_entities);
 			}
 		}
+		if (resetPlayer)
+		{
+		//m_currentPlayer = 0;
+		//m_GUI.setShipSelectionTrigger(false);
+		//	m_GUI.reset(m_players[m_currentPlayer].m_entities);
+			onReset();
+			return;
+		}
 		if (m_currentPlayer == static_cast<int>(m_players.size()))
 		{
 			m_startBattle = true;
 			m_currentPlayer = 0;
 			return;
 		}
-		
 	}
 	if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
@@ -92,7 +112,7 @@ void OverWorld::update(float deltaTime)
 	}
 
 	if (OverWorldGUI::CURRENT_WINDOW == eBattle)
-	{		
+	{
 		m_battle.update(deltaTime);
 	}
 }
@@ -101,10 +121,11 @@ void OverWorld::startBattle()
 {
 	if (m_startBattle)
 	{
+		m_GUI.setShipSelectionTrigger(false);
 		OverWorldGUI::CURRENT_WINDOW = eBattle;
 		
 		std::vector<std::pair<FactionName, std::vector<EntityProperties*>>> playersInBattle;
-		for (auto& player : m_players)
+		for (const auto& player : m_players)
 		{
 			std::pair<FactionName, std::vector<EntityProperties*>> p;
 			p.first = player.m_factionName;
@@ -112,7 +133,8 @@ void OverWorld::startBattle()
 			playersInBattle.push_back(p);
 		}
 		m_GUI.clear();
-		m_battle.startBattle("Level1.tmx", playersInBattle);
+		
+		m_battle.startBattle(m_GUI.getSelectedMap(), playersInBattle);
 		
 		for (auto& player : m_players)
 		{
@@ -125,12 +147,13 @@ void OverWorld::startBattle()
 
 void OverWorld::onReset()
 {
+	m_GUI.setShipSelectionTrigger(false);
 	m_currentPlayer = 0;
 	m_selectNextPlayer = false;
-	m_players.clear();
-	m_players.emplace_back(FactionName::eYellow);
-	m_players.emplace_back(FactionName::eBlue);
-	m_players.emplace_back(FactionName::eGreen);
-	m_players.emplace_back(FactionName::eRed);
+	//m_players.clear();
+	//m_players.emplace_back(FactionName::eYellow);
+	//m_players.emplace_back(FactionName::eBlue);
+	//m_players.emplace_back(FactionName::eGreen);
+	//m_players.emplace_back(FactionName::eRed);
 	m_GUI.reset(m_players[m_currentPlayer].m_entities);
 }

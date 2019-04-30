@@ -1,6 +1,15 @@
 #include "OverWorld.h"
 #include "Textures.h"
-//#include "BattleGUI.h"
+
+//TODO: AUDIO PLAYER
+//TODO: Target area appearing on land
+//TODO: BATTLEUI Sprites not drawin correctly - dragging around screen
+//TODO: CAn seemingly place ships on land
+//TODO: Notify game Won 
+//TODO: Sniper directly facing a collidable tile - line still draws
+
+//CLEAR MOVEMENT UI WHEN ENDING PHASE EARLY
+
 using namespace HAPISPACE;
 
 float getDeltaTime(int frameStart, int lastFrameStart)
@@ -11,8 +20,6 @@ float getDeltaTime(int frameStart, int lastFrameStart)
 void HAPI_Sprites_Main()
 {
 	std::pair<int, int> windowSize(1920, 1080);
-	//if (!HAPI_Sprites.Initialise(windowSize.first, windowSize.second, "Plunder Dogs", eHSFullscreen))
-	//	return;
 	if (!HAPI_Sprites.Initialise(windowSize.first, windowSize.second, "Plunder Dogs", eHSEnableUI))
 		return;
 

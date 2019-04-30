@@ -10,7 +10,21 @@
 
 enum GameEvent
 {
-	eResetBattle = 0
+	eResetBattle = 0,
+	eNewTurn,
+	eYellowShipDestroyed,
+	eBlueShipDestroyed,
+	eGreenShipDestroyed,
+	eRedShipDestroyed,
+	eRedWin,
+	eYellowWin,
+	eGreenWin,
+	eBlueWin,
+	eEnteringMovementPhase,
+	eEnteringAttackPhase,
+	eEndMovementPhaseEarly,
+	eEndAttackPhaseEarly,
+	eUnableToSkipPhase
 };
 
 class Listener
@@ -24,7 +38,6 @@ public:
 	std::function<void(GameEvent)> m_listener;
 	std::string m_name;
 };
-
 
 class GameEventMessenger
 {
@@ -51,10 +64,7 @@ public:
 	static void broadcast(GameEvent message)
 	{
 		auto iter = m_listeners.find(message);
-		if (iter == m_listeners.cend())
-		{
-			return;
-		}
+		assert(iter != m_listeners.cend());
 
 		for (const auto& listener : iter->second)
 		{

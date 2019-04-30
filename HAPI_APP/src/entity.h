@@ -6,7 +6,6 @@
 #include "Timer.h"
 #include "Global.h"
 
-
 struct MoveCounter
 {
 	MoveCounter()
@@ -26,22 +25,39 @@ enum class EntityType
 struct Tile;
 struct Weapons;
 class Map;
-
 struct EntityProperties
 {
 	EntityProperties(FactionName factionName, EntityType entityType);
+	EntityProperties() {};
 
 	std::shared_ptr<HAPISPACE::Sprite> m_sprite;
+	std::shared_ptr<HAPISPACE::Sprite> m_selectedSprite;
 	int m_movementPoints;
+	int m_originalMovement;
 	int m_healthMax;
+	int m_originalHealth;
 	int m_currentHealth;
 	int m_range;
+	int m_originalRange;
 	int m_damage;
-	eWeaponType m_weaponType;
+	int m_originalDamage;
+	int m_weaponType;
+	int m_upgradePoints;
+	int m_maxUpgradePoints;
 };
 
 class EntityBattleProperties
 {
+	struct ActionSprite
+	{
+		ActionSprite(FactionName factionName);
+
+		void render(const Map& map, std::pair<int, int> currentEntityPosition) const;
+
+		std::unique_ptr<Sprite> sprite;
+		bool active;
+	};
+
 	class MovementPath
 	{
 		struct PathNode
@@ -67,13 +83,15 @@ class EntityBattleProperties
 	};
 
 public:
-	EntityBattleProperties(std::pair<int, int> startingPosition, eDirection startingDirection = eNorth);
-
+	EntityBattleProperties(std::pair<int, int> startingPosition, FactionName factionName, eDirection startingDirection = eNorth);
+	~EntityBattleProperties();
+	const FactionName m_factionName;
 	eDirection getCurrentDirection() const;
 	bool isMovedToDestination() const;
 	std::pair<int, int> getCurrentPosition() const;
 	bool isWeaponFired() const;
 	bool isDead() const;
+	bool isMoving() const;
 
 	void update(float deltaTime, const Map& map, EntityProperties& entityProperties, MoveCounter& gameCounter);
 	void render(std::shared_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
@@ -88,6 +106,8 @@ public:
 	void setMoved();
 	void onNewTurn();
 
+	void enableAction();
+	void disableAction();
 private:
 	std::pair<int, int> m_currentPosition;
 	std::deque<std::pair<eDirection, std::pair<int, int>>> m_pathToTile;
@@ -98,6 +118,7 @@ private:
 	bool m_weaponFired;
 	bool m_movedToDestination;
 	bool m_isDead;
+	ActionSprite m_actionSprite;
 
 	void handleRotation(EntityProperties& entityProperties);
 };
@@ -127,4 +148,5 @@ struct BattlePlayer
 
 	std::vector<std::shared_ptr<BattleEntity>> m_entities;
 	const FactionName m_factionName;
+	bool m_eliminated;
 };

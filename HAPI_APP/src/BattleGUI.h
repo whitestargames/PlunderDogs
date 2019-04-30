@@ -4,8 +4,11 @@
 #include <HAPISprites_UI.h>
 #include "Global.h"
 #include "Textures.h"
+#include "entity.h"
+
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
+
 
 enum BattleWindow
 {
@@ -13,7 +16,7 @@ enum BattleWindow
 	ePause,
 	ePostBattle
 };
-
+enum class BattlePhase;
 class BattleGUI
 {
 public:
@@ -22,14 +25,15 @@ public:
 
 	std::pair<int, int> getCameraPositionOffset() const;
 
-	void render() const;
+	void render(BattlePhase currentBattlePhase) const;
+	void renderStats(EntityProperties& entityProperties) const;
 	void update(eDirection windDirection);
 	void updateFactionToken(int factionName);
-	void OnMouseLeftClick(const HAPI_TMouseData& mouseData);
+	void OnMouseLeftClick(const HAPI_TMouseData& mouseData, BattlePhase currentBattlePhase);
 	//void OnMouseScroll could be added
-	void OnMouseMove(const HAPI_TMouseData& mouseData);
+	void OnMouseMove(const HAPI_TMouseData& mouseData, BattlePhase currentBattlePhase);
 	void setMaxCameraOffset(std::pair<int, int> maxCameraOffset);
-	
+	void snapCameraToPosition(std::pair<int, int> snapLocation);
 
 private:
 	BattleWindow m_currentBattleWindow;
@@ -45,15 +49,27 @@ private:
 	std::unique_ptr<Sprite> m_activeFactionToken;
 	std::unique_ptr<Sprite> m_CompassPointer;
 	std::unique_ptr<Sprite> m_CompassBackGround;
-	
+	std::unique_ptr<Sprite> m_endPhaseButtons;
+
 	DWORD animationStartTime;
 	bool shipSelected;
-	bool playAnimation;
+	bool playAnimation = false;
 	int animationOffset = 100;
+	
 	bool victory = false;
+	std::string winningFaction{ "" };
 	VectorF pendingCameraMovement{ 0 };
 	std::pair<int, int> CameraPositionOffset;//camera offset that will be used by the map
 	float cameraZoom = 1.0f;//variable to multiply scale by
 	std::pair<int, int> m_cameraPositionOffset;
-	void onReset();
+	
+	void onBattleReset();
+	std::string getWinningFactionName();
+	void onBlueWin();
+	void onGreenWin();
+	void onYellowWin();
+	void onRedWin();
+	void onEnteringMovementPhase();
+	void onEnteringAttackPhase();
+	void onUnableToSkipPhase();
 };
