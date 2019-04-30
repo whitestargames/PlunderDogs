@@ -34,7 +34,7 @@ void AudioPlayer::stopSound(const std::string & soundName)
 {
 	if (m_soundList[soundName].m_isPlaying)
 	{
-		HAPI_Sprites.StopSound(m_soundList[soundName].m_instanceId, false);
+		HAPI_Sprites.StopSound(m_soundList[soundName].m_instanceId, true);
 		m_soundList[soundName].m_isPlaying = false;
 	}
 	

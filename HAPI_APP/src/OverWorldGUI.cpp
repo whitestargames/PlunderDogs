@@ -176,7 +176,7 @@ void OverWorldGUI::render(Battle& battle)
 		case OverWorldWindow::eBattle:
 		{
 			AudioPlayer::getInstance().stopSound("main menu");
-			AudioPlayer::getInstance().playSound("battle theme");
+			//AudioPlayer::getInstance().playSound("battle theme");
 			battle.render();
 			break;
 		}
