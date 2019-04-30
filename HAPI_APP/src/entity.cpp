@@ -162,7 +162,7 @@ int EntityBattleProperties::MovementPath::generatePath(const Map& map, const Til
 
 		if (prevDir == map.getWindDirection() && bonusMove == 0)
 		{
-			bonusMove = (int)source.m_entityOnTile->m_entityProperties.m_movementPoints * map.getWindStrength();
+			bonusMove = static_cast<int>(source.m_entityOnTile->m_entityProperties.m_movementPoints * map.getWindStrength());
 			movementPointsUsed -= bonusMove;
 		}
 
