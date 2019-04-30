@@ -104,7 +104,7 @@ void OverWorld::startBattle()
 
 		m_GUI.setShipSelectionTrigger(false);
 		m_GUI.clear();
-		m_battle.startBattle(m_GUI.getSelectedMap(), m_players);
+		m_battle.start(m_GUI.getSelectedMap(), m_players);
 		m_startBattle = false;
 	}
 }

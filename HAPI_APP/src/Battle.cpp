@@ -60,27 +60,29 @@ Battle::~Battle()
 	GameEventMessenger::getInstance().unsubscribe("Battle", GameEvent::eEndAttackPhaseEarly);
 }
 
-void Battle::startBattle(const std::string & newMapName, std::vector<Player>& newPlayers)
+void Battle::start(const std::string & newMapName, std::vector<Player>& newPlayers)
 {
 	assert(!newPlayers.empty());
 	assert(m_players.empty());
 	m_map.loadmap(newMapName);
 
+	//TODO: Hack to correct sprite sizes
+	for (auto& player : newPlayers)
+	{
+		for (auto& entity : player.m_entities)
+		{
+			entity.m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
+			entity.m_sprite->GetTransformComp().SetScaling({ 1, 1 });
+		}
+	}
+
 	for (auto& player : newPlayers)
 	{
 		m_players.emplace_back(player.m_factionName, m_map.getSpawnPosition(), player.m_type);
 	}
-
 	
-	for (auto& player : newPlayers)
-	{
-		if (player.m_type == ePlayerType::eHuman)
-		{
-
-		}
-	}
-	
-	//m_battleUI.startShipPlacement(newPlayers., m_map);
+	m_battleUI.deployHumanPlayers(newPlayers, m_map, *this);
+	//AI::DeployAIPlayers
 
 	m_battleUI.loadGUI(m_map.getDimensions());
 }
@@ -297,6 +299,13 @@ BattlePhase Battle::getCurrentPhase() const
 FactionName Battle::getCurentFaction() const
 {
 	return m_players[m_currentPlayerTurn].m_factionName;
+}
+
+const BattlePlayer & Battle::getPlayer(FactionName factionName) const
+{
+	auto cIter = std::find_if(m_players.cbegin(), m_players.cend(), [factionName](const auto& player) { return player.m_factionName == factionName; });
+	assert(cIter != m_players.cend());
+	return *cIter;
 }
 
 void Battle::onYellowShipDestroyed()

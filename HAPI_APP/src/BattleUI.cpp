@@ -139,63 +139,31 @@ void BattleUI::FactionUpdateGUI(FactionName faction)
 //
 //}
 
-void BattleUI::startShipPlacement(const std::vector<Player>& newPlayers, Map& map)
+void BattleUI::deployHumanPlayers(const std::vector<Player>& newPlayers, Map& map, const Battle& battle)
 {
 	assert(m_battle.getCurrentPhase() == BattlePhase::ShipPlacement);
 	assert(m_playerShipPlacement.empty());
 
-	//TODO: Change this at some point
-	for (auto& player : newPlayers)
+	bool positionToSnapToChosen = false;
+	std::pair<int, int> positionToSnapTo;
+
+	for (const auto& player : newPlayers)
 	{
-		for (auto& entity : player.m_entities)
+		if(player.m_type == ePlayerType::eHuman)
 		{
-			switch (player.m_factionName)
+			if (!positionToSnapToChosen)
 			{
-			case FactionName::eYellow:
-				//entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthYellow);
-				entity.m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
-				entity.m_sprite->GetTransformComp().SetScaling({ 1, 1 });
-				break;
-			case FactionName::eBlue:
-				//entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthBlue);
-				entity.m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
-				entity.m_sprite->GetTransformComp().SetScaling({ 1, 1 });
-				break;
-			case FactionName::eRed:
-				//entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthRed);
-				entity.m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
-				entity.m_sprite->GetTransformComp().SetScaling({ 1, 1 });
-				break;
-			case FactionName::eGreen:
-				//entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthGreen);
-				entity.m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
-				entity.m_sprite->GetTransformComp().SetScaling({ 1, 1 });
-				break;
+				positionToSnapToChosen = true;
+				positionToSnapTo = battle.getPlayer(player.m_factionName).m_spawnPosition;
 			}
+
+			m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>(player.m_selectedEntities,
+				battle.getPlayer(player.m_factionName).m_spawnPosition, SHIP_PLACEMENT_SPAWN_RANGE, m_battle.getMap(), player.m_factionName));
 		}
 	}
 
-	for (auto& player : newPlayers)
-	{
-		m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>
-			(player.m_entities, map.getSpawnPosition(), SHIP_PLACEMENT_SPAWN_RANGE, m_battle.getMap(), player.m_factionName));
-	}
-
-	std::pair<int, int> firstSpawnPosition = map.getSpawnPosition();
-	for (int i = 0; i < players.size(); ++i)
-	{
-		if (i == 0)
-		{
-			m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>
-				(players[i].second, firstSpawnPosition, SHIP_PLACEMENT_SPAWN_RANGE, m_battle.getMap(), players[i].first));
-		}
-		else
-		{
-		
-		}
-	}
-
-	m_gui.snapCameraToPosition(firstSpawnPosition);
+	//Snap the Camera to the first position of play
+	m_gui.snapCameraToPosition(positionToSnapTo);
 }
 
 void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)

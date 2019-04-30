@@ -119,7 +119,7 @@ public:
 	//void newPhase();
 	//void newTurn(FactionName playersTurn);
 
-	void startShipPlacement(const std::vector<Player>& newPlayers, Map& map);
+	void deployHumanPlayers(const std::vector<Player>& newPlayers, Map& map, const Battle& battle);
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
