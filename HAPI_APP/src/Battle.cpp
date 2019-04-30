@@ -173,15 +173,16 @@ void Battle::nextTurn()
 {
 	m_moveCounter.m_counter = 0;
 	FactionName currentPlayer;
-	bool lastPlayer = false;
+	bool lastHumanPlayer = false;
 	switch (m_currentPhase)
 	{
 	case BattlePhase::ShipPlacement :
-		lastPlayer = (m_currentPlayerTurn == static_cast<int>(m_players.size()) - 1);
+		lastHumanPlayer = (m_battleUI.isHumanDeploymentCompleted());
 		incrementPlayerTurn();
-		if (lastPlayer)
+		if (lastHumanPlayer)
 		{
 			m_currentPhase = BattlePhase::Movement;
+			m_currentPlayerTurn = 0;
 		}
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;

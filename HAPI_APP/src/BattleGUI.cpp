@@ -511,5 +511,4 @@ void BattleGUI::snapCameraToPosition(std::pair<int, int> snapLocation)//snaps th
 	m_cameraPositionOffset.second = snapLocation.second;
 	CameraPositionOffset.first = snapLocation.first;
 	CameraPositionOffset.second = snapLocation.second;
-	int i = 0;
 }

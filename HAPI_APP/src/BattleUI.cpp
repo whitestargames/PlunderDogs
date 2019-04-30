@@ -72,12 +72,17 @@ std::pair<int, int> BattleUI::getCameraPositionOffset() const
 	return m_gui.getCameraPositionOffset();
 }
 
+int BattleUI::isHumanDeploymentCompleted() const
+{
+	return m_playerShipPlacement.empty();
+}
+
 void BattleUI::renderUI() const
 {
 	switch (m_battle.getCurrentPhase())
 	{
 	case BattlePhase::ShipPlacement:
-		//assert(!m_playerShipPlacement.empty());
+		assert(!m_playerShipPlacement.empty());
 		m_playerShipPlacement.front()->render(m_invalidPosition, m_battle.getMap());
 		break;
 
@@ -239,6 +244,11 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 							//TODO:: Snap to new screen position
 							m_gui.snapCameraToPosition(m_playerShipPlacement.front()->getSpawnPosition());
 						}
+						else
+						{
+							m_battle.nextTurn();
+						}
+						
 					}
 					//m_battle.moveEntityToPosition(*m_selectedTile.m_tile->m_entityOnTile, *m_battle.getMap().getTile(m_leftMouseDownPosition), mouseMoveDirection.second);
 				}
@@ -255,6 +265,10 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 							//TODO: Snap to new screen position
 							m_gui.snapCameraToPosition(m_playerShipPlacement.front()->getSpawnPosition());
 							
+						}
+						else
+						{
+							m_battle.nextTurn();
 						}
 					}
 				}
@@ -996,7 +1010,6 @@ void BattleUI::ParticleSystem::setPosition(std::pair<int, int> position)
 
 void BattleUI::ParticleSystem::run(float deltaTime, const Map& map) 
 {
-
 	if (m_isEmitting)
 	{
 		const std::pair<int, int> tileTransform = map.getTileScreenPos(m_position);
@@ -1020,7 +1033,6 @@ void BattleUI::ParticleSystem::run(float deltaTime, const Map& map)
 			m_frameNum = 0;
 		}
 	}
-
 }
 
 void BattleUI::ParticleSystem::render()const 

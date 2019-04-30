@@ -2,8 +2,6 @@
 #include "Textures.h"
 #include "GameEventMessenger.h"
 
-
-
 OverWorld::OverWorld()
 	: m_currentPlayer(0),
 	m_selectNextPlayer(false),

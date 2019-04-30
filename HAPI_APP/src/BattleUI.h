@@ -106,6 +106,7 @@ public:
 	~BattleUI();
 
 	std::pair<int, int> getCameraPositionOffset() const;
+	int isHumanDeploymentCompleted() const;
 
 	void renderUI() const;
 	void renderParticles() const;
