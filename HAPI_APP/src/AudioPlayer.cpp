@@ -9,19 +9,33 @@ AudioPlayer::AudioPlayer() :m_soundList()
 	
 }
 
-void AudioPlayer::playSound(const std::string & soundName)
+void AudioPlayer::playSound(const std::string & soundName,  float volume , bool looping)
 {
 	
 	if (!m_soundList[soundName].m_isPlaying)
 	{
 		HAPI_Sprites.PlayStreamedMedia(Utilities::getDataDirectory() + m_soundList[soundName].m_soundName,
-			HAPISPACE::SoundOptions::HAPI_TSoundOptions(0.6, false), m_soundList[soundName].m_instanceId);
+			HAPISPACE::SoundOptions::HAPI_TSoundOptions(volume, looping	), m_soundList[soundName].m_instanceId);
 		
 
 		m_soundList[soundName].m_isPlaying = true;
 	}
 
 }
+
+
+void AudioPlayer::playShortSound(const std::string & soundName)
+{
+
+	if (!m_soundList[soundName].m_isPlaying)
+	{
+		HAPI_Sprites.PlayStreamedMedia(Utilities::getDataDirectory() + m_soundList[soundName].m_soundName,
+			HAPISPACE::SoundOptions::HAPI_TSoundOptions(1, false), m_soundList[soundName].m_instanceId);
+
+	}
+
+}
+
 
 void AudioPlayer::registerSound(const std::string & filename,  const std::string & soundName)
 {

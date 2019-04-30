@@ -30,7 +30,9 @@ public:
 		return instance;
 	}
 	
-	void playSound(const std::string& soundName);
+	void playSound(const std::string& soundName, float volume = 1, bool looping = false);
+	
+	void playShortSound(const std::string & soundName);
 	void registerSound(const std::string& filename, const std::string& soundName);
 	void stopSound(const std::string& soundName);
 

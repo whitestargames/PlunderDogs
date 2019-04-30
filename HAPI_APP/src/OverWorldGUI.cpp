@@ -137,7 +137,8 @@ void OverWorldGUI::render(Battle& battle)
 			HAPI_Sprites.ChangeFontFromFile("data/RAPSCALL.TTF");
 			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1380, 50), HAPISPACE::Colour255::YELLOW, "Plunder\n Dogs", 190, {}, HAPISPACE::Colour255::BLACK, 2.5f);
 			
-			AudioPlayer::getInstance().playSound("main menu");
+			AudioPlayer::getInstance().playSound("main menu", 0.2, true);
+			
 			
 			break;
 		}
@@ -176,7 +177,7 @@ void OverWorldGUI::render(Battle& battle)
 		case OverWorldWindow::eBattle:
 		{
 			AudioPlayer::getInstance().stopSound("main menu");
-			AudioPlayer::getInstance().playSound("battle theme");
+			AudioPlayer::getInstance().playSound("battle theme", 0.25, true);
 			battle.render();
 			break;
 		}
@@ -240,6 +241,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 		{
 			if (HAPI_Wrapper::isTranslated(m_playButton, mouseData, 0))
 			{
+				AudioPlayer::getInstance().playShortSound("click");
 				CURRENT_WINDOW = OverWorldWindow::ePlayerSelection;
 			}
 			if (HAPI_Wrapper::isTranslated(m_quitButton, mouseData, 0))
@@ -254,6 +256,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			if (HAPI_Wrapper::isTranslated(m_playerSelectYellow, mouseData, 0))
 			{
 			//	m_playerSelectYellow->AdvanceToNextFrame();
+				AudioPlayer::getInstance().playShortSound("click");
 				if (m_playerSelectYellow->GetFrameNumber() == ePlayerSelect::eHuman)
 				{
 					m_playerSelectYellow->SetFrameNumber(ePlayerSelect::eNone);
@@ -266,6 +269,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			if (HAPI_Wrapper::isTranslated(m_playerSelectGreen, mouseData, 0))
 			{
 				//m_playerSelectGreen->AdvanceToNextFrame();
+				AudioPlayer::getInstance().playShortSound("click");
 				if (m_playerSelectGreen->GetFrameNumber() == ePlayerSelect::eHuman)
 				{
 					m_playerSelectGreen->SetFrameNumber(ePlayerSelect::eNone);
@@ -280,6 +284,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			if (HAPI_Wrapper::isTranslated(m_playerSelectRed, mouseData, 0))
 			{
 				//m_playerSelectRed->AdvanceToNextFrame();
+				AudioPlayer::getInstance().playShortSound("click");
 				if (m_playerSelectRed->GetFrameNumber() == ePlayerSelect::eHuman)
 				{
 					m_playerSelectRed->SetFrameNumber(ePlayerSelect::eNone);
@@ -292,6 +297,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			if (HAPI_Wrapper::isTranslated(m_playerSelectBlue, mouseData, 0))
 			{
 				//m_playerSelectBlue->AdvanceToNextFrame();
+				AudioPlayer::getInstance().playShortSound("click");
 				if (m_playerSelectBlue->GetFrameNumber() == ePlayerSelect::eHuman)
 				{
 					m_playerSelectBlue->SetFrameNumber(ePlayerSelect::eNone);
@@ -303,6 +309,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			}
 			if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
 			{
+				AudioPlayer::getInstance().playShortSound("click");
 				m_playerSelectYellow->SetFrameNumber(ePlayerSelect::eNone);
 				m_playerSelectGreen->SetFrameNumber(ePlayerSelect::eNone);
 				m_playerSelectRed->SetFrameNumber(ePlayerSelect::eNone);
@@ -315,6 +322,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 				// put int function
 				if (getActivePlayerCount() >=2)
 				{
+					AudioPlayer::getInstance().playShortSound("click");
 					CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
 				
 				}
@@ -328,12 +336,13 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 		{
 			if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
 			{
-			
+				AudioPlayer::getInstance().playShortSound("click");
 			CURRENT_WINDOW = OverWorldWindow::ePlayerSelection;
 			}
 
 			if (HAPI_Wrapper::isTranslated(m_selectMapButtons1, mouseData, 0))
 			{
+				AudioPlayer::getInstance().playShortSound("click");
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				selectedMap = "Level1.tmx";
 				selectedMapName = "Isle of Turtles";
@@ -342,6 +351,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			}
 			if (HAPI_Wrapper::isTranslated(m_selectMapButtons2, mouseData, 0))
 			{
+				AudioPlayer::getInstance().playShortSound("click");
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				selectedMap = "Level2.tmx";
 				selectedMapName = "Frozen Depths";
@@ -351,6 +361,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 
 			if (HAPI_Wrapper::isTranslated(m_selectMapButtons3, mouseData, 0))
 			{
+				AudioPlayer::getInstance().playShortSound("click");
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				selectedMap = "Level3.tmx";
 				selectedMapName = "Sun Sand Cay";
@@ -360,6 +371,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 
 			if (HAPI_Wrapper::isTranslated(m_selectMapButtons4, mouseData, 0))
 			{
+				AudioPlayer::getInstance().playShortSound("click");
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				selectedMap = "Level5.tmx";
 				selectedMapName = "Misty Mountains";
@@ -369,6 +381,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 
 			if (HAPI_Wrapper::isTranslated(m_selectMapButtons5, mouseData, 0))
 			{
+				AudioPlayer::getInstance().playShortSound("click");
 				CURRENT_WINDOW = OverWorldWindow::eShipSelection;
 				selectedMap = "Level6.tmx";
 				selectedMapName = "Krakens Den";
@@ -383,6 +396,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 		{
 			if (HAPI_Wrapper::isTranslated(m_upgradesButton, mouseData, 0))
 			{
+				AudioPlayer::getInstance().playShortSound("click");
 				UI.CloseWindow(FLEET_WINDOW);
 				UI.CloseWindow(BATTLE_FLEET_WINDOW);
 				CURRENT_WINDOW = OverWorldWindow::eUpgrade;
@@ -392,6 +406,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			{
 				if (!currentSelectedPlayer.m_selectedEntities.empty())
 				{
+					AudioPlayer::getInstance().playShortSound("click");
 					//CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
 					selectNextPlayer = true;
 					UI.CloseWindow(FLEET_WINDOW);
@@ -404,6 +419,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 
 			if (HAPI_Wrapper::isTranslated(m_upgradesButton, mouseData, 0))
 			{
+				AudioPlayer::getInstance().playShortSound("click");
 				CURRENT_WINDOW = OverWorldWindow::eUpgrade;
 				UI.CloseWindow(FLEET_WINDOW);
 				UI.CloseWindow(BATTLE_FLEET_WINDOW);
@@ -412,6 +428,7 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 
 			else if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
 			{
+				AudioPlayer::getInstance().playShortSound("click");
 				resetPlayer = true;
 
 				CURRENT_WINDOW = OverWorldWindow::ePlayerSelection;
@@ -560,6 +577,7 @@ void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, Player& current
 	{
 		if (HAPI_Wrapper::isTranslated(m_playButton, mouseData, 0))
 		{
+			
 			m_playButton->SetFrameNumber(1);
 		}
 		else if (m_playButton->GetFrameNumber() != 0)
@@ -944,6 +962,7 @@ void OverWorldGUI::checkShipSelect(bool & selection, const std::string & shipWin
 		}
 		if (entityContainsMouse(shipWindow, ENTITY + std::to_string(i), windowTopLeft, mouseData))
 		{
+			
 			m_currentlySelected = &entities[i];
 			selection = true;
 		}
@@ -964,6 +983,7 @@ void OverWorldGUI::checkShipSelect(bool & selection, const std::string & shipWin
 		}
 		if (entityContainsMouse(shipWindow, ENTITY + std::to_string(i), windowTopLeft, mouseData))
 		{
+			
 			m_currentlySelected = entities[i];
 			selection = true;
 		}

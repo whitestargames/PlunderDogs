@@ -6,6 +6,7 @@
 #include "MouseSelection.h"
 #include "GameEventMessenger.h"
 #include <assert.h>
+#include "AudioPlayer.h"
 
 using namespace HAPISPACE;
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
@@ -513,6 +514,7 @@ void BattleUI::onLeftClickAttackPhase()
 	{
 		if ((tileOnMouse->m_entityOnTile != nullptr) && tileOnMouse->m_entityOnTile->m_factionName != m_selectedTile.m_tile->m_entityOnTile->m_factionName)
 		{
+			AudioPlayer::getInstance().playShortSound("shoot");
 			if (m_selectedTile.m_tile->m_entityOnTile->m_entityProperties.m_weaponType == eFlamethrower)
 			{
 				m_fire.orient(m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.getCurrentDirection());

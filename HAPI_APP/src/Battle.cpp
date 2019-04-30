@@ -1,6 +1,7 @@
 #include "Battle.h"
 #include "Utilities/MapParser.h"
 #include "GameEventMessenger.h"
+#include "AudioPlayer.h"
 
 using namespace HAPISPACE;
 
@@ -140,6 +141,7 @@ void Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 		if (cIter != targetArea.cend())
 		{
 			auto& enemy = tileOnAttackPosition.m_entityOnTile;
+			AudioPlayer::getInstance().playShortSound("hit");
 			enemy->m_battleProperties.takeDamage(enemy->m_entityProperties, player.m_entityProperties.m_damage, enemy->m_factionName);
 		}
 	}

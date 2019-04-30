@@ -32,6 +32,10 @@ void HAPI_Sprites_Main()
 
 	AudioPlayer::getInstance().registerSound("pirate_theme.wav", "main menu");
 	AudioPlayer::getInstance().registerSound("Blackmoor Tides Loop.wav", "battle theme");
+	AudioPlayer::getInstance().registerSound("GunShotGverb.wav", "shoot");
+	AudioPlayer::getInstance().registerSound("ExplosionMetalGverb.wav", "hit");
+	AudioPlayer::getInstance().registerSound("misc_menu_4.wav", "click");
+	AudioPlayer::getInstance().registerSound("click_2.wav", "hover");
 	HAPI_Sprites.SetShowFPS(true);
 	HAPI_Sprites.LimitFrameRate(150);
 
