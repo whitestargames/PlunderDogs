@@ -2,13 +2,51 @@
 #include <HAPISprites_lib.h>
 #include <HAPISprites_UI.h>
 #include "Utilities/Utilities.h"
-AudioPlayer::AudioPlayer()
+
+
+AudioPlayer::AudioPlayer() :m_soundList()
 {
-	HAPI_Sprites.LoadSound(Utilities::getDataDirectory() + "ExplosionMetal.wav");
+	
 }
 
-void AudioPlayer::playSound(const std::string & fileName)
+void AudioPlayer::playSound(const std::string & soundName)
 {
-	//HAPI_Sprites.PlaySound(Utilities::getDataDirectory() + fileName);
 	
+	if (!m_soundList[soundName].m_isPlaying)
+	{
+		HAPI_Sprites.PlaySound(Utilities::getDataDirectory() + m_soundList[soundName].m_soundName,
+			HAPISPACE::SoundOptions::HAPI_TSoundOptions(1, false), m_soundList[soundName].m_instanceId);
+
+		m_soundList[soundName].m_isPlaying = true;
+	}
+
+}
+
+void AudioPlayer::registerSound(const std::string & filename,  const std::string & soundName)
+{
+	Sound sound(0, filename, false);
+	m_soundList[soundName] = sound;
+	HAPI_Sprites.LoadSound(Utilities::getDataDirectory() + filename);
+}
+
+void AudioPlayer::stopSound(const std::string & soundName)
+{
+	if (m_soundList[soundName].m_isPlaying)
+	{
+		HAPI_Sprites.StopSound(m_soundList[soundName].m_instanceId, false);
+		m_soundList[soundName].m_isPlaying = false;
+	}
+	
+}
+
+
+Sound::Sound()
+{
+}
+
+Sound::Sound(int instanceId, const std::string& soundName, bool isplaying):
+	m_instanceId(instanceId),
+	m_soundName(soundName), 
+	m_isPlaying(isplaying)
+{
 }
