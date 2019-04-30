@@ -53,9 +53,9 @@ public:
 	void nextTurn();
 
 	std::vector<FactionName> getAllFactions() const;
-
-	std::vector<std::shared_ptr<BattleEntity>>& getFactionShips(FactionName faction);
-	const std::vector<std::shared_ptr<BattleEntity>>& getFactionShips(FactionName faction) const;
+	const BattlePlayer& getPlayer(FactionName faction) const;
+	//std::vector<std::shared_ptr<BattleEntity>>& getFactionShips(FactionName faction);
+	//const std::vector<std::shared_ptr<BattleEntity>>& getFactionShips(FactionName faction) const;
 private:
 	std::vector<BattlePlayer> m_players;
 	int m_currentPlayerTurn;

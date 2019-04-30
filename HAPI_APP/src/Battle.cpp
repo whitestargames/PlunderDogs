@@ -221,26 +221,11 @@ std::vector<FactionName> Battle::getAllFactions() const
 	return lol;
 }
 
-std::vector<std::shared_ptr<BattleEntity>>& Battle::getFactionShips(FactionName faction)
+const BattlePlayer& Battle::getPlayer(FactionName faction) const
 {
-	for (auto it : m_players)
-	{
-		if (it.m_factionName == faction)
-		{
-			return it.m_entities;
-		}
-	}
-}
-
-const std::vector<std::shared_ptr<BattleEntity>>& Battle::getFactionShips(FactionName faction) const
-{
-	for (auto it : m_players)
-	{
-		if (it.m_factionName == faction)
-		{
-			return it.m_entities;
-		}
-	}
+	auto cIter = std::find_if(m_players.cbegin(), m_players.cend(), [faction](const auto& player) { return player.m_factionName == faction; });
+	assert(cIter != m_players.cend());
+	return *cIter;
 }
 
 void Battle::updateMovementPhase(float deltaTime)
@@ -377,37 +362,13 @@ void Battle::onEndMovementPhaseEarly()
 	}
 	else
 	{
-		m_currentPhase = BattlePhase::Attack;
-		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
-		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringAttackPhase);
-		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
-		{
-			entity->m_battleProperties.clearMovementPath();
-			entity->m_battleProperties.enableAction();
-		}
+		nextTurn();
 	}
 }
 
 void Battle::onEndAttackPhaseEarly()
 {
 	nextTurn();
-	//m_currentPhase = BattlePhase::Movement;
-	//GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
-	//GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringMovementPhase);
-	//
-	//for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
-	//{
-	//	entity->m_battleProperties.disableAction();
-	//}
-
-	//incrementPlayerTurn();
-
-	//for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
-	//{
-	//	entity->m_battleProperties.enableAction();
-	//}
-
-	//AI::handleMovementPhase(this, &m_map, m_players[m_currentPlayerTurn]);
 }
 
 Battle::BattleManager::BattleManager()
