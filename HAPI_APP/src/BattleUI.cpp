@@ -45,6 +45,13 @@ void BattleUI::InvalidPosition::setPosition(std::pair<int, int> newPosition, con
 	m_position = newPosition;
 }
 
+void BattleUI::InvalidPosition::onReset()
+{
+	m_sprite.reset();
+	m_activate = false;
+	m_position = std::pair<int, int>(0, 0);
+}
+
 //
 //BattleUI
 //
@@ -640,13 +647,29 @@ void BattleUI::onMouseMoveAttackPhase()
 	}
 }
 
+
+//CurrentSelectedTile m_selectedTile;
+
+//std::pair<int, int> m_leftMouseDownPosition;
+////This is used to determine if an entity is currently being given a move command, it gets set to true in the "handleOnLeftClickMovementPhase()" and false after "eLeftMouseButtonUp" is detected.
+//bool m_isMovingEntity;
+////Used to store the tile selected for movement when the lmb is depressed, so that it can be used for moveEntity input on mouse up
+//const Tile* m_mouseDownTile;
+//BattleGUI m_gui;
+//InvalidPosition m_invalidPosition;
+//std::deque<std::unique_ptr<ShipPlacementPhase>> m_playerShipPlacement;
+
 void BattleUI::onResetBattle()
 {
 	//TODO: reset other things
 	m_playerShipPlacement.clear();
-	m_targetArea.clearTargetArea();
+	m_targetArea.onReset();
 	m_selectedTile.m_tile = nullptr;
-	m_invalidPosition.m_activate = false;
+	m_selectedTile.m_sprite.reset();
+	m_selectedTile.m_position = std::pair<int, int>(0, 0);
+	m_invalidPosition.onReset();
+	m_leftMouseDownPosition = std::pair<int, int>(0, 0);
+	m_mouseDownTile = nullptr;
 }
 
 void BattleUI::onNewTurn()
@@ -768,6 +791,12 @@ void BattleUI::TargetArea::clearTargetArea()
 	}
 }
 
+void BattleUI::TargetArea::onReset()
+{
+	m_targetAreaSprites.clear();
+	m_targetArea.clear();
+}
+
 BattleUI::TargetArea::HighlightNode::HighlightNode()
 	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),
 	activate(false)
@@ -862,17 +891,16 @@ void BattleUI::ShipPlacementPhase::render(const InvalidPosition& invalidPosition
 
 		m_spawnSprites[i]->Render(SCREEN_SURFACE);
 	}
+}
 
-	//for (const auto& spawnHex : m_spawnSprites)
-	//{
-	//	const std::pair<int, int> tileTransform = map.getTileScreenPos(m_currentSelectedEntity.m_position);
-
-	//	m_currentSelectedEntity.m_currentSelectedEntity->m_sprite->GetTransformComp().SetPosition({
-	//	static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
-	//	static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
-
-	//	spawnHex->Render(SCREEN_SURFACE);
-	//}
+void BattleUI::ShipPlacementPhase::onReset()
+{
+	m_player.clear();
+	m_currentSelectedEntity.m_position = std::pair<int, int>(0, 0);
+	m_currentSelectedEntity.m_currentSelectedEntity = nullptr;
+	m_spawnArea.clear();
+	m_spawnSprites.clear();
+	m_spawnPosition = std::pair<int, int>(0, 0);
 }
 
 const Tile* BattleUI::ShipPlacementPhase::getTileOnMouse(InvalidPosition& invalidPosition, const Tile* currentTileSelected, const Map& map)

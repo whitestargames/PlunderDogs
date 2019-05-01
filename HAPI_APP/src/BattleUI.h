@@ -25,6 +25,7 @@ class BattleUI : public IHapiSpritesInputListener
 		void render(const Map& map) const;
 		void generateTargetArea(const Map& map, const Tile& source);
 		void clearTargetArea();
+		void onReset();
 
 		std::vector<HighlightNode> m_targetAreaSprites;
 		std::vector<const Tile*> m_targetArea;
@@ -36,6 +37,7 @@ class BattleUI : public IHapiSpritesInputListener
 
 		void render(const Map& map) const;
 		void setPosition(std::pair<int, int> newPosition, const Map& map);
+		void onReset();
 
 		std::unique_ptr<Sprite> m_sprite;
 		bool m_activate;
@@ -62,6 +64,7 @@ class BattleUI : public IHapiSpritesInputListener
 
 		bool isCompleted() const;
 		void render(const InvalidPosition& invalidPosition, const Map& map) const;
+		void onReset();
 
 		const Tile* getTileOnMouse(InvalidPosition& invalidPosition, const Tile* currentTileSelected, const Map& map);
 		void onLeftClick(const InvalidPosition& invalidPosition, eDirection startingDirection, const Tile* currectTileSelected, Battle& battle);
