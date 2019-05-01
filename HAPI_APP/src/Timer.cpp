@@ -1,8 +1,9 @@
 #include "Timer.h"
 
-Timer::Timer(float expirationTime)
+Timer::Timer(float expirationTime, bool active)
 	: m_expirationTime(expirationTime),
-	m_elaspedTime(0)
+	m_elaspedTime(0),
+	m_active(active)
 {
 }
 
@@ -18,10 +19,19 @@ float Timer::getElaspedTime() const
 
 void Timer::update(float deltaTime)
 {
-	m_elaspedTime += deltaTime;
+	if (m_active)
+	{
+		m_elaspedTime += deltaTime;
+	}
+	
 }
 
 void Timer::reset()
 {
 	m_elaspedTime = 0;
+}
+
+void Timer::setActive(bool active)
+{
+	m_active = active;
 }

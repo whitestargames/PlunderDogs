@@ -10,22 +10,44 @@ constexpr size_t WEAPON_HIGHLIGHT_SIZE{ 200 };
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
 
+
 //std::pair<int, int> m_currentPosition;
-//std::deque<std::pair<eDirection, std::pair<int, int>>> m_pathToTile;
-//Timer m_movementTimer;
-//MovementPath m_movementPath;
-//int m_movementPathSize;
-//eDirection m_currentDirection;
-//bool m_weaponFired;
-////bool m_movedToDestination;
-//bool m_isDead;
-//ActionSprite m_actionSprite;
-//bool m_movingToDestination;
-//bool m_destinationSet;
+////std::deque<std::pair<eDirection, std::pair<int, int>>> m_pathToTile;
+////Timer m_movementTimer;
+////MovementPath m_movementPath;
+////int m_movementPathSize;
+////eDirection m_currentDirection;
+////bool m_weaponFired;
+//////bool m_movedToDestination;
+////bool m_isDead;
+////ActionSprite m_actionSprite;
+////bool m_movingToDestination;
+////bool m_destinationSet;
+//
+////ENTITY BATTLE PROPERTIES
+//EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosition, FactionName factionName, eDirection startingDirection)
+//	:  m_currentPosition(startingPosition),
+//=======
+//TODO: Will change
+std::vector<EntityProperties> assignEntities(FactionName name)
+{
+	std::vector<EntityProperties> entities;
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			EntityProperties newEntity(name, (EntityType)(i));
+			entities.push_back(newEntity);
+		}
+	}
+	assert(!entities.empty());
+	return entities;
+}
+
 
 //ENTITY BATTLE PROPERTIES
 EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosition, FactionName factionName, eDirection startingDirection)
-	:  m_currentPosition(startingPosition),
+	: m_currentPosition(startingPosition),
 	m_pathToTile(),
 	m_movementTimer(MOVEMENT_ANIMATION_TIME),
 	m_movementPath(),
@@ -60,10 +82,6 @@ eDirection EntityBattleProperties::getCurrentDirection() const
 	return m_currentDirection;
 }
 
-//bool EntityBattleProperties::isMovedToDestination() const
-//{
-//	return m_movedToDestination;
-//}
 
 std::pair<int, int> EntityBattleProperties::getCurrentPosition() const
 {
@@ -80,10 +98,6 @@ bool EntityBattleProperties::isDead() const
 	return m_isDead;
 }
 
-//bool EntityBattleProperties::isMoving() const
-//{
-//	return !m_pathToTile.empty();
-//}
 
 bool EntityBattleProperties::isMovingToDestination() const
 {
@@ -363,11 +377,9 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 
 //ENTITY
 EntityProperties::EntityProperties(FactionName factionName, EntityType entityType) : m_upgradePoints(4), m_maxUpgradePoints(4), m_selectedSprite(HAPI_Sprites.MakeSprite(Textures::m_thing))
-	
 {
 	//TODO: Currently not working as intended
 	//UI seems to be resetting the frameNumber somewhere in OverWorldGUI. 
-	
 	switch (entityType)
 	{
 	case EntityType::eFrigate:
@@ -580,9 +592,11 @@ void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, 
 }
 
 //BATTLE PLAYER
-BattlePlayer::BattlePlayer(FactionName name)
+BattlePlayer::BattlePlayer(FactionName name, std::pair<int, int> spawnPosition, ePlayerType playerType)
 	: m_entities(),
 	m_factionName(name),
+	m_playerType(playerType),
+	m_spawnPosition(spawnPosition),
 	m_eliminated(false)
 {}
 
@@ -621,3 +635,17 @@ void EntityBattleProperties::ActionSprite::render(const Map& map, std::pair<int,
 		sprite->Render(SCREEN_SURFACE);
 	}
 }
+
+
+Player::Player(FactionName name, ePlayerType playerType)
+	: m_entities(assignEntities(name)),
+	m_selectedEntities(),
+	m_factionName(name),
+	m_type(playerType)
+{}
+//
+//Player::Player(FactionName name, ePlayerType playerType)
+//	: m_factionName(name),
+//	m_type(playerType)
+//{
+//}

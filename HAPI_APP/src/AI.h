@@ -20,7 +20,7 @@ namespace AI
 	void attemptShot(Battle& battle, const Map& mapPtr, std::shared_ptr<BattleEntity> firingShip);
 //External use
 	void handleMovementPhase(const Battle& battle, Map& map, BattlePlayer& player);
-	void handleShootingPhase(Battle& battlePtr, const Map& mapPtr, BattlePlayer& player);
-	void handleDeploymentPhase(Battle& battlePtr, Map& mapPtr, BattlePlayer& player);
+	void handleShootingPhase(Battle& battle, const Map& map, BattlePlayer& player);
+	void handleDeploymentPhase(Battle& battle, Map& map, BattlePlayer& player);
 };
 

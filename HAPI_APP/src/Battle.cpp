@@ -4,6 +4,89 @@
 #include "AI.h"
 
 using namespace HAPISPACE;
+constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
+constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
+
+Battle::ParticleSystem::ParticleSystem(float lifespan, std::shared_ptr<HAPISPACE::SpriteSheet> texture, float scale) :
+	m_position(),
+	m_lifeSpan(lifespan),
+	m_particle(HAPI_Sprites.MakeSprite(texture)),
+	m_frameNum(0),
+	m_isEmitting(false),
+	m_scale(scale)
+{
+	m_particle->SetFrameNumber(m_frameNum);
+}
+
+void Battle::ParticleSystem::setPosition(std::pair<int, int> position)
+{
+	m_position = position;
+}
+
+void Battle::ParticleSystem::run(float deltaTime, const Map& map)
+{
+	if (m_isEmitting)
+	{
+		const std::pair<int, int> tileTransform = map.getTileScreenPos(m_position);
+		m_particle->GetTransformComp().SetPosition({
+			tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),
+			tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
+
+		m_lifeSpan.update(deltaTime);
+
+		if (m_lifeSpan.isExpired())
+		{
+			m_particle->SetFrameNumber(m_frameNum);
+
+			m_lifeSpan.reset();
+			++m_frameNum;
+		}
+
+		if (m_frameNum >= m_particle->GetNumFrames())
+		{
+			m_isEmitting = false;
+			m_frameNum = 0;
+		}
+	}
+}
+
+void Battle::ParticleSystem::render()const
+{
+	if (m_isEmitting)
+	{
+		m_particle->GetTransformComp().SetOriginToCentreOfFrame();
+		m_particle->GetTransformComp().SetScaling(m_scale);
+		m_particle->Render(SCREEN_SURFACE);
+	}
+}
+
+void Battle::ParticleSystem::orient(eDirection entityDir)
+{
+	eDirection direction;
+	switch (entityDir)
+	{
+	case eNorth:
+		direction = eSouth;
+		break;
+	case eNorthEast:
+		direction = eSouthWest;
+		break;
+	case eSouthEast:
+		direction = eNorthWest;
+		break;
+	case eSouth:
+		direction = eNorth;
+		break;
+	case eSouthWest:
+		direction = eNorthEast;
+		break;
+	case eNorthWest:
+		direction = eSouthEast;
+		break;
+	}
+	m_particle->GetTransformComp().SetRotation(DEGREES_TO_RADIANS(static_cast<int>(direction) * 60 % 360));
+}
+
 
 void Battle::setTimeOfDay(float deltaTime)
 {
@@ -32,15 +115,48 @@ void Battle::setWindDirection(float deltaTime)
 	}
 }
 
+void Battle::handleAIMovementPhaseTimer(float deltaTime)
+{
+	m_timeUntilAIMovementPhase.update(deltaTime);
+	if (m_timeUntilAIMovementPhase.isExpired())
+	{
+		AI::handleMovementPhase(*this, m_map, m_players[m_currentPlayerTurn]);
+		m_timeUntilAIMovementPhase.reset();
+		m_timeUntilAIMovementPhase.setActive(false);
+	}
+}
+
+void Battle::handleAIAttackPhaseTimer(float deltaTime)
+{
+	m_timeUntilAIAttackPhase.update(deltaTime);
+	if (m_timeUntilAIAttackPhase.isExpired())
+	{
+		AI::handleShootingPhase(*this, m_map, m_players[m_currentPlayerTurn]);
+		m_timeUntilAIAttackPhase.reset();
+		m_timeUntilAIAttackPhase.setActive(false);
+	}
+}
+
 Battle::Battle()
 	: m_players(),
 	m_currentPlayerTurn(0),
 	m_map(),
-	m_currentPhase(BattlePhase::ShipPlacement),
+	m_currentPhase(BattlePhase::Deployment),
 	m_battleUI(*this),
 	m_dayTime(20.0f),
-	m_windTime(10)
+	m_windTime(10),
+	m_explosion(),
+	m_fire(),
+	m_timeUntilAIMovementPhase(2.5f, false),
+	m_timeUntilAIAttackPhase(2.5f, false)
 {
+	m_explosion.reserve(6);
+	m_fire.reserve(6);
+	for (int i = 0; i < 6; i++)
+	{
+		m_explosion.emplace_back(0.10, Textures::m_explosion, 2.5f);
+		m_fire.emplace_back(0.05, Textures::m_fire, 2.0f);
+	}
 	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onResetBattle, this), "Battle", GameEvent::eResetBattle);
 	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onYellowShipDestroyed, this), "Battle", GameEvent::eYellowShipDestroyed);
 	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onRedShipDestroyed, this), "Battle", GameEvent::eRedShipDestroyed);
@@ -61,17 +177,29 @@ Battle::~Battle()
 	GameEventMessenger::getInstance().unsubscribe("Battle", GameEvent::eEndAttackPhaseEarly);
 }
 
-void Battle::startBattle(const std::string & newMapName, std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& newPlayers)
+void Battle::start(const std::string & newMapName, std::vector<Player>& newPlayers)
 {
+	assert(!newPlayers.empty());
 	assert(m_players.empty());
 	m_map.loadmap(newMapName);
+	
+	//TODO: Hack to correct sprite sizes
+	for (auto& player : newPlayers)
+	{
+		for (auto& entity : player.m_entities)
+		{
+			entity.m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
+			entity.m_sprite->GetTransformComp().SetScaling({ 1, 1 });
+		}
+	}
 
 	for (auto& player : newPlayers)
 	{
-		m_players.emplace_back(player.first);
+		m_players.emplace_back(player.m_factionName, m_map.getSpawnPosition(), player.m_type);
 	}
+	
+	m_battleUI.deployPlayers(newPlayers, m_map, *this);
 
-	m_battleUI.startShipPlacement(newPlayers, m_map);
 	m_battleUI.loadGUI(m_map.getDimensions());
 }
 
@@ -87,9 +215,14 @@ void Battle::render() const
 			entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
 		}
 	}
-	
-	m_battleUI.renderParticles();
-	m_battleUI.renderGUI();
+	for (auto& it : m_explosion)
+	{
+		it.render();
+	}
+	for (auto& it : m_fire)
+	{
+		it.render();
+	}
 }
 
 void Battle::update(float deltaTime)
@@ -100,6 +233,18 @@ void Battle::update(float deltaTime)
 
 	setTimeOfDay(deltaTime);
 	setWindDirection(deltaTime);
+
+	handleAIMovementPhaseTimer(deltaTime);
+	handleAIAttackPhaseTimer(deltaTime);
+
+	for (auto& it : m_explosion)
+	{
+		it.run(deltaTime, m_map);
+	}
+	for (auto& it : m_fire)
+	{
+		it.run(deltaTime, m_map);
+	}
 
 	if (m_currentPhase == BattlePhase::Movement)
 	{
@@ -123,10 +268,15 @@ void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination,
 	entity.m_battleProperties.moveEntity(m_map, destination, endDirection);
 }
 
-bool Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea)
+bool Battle::fireEntityWeaponAtPosition(const Tile& tileOnPlayer, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea)
 {
-	assert(m_currentPhase == BattlePhase::Attack);
-	assert(!player.m_battleProperties.isWeaponFired());
+	//assert(m_currentPhase == BattlePhase::Attack);
+	//assert(tileOnPlayer.m_entityOnTile);
+	if (!tileOnPlayer.m_entityOnTile)
+	{
+		return false;
+	}
+	assert(!tileOnPlayer.m_entityOnTile->m_battleProperties.isWeaponFired());
 
 	//Disallow attacking same team
 	if (tileOnAttackPosition.m_entityOnTile && tileOnAttackPosition.m_entityOnTile->m_factionName != getCurrentFaction()
@@ -138,19 +288,29 @@ bool Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 		//Enemy within range of weapon
 		if (cIter != targetArea.cend())
 		{
-			player.m_battleProperties.fireWeapon();
+			if (tileOnPlayer.m_entityOnTile->m_entityProperties.m_weaponType == eFlamethrower)
+			{
+				playFireAnimation(*tileOnPlayer.m_entityOnTile, targetArea[0]->m_tileCoordinate);
+			}
+			else
+			{
+				playExplosionAnimation(*tileOnAttackPosition.m_entityOnTile);
+			}
+
+			tileOnPlayer.m_entityOnTile->m_battleProperties.fireWeapon();
 			auto& enemy = tileOnAttackPosition.m_entityOnTile;
-			enemy->m_battleProperties.takeDamage(enemy->m_entityProperties, player.m_entityProperties.m_damage, enemy->m_factionName);
+			enemy->m_battleProperties.takeDamage(enemy->m_entityProperties, tileOnPlayer.m_entityOnTile->m_entityProperties.m_damage, enemy->m_factionName);
 			
 			return true;
 		}
 	}
+
 	return false;
 }
 
 void Battle::insertEntity(std::pair<int, int> startingPosition, eDirection startingDirection, const EntityProperties& entityProperties, FactionName factionName)
 {
-	assert(m_currentPhase == BattlePhase::ShipPlacement);
+	assert(m_currentPhase == BattlePhase::Deployment);
 
 	auto& player = getPlayer(factionName);
 	player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName, startingDirection));
@@ -162,32 +322,48 @@ void Battle::nextTurn()
 	bool lastPlayer = false;
 	switch (m_currentPhase)
 	{
-	case BattlePhase::ShipPlacement :
-		lastPlayer = (m_currentPlayerTurn == static_cast<int>(m_players.size()) - 1);
+	case BattlePhase::Deployment :
+		lastPlayer = (m_battleUI.isHumanDeploymentCompleted());
 		incrementPlayerTurn();
 		if (lastPlayer)
 		{
 			m_currentPhase = BattlePhase::Movement;
-			for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
+
+			//for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
+			//{
+			//	entity->m_battleProperties.enableAction();
+			//}
+
+			if (m_players[m_currentPlayerTurn].m_playerType == ePlayerType::eAI)
 			{
-				entity->m_battleProperties.enableAction();
+				m_timeUntilAIMovementPhase.setActive(true);
+				GameEventMessenger::getInstance().broadcast(GameEvent::eEnteredAITurn);
 			}
+
+			m_currentPlayerTurn = 0;
 		}
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;
+		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
+		{
+			entity->m_battleProperties.enableAction();
+		}
 		break;
 	case BattlePhase::Movement :
 		m_currentPhase = BattlePhase::Attack;
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringAttackPhase);
 		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;
+
 		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
 		{
 			entity->m_battleProperties.enableAction();
 		}
-		//AI::handleShootingPhase(*this, m_map, m_players[m_currentPlayerTurn]);
-		//TODO: if AI player
-		
+		if (m_players[m_currentPlayerTurn].m_playerType == ePlayerType::eAI)
+		{
+			m_timeUntilAIAttackPhase.setActive(true);
+			GameEventMessenger::getInstance().broadcast(GameEvent::eEnteredAITurn);
+		}
 		break;
 	case BattlePhase::Attack :
 		m_currentPhase = BattlePhase::Movement;
@@ -197,18 +373,27 @@ void Battle::nextTurn()
 		
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringMovementPhase);
+
 		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
 		{
 			entity->m_battleProperties.disableAction();
 		}
+
 		incrementPlayerTurn();
 		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;
 		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
 		{
 			entity->m_battleProperties.enableAction();
 		}
-		//AI::handleMovementPhase(*this, m_map, m_players[m_currentPlayerTurn]);
-		//TODO: if AI player
+		if (m_players[m_currentPlayerTurn].m_playerType == ePlayerType::eAI)
+		{
+			m_timeUntilAIMovementPhase.setActive(true);
+			GameEventMessenger::getInstance().broadcast(GameEvent::eEnteredAITurn);
+		}
+		else if (m_players[m_currentPlayerTurn].m_playerType == ePlayerType::eHuman)
+		{
+			GameEventMessenger::getInstance().broadcast(GameEvent::eLeftAITurn);
+		}
 		break;
 	}
 }
@@ -225,11 +410,31 @@ std::vector<FactionName> Battle::getAllFactions() const
 	return lol;
 }
 
-const BattlePlayer& Battle::getPlayer(FactionName faction) const
+void Battle::playFireAnimation(BattleEntity& entity, std::pair<int, int> position)
 {
-	auto cIter = std::find_if(m_players.cbegin(), m_players.cend(), [faction](const auto& player) { return player.m_factionName == faction; });
-	assert(cIter != m_players.cend());
-	return *cIter;
+	for (auto& it : m_fire)
+	{
+		if (!it.m_isEmitting)
+		{
+			it.orient(entity.m_battleProperties.getCurrentDirection());
+			it.setPosition(position);
+			it.m_isEmitting = true;
+			return;
+		}
+	}
+}
+
+void Battle::playExplosionAnimation(BattleEntity& entity)
+{
+	for (auto& it : m_explosion)
+	{
+		if (!it.m_isEmitting)
+		{
+			it.setPosition(entity.m_battleProperties.getCurrentPosition());
+			it.m_isEmitting = true;
+			return;
+		}
+	}
 }
 
 void Battle::updateMovementPhase(float deltaTime)
@@ -288,7 +493,7 @@ BattlePlayer & Battle::getPlayer(FactionName factionName)
 
 void Battle::onResetBattle()
 {
-	m_currentPhase = BattlePhase::ShipPlacement;
+	m_currentPhase = BattlePhase::Deployment;
 	m_currentPlayerTurn = 0;
 	m_dayTime.reset();
 	m_windTime.reset();
@@ -318,6 +523,13 @@ BattlePhase Battle::getCurrentPhase() const
 FactionName Battle::getCurrentFaction() const
 {
 	return m_players[m_currentPlayerTurn].m_factionName;
+}
+
+const BattlePlayer & Battle::getPlayer(FactionName factionName) const
+{
+	auto cIter = std::find_if(m_players.cbegin(), m_players.cend(), [factionName](const auto& player) { return player.m_factionName == factionName; });
+	assert(cIter != m_players.cend());
+	return *cIter;
 }
 
 void Battle::onYellowShipDestroyed()

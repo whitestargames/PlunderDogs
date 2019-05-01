@@ -19,7 +19,8 @@ BattleGUI::BattleGUI()
 	m_CompassBackGround(HAPI_Sprites.MakeSprite(Textures::m_CompassBackGround)),
 	m_currentBattleWindow(BattleWindow::eCombat),
 	m_maxCameraOffset(0, 0),
-	m_endPhaseButtons(HAPI_Sprites.MakeSprite(Textures::m_endPhaseButtons))
+	m_endPhaseButtons(HAPI_Sprites.MakeSprite(Textures::m_endPhaseButtons)),
+	m_AIInPlay(false)
 {	
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onBattleReset, this), "BattleGUI", GameEvent::eResetBattle);
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onRedWin, this), "BattleGUI", GameEvent::eRedWin);
@@ -29,6 +30,8 @@ BattleGUI::BattleGUI()
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onEnteringMovementPhase, this), "BattleGUI", GameEvent::eEnteringMovementPhase);
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onEnteringAttackPhase, this), "BattleGUI", GameEvent::eEnteringAttackPhase);
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onUnableToSkipPhase, this), "BattleGUI", GameEvent::eUnableToSkipPhase);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onEnteredAITurn, this), "BattleGUI", GameEvent::eEnteredAITurn);
+	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onLeftAITurn, this), "BattleGUI", GameEvent::eLeftAITurn);
 
 	m_battleIcons->GetTransformComp().SetPosition({ 510, 890 });
 	m_endPhaseButtons->GetTransformComp().SetPosition({ 0, 968 });
@@ -60,6 +63,8 @@ BattleGUI::~BattleGUI()
 	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eEnteringMovementPhase);
 	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eEnteringAttackPhase);
 	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eUnableToSkipPhase);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eEnteredAITurn);
+	GameEventMessenger::getInstance().unsubscribe("BattleGUI", GameEvent::eLeftAITurn);
 }
 
 std::pair<int, int> BattleGUI::getCameraPositionOffset() const
@@ -76,34 +81,34 @@ void BattleGUI::render(BattlePhase currentBattlePhase) const
 
 	//m_activeFactionToken->Render(SCREEN_SURFACE);
 
-	if (currentBattlePhase != BattlePhase::ShipPlacement)
+	if (currentBattlePhase != BattlePhase::Deployment)
 	{
 		if (m_activeFactionToken->GetFrameNumber() == FactionName::eRed)
 		{
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::RED, "Red Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::RED, "Red Team", 50, {}, HAPISPACE::Colour255::BLACK, 2.f);
 		}
 		else if (m_activeFactionToken->GetFrameNumber() == FactionName::eGreen)
 		{
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::GREEN, "Green Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::GREEN, "Green Team", 50, {}, HAPISPACE::Colour255::BLACK, 2.f);
 		}
 		else if (m_activeFactionToken->GetFrameNumber() == FactionName::eBlue)
 		{
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::BLUE, "Blue Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::BLUE, "Blue Team", 50, {}, HAPISPACE::Colour255::BLACK, 2.f);
 		}
 		else if (m_activeFactionToken->GetFrameNumber() == FactionName::eYellow)
 		{
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::YELLOW, "Yellow Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::YELLOW, "Yellow Team", 50, {}, HAPISPACE::Colour255::BLACK, 2.f);
 		}
 	}
 	
-	if (currentBattlePhase != BattlePhase::ShipPlacement)
+	if (currentBattlePhase != BattlePhase::Deployment && !m_AIInPlay)
 	{
 		m_endPhaseButtons->Render(SCREEN_SURFACE);
 	}
 
 
 	//m_activeFactionToken->Render(SCREEN_SURFACE);
-	m_endPhaseButtons->Render(SCREEN_SURFACE);
+	//m_endPhaseButtons->Render(SCREEN_SURFACE);
 	//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 585), HAPISPACE::Colour255::RED, std::to_string(m_maxCameraOffset.first), 50);//Dont delete these until the panning has been fixed - Jack
 	//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(950, 585), HAPISPACE::Colour255::RED, std::to_string(CameraPositionOffset.first), 50);
 	//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 685), HAPISPACE::Colour255::GREEN, std::to_string(m_maxCameraOffset.second), 50);
@@ -252,7 +257,7 @@ void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData, BattlePhase c
 		}
 
 		// ryan phase button stuff is here
-		if (m_endPhaseButtons->GetSpritesheet()->GetFrameRect(0).Translated(
+		if (!m_AIInPlay && m_endPhaseButtons->GetSpritesheet()->GetFrameRect(0).Translated(
 			m_endPhaseButtons->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 		{
 			if (currentBattlePhase == BattlePhase::Movement)
@@ -416,18 +421,18 @@ void BattleGUI::onBattleReset()
 {
 	m_currentBattleWindow = BattleWindow::eCombat;
 	winningFaction = "";
+	m_AIInPlay = false;
 
 	m_battleIcons->GetTransformComp().SetPosition({ 510, 890 });
-	m_pauseButton->GetTransformComp().SetPosition({ 1650, 140 });
+	m_endPhaseButtons->GetTransformComp().SetPosition({ 0, 968 });
+	m_pauseButton->GetTransformComp().SetPosition({ 1790, 30 });
 	//m_chickenButton->GetTransformComp().SetPosition({ 1610, 840 });
 	m_CompassBackGround->GetTransformComp().SetOriginToCentreOfFrame();
-	m_CompassBackGround->GetTransformComp().SetPosition({ 240, 170 });
+	m_CompassBackGround->GetTransformComp().SetPosition({ 100, 100 });
 	m_CompassPointer->GetTransformComp().SetOrigin({ 21.5f,60 });
-	m_CompassPointer->GetTransformComp().SetPosition({ 240, 170 });
+	m_CompassPointer->GetTransformComp().SetPosition({ 100, 100 });
 	m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
-	m_activeFactionToken->GetTransformComp().SetPosition({ 1510,140 });// position just temp can be adjusted as needed postiiton 900/100
-	
-
+	m_activeFactionToken->GetTransformComp().SetPosition({ 960,55 });// position just temp can be adjusted as needed postiiton 900/100
 
 	//pauseMenu
 	m_resumeButton->GetTransformComp().SetPosition({ 818, 387 });
@@ -495,6 +500,16 @@ void BattleGUI::onEnteringAttackPhase()
 
 void BattleGUI::onUnableToSkipPhase()
 {
+}
+
+void BattleGUI::onEnteredAITurn()
+{
+	m_AIInPlay = true;
+}
+
+void BattleGUI::onLeftAITurn()
+{
+	m_AIInPlay = false;
 }
 
 void BattleGUI::snapCameraToPosition(std::pair<int, int> snapLocation)//snaps the camera to be centered on a given tile

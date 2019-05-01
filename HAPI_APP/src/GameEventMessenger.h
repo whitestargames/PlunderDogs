@@ -24,7 +24,9 @@ enum GameEvent
 	eEnteringAttackPhase,
 	eEndMovementPhaseEarly,
 	eEndAttackPhaseEarly,
-	eUnableToSkipPhase
+	eUnableToSkipPhase,
+	eEnteredAITurn,
+	eLeftAITurn
 };
 
 class Listener

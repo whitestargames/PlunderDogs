@@ -55,6 +55,7 @@ private:
 	bool shipSelected;
 	bool playAnimation = false;
 	int animationOffset = 100;
+	bool m_AIInPlay;
 	
 	bool victory = false;
 	std::string winningFaction{ "" };
@@ -72,4 +73,6 @@ private:
 	void onEnteringMovementPhase();
 	void onEnteringAttackPhase();
 	void onUnableToSkipPhase();
+	void onEnteredAITurn();
+	void onLeftAITurn();
 };

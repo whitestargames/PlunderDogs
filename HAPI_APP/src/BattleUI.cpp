@@ -26,21 +26,29 @@ void BattleUI::InvalidPosition::render(const Map& map) const
 {
 	if (m_activate)
 	{
+		const std::pair<int, int> tileTransform = map.getTileScreenPos(m_position);
+
 		m_sprite->GetTransformComp().SetPosition({
-		static_cast<float>(m_position.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
-		static_cast<float>(m_position.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
+		static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
+		static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
 
 		m_sprite->Render(SCREEN_SURFACE);
 	}
 }
 
-void BattleUI::InvalidPosition::setPosition(std::pair<int, int> screenPosition, const Map& map)
+void BattleUI::InvalidPosition::setPosition(std::pair<int, int> newPosition, const Map& map)
 {
 	m_sprite->GetTransformComp().SetPosition({
-		(float)screenPosition.first + DRAW_OFFSET_X * map.getDrawScale(),
-		(float)screenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()});
+		(float)newPosition.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),
+		(float)newPosition.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()});
 
-	m_position = screenPosition;
+	m_position = newPosition;
+}
+
+void BattleUI::InvalidPosition::onReset()
+{
+	m_activate = false;
+	m_position = std::pair<int, int>(0, 0);
 }
 
 //
@@ -53,17 +61,8 @@ BattleUI::BattleUI(Battle & battle)
 	m_invalidPosition(),
 	m_leftMouseDownPosition({ 0, 0 }),
 	m_isMovingEntity(false),
-	m_mouseDownTile(nullptr),
-	m_explosion(),
-	m_fire()
+	m_mouseDownTile(nullptr)
 {
-	m_explosion.reserve(6);
-	m_fire.reserve(6);
-	for (int i = 0; i < 6; i++)
-	{
-		m_explosion.emplace_back(0.08, Textures::m_explosion);
-		m_fire.emplace_back(0.02, Textures::m_fire);
-	}
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleUI::onResetBattle, this), "BattleUI", GameEvent::eResetBattle);
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleUI::onNewTurn, this), "BattleUI", GameEvent::eNewTurn);
 }
@@ -79,13 +78,18 @@ std::pair<int, int> BattleUI::getCameraPositionOffset() const
 	return m_gui.getCameraPositionOffset();
 }
 
+int BattleUI::isHumanDeploymentCompleted() const
+{
+	return m_shipDeployment.empty();
+}
+
 void BattleUI::renderUI() const
 {
 	switch (m_battle.getCurrentPhase())
 	{
-	case BattlePhase::ShipPlacement:
-		//assert(!m_playerShipPlacement.empty());
-		m_playerShipPlacement.front()->render(m_invalidPosition, m_battle.getMap());
+	case BattlePhase::Deployment:
+		assert(!m_shipDeployment.empty());
+		m_shipDeployment.front()->render(m_invalidPosition, m_battle.getMap());
 		break;
 
 	case BattlePhase::Movement:
@@ -102,18 +106,6 @@ void BattleUI::renderUI() const
 	m_invalidPosition.render(m_battle.getMap());
 }
 
-void BattleUI::renderParticles() const
-{
-	for (auto& it : m_explosion)
-	{
-		it.render();
-	}
-	for (auto& it : m_fire)
-	{
-		it.render();
-	}
-}
-
 void BattleUI::renderGUI() const
 {
 	m_gui.render(m_battle.getCurrentPhase());
@@ -124,7 +116,6 @@ void BattleUI::renderGUI() const
 	}
 }
 
-
 void BattleUI::loadGUI(std::pair<int, int> mapDimensions)
 {
 	m_gui.setMaxCameraOffset(mapDimensions);
@@ -133,14 +124,6 @@ void BattleUI::loadGUI(std::pair<int, int> mapDimensions)
 void BattleUI::update(float deltaTime)
 {
 	m_gui.update(m_battle.getMap().getWindDirection());// added update for gui to receive wind direction so compass direction updates
-	for (auto& it : m_explosion)
-	{
-		it.run(deltaTime, m_battle.getMap());
-	}
-	for (auto& it : m_fire)
-	{
-		it.run(deltaTime, m_battle.getMap());
-	}
 }
 
 void BattleUI::FactionUpdateGUI(FactionName faction)
@@ -148,57 +131,31 @@ void BattleUI::FactionUpdateGUI(FactionName faction)
 	m_gui.updateFactionToken(faction);
 }
 
-//void BattleUI::newPhase()
-//{
-//	
-//}
-//
-//void BattleUI::newTurn(FactionName playersTurn)
-//{
-//
-//}
-
-void BattleUI::startShipPlacement(const std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players, Map& map)
+void BattleUI::deployPlayers(const std::vector<Player>& newPlayers, Map& map, const Battle& battle)
 {
-	assert(m_battle.getCurrentPhase() == BattlePhase::ShipPlacement);
-	assert(m_playerShipPlacement.empty());
+	assert(m_battle.getCurrentPhase() == BattlePhase::Deployment);
+	assert(m_shipDeployment.empty());
 
-	//TODO: Change this at some point
-	for (auto& player : players)
+	bool positionToSnapToChosen = false;
+	std::pair<int, int> positionToSnapTo;
+
+	for (const auto& player : newPlayers)
 	{
-		for (auto& entity : player.second)
-		{
-			switch (player.first)
+		/*if(player.m_type == ePlayerType::eHuman)
+		{*/
+			if (!positionToSnapToChosen)
 			{
-			case FactionName::eYellow:
-				//entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthYellow);
-				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
-				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });
-				break;
-			case FactionName::eBlue:
-				//entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthBlue);
-				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
-				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });
-				break;
-			case FactionName::eRed:
-				//entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthRed);
-				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
-				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });
-				break;
-			case FactionName::eGreen:
-				//entity->m_sprite->SetFrameNumber(eShipSpriteFrame::eMaxHealthGreen);
-				entity->m_sprite->GetTransformComp().SetOriginToCentreOfFrame();
-				entity->m_sprite->GetTransformComp().SetScaling({ 1, 1 });
-				break;
+				positionToSnapToChosen = true;
+				positionToSnapTo = battle.getPlayer(player.m_factionName).m_spawnPosition;
 			}
-		}
+
+			m_shipDeployment.push_back(std::make_unique<DeploymentPhase>(player.m_selectedEntities,
+				battle.getPlayer(player.m_factionName).m_spawnPosition, SHIP_PLACEMENT_SPAWN_RANGE, m_battle.getMap(), player.m_factionName));
+		//}
 	}
 
-	for (const auto& player : players)
-	{
-		m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>
-			(player.second, map.getSpawnPosition(), SHIP_PLACEMENT_SPAWN_RANGE, m_battle.getMap(), player.first));
-	}
+	//Snap the Camera to the first position of play
+	m_gui.snapCameraToPosition(positionToSnapTo);
 }
 
 void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
@@ -213,7 +170,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 
 		switch (m_battle.getCurrentPhase())
 		{
-		case BattlePhase::ShipPlacement :
+		case BattlePhase::Deployment :
 		{
 			m_isMovingEntity = true;
 			m_leftMouseDownPosition = { mouseData.x, mouseData.y };
@@ -255,9 +212,9 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 			std::pair<double, eDirection> mouseMoveDirection{ MouseSelection::calculateDirection(m_leftMouseDownPosition,HAPI_Wrapper::getMouseLocation()) };
 			switch (m_battle.getCurrentPhase())
 			{
-			case BattlePhase::ShipPlacement :
+			case BattlePhase::Deployment :
 			{
-				assert(!m_playerShipPlacement.empty());
+				assert(!m_shipDeployment.empty());
 				if (!m_selectedTile.m_tile)
 					break;
 				if (mouseMoveDirection.first > 20)
@@ -265,10 +222,23 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 					//This function call will be used if the mouse moved a significant enough distance during inputing a move command to assume it was on purpose, it sends not only the
 					//destination tile but the direction of the aformentioned movement.  In order for this to work the pathfinding must be capable of taking an eDirection as part of the
 					//function used by the battle to move the entity.
-					m_playerShipPlacement.front()->onLeftClick(m_invalidPosition, mouseMoveDirection.second, m_selectedTile.m_tile, m_battle);
-					if (m_playerShipPlacement.front()->isCompleted())
+					m_shipDeployment.front()->onLeftClick(m_invalidPosition, mouseMoveDirection.second, m_selectedTile.m_tile, m_battle);
+					if (m_shipDeployment.front()->isCompleted())
 					{
-						m_playerShipPlacement.pop_front();
+						m_shipDeployment.pop_front();
+						if (!m_shipDeployment.empty())
+						{
+							//TODO:: Snap to new screen position
+							m_selectedTile.m_tile = nullptr;
+							m_gui.snapCameraToPosition(m_shipDeployment.front()->getSpawnPosition());
+							
+						}
+						else
+						{
+							m_selectedTile.m_tile = nullptr;
+							m_battle.nextTurn();
+						}
+						
 					}
 					//m_battle.moveEntityToPosition(*m_selectedTile.m_tile->m_entityOnTile, *m_battle.getMap().getTile(m_leftMouseDownPosition), mouseMoveDirection.second);
 				}
@@ -276,10 +246,21 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 				{
 					//This function call is to be used if the movement of the mouse during the move command is small enough to be considered unintended,
 					//in this case the ship should not rotate after reaching the destination.
-					m_playerShipPlacement.front()->onLeftClick(m_invalidPosition, eNorth, m_selectedTile.m_tile, m_battle);
-					if (m_playerShipPlacement.front()->isCompleted())
+					m_shipDeployment.front()->onLeftClick(m_invalidPosition, eNorth, m_selectedTile.m_tile, m_battle);
+					if (m_shipDeployment.front()->isCompleted())
 					{
-						m_playerShipPlacement.pop_front();
+						m_shipDeployment.pop_front();
+						if (!m_shipDeployment.empty())
+						{
+							//TODO: Snap to new screen position
+							m_selectedTile.m_tile = nullptr;
+							m_gui.snapCameraToPosition(m_shipDeployment.front()->getSpawnPosition());
+						}
+						else
+						{
+							m_selectedTile.m_tile = nullptr;
+							m_battle.nextTurn();
+						}
 					}
 				}
 				break;
@@ -321,12 +302,12 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 
 	switch (m_battle.getCurrentPhase())
 	{
-	case BattlePhase::ShipPlacement:
+	case BattlePhase::Deployment:
 	{
-		assert(!m_playerShipPlacement.empty());
+		assert(!m_shipDeployment.empty());
 		if (!m_isMovingEntity)
 		{
-			m_selectedTile.m_tile = m_playerShipPlacement.front()->getTileOnMouse(
+			m_selectedTile.m_tile = m_shipDeployment.front()->getTileOnMouse(
 				m_invalidPosition, m_selectedTile.m_tile, m_battle.getMap());
 			//TODO: Raise info box
 		}
@@ -360,33 +341,6 @@ void BattleUI::clearSelectedTile()
 	m_selectedTile.m_tile = nullptr;
 }
 
-void BattleUI::playFireAnimation(BattleEntity& entity, std::pair<int, int> position)
-{
-	for (auto& it : m_fire)
-	{
-		if (!it.m_isEmitting)
-		{
-			it.orient(entity.m_battleProperties.getCurrentDirection());
-			it.setPosition(position);
-			it.m_isEmitting = true;
-			return;
-		}
-	}
-}
-
-void BattleUI::playExplosionAnimation(BattleEntity& entity)
-{
-	for (auto& it : m_explosion)
-	{
-		if (!it.m_isEmitting)
-		{
-			it.setPosition(entity.m_battleProperties.getCurrentPosition());
-			it.m_isEmitting = true;
-			return;
-		}
-	}
-}
-
 void BattleUI::onMouseMoveMovementPhase()
 {
 	assert(m_battle.getCurrentPhase() == BattlePhase::Movement);
@@ -413,7 +367,7 @@ void BattleUI::onMouseMoveMovementPhase()
 		{
 			if (tile->m_type != eTileType::eSea && tile->m_type != eTileType::eOcean)
 			{
-				m_invalidPosition.setPosition(m_battle.getMap().getTileScreenPos(tile->m_tileCoordinate), m_battle.getMap());
+				m_invalidPosition.setPosition(tile->m_tileCoordinate, m_battle.getMap());
 				m_invalidPosition.m_activate = true;
 				m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.clearMovementPath();
 			}
@@ -613,17 +567,8 @@ void BattleUI::onLeftClickAttackPhase()
 		//If there is an entity on the tile you're clicking on and that entity's faction name differs from the one of the ship that's firing
 		if ((tileOnMouse->m_entityOnTile != nullptr) && tileOnMouse->m_entityOnTile->m_factionName != m_selectedTile.m_tile->m_entityOnTile->m_factionName)
 		{
-			if (m_selectedTile.m_tile->m_entityOnTile->m_entityProperties.m_weaponType == eFlamethrower)
-			{
-				playFireAnimation(*m_selectedTile.m_tile->m_entityOnTile, m_targetArea.m_targetArea[0]->m_tileCoordinate);
-			}
-			else
-			{
-				playExplosionAnimation(*tileOnMouse->m_entityOnTile);
-			}
-			m_battle.fireEntityWeaponAtPosition(*m_selectedTile.m_tile->m_entityOnTile, *tileOnMouse, m_targetArea.m_targetArea);
+			m_battle.fireEntityWeaponAtPosition(*m_selectedTile.m_tile, *tileOnMouse, m_targetArea.m_targetArea);
 		}
-
 		m_targetArea.clearTargetArea();
 		m_selectedTile.m_tile = nullptr;
 		m_invalidPosition.m_activate = false;
@@ -695,7 +640,7 @@ void BattleUI::onMouseMoveAttackPhase()
 		//tileOnMouse within weapon range
 		if (cIter != m_targetArea.m_targetArea.cend())
 		{
-			m_invalidPosition.setPosition(m_battle.getMap().getTileScreenPos(tileOnMouse->m_tileCoordinate), m_battle.getMap());
+			m_invalidPosition.setPosition(tileOnMouse->m_tileCoordinate, m_battle.getMap());
 			m_invalidPosition.m_activate = true;
 		}
 		//outside weapon range
@@ -706,13 +651,28 @@ void BattleUI::onMouseMoveAttackPhase()
 	}
 }
 
+
+//CurrentSelectedTile m_selectedTile;
+
+//std::pair<int, int> m_leftMouseDownPosition;
+////This is used to determine if an entity is currently being given a move command, it gets set to true in the "handleOnLeftClickMovementPhase()" and false after "eLeftMouseButtonUp" is detected.
+//bool m_isMovingEntity;
+////Used to store the tile selected for movement when the lmb is depressed, so that it can be used for moveEntity input on mouse up
+//const Tile* m_mouseDownTile;
+//BattleGUI m_gui;
+//InvalidPosition m_invalidPosition;
+//std::deque<std::unique_ptr<ShipPlacementPhase>> m_playerShipPlacement;
+
 void BattleUI::onResetBattle()
 {
 	//TODO: reset other things
-	m_playerShipPlacement.clear();
-	m_targetArea.clearTargetArea();
+	m_shipDeployment.clear();
+	m_targetArea.onReset();
 	m_selectedTile.m_tile = nullptr;
-	m_invalidPosition.m_activate = false;
+	m_selectedTile.m_position = std::pair<int, int>(0, 0);
+	m_invalidPosition.onReset();
+	m_leftMouseDownPosition = std::pair<int, int>(0, 0);
+	m_mouseDownTile = nullptr;
 }
 
 void BattleUI::onNewTurn()
@@ -834,6 +794,12 @@ void BattleUI::TargetArea::clearTargetArea()
 	}
 }
 
+void BattleUI::TargetArea::onReset()
+{
+	m_targetAreaSprites.clear();
+	m_targetArea.clear();
+}
+
 BattleUI::TargetArea::HighlightNode::HighlightNode()
 	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),
 	activate(false)
@@ -841,7 +807,7 @@ BattleUI::TargetArea::HighlightNode::HighlightNode()
 	sprite->GetTransformComp().SetOriginToCentreOfFrame();
 }
 
-BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*> player, 
+BattleUI::DeploymentPhase::DeploymentPhase(std::vector<EntityProperties*> player, 
 	std::pair<int, int> spawnPosition, int range, const Map& map, FactionName factionName)
 	: m_factionName(factionName),
 	m_player(player),
@@ -900,12 +866,12 @@ BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*> 
 	m_currentSelectedEntity.m_currentSelectedEntity = m_player.back();
 }
 
-bool BattleUI::ShipPlacementPhase::isCompleted() const
+bool BattleUI::DeploymentPhase::isCompleted() const
 {
 	return m_player.empty();
 }
 
-void BattleUI::ShipPlacementPhase::render(const InvalidPosition& invalidPosition, const Map& map) const
+void BattleUI::DeploymentPhase::render(const InvalidPosition& invalidPosition, const Map& map) const
 {
 	if (m_currentSelectedEntity.m_currentSelectedEntity && !invalidPosition.m_activate)
 	{
@@ -928,20 +894,19 @@ void BattleUI::ShipPlacementPhase::render(const InvalidPosition& invalidPosition
 
 		m_spawnSprites[i]->Render(SCREEN_SURFACE);
 	}
-
-	//for (const auto& spawnHex : m_spawnSprites)
-	//{
-	//	const std::pair<int, int> tileTransform = map.getTileScreenPos(m_currentSelectedEntity.m_position);
-
-	//	m_currentSelectedEntity.m_currentSelectedEntity->m_sprite->GetTransformComp().SetPosition({
-	//	static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
-	//	static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
-
-	//	spawnHex->Render(SCREEN_SURFACE);
-	//}
 }
 
-const Tile* BattleUI::ShipPlacementPhase::getTileOnMouse(InvalidPosition& invalidPosition, const Tile* currentTileSelected, const Map& map)
+void BattleUI::DeploymentPhase::onReset()
+{
+	m_player.clear();
+	m_currentSelectedEntity.m_position = std::pair<int, int>(0, 0);
+	m_currentSelectedEntity.m_currentSelectedEntity = nullptr;
+	m_spawnArea.clear();
+	m_spawnSprites.clear();
+	m_spawnPosition = std::pair<int, int>(0, 0);
+}
+
+const Tile* BattleUI::DeploymentPhase::getTileOnMouse(InvalidPosition& invalidPosition, const Tile* currentTileSelected, const Map& map)
 {
 	const Tile* tileOnMouse = map.getTile(map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 	if (!tileOnMouse)
@@ -982,7 +947,7 @@ const Tile* BattleUI::ShipPlacementPhase::getTileOnMouse(InvalidPosition& invali
 		}
 		else
 		{
-			invalidPosition.setPosition(map.getTileScreenPos(tileOnMouse->m_tileCoordinate), map);
+			invalidPosition.setPosition(tileOnMouse->m_tileCoordinate, map);
 			invalidPosition.m_activate = true;
 		}
 	}
@@ -990,7 +955,7 @@ const Tile* BattleUI::ShipPlacementPhase::getTileOnMouse(InvalidPosition& invali
 	return tileOnMouse;
 }
 
-void BattleUI::ShipPlacementPhase::onLeftClick(const InvalidPosition& invalidPosition, eDirection startingDirection, const Tile* currentTileSelected, Battle& battle)
+void BattleUI::DeploymentPhase::onLeftClick(const InvalidPosition& invalidPosition, eDirection startingDirection, const Tile* currentTileSelected, Battle& battle)
 {
 	if (!currentTileSelected)
 	{
@@ -1041,88 +1006,7 @@ void BattleUI::CurrentSelectedTile::render(const Map & map) const
 	}
 }
 
-BattleUI::ParticleSystem::ParticleSystem(float lifespan, std::shared_ptr<HAPISPACE::SpriteSheet> texture) :
-	m_position(),
-	m_lifeSpan(lifespan),
-	m_particle(HAPI_Sprites.MakeSprite(texture)),
-	m_frameNum(0),
-	m_isEmitting(false)
-{
-	m_particle->SetFrameNumber(m_frameNum);
-}
-
-void BattleUI::ParticleSystem::setPosition(std::pair<int, int> position)
-{
-	m_position = position;
-}
-
-void BattleUI::ParticleSystem::run(float deltaTime, const Map& map) 
-{
-
-	if (m_isEmitting)
-	{
-		const std::pair<int, int> tileTransform = map.getTileScreenPos(m_position);
-		m_particle->GetTransformComp().SetPosition({
-			tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),
-			tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
-
-		m_lifeSpan.update(deltaTime);
-
-		if (m_lifeSpan.isExpired())
-		{
-			m_particle->SetFrameNumber(m_frameNum);
-			
-			m_lifeSpan.reset();
-			++m_frameNum;
-		}
-
-		if (m_frameNum >= m_particle->GetNumFrames())
-		{
-			m_isEmitting = false;
-			m_frameNum = 0;
-		}
-	}
-
-}
-
-void BattleUI::ParticleSystem::render()const 
-{
-	if (m_isEmitting)
-	{
-		m_particle->GetTransformComp().SetOriginToCentreOfFrame();
-		m_particle->GetTransformComp().SetScaling(1.5);
-		m_particle->Render(SCREEN_SURFACE);
-	}
-}
-
-void BattleUI::ParticleSystem::orient(eDirection entityDir)
-{
-	eDirection direction;
-	switch (entityDir)
-	{
-	case eNorth:
-		direction = eSouth;
-		break;
-	case eNorthEast:
-		direction = eSouthWest;
-		break;
-	case eSouthEast:
-		direction = eNorthWest;
-		break;
-	case eSouth:
-		direction = eNorth;
-		break;
-	case eSouthWest:
-		direction = eNorthEast;
-		break;
-	case eNorthWest:
-		direction = eSouthEast;
-		break;
-	}
-	m_particle->GetTransformComp().SetRotation(DEGREES_TO_RADIANS(static_cast<int>(direction) * 60 % 360));
-}
-
-std::pair<int, int> BattleUI::ShipPlacementPhase::getSpawnPosition() const
+std::pair<int, int> BattleUI::DeploymentPhase::getSpawnPosition() const
 {
 	return m_spawnPosition;
 }
