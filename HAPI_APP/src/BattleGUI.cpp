@@ -3,7 +3,7 @@
 #include "Utilities/MapParser.h"
 #include "GameEventMessenger.h"
 #include "Battle.h"
-
+#include "AudioPlayer.h"
 BattleGUI::BattleGUI()
 	:
 	m_battleIcons(HAPI_Sprites.MakeSprite(Textures::m_battleIcons)),
@@ -126,6 +126,7 @@ void BattleGUI::render(BattlePhase currentBattlePhase) const
 	}
 	case BattleWindow::ePostBattle:
 	{
+		
 		m_postBattleBackground->Render(SCREEN_SURFACE);
 		m_doneButton->Render(SCREEN_SURFACE);
 		if (winningFaction == "Red")
@@ -232,7 +233,7 @@ void BattleGUI::updateFactionToken(int factionName)
 
 void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData, BattlePhase currentBattlePhase)
 {
-
+	
 	//snapCameraToPosition(std::pair<int, int>{ 15, 15 });
 
 	switch (m_currentBattleWindow)
@@ -242,6 +243,7 @@ void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData, BattlePhase c
 		if (m_pauseButton->GetSpritesheet()->GetFrameRect(0).Translated(
 			m_pauseButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
 		{
+			AudioPlayer::getInstance().playShortSound("click");
 			m_currentBattleWindow = BattleWindow::ePause;//enables the pause menu
 		}
 
@@ -279,20 +281,26 @@ void BattleGUI::OnMouseLeftClick(const HAPI_TMouseData& mouseData, BattlePhase c
 		if (m_resumeButton->GetSpritesheet()->GetFrameRect(0).Translated(
 			m_resumeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the resume button
 		{
+			AudioPlayer::getInstance().playShortSound("click");
 			m_currentBattleWindow = BattleWindow::eCombat;//disables the pause menu
 		}
 		else if (m_quitButton->GetSpritesheet()->GetFrameRect(0).Translated(
 			m_quitButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the resume button
 		{
+
+			AudioPlayer::getInstance().playShortSound("click");
 			GameEventMessenger::getInstance().broadcast(GameEvent::eResetBattle);
+			AudioPlayer::getInstance().stopSound("battle theme");
 			//m_currentBattleWindow = BattleWindow::ePostBattle;//disables the pause menu
 		}
 		break;
 	}
 	case BattleWindow::ePostBattle:
 	{
+		AudioPlayer::getInstance().stopSound("battle theme");
 		if (m_doneButton->GetSpritesheet()->GetFrameRect(0).Translated(m_doneButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))//if you press the pause button
 		{
+			AudioPlayer::getInstance().stopSound("win");
 			GameEventMessenger::getInstance().broadcast(GameEvent::eResetBattle);
 		}
 		break;

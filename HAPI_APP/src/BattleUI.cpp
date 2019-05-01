@@ -6,7 +6,7 @@
 #include "MouseSelection.h"
 #include "GameEventMessenger.h"
 #include <assert.h>
-
+#include "AI.h"
 using namespace HAPISPACE;
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
@@ -374,7 +374,7 @@ void BattleUI::onMouseMoveMovementPhase()
 void BattleUI::onLeftClickMovementPhase()
 {
 	assert(m_battle.getCurrentPhase() == BattlePhase::Movement);
-
+	
 	const Tile* tileOnMouse = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 	if (!tileOnMouse)
 	{
