@@ -147,6 +147,8 @@ int EntityBattleProperties::MovementPath::generatePath(const Map& map, const Til
 
 	int bonusMove = 0;
 	float movementPointsUsed = 0;
+	if (!source.m_entityOnTile)
+		return 1;
 	int prevDir = source.m_entityOnTile->m_battleProperties.m_currentDirection;
 	float windStrength = map.getWindStrength();
 	int windDirection = static_cast<int>(map.getWindDirection());
