@@ -82,10 +82,6 @@ eDirection EntityBattleProperties::getCurrentDirection() const
 	return m_currentDirection;
 }
 
-//bool EntityBattleProperties::isMovedToDestination() const
-//{
-//	return m_movedToDestination;
-//}
 
 std::pair<int, int> EntityBattleProperties::getCurrentPosition() const
 {
@@ -102,10 +98,6 @@ bool EntityBattleProperties::isDead() const
 	return m_isDead;
 }
 
-//bool EntityBattleProperties::isMoving() const
-//{
-//	return !m_pathToTile.empty();
-//}
 
 bool EntityBattleProperties::isMovingToDestination() const
 {
