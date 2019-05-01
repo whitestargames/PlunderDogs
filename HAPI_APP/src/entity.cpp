@@ -250,15 +250,11 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 		if (!pathToTile.empty() && pathToTile.size() <= m_movementPathSize + 1)
 		{
 			m_pathToTile = pathToTile;
-			for (int i = 0; i < m_pathToTile.size(); ++i)
-			{
-				m_movementPath.setPosition(i, m_pathToTile[i].second);
-			}
-			for (auto& node : m_pathToTile)
-			{
-				//node.second
-				
-			}
+			//for (int i = 0; i < m_pathToTile.size(); ++i)
+			//{
+			//	m_movementPath.setPosition(i, m_pathToTile[i].second);
+			//}
+
 			map.moveEntity(m_currentPosition, pathToTile.back().second);
 			m_destinationSet = true;
 			m_movingToDestination = true;

@@ -801,8 +801,8 @@ void BattleUI::TargetArea::clearTargetArea()
 
 void BattleUI::TargetArea::onReset()
 {
-	m_targetAreaSprites.clear();
-	m_targetArea.clear();
+	//m_targetAreaSprites.clear();
+	//m_targetArea.clear();
 }
 
 BattleUI::TargetArea::HighlightNode::HighlightNode()
