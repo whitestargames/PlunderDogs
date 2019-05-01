@@ -31,10 +31,10 @@ std::pair<double, eDirection> MouseSelection::calculateDirection(std::pair<int, 
 		{
 			if (distance.second > 0)
 			{
-				returnVariable.second = eSouthEast;
+				returnVariable.second = eSouth;
 				return returnVariable;
 			}
-			else returnVariable.second = eNorthWest;
+			else returnVariable.second = eNorth;
 			return returnVariable;
 		}
 		double angle;
