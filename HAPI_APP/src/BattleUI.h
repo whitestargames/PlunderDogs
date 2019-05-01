@@ -67,7 +67,7 @@ class BattleUI : public IHapiSpritesInputListener
 		void onReset();
 
 		const Tile* getTileOnMouse(InvalidPosition& invalidPosition, const Tile* currentTileSelected, const Map& map);
-		void onLeftClick(const InvalidPosition& invalidPosition, eDirection startingDirection, const Tile* currectTileSelected, Battle& battle);
+		void onLeftClick(InvalidPosition& invalidPosition, eDirection startingDirection, const Tile* currectTileSelected, Battle& battle);
 
 	private:
 		FactionName m_factionName;
