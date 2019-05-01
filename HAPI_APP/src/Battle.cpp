@@ -303,13 +303,13 @@ void Battle::insertEntity(std::pair<int, int> startingPosition, eDirection start
 void Battle::nextTurn()
 {
 	FactionName currentPlayer;
-	bool lastHumanPlayer = false;
+	bool lastPlayer = false;
 	switch (m_currentPhase)
 	{
 	case BattlePhase::ShipPlacement :
-		lastHumanPlayer = (m_battleUI.isHumanDeploymentCompleted());
+		lastPlayer = (m_battleUI.isHumanDeploymentCompleted());
 		incrementPlayerTurn();
-		if (lastHumanPlayer)
+		if (lastPlayer)
 		{
 			m_currentPhase = BattlePhase::Movement;
 
@@ -317,6 +317,12 @@ void Battle::nextTurn()
 			//{
 			//	entity->m_battleProperties.enableAction();
 			//}
+
+			if (m_players[m_currentPlayerTurn].m_playerType == ePlayerType::eAI)
+			{
+				m_timeUntilAIMovementPhase.setActive(true);
+				GameEventMessenger::getInstance().broadcast(GameEvent::eEnteredAITurn);
+			}
 
 			m_currentPlayerTurn = 0;
 		}
