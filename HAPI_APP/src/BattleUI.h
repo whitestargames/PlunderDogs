@@ -125,6 +125,11 @@ public:
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
 	void setCurrentFaction(FactionName faction);
+
+	void clearTargetArea();
+	void clearSelectedTile();
+	void playFireAnimation(BattleEntity& entity, std::pair<int, int> position);
+	void playExplosionAnimation(BattleEntity& entity);
 private:
 	Battle& m_battle;
 	CurrentSelectedTile m_selectedTile;
@@ -153,6 +158,6 @@ private:
 	void onResetBattle();
 	void onNewTurn();
 
-	ParticleSystem m_explosion;
-	ParticleSystem m_fire;
+	std::vector<ParticleSystem> m_explosion;
+	std::vector<ParticleSystem> m_fire;
 };

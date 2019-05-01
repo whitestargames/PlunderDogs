@@ -40,7 +40,7 @@ public:
 	~Battle();
 	const Map& getMap() const;
 	BattlePhase getCurrentPhase() const;
-	FactionName getCurentFaction() const;
+	FactionName getCurrentFaction() const;
 
 	void startBattle(const std::string& newMapName, std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& newPlayers);
 	void render() const;

@@ -54,9 +54,16 @@ BattleUI::BattleUI(Battle & battle)
 	m_leftMouseDownPosition({ 0, 0 }),
 	m_isMovingEntity(false),
 	m_mouseDownTile(nullptr),
-	m_explosion(0.08, Textures::m_explosion),
-	m_fire(0.02, Textures::m_fire)
+	m_explosion(),
+	m_fire()
 {
+	m_explosion.reserve(6);
+	m_fire.reserve(6);
+	for (int i = 0; i < 6; i++)
+	{
+		m_explosion.emplace_back(0.08, Textures::m_explosion);
+		m_fire.emplace_back(0.02, Textures::m_fire);
+	}
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleUI::onResetBattle, this), "BattleUI", GameEvent::eResetBattle);
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleUI::onNewTurn, this), "BattleUI", GameEvent::eNewTurn);
 }
@@ -97,8 +104,14 @@ void BattleUI::renderUI() const
 
 void BattleUI::renderParticles() const
 {
-	m_explosion.render();
-	m_fire.render();
+	for (auto& it : m_explosion)
+	{
+		it.render();
+	}
+	for (auto& it : m_fire)
+	{
+		it.render();
+	}
 }
 
 void BattleUI::renderGUI() const
@@ -120,8 +133,14 @@ void BattleUI::loadGUI(std::pair<int, int> mapDimensions)
 void BattleUI::update(float deltaTime)
 {
 	m_gui.update(m_battle.getMap().getWindDirection());// added update for gui to receive wind direction so compass direction updates
-	m_explosion.run(deltaTime, m_battle.getMap());
-	m_fire.run(deltaTime, m_battle.getMap());
+	for (auto& it : m_explosion)
+	{
+		it.run(deltaTime, m_battle.getMap());
+	}
+	for (auto& it : m_fire)
+	{
+		it.run(deltaTime, m_battle.getMap());
+	}
 }
 
 void BattleUI::FactionUpdateGUI(FactionName faction)
@@ -331,13 +350,50 @@ void BattleUI::setCurrentFaction(FactionName faction)
 	FactionUpdateGUI(faction);
 }
 
+void BattleUI::clearTargetArea()
+{
+	m_targetArea.clearTargetArea();
+}
+
+void BattleUI::clearSelectedTile()
+{
+	m_selectedTile.m_tile = nullptr;
+}
+
+void BattleUI::playFireAnimation(BattleEntity& entity, std::pair<int, int> position)
+{
+	for (auto& it : m_fire)
+	{
+		if (!it.m_isEmitting)
+		{
+			it.orient(entity.m_battleProperties.getCurrentDirection());
+			it.setPosition(position);
+			it.m_isEmitting = true;
+			return;
+		}
+	}
+}
+
+void BattleUI::playExplosionAnimation(BattleEntity& entity)
+{
+	for (auto& it : m_explosion)
+	{
+		if (!it.m_isEmitting)
+		{
+			it.setPosition(entity.m_battleProperties.getCurrentPosition());
+			it.m_isEmitting = true;
+			return;
+		}
+	}
+}
+
 void BattleUI::onMouseMoveMovementPhase()
 {
 	assert(m_battle.getCurrentPhase() == BattlePhase::Movement);
 
 	//Current tile selected does not match the current player in play
 	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile 
-		&& m_selectedTile.m_tile->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
+		&& m_selectedTile.m_tile->m_entityOnTile->m_factionName != m_battle.getCurrentFaction())
 	{
 		return;
 	}
@@ -387,7 +443,7 @@ void BattleUI::onLeftClickMovementPhase()
 	}
 
 	if (!m_selectedTile.m_tile && tileOnMouse->m_entityOnTile &&
-		tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
+		tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurrentFaction())
 	{
 		m_selectedTile.m_tile = tileOnMouse;
 		return;
@@ -430,12 +486,12 @@ void BattleUI::onLeftClickMovementPhase()
 		}
 
 		//Disallow movement to tile occupied by other player
-		else if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
+		else if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurrentFaction())
 		{
 			m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.clearMovementPath();
 			m_selectedTile.m_tile = tileOnMouse;
 		}
-		else if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName == m_battle.getCurentFaction())
+		else if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName == m_battle.getCurrentFaction())
 		{
 			m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.clearMovementPath();
 			m_selectedTile.m_tile = tileOnMouse;
@@ -443,9 +499,9 @@ void BattleUI::onLeftClickMovementPhase()
 
 		//Store data so Entity can move to new location
 		else if (m_selectedTile.m_tile->m_entityOnTile && (m_selectedTile.m_tile->m_tileCoordinate != tileOnMouse->m_tileCoordinate)
-			&& m_selectedTile.m_tile->m_entityOnTile->m_factionName == m_battle.getCurentFaction())
+			&& m_selectedTile.m_tile->m_entityOnTile->m_factionName == m_battle.getCurrentFaction())
 		{
-			assert(m_selectedTile.m_tile->m_entityOnTile->m_factionName == m_battle.getCurentFaction());
+			assert(m_selectedTile.m_tile->m_entityOnTile->m_factionName == m_battle.getCurrentFaction());
 			m_mouseDownTile = tileOnMouse;
 			m_isMovingEntity = true;
 			//m_battle.moveEntityToPosition(*m_selectedTile.m_tile->m_entityOnTile, *tileOnMouse);
@@ -462,7 +518,7 @@ void BattleUI::onLeftClickMovementPhase()
 		//Do not select tile that contains wrong players entity
 		if (tileOnMouse->m_entityOnTile)
 		{
-			if (tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
+			if (tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurrentFaction())
 			{
 				//TODO: Drop info box
 				m_selectedTile.m_tile = nullptr;
@@ -513,7 +569,7 @@ void BattleUI::onLeftClickAttackPhase()
 
 	//Select new entity that is on same team
 	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile && tileOnMouse->m_entityOnTile &&
-		(tileOnMouse->m_entityOnTile->m_factionName == m_battle.getCurentFaction()))
+		(tileOnMouse->m_entityOnTile->m_factionName == m_battle.getCurrentFaction()))
 	{
 		if (!tileOnMouse->m_entityOnTile->m_battleProperties.isWeaponFired())
 		{
@@ -524,7 +580,7 @@ void BattleUI::onLeftClickAttackPhase()
 		}
 	}
 
-	if (!m_selectedTile.m_tile && tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
+	if (!m_selectedTile.m_tile && tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurrentFaction())
 	{
 		m_selectedTile.m_tile = tileOnMouse;
 		return;
@@ -540,7 +596,7 @@ void BattleUI::onLeftClickAttackPhase()
 		return;
 	}
 
-	//Clicking on the same entity what has been previously selected
+	//Clicking on the same entity that has been previously selected
 	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_tileCoordinate == tileOnMouse->m_tileCoordinate)
 	{
 		m_targetArea.clearTargetArea();
@@ -551,25 +607,23 @@ void BattleUI::onLeftClickAttackPhase()
 	}
 
 	//Entity already selected Fire weapon at position
+	//If the selectedTile has an entity on it and that entity hasn't fired
 	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile && !m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.isWeaponFired())
 	{
+		//If there is an entity on the tile you're clicking on and that entity's faction name differs from the one of the ship that's firing
 		if ((tileOnMouse->m_entityOnTile != nullptr) && tileOnMouse->m_entityOnTile->m_factionName != m_selectedTile.m_tile->m_entityOnTile->m_factionName)
 		{
 			if (m_selectedTile.m_tile->m_entityOnTile->m_entityProperties.m_weaponType == eFlamethrower)
 			{
-				m_fire.orient(m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.getCurrentDirection());
-				m_fire.setPosition(m_targetArea.m_targetArea[0]->m_tileCoordinate);
-				m_fire.m_isEmitting = true;
+				playFireAnimation(*m_selectedTile.m_tile->m_entityOnTile, m_targetArea.m_targetArea[0]->m_tileCoordinate);
 			}
 			else
 			{
-				m_explosion.setPosition(tileOnMouse->m_entityOnTile->m_battleProperties.getCurrentPosition());
-				m_explosion.m_isEmitting = true;
+				playExplosionAnimation(*tileOnMouse->m_entityOnTile);
 			}
-
+			m_battle.fireEntityWeaponAtPosition(*m_selectedTile.m_tile->m_entityOnTile, *tileOnMouse, m_targetArea.m_targetArea);
 		}
 
-		m_battle.fireEntityWeaponAtPosition(*m_selectedTile.m_tile->m_entityOnTile, *tileOnMouse, m_targetArea.m_targetArea);
 		m_targetArea.clearTargetArea();
 		m_selectedTile.m_tile = nullptr;
 		m_invalidPosition.m_activate = false;
@@ -578,7 +632,7 @@ void BattleUI::onLeftClickAttackPhase()
 
 	//Entity Already Selected whilst showing where to fire
 	//Change to different Entity before firing
-	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName == m_battle.getCurentFaction()
+	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName == m_battle.getCurrentFaction()
 		&& m_selectedTile.m_tile && m_selectedTile.m_tile && m_targetArea.m_targetArea.size() > 0)
 	{
 		m_targetArea.clearTargetArea();
@@ -590,19 +644,19 @@ void BattleUI::onLeftClickAttackPhase()
 
 	//Click on same
 	//Select new Entity to fire at something
-	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
+	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurrentFaction())
 	{
 		m_selectedTile.m_tile = tileOnMouse;
 		return;
 	}
 
-	if (!m_selectedTile.m_tile && tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName == m_battle.getCurentFaction())
+	if (!m_selectedTile.m_tile && tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName == m_battle.getCurrentFaction())
 	{
 		m_selectedTile.m_tile = tileOnMouse;
 	}
 
 	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile && !m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.isWeaponFired() &&
-		m_selectedTile.m_tile->m_entityOnTile->m_factionName == m_battle.getCurentFaction())
+		m_selectedTile.m_tile->m_entityOnTile->m_factionName == m_battle.getCurrentFaction())
 	{
 		m_selectedTile.m_tile = tileOnMouse;
 		m_targetArea.generateTargetArea(m_battle.getMap(), *tileOnMouse);

@@ -94,7 +94,7 @@ void Battle::render() const
 
 void Battle::update(float deltaTime)
 {
-	m_battleUI.setCurrentFaction(getCurentFaction());
+	m_battleUI.setCurrentFaction(getCurrentFaction());
 	m_battleUI.update(deltaTime);
 	m_map.setDrawOffset(m_battleUI.getCameraPositionOffset());
 
@@ -129,7 +129,7 @@ bool Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 	assert(!player.m_battleProperties.isWeaponFired());
 
 	//Disallow attacking same team
-	if (tileOnAttackPosition.m_entityOnTile && tileOnAttackPosition.m_entityOnTile->m_factionName != getCurentFaction()
+	if (tileOnAttackPosition.m_entityOnTile && tileOnAttackPosition.m_entityOnTile->m_factionName != getCurrentFaction()
 			&& !tileOnAttackPosition.m_entityOnTile->m_battleProperties.isDead())
 	{
 		//Find entity 
@@ -191,6 +191,10 @@ void Battle::nextTurn()
 		break;
 	case BattlePhase::Attack :
 		m_currentPhase = BattlePhase::Movement;
+		//Clear the targeting sprites and UI selectedTile
+		m_battleUI.clearTargetArea();
+		m_battleUI.clearSelectedTile();
+		
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringMovementPhase);
 		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
@@ -311,7 +315,7 @@ BattlePhase Battle::getCurrentPhase() const
 	return m_currentPhase;
 }
 
-FactionName Battle::getCurentFaction() const
+FactionName Battle::getCurrentFaction() const
 {
 	return m_players[m_currentPlayerTurn].m_factionName;
 }
