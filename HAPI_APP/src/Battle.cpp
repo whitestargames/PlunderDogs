@@ -117,6 +117,8 @@ void Battle::setWindDirection(float deltaTime)
 
 void Battle::handleAIMovementPhaseTimer(float deltaTime)
 {
+	if (m_battleUI.isPaused())
+		return;
 	m_timeUntilAIMovementPhase.update(deltaTime);
 	if (m_timeUntilAIMovementPhase.isExpired())
 	{
@@ -129,6 +131,8 @@ void Battle::handleAIMovementPhaseTimer(float deltaTime)
 
 void Battle::handleAIAttackPhaseTimer(float deltaTime)
 {
+	if (m_battleUI.isPaused())
+		return;
 	m_timeUntilAIAttackPhase.update(deltaTime);
 	if (m_timeUntilAIAttackPhase.isExpired())
 	{
@@ -446,6 +450,8 @@ void Battle::playExplosionAnimation(BattleEntity& entity)
 
 void Battle::updateMovementPhase(float deltaTime)
 {
+	if (m_battleUI.isPaused())
+		return;
 	for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
 	{
 		if (entity->m_battleProperties.isDead())

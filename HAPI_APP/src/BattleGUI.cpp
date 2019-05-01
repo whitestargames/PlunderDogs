@@ -526,3 +526,10 @@ void BattleGUI::snapCameraToPosition(std::pair<int, int> snapLocation)//snaps th
 	CameraPositionOffset.first = snapLocation.first;
 	CameraPositionOffset.second = snapLocation.second;
 }
+
+bool BattleGUI::isPaused()
+{
+	if (m_currentBattleWindow == ePause)
+		return true;
+	return false;
+}

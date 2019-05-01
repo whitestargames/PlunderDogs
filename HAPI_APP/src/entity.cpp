@@ -9,7 +9,7 @@ constexpr size_t MOVEMENT_PATH_SIZE{ 32 };
 constexpr size_t WEAPON_HIGHLIGHT_SIZE{ 200 };
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
-
+constexpr int UPGRADE_POINTS = 2;
 
 //std::pair<int, int> m_currentPosition;
 ////std::deque<std::pair<eDirection, std::pair<int, int>>> m_pathToTile;
@@ -380,7 +380,7 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 }
 
 //ENTITY
-EntityProperties::EntityProperties(FactionName factionName, EntityType entityType) : m_upgradePoints(4), m_maxUpgradePoints(4), m_selectedSprite(HAPI_Sprites.MakeSprite(Textures::m_thing))
+EntityProperties::EntityProperties(FactionName factionName, EntityType entityType) : m_upgradePoints(UPGRADE_POINTS), m_maxUpgradePoints(UPGRADE_POINTS), m_selectedSprite(HAPI_Sprites.MakeSprite(Textures::m_thing))
 {
 	//TODO: Currently not working as intended
 	//UI seems to be resetting the frameNumber somewhere in OverWorldGUI. 
@@ -460,7 +460,6 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_yellowShipSnipe));
 			break;
-
 		}
 
 		break;
@@ -484,7 +483,6 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_blueShipSnipe));
 			break;
-
 		}
 
 		break;
@@ -531,7 +529,6 @@ EntityProperties::EntityProperties(FactionName factionName, EntityType entityTyp
 
 			m_sprite = std::shared_ptr<HAPISPACE::Sprite>(HAPI_Sprites.MakeSprite(Textures::m_greenShipSnipe));
 			break;
-
 		}
 		break;
 	}
@@ -550,14 +547,6 @@ BattleEntity::BattleEntity(std::pair<int, int> startingPosition, const EntityPro
 
 void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProperties& entityProperties)
 {	
-	//bool m_movingToDestination = false;
-	//bool m_reachedDestination = false;
-	//if (!m_movingToDestination && m_reachedDestination)
-	//{
-	//	return true;
-	//}
-	//
-
 	if (!m_pathToTile.empty())
 	{
 		m_movementTimer.update(deltaTime);

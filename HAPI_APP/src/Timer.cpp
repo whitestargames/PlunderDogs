@@ -1,8 +1,9 @@
 #include "Timer.h"
+#include <algorithm>	//abs()
 
 Timer::Timer(float expirationTime, bool active)
 	: m_expirationTime(expirationTime),
-	m_elaspedTime(0),
+	m_elaspedTime(0.0f),
 	m_active(active)
 {
 }
@@ -21,13 +22,13 @@ void Timer::update(float deltaTime)
 {
 	if (m_active)
 	{
-		m_elaspedTime += deltaTime;
+		m_elaspedTime += std::abs(deltaTime);
 	}
 }
 
 void Timer::reset()
 {
-	m_elaspedTime = 0;
+	m_elaspedTime = 0.0f;
 }
 
 void Timer::setActive(bool active)

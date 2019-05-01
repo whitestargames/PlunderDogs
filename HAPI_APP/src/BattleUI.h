@@ -109,6 +109,7 @@ public:
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
 	void setCurrentFaction(FactionName faction);
+	bool isPaused();
 
 	void clearTargetArea();
 	void clearSelectedTile();

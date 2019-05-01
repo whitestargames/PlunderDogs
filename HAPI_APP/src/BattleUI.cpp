@@ -330,6 +330,11 @@ void BattleUI::setCurrentFaction(FactionName faction)
 	FactionUpdateGUI(faction);
 }
 
+bool BattleUI::isPaused()
+{
+	return m_gui.isPaused();
+}
+
 void BattleUI::clearTargetArea()
 {
 	m_targetArea.clearTargetArea();

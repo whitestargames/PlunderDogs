@@ -14,11 +14,12 @@ constexpr int UPGRADE_WINDOW_OBJECTWIDTH = 150;
 constexpr int UPGRADE_WINDOW_OBJECTHEIGHT = 300;
 constexpr int UPGRADE_WINDOW_WIDTH = 200;
 constexpr int UPGRADE_WINDOW_HEIGHT = 600;
-//const for upgrade screen
-constexpr int UPGRADE_COST_HEALTH = 1;
-constexpr int UPGRADE_COST_RANGE = 2;
-constexpr int UPGRADE_COST_MOVEMENT = 1;
-constexpr int UPGRADE_COST_DAMAGE = 4;
+//cost for upgrade screen
+constexpr float UPGRADE_POWER = 0.25;
+//constexpr int UPGRADE_COST_HEALTH = 1;
+//constexpr int UPGRADE_COST_RANGE = 2;
+//constexpr int UPGRADE_COST_MOVEMENT = 1;
+//constexpr int UPGRADE_COST_DAMAGE = 4;
 
 int OverWorldGUI::getActivePlayerCount()
 {
@@ -188,7 +189,7 @@ void OverWorldGUI::render(Battle& battle)
 			m_upgradesButton->Render(SCREEN_SURFACE);
 			
 			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(550, 100), HAPISPACE::Colour255::BLACK, selectedMapName, 100);
-			if (m_currentlySelected != nullptr)
+			if (m_currentlySelected)
 			{
 				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1600, 360), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_currentHealth), 50);
 				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1600, 445), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_damage), 50);
@@ -226,7 +227,7 @@ void OverWorldGUI::render(Battle& battle)
 			//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1330, 240), HAPISPACE::Colour255::BLACK, "36", 50);//draw text gold
 			//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1270, 360), HAPISPACE::Colour255::BLACK, "BUY", 50);
 			//SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1270, 405), HAPISPACE::Colour255::BLACK, "SHIPS", 50);
-			if (m_currentlySelected != nullptr)
+			if (m_currentlySelected)
 			{
 				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(870, 240), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_currentHealth), 50);
 				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(870, 370), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_movementPoints), 50);
@@ -249,11 +250,30 @@ void OverWorldGUI::render(Battle& battle)
 			m_addMovementButton->Render(SCREEN_SURFACE);
 			m_addDamageButton->Render(SCREEN_SURFACE);
 			m_addRangeButton->Render(SCREEN_SURFACE);
-			// upgrades cost text display
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1125, 240), HAPISPACE::Colour255::BLACK, std::to_string(UPGRADE_COST_HEALTH), 50);
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1125, 370), HAPISPACE::Colour255::BLACK, std::to_string(UPGRADE_COST_MOVEMENT), 50);
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1125, 500), HAPISPACE::Colour255::BLACK, std::to_string(UPGRADE_COST_DAMAGE), 50);
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1125, 630), HAPISPACE::Colour255::BLACK, std::to_string(UPGRADE_COST_RANGE), 50);
+			//Draw upgrades cost text
+			if (m_currentlySelected)
+			{
+				int healthUp = static_cast<int>(m_currentlySelected->m_originalHealth * UPGRADE_POWER);
+				int moveUp = static_cast<int>(m_currentlySelected->m_originalMovement * UPGRADE_POWER);
+				int damageUp = static_cast<int>(m_currentlySelected->m_originalDamage * UPGRADE_POWER);
+				int rangeUp = static_cast<int>(m_currentlySelected->m_originalRange * UPGRADE_POWER);
+				if (healthUp)
+					SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1125, 240), HAPISPACE::Colour255::BLACK, std::to_string(healthUp), 50);
+				else
+					SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1108, 240), HAPISPACE::Colour255::BLACK, "0.5", 50);
+				if (moveUp)
+					SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1125, 370), HAPISPACE::Colour255::BLACK, std::to_string(moveUp), 50);
+				else
+					SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1108, 370), HAPISPACE::Colour255::BLACK, "0.5", 50);
+				if (damageUp)
+					SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1125, 500), HAPISPACE::Colour255::BLACK, std::to_string(damageUp), 50);
+				else
+					SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1108, 500), HAPISPACE::Colour255::BLACK, "0.5", 50);
+				if (rangeUp)
+					SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1125, 630), HAPISPACE::Colour255::BLACK, std::to_string(rangeUp), 50);
+				else
+					SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1108, 630), HAPISPACE::Colour255::BLACK, "0.5", 50);
+			}
 			break;
 		}
 	}
@@ -483,11 +503,20 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			else if (m_addHealthButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addHealthButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//health+
-				if (m_currentlySelected != nullptr)
+				if (m_currentlySelected)
 				{
-					if (m_currentlySelected->m_upgradePoints >= UPGRADE_COST_HEALTH)
+					int increase = m_currentlySelected->m_originalHealth * UPGRADE_POWER;
+					//If increase is non zero and there are points to spend
+					if (increase > 0 && m_currentlySelected->m_upgradePoints > 0)
 					{
-						m_currentlySelected->m_upgradePoints -= UPGRADE_COST_HEALTH;
+						m_currentlySelected->m_upgradePoints--;
+						m_currentlySelected->m_healthMax += increase;
+						m_currentlySelected->m_currentHealth += increase;
+					}
+					//If you have at least two upgrade points
+					else if (m_currentlySelected->m_upgradePoints > 1)
+					{
+						m_currentlySelected->m_upgradePoints -= 2;
 						m_currentlySelected->m_healthMax++;
 						m_currentlySelected->m_currentHealth++;
 					}
@@ -496,11 +525,19 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			else if (m_addMovementButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addMovementButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//movement+
-				if (m_currentlySelected != nullptr)
+				if (m_currentlySelected)
 				{
-					if (m_currentlySelected->m_upgradePoints >= UPGRADE_COST_MOVEMENT)
+					int increase = m_currentlySelected->m_originalMovement * UPGRADE_POWER;
+					//If increase is non zero and there are points to spend
+					if (increase > 0 && m_currentlySelected->m_upgradePoints > 0)
 					{
-						m_currentlySelected->m_upgradePoints-= UPGRADE_COST_MOVEMENT;
+						m_currentlySelected->m_upgradePoints--;
+						m_currentlySelected->m_movementPoints += increase;
+					}
+					//If you have at least two upgrade points 
+					else if (m_currentlySelected->m_upgradePoints > 1)
+					{
+						m_currentlySelected->m_upgradePoints -= 2;
 						m_currentlySelected->m_movementPoints++;
 					}
 				}
@@ -508,11 +545,19 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			else if (m_addDamageButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addDamageButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//damage+
-				if (m_currentlySelected != nullptr)
+				if (m_currentlySelected)
 				{
-					if (m_currentlySelected->m_upgradePoints >= UPGRADE_COST_DAMAGE)
+					int increase = m_currentlySelected->m_originalDamage * UPGRADE_POWER;
+					//If increase is non zero and there are points to spend
+					if (increase > 0 && m_currentlySelected->m_upgradePoints > 0)
 					{
-						m_currentlySelected->m_upgradePoints -= UPGRADE_COST_DAMAGE;
+						m_currentlySelected->m_upgradePoints--;
+						m_currentlySelected->m_damage += increase;
+					}
+					//If you have at least two upgrade points
+					else if (m_currentlySelected->m_upgradePoints > 1)
+					{
+						m_currentlySelected->m_upgradePoints -= 2;
 						m_currentlySelected->m_damage++;
 					}
 				}
@@ -520,11 +565,19 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			else if (m_addRangeButton->GetSpritesheet()->GetFrameRect(0).Translated(m_addRangeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//range+
-				if (m_currentlySelected != nullptr)
+				if (m_currentlySelected)
 				{
-					if (m_currentlySelected->m_upgradePoints >= UPGRADE_COST_RANGE)
+					int increase = m_currentlySelected->m_originalRange * UPGRADE_POWER;
+					//If increase is non zero and there are points to spend
+					if (increase > 0 && m_currentlySelected->m_upgradePoints > 0)
 					{
-						m_currentlySelected->m_upgradePoints-= UPGRADE_COST_RANGE;
+						m_currentlySelected->m_upgradePoints--;
+						m_currentlySelected->m_range += increase;
+					}
+					//If you have at least two upgrade points 
+					else if (m_currentlySelected->m_upgradePoints > 1)
+					{
+						m_currentlySelected->m_upgradePoints -= 2;
 						m_currentlySelected->m_range++;
 					}
 				}
@@ -532,49 +585,82 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			else if (m_removeHealthButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeHealthButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//health-
-				if (m_currentlySelected != nullptr)
+				if (m_currentlySelected)
 				{
-					if (m_currentlySelected->m_upgradePoints < m_currentlySelected->m_maxUpgradePoints && m_currentlySelected->m_healthMax > m_currentlySelected->m_originalHealth)
+					int increase = m_currentlySelected->m_originalHealth * UPGRADE_POWER;
+					//If increase is non zero and below max points
+					if (increase > 0 && m_currentlySelected->m_upgradePoints < m_currentlySelected->m_maxUpgradePoints && m_currentlySelected->m_healthMax > m_currentlySelected->m_originalHealth)
 					{
-						m_currentlySelected->m_currentHealth--;
+						m_currentlySelected->m_upgradePoints++;
+						m_currentlySelected->m_healthMax -= increase;
+						m_currentlySelected->m_currentHealth -= increase;
+					}
+					//If you have at least two upgrade points blow max
+					else if (m_currentlySelected->m_upgradePoints < m_currentlySelected->m_maxUpgradePoints - 1 && m_currentlySelected->m_healthMax > m_currentlySelected->m_originalHealth)
+					{
+						m_currentlySelected->m_upgradePoints += 2;
 						m_currentlySelected->m_healthMax--;
-						m_currentlySelected->m_upgradePoints+= UPGRADE_COST_HEALTH;
+						m_currentlySelected->m_currentHealth--;
 					}
 				}
 			}
 			else if (m_removeMovementButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeMovementButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//movement-
-				if (m_currentlySelected != nullptr)
+				if (m_currentlySelected)
 				{
-					if (m_currentlySelected->m_upgradePoints < m_currentlySelected->m_maxUpgradePoints && m_currentlySelected->m_movementPoints > m_currentlySelected->m_originalMovement)
+					int increase = m_currentlySelected->m_originalMovement * UPGRADE_POWER;
+					//If increase is non zero and below max points
+					if (increase > 0 && m_currentlySelected->m_upgradePoints < m_currentlySelected->m_maxUpgradePoints && m_currentlySelected->m_movementPoints > m_currentlySelected->m_originalMovement)
 					{
+						m_currentlySelected->m_upgradePoints++;
+						m_currentlySelected->m_movementPoints -= increase;
+					}
+					//If you have at least two upgrade points blow max
+					else if (m_currentlySelected->m_upgradePoints < m_currentlySelected->m_maxUpgradePoints - 1 && m_currentlySelected->m_movementPoints > m_currentlySelected->m_originalMovement)
+					{
+						m_currentlySelected->m_upgradePoints += 2;
 						m_currentlySelected->m_movementPoints--;
-						m_currentlySelected->m_upgradePoints += UPGRADE_COST_MOVEMENT;
 					}
 				}
 			}
 			else if (m_removeDamageButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeDamageButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//damage-
-				if (m_currentlySelected != nullptr)
+				if (m_currentlySelected)
 				{
-					if (m_currentlySelected->m_upgradePoints < m_currentlySelected->m_maxUpgradePoints - 3 && m_currentlySelected->m_damage > m_currentlySelected->m_originalDamage)
+					int increase = m_currentlySelected->m_originalDamage * UPGRADE_POWER;
+					//If increase is non zero and below max points
+					if (increase > 0 && m_currentlySelected->m_upgradePoints < m_currentlySelected->m_maxUpgradePoints && m_currentlySelected->m_damage > m_currentlySelected->m_originalDamage)
 					{
+						m_currentlySelected->m_upgradePoints++;
+						m_currentlySelected->m_damage -= increase;
+					}
+					//If you have at least two upgrade points blow max
+					else if (m_currentlySelected->m_upgradePoints < m_currentlySelected->m_maxUpgradePoints - 1 && m_currentlySelected->m_damage > m_currentlySelected->m_originalDamage)
+					{
+						m_currentlySelected->m_upgradePoints += 2;
 						m_currentlySelected->m_damage--;
-						m_currentlySelected->m_upgradePoints += UPGRADE_COST_DAMAGE;
 					}
 				}
 			}
 			else if (m_removeRangeButton->GetSpritesheet()->GetFrameRect(0).Translated(m_removeRangeButton->GetTransformComp().GetPosition()).Contains(HAPISPACE::RectangleI(mouseData.x, mouseData.x, mouseData.y, mouseData.y)))
 			{
 				//range-
-				if (m_currentlySelected != nullptr)
+				if (m_currentlySelected)
 				{
-					if (m_currentlySelected->m_upgradePoints < m_currentlySelected->m_maxUpgradePoints - 1 && m_currentlySelected->m_range > m_currentlySelected->m_originalRange)
+					int increase = m_currentlySelected->m_originalRange * UPGRADE_POWER;
+					//If increase is non zero and below max points
+					if (increase > 0 && m_currentlySelected->m_upgradePoints < m_currentlySelected->m_maxUpgradePoints && m_currentlySelected->m_range > m_currentlySelected->m_originalRange)
 					{
+						m_currentlySelected->m_upgradePoints++;
+						m_currentlySelected->m_range -= increase;
+					}
+					//If you have at least two upgrade points blow max
+					else if (m_currentlySelected->m_upgradePoints < m_currentlySelected->m_maxUpgradePoints - 1 && m_currentlySelected->m_range > m_currentlySelected->m_originalRange)
+					{
+						m_currentlySelected->m_upgradePoints += 2;
 						m_currentlySelected->m_range--;
-						m_currentlySelected->m_upgradePoints+= UPGRADE_COST_RANGE;
 					}
 				}
 			}
