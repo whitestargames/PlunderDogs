@@ -668,6 +668,8 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 					}
 				}
 			}
+			bool selection = false;
+			checkShipSelect(selection, UPGRADE_FLEET_WINDOW, UPGRADE_FLEET_SCROLLBAR, HAPISPACE::VectorI(mouseData.x, mouseData.y), m_upgradeFleetWindowTopLeft, currentSelectedPlayer.m_entities, true);
 			break;
 		}
 	}
