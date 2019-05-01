@@ -47,7 +47,6 @@ void BattleUI::InvalidPosition::setPosition(std::pair<int, int> newPosition, con
 
 void BattleUI::InvalidPosition::onReset()
 {
-	m_sprite.reset();
 	m_activate = false;
 	m_position = std::pair<int, int>(0, 0);
 }
@@ -665,7 +664,6 @@ void BattleUI::onResetBattle()
 	m_playerShipPlacement.clear();
 	m_targetArea.onReset();
 	m_selectedTile.m_tile = nullptr;
-	m_selectedTile.m_sprite.reset();
 	m_selectedTile.m_position = std::pair<int, int>(0, 0);
 	m_invalidPosition.onReset();
 	m_leftMouseDownPosition = std::pair<int, int>(0, 0);
