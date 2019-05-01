@@ -149,8 +149,8 @@ Battle::Battle()
 	m_windTime(10),
 	m_explosionParticle(0.10, Textures::m_explosion, 2.5f),
 	m_fireParticle(0.05, Textures::m_fire, 2.0f),
-	m_timeUntilAIMovementPhase(2.5f, false),
-	m_timeUntilAIAttackPhase(2.5f, false),
+	m_timeUntilAIMovementPhase(2.0f, false),
+	m_timeUntilAIAttackPhase(2.0f, false),
 	m_AITurn(false)
 {
 	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onResetBattle, this), "Battle", GameEvent::eResetBattle);
@@ -226,19 +226,18 @@ void Battle::update(float deltaTime)
 	setTimeOfDay(deltaTime);
 	setWindDirection(deltaTime);
 
-	handleAIMovementPhaseTimer(deltaTime);
-	handleAIAttackPhaseTimer(deltaTime);
-
 	m_explosionParticle.run(deltaTime, m_map);
 	m_fireParticle.run(deltaTime, m_map);
 
 	if (m_currentPhase == BattlePhase::Movement)
 	{
 		updateMovementPhase(deltaTime);
+		handleAIMovementPhaseTimer(deltaTime);
 	}
 	else if (m_currentPhase == BattlePhase::Attack)
 	{
 		updateAttackPhase();
+		handleAIAttackPhaseTimer(deltaTime);
 	}
 }
 
@@ -349,7 +348,7 @@ void Battle::nextTurn()
 			entity->m_battleProperties.enableAction();
 		}
 
-		if (m_players[m_currentPlayerTurn].m_playerType == ePlayerType::eAI)
+		if (!m_players[m_currentPlayerTurn].m_eliminated && m_players[m_currentPlayerTurn].m_playerType == ePlayerType::eAI)
 		{
 			m_timeUntilAIAttackPhase.setActive(true);
 			GameEventMessenger::getInstance().broadcast(GameEvent::eEnteredAITurn);
@@ -373,7 +372,7 @@ void Battle::nextTurn()
 			entity->m_battleProperties.enableAction();
 		}
 
-		if (m_players[m_currentPlayerTurn].m_playerType == ePlayerType::eAI)
+		if (!m_players[m_currentPlayerTurn].m_eliminated && m_players[m_currentPlayerTurn].m_playerType == ePlayerType::eAI)
 		{
 			m_timeUntilAIMovementPhase.setActive(true);
 			GameEventMessenger::getInstance().broadcast(GameEvent::eEnteredAITurn);
