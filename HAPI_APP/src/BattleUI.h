@@ -35,7 +35,7 @@ class BattleUI : public IHapiSpritesInputListener
 		InvalidPosition();
 
 		void render(const Map& map) const;
-		void setPosition(std::pair<int, int> screenPosition, const Map& map);
+		void setPosition(std::pair<int, int> newPosition, const Map& map);
 
 		std::unique_ptr<Sprite> m_sprite;
 		bool m_activate;

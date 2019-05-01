@@ -26,21 +26,23 @@ void BattleUI::InvalidPosition::render(const Map& map) const
 {
 	if (m_activate)
 	{
+		const std::pair<int, int> tileTransform = map.getTileScreenPos(m_position);
+
 		m_sprite->GetTransformComp().SetPosition({
-		static_cast<float>(m_position.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
-		static_cast<float>(m_position.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
+		static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
+		static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
 
 		m_sprite->Render(SCREEN_SURFACE);
 	}
 }
 
-void BattleUI::InvalidPosition::setPosition(std::pair<int, int> screenPosition, const Map& map)
+void BattleUI::InvalidPosition::setPosition(std::pair<int, int> newPosition, const Map& map)
 {
 	m_sprite->GetTransformComp().SetPosition({
-		(float)screenPosition.first + DRAW_OFFSET_X * map.getDrawScale(),
-		(float)screenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()});
+		(float)newPosition.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),
+		(float)newPosition.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()});
 
-	m_position = screenPosition;
+	m_position = newPosition;
 }
 
 //
@@ -363,7 +365,7 @@ void BattleUI::onMouseMoveMovementPhase()
 		{
 			if (tile->m_type != eTileType::eSea && tile->m_type != eTileType::eOcean)
 			{
-				m_invalidPosition.setPosition(m_battle.getMap().getTileScreenPos(tile->m_tileCoordinate), m_battle.getMap());
+				m_invalidPosition.setPosition(tile->m_tileCoordinate, m_battle.getMap());
 				m_invalidPosition.m_activate = true;
 				m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.clearMovementPath();
 			}
@@ -647,7 +649,7 @@ void BattleUI::onMouseMoveAttackPhase()
 		//tileOnMouse within weapon range
 		if (cIter != m_targetArea.m_targetArea.cend())
 		{
-			m_invalidPosition.setPosition(m_battle.getMap().getTileScreenPos(tileOnMouse->m_tileCoordinate), m_battle.getMap());
+			m_invalidPosition.setPosition(tileOnMouse->m_tileCoordinate, m_battle.getMap());
 			m_invalidPosition.m_activate = true;
 		}
 		//outside weapon range
@@ -934,7 +936,7 @@ const Tile* BattleUI::ShipPlacementPhase::getTileOnMouse(InvalidPosition& invali
 		}
 		else
 		{
-			invalidPosition.setPosition(map.getTileScreenPos(tileOnMouse->m_tileCoordinate), map);
+			invalidPosition.setPosition(tileOnMouse->m_tileCoordinate, map);
 			invalidPosition.m_activate = true;
 		}
 	}
