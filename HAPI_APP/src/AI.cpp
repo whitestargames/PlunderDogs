@@ -82,7 +82,7 @@ const Tile* firePosLine(const Map& map, const Tile* targetShip, const Tile* alli
 	//Iterate through all 6 possible lines
 	for (int i = 0; i < 6; i++)
 	{
-		availableTiles = map.cGetTileLine(targetShip->m_tileCoordinate, range, static_cast<eDirection>(i));
+		availableTiles = map.cGetTileLine(targetShip->m_tileCoordinate, range, static_cast<eDirection>(i), true);
 		for (const Tile* it : availableTiles)
 		{
 			//Ensure it's a valid tile, if not skip this one
@@ -209,7 +209,7 @@ void AI::attemptShot(Battle& battle, const Map& map, std::shared_ptr<BattleEntit
 	}
 	case eStraightShot:
 	{
-		firingArea = map.cGetTileLine(firingShip->m_battleProperties.getCurrentPosition(), firingShip->m_entityProperties.m_range, firingShip->m_battleProperties.getCurrentDirection());
+		firingArea = map.cGetTileLine(firingShip->m_battleProperties.getCurrentPosition(), firingShip->m_entityProperties.m_range, firingShip->m_battleProperties.getCurrentDirection(), true);
 		for (int i = 0; i < firingArea.size(); i++)
 		{
 			if (!firingArea[i]) continue;
@@ -258,7 +258,7 @@ void AI::attemptShot(Battle& battle, const Map& map, std::shared_ptr<BattleEntit
 			break;
 		}
 			
-		firingArea = map.cGetTileLine(firingShip->m_battleProperties.getCurrentPosition(), firingShip->m_entityProperties.m_range, backwardsDirection);
+		firingArea = map.cGetTileLine(firingShip->m_battleProperties.getCurrentPosition(), firingShip->m_entityProperties.m_range, backwardsDirection, true);
 		for (int i = 0; i < firingArea.size(); i++)
 		{
 			if (!firingArea[i]) continue;

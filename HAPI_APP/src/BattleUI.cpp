@@ -604,7 +604,7 @@ void BattleUI::onLeftClickAttackPhase()
 	//Entity Already Selected whilst showing where to fire
 	//Change to different Entity before firing
 	if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName == m_battle.getCurrentFaction()
-		&& m_selectedTile.m_tile && m_selectedTile.m_tile && m_targetArea.m_targetArea.size() > 0)
+		 && m_selectedTile.m_tile && m_targetArea.m_targetArea.size() > 0)
 	{
 		m_targetArea.clearTargetArea();
 		m_targetArea.generateTargetArea(m_battle.getMap(), *tileOnMouse);
@@ -740,7 +740,7 @@ void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & sour
 	{
 		m_targetArea = map.cGetTileCone(source.m_tileCoordinate,
 			source.m_entityOnTile->m_entityProperties.m_range, 
-			source.m_entityOnTile->m_battleProperties.getCurrentDirection());
+			source.m_entityOnTile->m_battleProperties.getCurrentDirection(), true);
 	
 	}
 
@@ -748,7 +748,7 @@ void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & sour
 	{
 		m_targetArea = map.cGetTileLine(source.m_tileCoordinate, 
 			source.m_entityOnTile->m_entityProperties.m_range, 
-			source.m_entityOnTile->m_battleProperties.getCurrentDirection());
+			source.m_entityOnTile->m_battleProperties.getCurrentDirection(), true);
 
 	}
 
@@ -756,12 +756,12 @@ void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & sour
 	{
 		// make so where ever the place presses get radius called talk adrais about size of that
 		m_targetArea = map.cGetTileRadius(source.m_tileCoordinate, 
-			source.m_entityOnTile->m_entityProperties.m_range);
+			source.m_entityOnTile->m_entityProperties.m_range, true);
 	}
 
 	else if (source.m_entityOnTile->m_entityProperties.m_weaponType == eFlamethrower)
 	{
-		eDirection directionOfFire;
+		eDirection directionOfFire = eNorth;
 		switch (source.m_entityOnTile->m_battleProperties.getCurrentDirection() )
 		{
 		case eNorth:
@@ -784,7 +784,7 @@ void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & sour
 			break;
 		}
 		m_targetArea = map.cGetTileLine(source.m_tileCoordinate,
-			source.m_entityOnTile->m_entityProperties.m_range, directionOfFire);
+			source.m_entityOnTile->m_entityProperties.m_range, directionOfFire, true);
 	}
 	
 	if (m_targetArea.empty())

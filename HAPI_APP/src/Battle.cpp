@@ -63,7 +63,7 @@ void Battle::ParticleSystem::render()const
 
 void Battle::ParticleSystem::orient(eDirection entityDir)
 {
-	eDirection direction;
+	eDirection direction = eNorth;
 	switch (entityDir)
 	{
 	case eNorth:

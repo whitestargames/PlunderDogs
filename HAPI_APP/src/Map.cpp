@@ -37,39 +37,40 @@ void Map::drawMap() const
 		for (int x = 1; x < m_mapDimensions.first; x += 2)
 		{
 			const float xPos = (float)x * textureDimensions.first * 3 / 4;
+			int fin = access + x;
 			switch (m_timeOfDay)
 			{
 			case eTimeOfDay::eMorning:
-				m_data[access + x].m_daySprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
+				m_data[fin].m_daySprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosOdd - m_drawOffset.second)*m_drawScale));
-				m_data[access + x].m_daySprite->GetTransformComp().SetScaling(
+				m_data[fin].m_daySprite->GetTransformComp().SetScaling(
 					HAPISPACE::VectorF(m_drawScale, m_drawScale));
-				m_data[access + x].m_daySprite->Render(SCREEN_SURFACE);
+				m_data[fin].m_daySprite->Render(SCREEN_SURFACE);
 				break;
 			case eTimeOfDay::eAfternoon:
-				m_data[access + x].m_aftersprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
+				m_data[fin].m_aftersprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosOdd - m_drawOffset.second)*m_drawScale));
-				m_data[access + x].m_aftersprite->GetTransformComp().SetScaling(
+				m_data[fin].m_aftersprite->GetTransformComp().SetScaling(
 					HAPISPACE::VectorF(m_drawScale, m_drawScale));
-				m_data[access + x].m_aftersprite->Render(SCREEN_SURFACE);
+				m_data[fin].m_aftersprite->Render(SCREEN_SURFACE);
 				break;
 			case eTimeOfDay::eEvening:
-				m_data[access + x].m_eveningSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
+				m_data[fin].m_eveningSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosOdd - m_drawOffset.second)*m_drawScale));
-				m_data[access + x].m_eveningSprite->GetTransformComp().SetScaling(
+				m_data[fin].m_eveningSprite->GetTransformComp().SetScaling(
 					HAPISPACE::VectorF(m_drawScale, m_drawScale));
-				m_data[access + x].m_eveningSprite->Render(SCREEN_SURFACE);
+				m_data[fin].m_eveningSprite->Render(SCREEN_SURFACE);
 				break;
 			case eTimeOfDay::eNight:
-				m_data[access + x].m_nightSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
+				m_data[fin].m_nightSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosOdd - m_drawOffset.second)*m_drawScale));
-				m_data[access + x].m_nightSprite->GetTransformComp().SetScaling(
+				m_data[fin].m_nightSprite->GetTransformComp().SetScaling(
 					HAPISPACE::VectorF(m_drawScale, m_drawScale));
-				m_data[access + x].m_nightSprite->Render(SCREEN_SURFACE);
+				m_data[fin].m_nightSprite->Render(SCREEN_SURFACE);
 				break;
 			}
 			//Is Odd
@@ -632,10 +633,12 @@ std::vector<Tile*> Map::getTileLine(
 		if (!pushBackTile)
 			continue;
 		pushBackTile = getAdjacentTiles(pushBackTile->m_tileCoordinate)[direction];
-		if (avoidInvalid && (pushBackTile && ((pushBackTile->m_entityOnTile) || (pushBackTile->m_type != eTileType::eSea && pushBackTile->m_type != eTileType::eOcean))))
-		{
+		//If avoidInvalid skip if the tile is an entity or not water
+		if (avoidInvalid && (pushBackTile && ((pushBackTile->m_entityOnTile) || (pushBackTile->m_type != eSea && pushBackTile->m_type != eOcean))))
+			continue;
+		//If avoidInvalid stop the line if a mountain or Mesa is encountered
+		if (avoidInvalid && (pushBackTile->m_type == eMountain || pushBackTile->m_type == eMesa))
 			break;
-		}
 		tileStore.emplace_back(pushBackTile);
 	}
 	return tileStore;
@@ -652,10 +655,12 @@ std::vector<const Tile*> Map::cGetTileLine(
 		if (!pushBackTile)
 			continue;
 		pushBackTile = cGetAdjacentTiles(pushBackTile->m_tileCoordinate)[direction]; 
-		if (avoidInvalid && (pushBackTile && ((pushBackTile->m_entityOnTile) || (pushBackTile->m_type != eTileType::eSea && pushBackTile->m_type != eTileType::eOcean))))
-		{
+		//If avoidInvalid skip if the tile is not water
+		if (avoidInvalid && (pushBackTile && (pushBackTile->m_type != eSea && pushBackTile->m_type != eOcean)))
+			continue;
+		//If avoidInvalid stop the line if a mountain or Mesa is encountered
+		if (avoidInvalid && (pushBackTile->m_type == eMountain || pushBackTile->m_type == eMesa))
 			break;
-		}
 		tileStore.emplace_back(pushBackTile);
 	}
 	return tileStore;
