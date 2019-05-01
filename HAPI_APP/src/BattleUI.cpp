@@ -397,6 +397,10 @@ void BattleUI::onLeftClickMovementPhase()
 	if (!m_selectedTile.m_tile && tileOnMouse->m_entityOnTile)
 	{
 		m_selectedTile.m_tile = tileOnMouse;
+		if (!m_battle.isAIPlaying())
+		{
+			m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.clearMovementPath();
+		}
 		return;
 	}
 
