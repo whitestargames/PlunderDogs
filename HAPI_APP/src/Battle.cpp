@@ -90,6 +90,8 @@ void Battle::ParticleSystem::orient(eDirection entityDir)
 
 void Battle::setTimeOfDay(float deltaTime)
 {
+	if (m_battleUI.isPaused())
+		return;
 	m_dayTime.update(deltaTime);
 	if (m_dayTime.isExpired())
 	{
@@ -104,15 +106,47 @@ void Battle::setTimeOfDay(float deltaTime)
 	}
 }
 
-void Battle::setWindDirection(float deltaTime)
+void Battle::updateWindDirection()
 {
-	m_windTime.update(deltaTime);
-	if (m_windTime.isExpired())
+	int turnLeft = rand() % 2;
+	eDirection windDirection = eNorth;
+	if (turnLeft)
 	{
-		int wind = rand() % eDirection::Max;
-		m_map.setWindDirection((eDirection)wind);
-		m_windTime.reset();
+		switch (m_map.getWindDirection())
+		{
+		case eNorth: windDirection = eNorthWest;
+			break;
+		case eNorthEast: windDirection = eNorth;
+			break;
+		case eSouthEast: windDirection = eNorthEast;
+			break;
+		case eSouth: windDirection = eSouthEast;
+			break;
+		case eSouthWest: windDirection = eSouth;
+			break;
+		case eNorthWest: windDirection = eSouthWest;
+			break;
+		}
 	}
+	else
+	{
+		switch (m_map.getWindDirection())
+		{
+		case eNorth: windDirection = eNorthEast;
+			break;
+		case eNorthEast: windDirection = eSouthEast;
+			break;
+		case eSouthEast: windDirection = eSouth;
+			break;
+		case eSouth: windDirection = eSouthWest;
+			break;
+		case eSouthWest: windDirection = eNorthWest;
+			break;
+		case eNorthWest: windDirection = eNorth;
+			break;
+		}
+	}
+	m_map.setWindDirection(windDirection);
 }
 
 void Battle::handleAIMovementPhaseTimer(float deltaTime)
@@ -150,7 +184,6 @@ Battle::Battle()
 	m_currentPhase(BattlePhase::Deployment),
 	m_battleUI(*this),
 	m_dayTime(20.0f),
-	m_windTime(10),
 	m_explosion(),
 	m_fire(),
 	m_timeUntilAIMovementPhase(2.0f, false),
@@ -240,7 +273,6 @@ void Battle::update(float deltaTime)
 	m_map.setDrawOffset(m_battleUI.getCameraPositionOffset());
 
 	setTimeOfDay(deltaTime);
-	setWindDirection(deltaTime);
 	for (auto& it : m_explosion)
 	{
 		it.run(deltaTime, m_map);
@@ -387,6 +419,7 @@ void Battle::nextTurn()
 			entity->m_battleProperties.disableAction();
 		}
 
+		updateWindDirection();
 		incrementPlayerTurn();
 		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;
 		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
@@ -509,7 +542,6 @@ void Battle::onResetBattle()
 	m_currentPhase = BattlePhase::Deployment;
 	m_currentPlayerTurn = 0;
 	m_dayTime.reset();
-	m_windTime.reset();
 	m_players.clear();
 }
 

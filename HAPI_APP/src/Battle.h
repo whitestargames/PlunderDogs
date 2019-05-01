@@ -85,7 +85,6 @@ private:
 	BattlePhase m_currentPhase;
 	BattleUI m_battleUI;
 	Timer m_dayTime;
-	Timer m_windTime;
 	BattleManager m_battleManager;
 	std::vector<ParticleSystem> m_explosion;
 	std::vector<ParticleSystem> m_fire;
@@ -101,7 +100,7 @@ private:
 
 	void incrementPlayerTurn();
 	void setTimeOfDay(float deltaTime);
-	void setWindDirection(float deltaTime);
+	void updateWindDirection();
 	void handleAIMovementPhaseTimer(float deltaTime);
 	void handleAIAttackPhaseTimer(float deltaTime);
 
