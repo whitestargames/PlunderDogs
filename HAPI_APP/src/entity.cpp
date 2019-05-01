@@ -111,7 +111,7 @@ bool EntityBattleProperties::isDestinationSet() const
 
 //MOVEMENT PATH NODE
 EntityBattleProperties::MovementPath::PathNode::PathNode()
-	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),
+	: sprite(std::make_unique<Sprite>(Textures::m_spawnHex)),
 	activate(false)
 {
 	sprite->GetTransformComp().SetOriginToCentreOfFrame();
