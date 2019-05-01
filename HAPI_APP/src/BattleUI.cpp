@@ -841,7 +841,7 @@ BattleUI::DeploymentPhase::DeploymentPhase(std::vector<EntityProperties*> player
 	m_spawnSprites()
 {
 	//Might change this - for now its two containers but looks confusing
-	m_spawnArea = map.cGetTileRadius(spawnPosition, range, true);
+	m_spawnArea = map.cGetTileRadius(spawnPosition, range, true, true);
 	m_spawnSprites.reserve(m_spawnArea.size());
 	for (int i = 0; i < m_spawnArea.size(); ++i)
 	{
@@ -864,8 +864,8 @@ BattleUI::DeploymentPhase::DeploymentPhase(std::vector<EntityProperties*> player
 
 		auto screenPosition = map.getTileScreenPos(m_spawnArea[i]->m_tileCoordinate);
 		sprite->GetTransformComp().SetPosition({
-		(float)screenPosition.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),
-		(float)screenPosition.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
+			(float)screenPosition.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),
+			(float)screenPosition.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
 		sprite->GetTransformComp().SetOriginToCentreOfFrame();
 		sprite->GetTransformComp().SetScaling({ 2.f, 2.f });
 
