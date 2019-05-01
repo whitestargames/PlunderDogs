@@ -80,16 +80,16 @@ std::pair<int, int> BattleUI::getCameraPositionOffset() const
 
 int BattleUI::isHumanDeploymentCompleted() const
 {
-	return m_playerShipPlacement.empty();
+	return m_shipDeployment.empty();
 }
 
 void BattleUI::renderUI() const
 {
 	switch (m_battle.getCurrentPhase())
 	{
-	case BattlePhase::ShipPlacement:
-		assert(!m_playerShipPlacement.empty());
-		m_playerShipPlacement.front()->render(m_invalidPosition, m_battle.getMap());
+	case BattlePhase::Deployment:
+		assert(!m_shipDeployment.empty());
+		m_shipDeployment.front()->render(m_invalidPosition, m_battle.getMap());
 		break;
 
 	case BattlePhase::Movement:
@@ -132,10 +132,10 @@ void BattleUI::FactionUpdateGUI(FactionName faction)
 	m_gui.updateFactionToken(faction);
 }
 
-void BattleUI::deployHumanPlayers(const std::vector<Player>& newPlayers, Map& map, const Battle& battle)
+void BattleUI::deployPlayers(const std::vector<Player>& newPlayers, Map& map, const Battle& battle)
 {
-	assert(m_battle.getCurrentPhase() == BattlePhase::ShipPlacement);
-	assert(m_playerShipPlacement.empty());
+	assert(m_battle.getCurrentPhase() == BattlePhase::Deployment);
+	assert(m_shipDeployment.empty());
 
 	bool positionToSnapToChosen = false;
 	std::pair<int, int> positionToSnapTo;
@@ -150,7 +150,7 @@ void BattleUI::deployHumanPlayers(const std::vector<Player>& newPlayers, Map& ma
 				positionToSnapTo = battle.getPlayer(player.m_factionName).m_spawnPosition;
 			}
 
-			m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>(player.m_selectedEntities,
+			m_shipDeployment.push_back(std::make_unique<DeploymentPhase>(player.m_selectedEntities,
 				battle.getPlayer(player.m_factionName).m_spawnPosition, SHIP_PLACEMENT_SPAWN_RANGE, m_battle.getMap(), player.m_factionName));
 		//}
 	}
@@ -171,7 +171,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 
 		switch (m_battle.getCurrentPhase())
 		{
-		case BattlePhase::ShipPlacement :
+		case BattlePhase::Deployment :
 		{
 			m_isMovingEntity = true;
 			m_leftMouseDownPosition = { mouseData.x, mouseData.y };
@@ -213,9 +213,9 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 			std::pair<double, eDirection> mouseMoveDirection{ MouseSelection::calculateDirection(m_leftMouseDownPosition,HAPI_Wrapper::getMouseLocation()) };
 			switch (m_battle.getCurrentPhase())
 			{
-			case BattlePhase::ShipPlacement :
+			case BattlePhase::Deployment :
 			{
-				assert(!m_playerShipPlacement.empty());
+				assert(!m_shipDeployment.empty());
 				if (!m_selectedTile.m_tile)
 					break;
 				if (mouseMoveDirection.first > 20)
@@ -223,15 +223,15 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 					//This function call will be used if the mouse moved a significant enough distance during inputing a move command to assume it was on purpose, it sends not only the
 					//destination tile but the direction of the aformentioned movement.  In order for this to work the pathfinding must be capable of taking an eDirection as part of the
 					//function used by the battle to move the entity.
-					m_playerShipPlacement.front()->onLeftClick(m_invalidPosition, mouseMoveDirection.second, m_selectedTile.m_tile, m_battle);
-					if (m_playerShipPlacement.front()->isCompleted())
+					m_shipDeployment.front()->onLeftClick(m_invalidPosition, mouseMoveDirection.second, m_selectedTile.m_tile, m_battle);
+					if (m_shipDeployment.front()->isCompleted())
 					{
-						m_playerShipPlacement.pop_front();
-						if (!m_playerShipPlacement.empty())
+						m_shipDeployment.pop_front();
+						if (!m_shipDeployment.empty())
 						{
 							//TODO:: Snap to new screen position
 							m_selectedTile.m_tile = nullptr;
-							m_gui.snapCameraToPosition(m_playerShipPlacement.front()->getSpawnPosition());
+							m_gui.snapCameraToPosition(m_shipDeployment.front()->getSpawnPosition());
 							
 						}
 						else
@@ -247,15 +247,15 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 				{
 					//This function call is to be used if the movement of the mouse during the move command is small enough to be considered unintended,
 					//in this case the ship should not rotate after reaching the destination.
-					m_playerShipPlacement.front()->onLeftClick(m_invalidPosition, eNorth, m_selectedTile.m_tile, m_battle);
-					if (m_playerShipPlacement.front()->isCompleted())
+					m_shipDeployment.front()->onLeftClick(m_invalidPosition, eNorth, m_selectedTile.m_tile, m_battle);
+					if (m_shipDeployment.front()->isCompleted())
 					{
-						m_playerShipPlacement.pop_front();
-						if (!m_playerShipPlacement.empty())
+						m_shipDeployment.pop_front();
+						if (!m_shipDeployment.empty())
 						{
 							//TODO: Snap to new screen position
 							m_selectedTile.m_tile = nullptr;
-							m_gui.snapCameraToPosition(m_playerShipPlacement.front()->getSpawnPosition());
+							m_gui.snapCameraToPosition(m_shipDeployment.front()->getSpawnPosition());
 						}
 						else
 						{
@@ -303,12 +303,12 @@ void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 
 	switch (m_battle.getCurrentPhase())
 	{
-	case BattlePhase::ShipPlacement:
+	case BattlePhase::Deployment:
 	{
-		assert(!m_playerShipPlacement.empty());
+		assert(!m_shipDeployment.empty());
 		if (!m_isMovingEntity)
 		{
-			m_selectedTile.m_tile = m_playerShipPlacement.front()->getTileOnMouse(
+			m_selectedTile.m_tile = m_shipDeployment.front()->getTileOnMouse(
 				m_invalidPosition, m_selectedTile.m_tile, m_battle.getMap());
 			//TODO: Raise info box
 		}
@@ -668,7 +668,7 @@ void BattleUI::onMouseMoveAttackPhase()
 void BattleUI::onResetBattle()
 {
 	//TODO: reset other things
-	m_playerShipPlacement.clear();
+	m_shipDeployment.clear();
 	m_targetArea.onReset();
 	m_selectedTile.m_tile = nullptr;
 	m_selectedTile.m_position = std::pair<int, int>(0, 0);
@@ -809,7 +809,7 @@ BattleUI::TargetArea::HighlightNode::HighlightNode()
 	sprite->GetTransformComp().SetOriginToCentreOfFrame();
 }
 
-BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*> player, 
+BattleUI::DeploymentPhase::DeploymentPhase(std::vector<EntityProperties*> player, 
 	std::pair<int, int> spawnPosition, int range, const Map& map, FactionName factionName)
 	: m_factionName(factionName),
 	m_player(player),
@@ -868,12 +868,12 @@ BattleUI::ShipPlacementPhase::ShipPlacementPhase(std::vector<EntityProperties*> 
 	m_currentSelectedEntity.m_currentSelectedEntity = m_player.back();
 }
 
-bool BattleUI::ShipPlacementPhase::isCompleted() const
+bool BattleUI::DeploymentPhase::isCompleted() const
 {
 	return m_player.empty();
 }
 
-void BattleUI::ShipPlacementPhase::render(const InvalidPosition& invalidPosition, const Map& map) const
+void BattleUI::DeploymentPhase::render(const InvalidPosition& invalidPosition, const Map& map) const
 {
 	if (m_currentSelectedEntity.m_currentSelectedEntity && !invalidPosition.m_activate)
 	{
@@ -898,7 +898,7 @@ void BattleUI::ShipPlacementPhase::render(const InvalidPosition& invalidPosition
 	}
 }
 
-void BattleUI::ShipPlacementPhase::onReset()
+void BattleUI::DeploymentPhase::onReset()
 {
 	m_player.clear();
 	m_currentSelectedEntity.m_position = std::pair<int, int>(0, 0);
@@ -908,7 +908,7 @@ void BattleUI::ShipPlacementPhase::onReset()
 	m_spawnPosition = std::pair<int, int>(0, 0);
 }
 
-const Tile* BattleUI::ShipPlacementPhase::getTileOnMouse(InvalidPosition& invalidPosition, const Tile* currentTileSelected, const Map& map)
+const Tile* BattleUI::DeploymentPhase::getTileOnMouse(InvalidPosition& invalidPosition, const Tile* currentTileSelected, const Map& map)
 {
 	const Tile* tileOnMouse = map.getTile(map.getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 	if (!tileOnMouse)
@@ -957,7 +957,7 @@ const Tile* BattleUI::ShipPlacementPhase::getTileOnMouse(InvalidPosition& invali
 	return tileOnMouse;
 }
 
-void BattleUI::ShipPlacementPhase::onLeftClick(const InvalidPosition& invalidPosition, eDirection startingDirection, const Tile* currentTileSelected, Battle& battle)
+void BattleUI::DeploymentPhase::onLeftClick(const InvalidPosition& invalidPosition, eDirection startingDirection, const Tile* currentTileSelected, Battle& battle)
 {
 	if (!currentTileSelected)
 	{
@@ -1008,7 +1008,7 @@ void BattleUI::CurrentSelectedTile::render(const Map & map) const
 	}
 }
 
-std::pair<int, int> BattleUI::ShipPlacementPhase::getSpawnPosition() const
+std::pair<int, int> BattleUI::DeploymentPhase::getSpawnPosition() const
 {
 	return m_spawnPosition;
 }

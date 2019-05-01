@@ -123,7 +123,6 @@ void Battle::handleAIMovementPhaseTimer(float deltaTime)
 		AI::handleMovementPhase(*this, m_map, m_players[m_currentPlayerTurn]);
 		m_timeUntilAIMovementPhase.reset();
 		m_timeUntilAIMovementPhase.setActive(false);
-		//GameEventMessenger::getInstance().broadcast(GameEvent::eLeftAITurn);
 	}
 }
 
@@ -135,7 +134,6 @@ void Battle::handleAIAttackPhaseTimer(float deltaTime)
 		AI::handleShootingPhase(*this, m_map, m_players[m_currentPlayerTurn]);
 		m_timeUntilAIAttackPhase.reset();
 		m_timeUntilAIAttackPhase.setActive(false);
-		//GameEventMessenger::getInstance().broadcast(GameEvent::eLeftAITurn);
 	}
 }
 
@@ -143,7 +141,7 @@ Battle::Battle()
 	: m_players(),
 	m_currentPlayerTurn(0),
 	m_map(),
-	m_currentPhase(BattlePhase::ShipPlacement),
+	m_currentPhase(BattlePhase::Deployment),
 	m_battleUI(*this),
 	m_dayTime(20.0f),
 	m_windTime(10),
@@ -193,8 +191,7 @@ void Battle::start(const std::string & newMapName, std::vector<Player>& newPlaye
 		m_players.emplace_back(player.m_factionName, m_map.getSpawnPosition(), player.m_type);
 	}
 	
-	m_battleUI.deployHumanPlayers(newPlayers, m_map, *this);
-	//AI::DeployAIPlayers
+	m_battleUI.deployPlayers(newPlayers, m_map, *this);
 
 	m_battleUI.loadGUI(m_map.getDimensions());
 }
@@ -294,7 +291,7 @@ bool Battle::fireEntityWeaponAtPosition(const Tile& tileOnPlayer, const Tile& ti
 
 void Battle::insertEntity(std::pair<int, int> startingPosition, eDirection startingDirection, const EntityProperties& entityProperties, FactionName factionName)
 {
-	assert(m_currentPhase == BattlePhase::ShipPlacement);
+	assert(m_currentPhase == BattlePhase::Deployment);
 
 	auto& player = getPlayer(factionName);
 	player.m_entities.push_back(std::make_unique<BattleEntity>(startingPosition, entityProperties, m_map, factionName, startingDirection));
@@ -306,7 +303,7 @@ void Battle::nextTurn()
 	bool lastPlayer = false;
 	switch (m_currentPhase)
 	{
-	case BattlePhase::ShipPlacement :
+	case BattlePhase::Deployment :
 		lastPlayer = (m_battleUI.isHumanDeploymentCompleted());
 		incrementPlayerTurn();
 		if (lastPlayer)
@@ -448,7 +445,7 @@ BattlePlayer & Battle::getPlayer(FactionName factionName)
 
 void Battle::onResetBattle()
 {
-	m_currentPhase = BattlePhase::ShipPlacement;
+	m_currentPhase = BattlePhase::Deployment;
 	m_currentPlayerTurn = 0;
 	m_dayTime.reset();
 	m_windTime.reset();

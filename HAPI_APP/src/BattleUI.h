@@ -44,7 +44,7 @@ class BattleUI : public IHapiSpritesInputListener
 		std::pair<int, int> m_position;
 	};
 
-	class ShipPlacementPhase
+	class DeploymentPhase
 	{
 		struct CurrentSelectedEntity
 		{
@@ -57,7 +57,7 @@ class BattleUI : public IHapiSpritesInputListener
 			std::pair<int, int> m_position;
 		};
 	public:
-		ShipPlacementPhase(std::vector<EntityProperties*> player,
+		DeploymentPhase(std::vector<EntityProperties*> player,
 			std::pair<int, int> spawnPosition, int range, const Map& map, FactionName factionName);
 
 		std::pair<int, int> getSpawnPosition() const;
@@ -103,7 +103,7 @@ public:
 	void update(float deltaTime);
 
 	void FactionUpdateGUI(FactionName faction);
-	void deployHumanPlayers(const std::vector<Player>& newPlayers, Map& map, const Battle& battle);
+	void deployPlayers(const std::vector<Player>& newPlayers, Map& map, const Battle& battle);
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
@@ -121,7 +121,7 @@ private:
 	const Tile* m_mouseDownTile;
 	BattleGUI m_gui;
 	InvalidPosition m_invalidPosition;
-	std::deque<std::unique_ptr<ShipPlacementPhase>> m_playerShipPlacement;
+	std::deque<std::unique_ptr<DeploymentPhase>> m_shipDeployment;
 
 	//Movement Phase
 	void onMouseMoveMovementPhase();

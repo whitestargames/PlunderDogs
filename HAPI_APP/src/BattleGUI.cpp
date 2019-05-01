@@ -81,7 +81,7 @@ void BattleGUI::render(BattlePhase currentBattlePhase) const
 
 	//m_activeFactionToken->Render(SCREEN_SURFACE);
 
-	if (currentBattlePhase != BattlePhase::ShipPlacement)
+	if (currentBattlePhase != BattlePhase::Deployment)
 	{
 		if (m_activeFactionToken->GetFrameNumber() == FactionName::eRed)
 		{
@@ -101,7 +101,7 @@ void BattleGUI::render(BattlePhase currentBattlePhase) const
 		}
 	}
 	
-	if (currentBattlePhase != BattlePhase::ShipPlacement && !m_AIInPlay)
+	if (currentBattlePhase != BattlePhase::Deployment && !m_AIInPlay)
 	{
 		m_endPhaseButtons->Render(SCREEN_SURFACE);
 	}

@@ -7,7 +7,7 @@
 
 enum class BattlePhase
 {
-	ShipPlacement = 0,
+	Deployment = 0,
 	Movement,
 	Attack
 };
