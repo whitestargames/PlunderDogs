@@ -253,7 +253,12 @@ void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination,
 
 bool Battle::fireEntityWeaponAtPosition(const Tile& tileOnPlayer, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea)
 {
-	assert(m_currentPhase == BattlePhase::Attack);
+	//assert(m_currentPhase == BattlePhase::Attack);
+	//assert(tileOnPlayer.m_entityOnTile);
+	if (!tileOnPlayer.m_entityOnTile)
+	{
+		return false;
+	}
 	assert(!tileOnPlayer.m_entityOnTile->m_battleProperties.isWeaponFired());
 
 	//Disallow attacking same team
