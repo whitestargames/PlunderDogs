@@ -143,8 +143,8 @@ void BattleUI::deployHumanPlayers(const std::vector<Player>& newPlayers, Map& ma
 
 	for (const auto& player : newPlayers)
 	{
-		if(player.m_type == ePlayerType::eHuman)
-		{
+		/*if(player.m_type == ePlayerType::eHuman)
+		{*/
 			if (!positionToSnapToChosen)
 			{
 				positionToSnapToChosen = true;
@@ -153,7 +153,7 @@ void BattleUI::deployHumanPlayers(const std::vector<Player>& newPlayers, Map& ma
 
 			m_playerShipPlacement.push_back(std::make_unique<ShipPlacementPhase>(player.m_selectedEntities,
 				battle.getPlayer(player.m_factionName).m_spawnPosition, SHIP_PLACEMENT_SPAWN_RANGE, m_battle.getMap(), player.m_factionName));
-		}
+		//}
 	}
 
 	//Snap the Camera to the first position of play
