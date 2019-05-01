@@ -115,6 +115,30 @@ void Battle::setWindDirection(float deltaTime)
 	}
 }
 
+void Battle::handleAIMovementPhaseTimer(float deltaTime)
+{
+	m_timeUntilAIMovementPhase.update(deltaTime);
+	if (m_timeUntilAIMovementPhase.isExpired())
+	{
+		AI::handleMovementPhase(*this, m_map, m_players[m_currentPlayerTurn]);
+		m_timeUntilAIMovementPhase.reset();
+		m_timeUntilAIMovementPhase.setActive(false);
+		//GameEventMessenger::getInstance().broadcast(GameEvent::eLeftAITurn);
+	}
+}
+
+void Battle::handleAIAttackPhaseTimer(float deltaTime)
+{
+	m_timeUntilAIAttackPhase.update(deltaTime);
+	if (m_timeUntilAIAttackPhase.isExpired())
+	{
+		AI::handleShootingPhase(*this, m_map, m_players[m_currentPlayerTurn]);
+		m_timeUntilAIAttackPhase.reset();
+		m_timeUntilAIAttackPhase.setActive(false);
+		//GameEventMessenger::getInstance().broadcast(GameEvent::eLeftAITurn);
+	}
+}
+
 Battle::Battle()
 	: m_players(),
 	m_currentPlayerTurn(0),
@@ -124,7 +148,9 @@ Battle::Battle()
 	m_dayTime(20.0f),
 	m_windTime(10),
 	m_explosionParticle(0.10, Textures::m_explosion, 2.5f),
-	m_fireParticle(0.05, Textures::m_fire, 2.0f)
+	m_fireParticle(0.05, Textures::m_fire, 2.0f),
+	m_timeUntilAIMovementPhase(2.5f, false),
+	m_timeUntilAIAttackPhase(2.5f, false)
 {
 	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onResetBattle, this), "Battle", GameEvent::eResetBattle);
 	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onYellowShipDestroyed, this), "Battle", GameEvent::eYellowShipDestroyed);
@@ -199,6 +225,9 @@ void Battle::update(float deltaTime)
 
 	setTimeOfDay(deltaTime);
 	setWindDirection(deltaTime);
+
+	handleAIMovementPhaseTimer(deltaTime);
+	handleAIAttackPhaseTimer(deltaTime);
 
 	m_explosionParticle.run(deltaTime, m_map);
 	m_fireParticle.run(deltaTime, m_map);
@@ -303,30 +332,44 @@ void Battle::nextTurn()
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringAttackPhase);
 		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;
+
 		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
 		{
 			entity->m_battleProperties.enableAction();
 		}
-		AI::handleShootingPhase(*this, m_map, m_players[m_currentPlayerTurn]);
-		//TODO: if AI player
-		
+
+		if (m_players[m_currentPlayerTurn].m_playerType == ePlayerType::eAI)
+		{
+			m_timeUntilAIAttackPhase.setActive(true);
+			GameEventMessenger::getInstance().broadcast(GameEvent::eEnteredAITurn);
+		}
 		break;
 	case BattlePhase::Attack :
 		m_currentPhase = BattlePhase::Movement;
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringMovementPhase);
+
 		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
 		{
 			entity->m_battleProperties.disableAction();
 		}
+
 		incrementPlayerTurn();
 		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;
 		for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
 		{
 			entity->m_battleProperties.enableAction();
 		}
-		AI::handleMovementPhase(*this, m_map, m_players[m_currentPlayerTurn]);
-		//TODO: if AI player
+
+		if (m_players[m_currentPlayerTurn].m_playerType == ePlayerType::eAI)
+		{
+			m_timeUntilAIMovementPhase.setActive(true);
+			GameEventMessenger::getInstance().broadcast(GameEvent::eEnteredAITurn);
+		}
+		else if (m_players[m_currentPlayerTurn].m_playerType == ePlayerType::eHuman)
+		{
+			GameEventMessenger::getInstance().broadcast(GameEvent::eLeftAITurn);
+		}
 		break;
 	}
 }

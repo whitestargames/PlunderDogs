@@ -230,10 +230,13 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 						if (!m_playerShipPlacement.empty())
 						{
 							//TODO:: Snap to new screen position
+							m_selectedTile.m_tile = nullptr;
 							m_gui.snapCameraToPosition(m_playerShipPlacement.front()->getSpawnPosition());
+							
 						}
 						else
 						{
+							m_selectedTile.m_tile = nullptr;
 							m_battle.nextTurn();
 						}
 						
@@ -251,11 +254,12 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 						if (!m_playerShipPlacement.empty())
 						{
 							//TODO: Snap to new screen position
+							m_selectedTile.m_tile = nullptr;
 							m_gui.snapCameraToPosition(m_playerShipPlacement.front()->getSpawnPosition());
-							
 						}
 						else
 						{
+							m_selectedTile.m_tile = nullptr;
 							m_battle.nextTurn();
 						}
 					}

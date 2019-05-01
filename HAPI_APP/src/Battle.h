@@ -85,7 +85,8 @@ private:
 	BattleManager m_battleManager;
 	ParticleSystem m_explosionParticle;
 	ParticleSystem m_fireParticle;
-	//Timer m_timeUntilNextTurn;
+	Timer m_timeUntilAIMovementPhase;
+	Timer m_timeUntilAIAttackPhase;
 
 	void updateMovementPhase(float deltaTime);
 	void updateAttackPhase();
@@ -96,6 +97,9 @@ private:
 	void incrementPlayerTurn();
 	void setTimeOfDay(float deltaTime);
 	void setWindDirection(float deltaTime);
+	void handleAIMovementPhaseTimer(float deltaTime);
+	void handleAIAttackPhaseTimer(float deltaTime);
+
 
 	void onResetBattle();
 	void onYellowShipDestroyed();
