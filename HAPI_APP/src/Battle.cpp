@@ -335,15 +335,14 @@ void Battle::nextTurn()
 			//{
 			//	entity->m_battleProperties.enableAction();
 			//}
-
+			
+			m_currentPlayerTurn = 0;
 			if (m_players[m_currentPlayerTurn].m_playerType == ePlayerType::eAI)
 			{
 				m_timeUntilAIMovementPhase.setActive(true);
 				GameEventMessenger::getInstance().broadcast(GameEvent::eEnteredAITurn);
 				m_AITurn = true;
 			}
-
-			m_currentPlayerTurn = 0;
 		}
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		currentPlayer = m_players[m_currentPlayerTurn].m_factionName;
@@ -393,6 +392,7 @@ void Battle::nextTurn()
 		{
 			m_timeUntilAIMovementPhase.setActive(true);
 			GameEventMessenger::getInstance().broadcast(GameEvent::eEnteredAITurn);
+			m_AITurn = true;
 		}
 		else if (m_players[m_currentPlayerTurn].m_playerType == ePlayerType::eHuman)
 		{

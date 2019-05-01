@@ -102,12 +102,11 @@ void BattleUI::renderUI() const
 		
 		break;
 	}
-
-	m_invalidPosition.render(m_battle.getMap());
 }
 
 void BattleUI::renderGUI() const
 {
+	m_invalidPosition.render(m_battle.getMap());
 	m_gui.render(m_battle.getCurrentPhase());
 
 	if (m_selectedTile.m_tile  != nullptr && m_selectedTile.m_tile->m_entityOnTile != nullptr)
@@ -972,7 +971,7 @@ const Tile* BattleUI::DeploymentPhase::getTileOnMouse(InvalidPosition& invalidPo
 	return tileOnMouse;
 }
 
-void BattleUI::DeploymentPhase::onLeftClick(const InvalidPosition& invalidPosition, eDirection startingDirection, const Tile* currentTileSelected, Battle& battle)
+void BattleUI::DeploymentPhase::onLeftClick(InvalidPosition& invalidPosition, eDirection startingDirection, const Tile* currentTileSelected, Battle& battle)
 {
 	if (!currentTileSelected)
 	{
@@ -986,15 +985,19 @@ void BattleUI::DeploymentPhase::onLeftClick(const InvalidPosition& invalidPositi
 	if (!invalidPosition.m_activate && !currentTileSelected->m_entityOnTile)
 	{
 		battle.insertEntity(currentTileSelected->m_tileCoordinate, startingDirection, *m_currentSelectedEntity.m_currentSelectedEntity, m_factionName);
+		invalidPosition.m_activate = true;
+		invalidPosition.m_position = currentTileSelected->m_tileCoordinate;
 		//Change ordering around to pop front with different container
 		m_player.pop_back();
 		if (m_player.empty())
 		{
 			battle.nextTurn();
+			invalidPosition.m_activate = false;
 		}
 		else
 		{
 			m_currentSelectedEntity.m_currentSelectedEntity = m_player.back();
+			invalidPosition.m_activate = false;
 		}
 	}
 }
