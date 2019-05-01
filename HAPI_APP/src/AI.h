@@ -23,4 +23,3 @@ namespace AI
 	void handleShootingPhase(Battle& battle, const Map& map, BattlePlayer& player);
 	void handleDeploymentPhase(Battle& battle, Map& map, BattlePlayer& player);
 };
-

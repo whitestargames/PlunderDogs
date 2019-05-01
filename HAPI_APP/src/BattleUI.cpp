@@ -336,6 +336,11 @@ void BattleUI::onMouseMoveMovementPhase()
 {
 	assert(m_battle.getCurrentPhase() == BattlePhase::Movement);
 
+	if (m_battle.isAIPlaying())
+	{
+		return;
+	}
+
 	//Current tile selected does not match the current player in play
 	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile 
 		&& m_selectedTile.m_tile->m_entityOnTile->m_factionName != m_battle.getCurentFaction())
@@ -384,6 +389,12 @@ void BattleUI::onLeftClickMovementPhase()
 	if (!m_selectedTile.m_tile && tileOnMouse->m_entityOnTile)
 	{
 		m_selectedTile.m_tile = tileOnMouse;
+		return;
+	}
+
+	//AI is in play
+	if (m_battle.isAIPlaying())
+	{
 		return;
 	}
 
@@ -509,6 +520,13 @@ void BattleUI::onLeftClickAttackPhase()
 	const Tile* tileOnMouse = m_battle.getMap().getTile(m_battle.getMap().getMouseClickCoord(HAPI_Wrapper::getMouseLocation()));
 	if (!tileOnMouse)
 	{
+		return;
+	}
+
+	//AI in play
+	if (m_battle.isAIPlaying())
+	{
+		m_selectedTile.m_tile = tileOnMouse;
 		return;
 	}
 
@@ -712,7 +730,6 @@ void BattleUI::TargetArea::render(const Map& map) const
 
 void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & source)
 {
-	
 	if (source.m_entityOnTile->m_entityProperties.m_weaponType == eSideCannons)
 	{
 		m_targetArea = map.cGetTileCone(source.m_tileCoordinate,
@@ -768,7 +785,7 @@ void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & sour
 	{
 		return;
 	}
-	clearTargetArea();
+	//clearTargetArea();
 	assert(!m_targetAreaSprites.empty());
 	//using same convention as movement // from source should be able to get position
 	for (int i = 0; i < m_targetArea.size(); i++)

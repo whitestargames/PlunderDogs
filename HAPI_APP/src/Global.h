@@ -27,7 +27,6 @@ enum OverWorldWindow
 	eLevelSelection,
 	ePlayerSelection, 
 	eUpgrade
-
 };
 
 enum ePlayerType
