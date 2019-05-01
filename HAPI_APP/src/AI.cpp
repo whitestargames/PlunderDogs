@@ -183,7 +183,7 @@ void AI::attemptMove(Map& map, std::shared_ptr<BattleEntity> currentShip, std::p
 	{
 		const Tile* attemptedDest = map.getTile(pathToTile[pathLength].second);
 		if (currentShip->m_battleProperties.moveEntity(map, *attemptedDest, targetTile.second))
-			break;
+			return;
 	}
 	currentShip->m_battleProperties.setDestination();
 }

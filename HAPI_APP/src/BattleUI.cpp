@@ -816,7 +816,7 @@ void BattleUI::TargetArea::clearTargetArea()
 
 void BattleUI::TargetArea::onReset()
 {
-	m_targetAreaSprites.clear();
+	//m_targetAreaSprites.clear();
 	m_targetArea.clear();
 }
 

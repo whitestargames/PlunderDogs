@@ -264,6 +264,8 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 			return false;
 		}
 	}
+
+	return true;
 }
 
 bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection endDirection)
@@ -289,6 +291,8 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection e
 			return false;
 		}
 	}
+
+	return true;
 }
 
 //TODO: Will change.

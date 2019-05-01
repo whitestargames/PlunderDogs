@@ -120,6 +120,7 @@ void Battle::handleAIMovementPhaseTimer(float deltaTime)
 	m_timeUntilAIMovementPhase.update(deltaTime);
 	if (m_timeUntilAIMovementPhase.isExpired())
 	{
+		assert(m_currentPhase == BattlePhase::Movement);
 		AI::handleMovementPhase(*this, m_map, m_players[m_currentPlayerTurn]);
 		m_timeUntilAIMovementPhase.reset();
 		m_timeUntilAIMovementPhase.setActive(false);
@@ -131,6 +132,7 @@ void Battle::handleAIAttackPhaseTimer(float deltaTime)
 	m_timeUntilAIAttackPhase.update(deltaTime);
 	if (m_timeUntilAIAttackPhase.isExpired())
 	{
+		assert(m_currentPhase == BattlePhase::Attack);
 		AI::handleShootingPhase(*this, m_map, m_players[m_currentPlayerTurn]);
 		m_timeUntilAIAttackPhase.reset();
 		m_timeUntilAIAttackPhase.setActive(false);
@@ -147,8 +149,8 @@ Battle::Battle()
 	m_windTime(10),
 	m_explosion(),
 	m_fire(),
-	m_timeUntilAIMovementPhase(2.5f, false),
-	m_timeUntilAIAttackPhase(2.5f, false),
+	m_timeUntilAIMovementPhase(2.0f, false),
+	m_timeUntilAIAttackPhase(2.0f, false),
 	m_AITurn(false)
 {
 	m_explosion.reserve(6);
@@ -235,10 +237,6 @@ void Battle::update(float deltaTime)
 
 	setTimeOfDay(deltaTime);
 	setWindDirection(deltaTime);
-
-	handleAIMovementPhaseTimer(deltaTime);
-	handleAIAttackPhaseTimer(deltaTime);
-
 	for (auto& it : m_explosion)
 	{
 		it.run(deltaTime, m_map);
@@ -251,10 +249,12 @@ void Battle::update(float deltaTime)
 	if (m_currentPhase == BattlePhase::Movement)
 	{
 		updateMovementPhase(deltaTime);
+		handleAIMovementPhaseTimer(deltaTime);
 	}
 	else if (m_currentPhase == BattlePhase::Attack)
 	{
 		updateAttackPhase();
+		handleAIAttackPhaseTimer(deltaTime);
 	}
 }
 
@@ -361,7 +361,8 @@ void Battle::nextTurn()
 		{
 			entity->m_battleProperties.enableAction();
 		}
-		if (m_players[m_currentPlayerTurn].m_playerType == ePlayerType::eAI)
+
+		if (!m_players[m_currentPlayerTurn].m_eliminated && m_players[m_currentPlayerTurn].m_playerType == ePlayerType::eAI)
 		{
 			m_timeUntilAIAttackPhase.setActive(true);
 			GameEventMessenger::getInstance().broadcast(GameEvent::eEnteredAITurn);
@@ -388,7 +389,8 @@ void Battle::nextTurn()
 		{
 			entity->m_battleProperties.enableAction();
 		}
-		if (m_players[m_currentPlayerTurn].m_playerType == ePlayerType::eAI)
+
+		if (!m_players[m_currentPlayerTurn].m_eliminated && m_players[m_currentPlayerTurn].m_playerType == ePlayerType::eAI)
 		{
 			m_timeUntilAIMovementPhase.setActive(true);
 			GameEventMessenger::getInstance().broadcast(GameEvent::eEnteredAITurn);

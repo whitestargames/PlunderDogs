@@ -164,9 +164,7 @@ void BattleGUI::renderStats(EntityProperties & entityProperties) const
 
 void BattleGUI::update(eDirection windDirection)
 {
-	//m_CompassPointer->GetTransformComp().SetRotation(static_cast<float>(windDirection) * 0.333333 * 3.14159);
 	m_CompassPointer->GetTransformComp().SetRotation(DEGREES_TO_RADIANS((static_cast<int>(windDirection) *60) % 360));
-
 	
 	if (playAnimation)
 	{

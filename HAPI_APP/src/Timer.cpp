@@ -23,7 +23,6 @@ void Timer::update(float deltaTime)
 	{
 		m_elaspedTime += deltaTime;
 	}
-	
 }
 
 void Timer::reset()
