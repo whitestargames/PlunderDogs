@@ -120,6 +120,7 @@ void Battle::handleAIMovementPhaseTimer(float deltaTime)
 	m_timeUntilAIMovementPhase.update(deltaTime);
 	if (m_timeUntilAIMovementPhase.isExpired())
 	{
+		assert(m_currentPhase == BattlePhase::Movement);
 		AI::handleMovementPhase(*this, m_map, m_players[m_currentPlayerTurn]);
 		m_timeUntilAIMovementPhase.reset();
 		m_timeUntilAIMovementPhase.setActive(false);
@@ -131,6 +132,7 @@ void Battle::handleAIAttackPhaseTimer(float deltaTime)
 	m_timeUntilAIAttackPhase.update(deltaTime);
 	if (m_timeUntilAIAttackPhase.isExpired())
 	{
+		assert(m_currentPhase == BattlePhase::Attack);
 		AI::handleShootingPhase(*this, m_map, m_players[m_currentPlayerTurn]);
 		m_timeUntilAIAttackPhase.reset();
 		m_timeUntilAIAttackPhase.setActive(false);
