@@ -19,19 +19,19 @@ int OverWorldGUI::getActivePlayerCount()
 {
 	int playerCount = 0;
 
-	if (m_playerSelectYellow->GetFrameNumber() == ePlayerSelect::eHuman)
+	if (m_playerSelectYellow->GetFrameNumber() == ePlayerType::eHuman || m_playerSelectYellow->GetFrameNumber() == ePlayerType::eAI)
 	{
 		playerCount++;
 	}
-	if (m_playerSelectGreen->GetFrameNumber() == ePlayerSelect::eHuman)
+	if (m_playerSelectGreen->GetFrameNumber() == ePlayerType::eHuman || m_playerSelectGreen->GetFrameNumber() == ePlayerType::eAI)
 	{
 		playerCount++;
 	}
-	if (m_playerSelectRed->GetFrameNumber() == ePlayerSelect::eHuman)
+	if (m_playerSelectRed->GetFrameNumber() == ePlayerType::eHuman || m_playerSelectRed->GetFrameNumber() == ePlayerType::eAI)
 	{
 		playerCount++;
 	}
-	if (m_playerSelectBlue->GetFrameNumber() == ePlayerSelect::eHuman)
+	if (m_playerSelectBlue->GetFrameNumber() == ePlayerType::eHuman || m_playerSelectBlue->GetFrameNumber() == ePlayerType::eAI)
 	{
 		playerCount++;
 	}
@@ -42,21 +42,40 @@ int OverWorldGUI::getActivePlayerCount()
 void OverWorldGUI::setActivePlayers(std::vector<Player>& players)
 {
 	players.clear();
-	if (m_playerSelectYellow->GetFrameNumber() == ePlayerSelect::eHuman)
+	if (m_playerSelectYellow->GetFrameNumber() == ePlayerType::eHuman)
 	{
-		players.emplace_back(FactionName::eYellow);
+		players.emplace_back(FactionName::eYellow, ePlayerType::eHuman);
 	}
-	if (m_playerSelectGreen->GetFrameNumber() == ePlayerSelect::eHuman)
+	else if (m_playerSelectYellow->GetFrameNumber() == ePlayerType::eAI)
 	{
-		players.emplace_back(FactionName::eGreen);
+		players.emplace_back(FactionName::eYellow, ePlayerType::eAI);
 	}
-	if (m_playerSelectRed->GetFrameNumber() == ePlayerSelect::eHuman)
+
+	if (m_playerSelectGreen->GetFrameNumber() == ePlayerType::eHuman)
 	{
-		players.emplace_back(FactionName::eRed);
+		players.emplace_back(FactionName::eGreen, ePlayerType::eHuman);
 	}
-	if (m_playerSelectBlue->GetFrameNumber() == ePlayerSelect::eHuman)
+	else if (m_playerSelectGreen->GetFrameNumber() == ePlayerType::eAI)
 	{
-		players.emplace_back(FactionName::eBlue);
+		players.emplace_back(FactionName::eGreen, ePlayerType::eAI);
+	}
+	
+	if (m_playerSelectRed->GetFrameNumber() == ePlayerType::eHuman)
+	{
+		players.emplace_back(FactionName::eRed, ePlayerType::eHuman);
+	}
+	else if (m_playerSelectRed->GetFrameNumber() == ePlayerType::eAI)
+	{
+		players.emplace_back(FactionName::eRed, ePlayerType::eAI);
+	}
+	
+	if (m_playerSelectBlue->GetFrameNumber() == ePlayerType::eHuman)
+	{
+		players.emplace_back(FactionName::eBlue, ePlayerType::eHuman);
+	}
+	else if (m_playerSelectBlue->GetFrameNumber() == ePlayerType::eAI)
+	{
+		players.emplace_back(FactionName::eBlue, ePlayerType::eAI);
 	}
 }
 
@@ -253,59 +272,78 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			if (HAPI_Wrapper::isTranslated(m_playerSelectYellow, mouseData, 0))
 			{
 			//	m_playerSelectYellow->AdvanceToNextFrame();
-				if (m_playerSelectYellow->GetFrameNumber() == ePlayerSelect::eHuman)
+				if (m_playerSelectYellow->GetFrameNumber() == ePlayerType::eHuman)
 				{
-					m_playerSelectYellow->SetFrameNumber(ePlayerSelect::eNone);
+					m_playerSelectYellow->SetFrameNumber(ePlayerType::eAI);
 				}
-				else
+				else if (m_playerSelectYellow->GetFrameNumber() == ePlayerType::eAI)
 				{
-					m_playerSelectYellow->SetFrameNumber(ePlayerSelect::eHuman);
+					m_playerSelectYellow->SetFrameNumber(ePlayerType::eNone);
+				}
+				else if(m_playerSelectYellow->GetFrameNumber() == ePlayerType::eNone)
+				{
+					m_playerSelectYellow->SetFrameNumber(ePlayerType::eHuman);
 				}
 			}
 			if (HAPI_Wrapper::isTranslated(m_playerSelectGreen, mouseData, 0))
 			{
+				//Green
 				//m_playerSelectGreen->AdvanceToNextFrame();
-				if (m_playerSelectGreen->GetFrameNumber() == ePlayerSelect::eHuman)
+				if (m_playerSelectGreen->GetFrameNumber() == ePlayerType::eHuman)
 				{
-					m_playerSelectGreen->SetFrameNumber(ePlayerSelect::eNone);
+					m_playerSelectGreen->SetFrameNumber(ePlayerType::eAI);
 				}
-				else
+				else if (m_playerSelectGreen->GetFrameNumber() == ePlayerType::eAI)
 				{
-					m_playerSelectGreen->SetFrameNumber(ePlayerSelect::eHuman);
+					m_playerSelectGreen->SetFrameNumber(ePlayerType::eNone);
+				}
+				else if (m_playerSelectGreen->GetFrameNumber() == ePlayerType::eNone)
+				{
+					m_playerSelectGreen->SetFrameNumber(ePlayerType::eHuman);
 				}
 			}
 
 
 			if (HAPI_Wrapper::isTranslated(m_playerSelectRed, mouseData, 0))
 			{
+				//Red
 				//m_playerSelectRed->AdvanceToNextFrame();
-				if (m_playerSelectRed->GetFrameNumber() == ePlayerSelect::eHuman)
+				if (m_playerSelectRed->GetFrameNumber() == ePlayerType::eHuman)
 				{
-					m_playerSelectRed->SetFrameNumber(ePlayerSelect::eNone);
+					m_playerSelectRed->SetFrameNumber(ePlayerType::eAI);
 				}
-				else
+				else if (m_playerSelectRed->GetFrameNumber() == ePlayerType::eAI)
 				{
-					m_playerSelectRed->SetFrameNumber(ePlayerSelect::eHuman);
+					m_playerSelectRed->SetFrameNumber(ePlayerType::eNone);
+				}
+				else if (m_playerSelectRed->GetFrameNumber() == ePlayerType::eNone)
+				{
+					m_playerSelectRed->SetFrameNumber(ePlayerType::eHuman);
 				}
 			}
 			if (HAPI_Wrapper::isTranslated(m_playerSelectBlue, mouseData, 0))
 			{
+				//Blue
 				//m_playerSelectBlue->AdvanceToNextFrame();
-				if (m_playerSelectBlue->GetFrameNumber() == ePlayerSelect::eHuman)
+				if (m_playerSelectBlue->GetFrameNumber() == ePlayerType::eHuman)
 				{
-					m_playerSelectBlue->SetFrameNumber(ePlayerSelect::eNone);
+					m_playerSelectBlue->SetFrameNumber(ePlayerType::eAI);
 				}
-				else
+				else if (m_playerSelectBlue->GetFrameNumber() == ePlayerType::eAI)
 				{
-					m_playerSelectBlue->SetFrameNumber(ePlayerSelect::eHuman);
+					m_playerSelectBlue->SetFrameNumber(ePlayerType::eNone);
+				}
+				else if (m_playerSelectBlue->GetFrameNumber() == ePlayerType::eNone)
+				{
+					m_playerSelectBlue->SetFrameNumber(ePlayerType::eHuman);
 				}
 			}
 			if (HAPI_Wrapper::isTranslated(m_backButton, mouseData, 0))
 			{
-				m_playerSelectYellow->SetFrameNumber(ePlayerSelect::eNone);
-				m_playerSelectGreen->SetFrameNumber(ePlayerSelect::eNone);
-				m_playerSelectRed->SetFrameNumber(ePlayerSelect::eNone);
-				m_playerSelectBlue->SetFrameNumber(ePlayerSelect::eNone);
+				m_playerSelectYellow->SetFrameNumber(ePlayerType::eNone);
+				m_playerSelectGreen->SetFrameNumber(ePlayerType::eNone);
+				m_playerSelectRed->SetFrameNumber(ePlayerType::eNone);
+				m_playerSelectBlue->SetFrameNumber(ePlayerType::eNone);
 				CURRENT_WINDOW = OverWorldWindow::eMainMenu;
 			}
 			if (HAPI_Wrapper::isTranslated(m_done, mouseData, 0))
@@ -814,10 +852,10 @@ void OverWorldGUI::reset(const std::vector<EntityProperties>& playerEntities)
 	HAPI_Wrapper::setPosition(m_playerSelectGreen, { 700, 300 });
 	HAPI_Wrapper::setPosition(m_playerSelectRed, { 1000, 300 });
 	HAPI_Wrapper::setPosition(m_playerSelectBlue, { 1300, 300 });
-	m_playerSelectYellow->SetFrameNumber(ePlayerSelect::eNone);
-	m_playerSelectGreen->SetFrameNumber(ePlayerSelect::eNone);
-	m_playerSelectRed->SetFrameNumber(ePlayerSelect::eNone);
-	m_playerSelectBlue->SetFrameNumber(ePlayerSelect::eNone);
+	m_playerSelectYellow->SetFrameNumber(ePlayerType::eNone);
+	m_playerSelectGreen->SetFrameNumber(ePlayerType::eNone);
+	m_playerSelectRed->SetFrameNumber(ePlayerType::eNone);
+	m_playerSelectBlue->SetFrameNumber(ePlayerType::eNone);
 
 	
 	//adding the windows and sliders, also populates the fleet window with all current entities

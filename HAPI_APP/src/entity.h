@@ -85,7 +85,6 @@ class EntityBattleProperties
 public:
 	EntityBattleProperties(std::pair<int, int> startingPosition, FactionName factionName, eDirection startingDirection = eNorth);
 	~EntityBattleProperties();
-	const FactionName m_factionName;
 	eDirection getCurrentDirection() const;
 	bool isMovedToDestination() const;
 	std::pair<int, int> getCurrentPosition() const;
@@ -135,18 +134,21 @@ struct BattleEntity
 
 struct Player
 {
-	Player(FactionName name);
+	Player(FactionName name, ePlayerType playerType);
 
 	std::vector<EntityProperties> m_entities;
 	std::vector<EntityProperties*> m_selectedEntities;
-	const FactionName m_factionName;
+	FactionName m_factionName;
+	ePlayerType m_type;
 };
 
 struct BattlePlayer
 {
-	BattlePlayer(FactionName name);
+	BattlePlayer(FactionName name, std::pair<int, int> spawnPosition, ePlayerType playerType);
 
 	std::vector<std::unique_ptr<BattleEntity>> m_entities;
 	const FactionName m_factionName;
+	const ePlayerType m_playerType;
+	const std::pair<int, int> m_spawnPosition;
 	bool m_eliminated;
 };

@@ -9,10 +9,26 @@ constexpr size_t WEAPON_HIGHLIGHT_SIZE{ 200 };
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
 
+//TODO: Will change
+std::vector<EntityProperties> assignEntities(FactionName name)
+{
+	std::vector<EntityProperties> entities;
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			EntityProperties newEntity(name, (EntityType)(i));
+			entities.push_back(newEntity);
+		}
+	}
+	assert(!entities.empty());
+	return entities;
+}
+
+
 //ENTITY BATTLE PROPERTIES
 EntityBattleProperties::EntityBattleProperties(std::pair<int, int> startingPosition, FactionName factionName, eDirection startingDirection)
-	: m_factionName(factionName),
-	m_currentPosition(startingPosition),
+	: m_currentPosition(startingPosition),
 	m_pathToTile(),
 	m_movementTimer(0.35f),
 	m_movedToDestination(false),
@@ -314,11 +330,9 @@ unsigned int EntityBattleProperties::MovementPath::getDirectionCost(int currentD
 
 //ENTITY
 EntityProperties::EntityProperties(FactionName factionName, EntityType entityType) : m_upgradePoints(4), m_maxUpgradePoints(4), m_selectedSprite(HAPI_Sprites.MakeSprite(Textures::m_thing))
-	
 {
 	//TODO: Currently not working as intended
 	//UI seems to be resetting the frameNumber somewhere in OverWorldGUI. 
-	
 	switch (entityType)
 	{
 	case EntityType::eCruiser:
@@ -519,9 +533,11 @@ void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, 
 }
 
 //BATTLE PLAYER
-BattlePlayer::BattlePlayer(FactionName name)
+BattlePlayer::BattlePlayer(FactionName name, std::pair<int, int> spawnPosition, ePlayerType playerType)
 	: m_entities(),
 	m_factionName(name),
+	m_playerType(playerType),
+	m_spawnPosition(spawnPosition),
 	m_eliminated(false)
 {}
 
@@ -560,3 +576,17 @@ void EntityBattleProperties::ActionSprite::render(const Map& map, std::pair<int,
 		sprite->Render(SCREEN_SURFACE);
 	}
 }
+
+
+Player::Player(FactionName name, ePlayerType playerType)
+	: m_entities(assignEntities(name)),
+	m_selectedEntities(),
+	m_factionName(name),
+	m_type(playerType)
+{}
+//
+//Player::Player(FactionName name, ePlayerType playerType)
+//	: m_factionName(name),
+//	m_type(playerType)
+//{
+//}

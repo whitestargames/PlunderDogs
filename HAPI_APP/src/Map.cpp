@@ -449,6 +449,7 @@ intPair Map::getMouseClickCoord(intPair mouseCoord) const
 
 void Map::loadmap(const std::string & mapName)
 {
+	assert(!mapName.empty());
 	MapDetails mapDetails = MapParser::parseMapDetails(mapName);
 	m_mapDimensions = mapDetails.mapDimensions;
 	m_data.reserve(m_mapDimensions.first * m_mapDimensions.second);
@@ -637,12 +638,13 @@ std::vector<const Tile*> Map::getTileLine(
 
 std::pair<int, int> Map::getSpawnPosition()
 {
+	std::cout << "Hit\n";
 	//Make sure all spawn positions aren't in use
 	assert(std::find_if(m_spawnPositions.cbegin(), m_spawnPositions.cend(),
 		[](const auto& spawnPosition) { return spawnPosition.inUse == false; }) != m_spawnPositions.cend());
 
-	bool validSpawnPositionFound = false;
 	std::pair<int, int> spawnPosition;
+	bool validSpawnPositionFound = false;
 	while (!validSpawnPositionFound)
 	{
 		int randNumb = Utilities::getRandomNumber(0, static_cast<int>(m_spawnPositions.size()) - 1);

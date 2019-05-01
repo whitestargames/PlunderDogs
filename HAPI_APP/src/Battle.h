@@ -13,6 +13,22 @@ enum class BattlePhase
 
 class Battle
 {
+	struct ParticleSystem
+	{
+		std::pair<float, float> m_position;
+		Timer m_lifeSpan;
+		std::unique_ptr<HAPISPACE::Sprite> m_particle;
+		int m_frameNum = 0;
+		bool m_isEmitting;
+		const float m_scale;
+
+		ParticleSystem(float lifespan, std::shared_ptr<HAPISPACE::SpriteSheet> texture, float scale);
+		void setPosition(std::pair<int, int> position);
+		void run(float deltaTime, const Map& map);
+		void render() const;
+		void orient(eDirection direction);
+	};
+
 	class BattleManager
 	{
 	public:
@@ -36,18 +52,20 @@ class Battle
 
 public:
 	Battle();
+	
 	~Battle();
 	const Map& getMap() const;
 	BattlePhase getCurrentPhase() const;
 	FactionName getCurentFaction() const;
+	const BattlePlayer& getPlayer(FactionName name) const;
 
-	void startBattle(const std::string& newMapName, std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& newPlayers);
+	void start(const std::string& newMapName, std::vector<Player>& newPlayers);
 	void render() const;
 	void update(float deltaTime);
 	void moveEntityToPosition(BattleEntity& entity, const Tile& destination);
 	void moveEntityToPosition(BattleEntity& entity, const Tile& destination, eDirection endDirection);
 
-	bool fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea);
+	bool fireEntityWeaponAtPosition(const Tile& tileOnPlayer, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea);
 	void insertEntity(std::pair<int, int> startingPosition, eDirection startingDirection, const EntityProperties& entityProperties, FactionName factionName);
 	void nextTurn();
 
@@ -61,12 +79,14 @@ private:
 	Timer m_dayTime;
 	Timer m_windTime;
 	BattleManager m_battleManager;
+	ParticleSystem m_explosionParticle;
+	ParticleSystem m_fireParticle;
 
 	void updateMovementPhase(float deltaTime);
 	void updateAttackPhase();
 	bool allEntitiesAttacked(std::vector<std::unique_ptr<BattleEntity>>& playerEntities) const;
-	BattlePlayer& getPlayer(FactionName factionName);
 
+	BattlePlayer& getPlayer(FactionName factionName);
 	void incrementPlayerTurn();
 	void setTimeOfDay(float deltaTime);
 	void setWindDirection(float deltaTime);

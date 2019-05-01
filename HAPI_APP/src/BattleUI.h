@@ -35,26 +35,11 @@ class BattleUI : public IHapiSpritesInputListener
 		InvalidPosition();
 
 		void render(const Map& map) const;
-		void setPosition(std::pair<int, int> screenPosition, const Map& map);
+		void setPosition(std::pair<int, int> newPosition, const Map& map);
 
 		std::unique_ptr<Sprite> m_sprite;
 		bool m_activate;
 		std::pair<int, int> m_position;
-	};
-
-	struct ParticleSystem
-	{
-		std::pair<float, float> m_position;
-		Timer m_lifeSpan;
-		std::unique_ptr<HAPISPACE::Sprite> m_particle;
-		int m_frameNum = 0;
-		bool m_isEmitting;
-
-		ParticleSystem(float lifespan, std::shared_ptr<HAPISPACE::SpriteSheet> texture);
-		void setPosition(std::pair<int, int> position);
-		void run(float deltaTime, const Map& map);
-		void render() const;
-		void orient(eDirection direction);
 	};
 
 	class ShipPlacementPhase
@@ -106,20 +91,16 @@ public:
 	~BattleUI();
 
 	std::pair<int, int> getCameraPositionOffset() const;
+	int isHumanDeploymentCompleted() const;
 
 	void renderUI() const;
-	void renderParticles() const;
 	void renderGUI() const;
 	void loadGUI(std::pair<int, int> mapDimensions);
 
 	void update(float deltaTime);
 
-	void FactionUpdateGUI(FactionName faction);//tempName
-
-	//void newPhase();
-	//void newTurn(FactionName playersTurn);
-
-	void startShipPlacement(const std::vector<std::pair<FactionName, std::vector<EntityProperties*>>>& players, Map& map);
+	void FactionUpdateGUI(FactionName faction);
+	void deployHumanPlayers(const std::vector<Player>& newPlayers, Map& map, const Battle& battle);
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
@@ -152,7 +133,4 @@ private:
 
 	void onResetBattle();
 	void onNewTurn();
-
-	ParticleSystem m_explosion;
-	ParticleSystem m_fire;
 };
