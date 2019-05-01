@@ -80,19 +80,19 @@ void BattleGUI::render(BattlePhase currentBattlePhase) const
 	{
 		if (m_activeFactionToken->GetFrameNumber() == FactionName::eRed)
 		{
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::RED, "Red Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::RED, "Red Team", 50, {}, HAPISPACE::Colour255::BLACK, 2.f);
 		}
 		else if (m_activeFactionToken->GetFrameNumber() == FactionName::eGreen)
 		{
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::GREEN, "Green Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::GREEN, "Green Team", 50, {}, HAPISPACE::Colour255::BLACK, 2.f);
 		}
 		else if (m_activeFactionToken->GetFrameNumber() == FactionName::eBlue)
 		{
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::BLUE, "Blue Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::BLUE, "Blue Team", 50, {}, HAPISPACE::Colour255::BLACK, 2.f);
 		}
 		else if (m_activeFactionToken->GetFrameNumber() == FactionName::eYellow)
 		{
-			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::YELLOW, "Yellow Team", 80, {}, HAPISPACE::Colour255::BLACK, 2.5f);
+			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(800, 50), HAPISPACE::Colour255::YELLOW, "Yellow Team", 50, {}, HAPISPACE::Colour255::BLACK, 2.f);
 		}
 	}
 	
@@ -418,16 +418,15 @@ void BattleGUI::onBattleReset()
 	winningFaction = "";
 
 	m_battleIcons->GetTransformComp().SetPosition({ 510, 890 });
-	m_pauseButton->GetTransformComp().SetPosition({ 1650, 140 });
+	m_endPhaseButtons->GetTransformComp().SetPosition({ 0, 968 });
+	m_pauseButton->GetTransformComp().SetPosition({ 1790, 30 });
 	//m_chickenButton->GetTransformComp().SetPosition({ 1610, 840 });
 	m_CompassBackGround->GetTransformComp().SetOriginToCentreOfFrame();
-	m_CompassBackGround->GetTransformComp().SetPosition({ 240, 170 });
+	m_CompassBackGround->GetTransformComp().SetPosition({ 100, 100 });
 	m_CompassPointer->GetTransformComp().SetOrigin({ 21.5f,60 });
-	m_CompassPointer->GetTransformComp().SetPosition({ 240, 170 });
+	m_CompassPointer->GetTransformComp().SetPosition({ 100, 100 });
 	m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
-	m_activeFactionToken->GetTransformComp().SetPosition({ 1510,140 });// position just temp can be adjusted as needed postiiton 900/100
-	
-
+	m_activeFactionToken->GetTransformComp().SetPosition({ 960,55 });// position just temp can be adjusted as needed postiiton 900/100
 
 	//pauseMenu
 	m_resumeButton->GetTransformComp().SetPosition({ 818, 387 });

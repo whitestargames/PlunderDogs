@@ -3,6 +3,7 @@
 #include "Global.h"
 #include "Battle.h"
 #include "OverWorldGUI.h"
+#include "entity.h"
 
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;

@@ -2,29 +2,6 @@
 #include "Textures.h"
 #include "GameEventMessenger.h"
 
-
-//TODO: Will change
-std::vector<EntityProperties> assignEntities(FactionName name)
-{
-	std::vector<EntityProperties> entities;
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			EntityProperties newEntity(name, (EntityType)(i));
-			entities.push_back(newEntity);
-		}
-	}
-	assert(!entities.empty());
-	return entities;
-}
-
-Player::Player(FactionName name)
-	: m_entities(assignEntities(name)),
-	m_selectedEntities(),
-	m_factionName(name)
-{}
-
 OverWorld::OverWorld()
 	: m_currentPlayer(0),
 	m_selectNextPlayer(false),
@@ -34,7 +11,7 @@ OverWorld::OverWorld()
 	m_startBattle(false)
 {
 	GameEventMessenger::getInstance().subscribe(std::bind(&OverWorld::onReset, this), "OverWorld", GameEvent::eResetBattle);
-	m_players.emplace_back(FactionName::eYellow);
+	m_players.emplace_back(FactionName::eYellow, ePlayerType::eNone);
 	
 	m_GUI.reset(m_players[m_currentPlayer].m_entities);
 }
@@ -121,26 +98,11 @@ void OverWorld::startBattle()
 {
 	if (m_startBattle)
 	{
-		m_GUI.setShipSelectionTrigger(false);
 		OverWorldGUI::CURRENT_WINDOW = eBattle;
-		
-		std::vector<std::pair<FactionName, std::vector<EntityProperties*>>> playersInBattle;
-		for (const auto& player : m_players)
-		{
-			std::pair<FactionName, std::vector<EntityProperties*>> p;
-			p.first = player.m_factionName;
-			p.second = player.m_selectedEntities;
-			playersInBattle.push_back(p);
-		}
-		m_GUI.clear();
-		
-		m_battle.startBattle(m_GUI.getSelectedMap(), playersInBattle);
-		
-		for (auto& player : m_players)
-		{
-			player.m_selectedEntities.clear();
-		}
 
+		m_GUI.setShipSelectionTrigger(false);
+		m_GUI.clear();
+		m_battle.start(m_GUI.getSelectedMap(), m_players);
 		m_startBattle = false;
 	}
 }
@@ -150,6 +112,10 @@ void OverWorld::onReset()
 	m_GUI.setShipSelectionTrigger(false);
 	m_currentPlayer = 0;
 	m_selectNextPlayer = false;
+	for (auto& player : m_players)
+	{
+		player.m_selectedEntities.clear();
+	}
 	//m_players.clear();
 	//m_players.emplace_back(FactionName::eYellow);
 	//m_players.emplace_back(FactionName::eBlue);
