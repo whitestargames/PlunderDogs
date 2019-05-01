@@ -30,7 +30,7 @@ void AudioPlayer::playShortSound(const std::string & soundName)
 	if (!m_soundList[soundName].m_isPlaying)
 	{
 		HAPI_Sprites.PlayStreamedMedia(Utilities::getDataDirectory() + m_soundList[soundName].m_soundName,
-			HAPISPACE::SoundOptions::HAPI_TSoundOptions(1, false), m_soundList[soundName].m_instanceId);
+			HAPISPACE::SoundOptions::HAPI_TSoundOptions(0.6, false), m_soundList[soundName].m_instanceId);
 
 	}
 
