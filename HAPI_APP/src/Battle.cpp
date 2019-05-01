@@ -224,6 +224,7 @@ void Battle::render() const
 	{
 		it.render();
 	}
+	m_battleUI.renderGUI();
 }
 
 void Battle::update(float deltaTime)
