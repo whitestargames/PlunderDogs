@@ -55,7 +55,6 @@ class EntityBattleProperties
 		struct PathNode
 		{
 			PathNode();
-
 			std::unique_ptr<Sprite> sprite;
 			bool activate;
 			std::pair<int, int> m_position;
@@ -69,6 +68,7 @@ class EntityBattleProperties
 		void eraseNode(std::pair<int, int> position, const Map& map);
 		void clearPath();
 
+		void setPosition(int i, std::pair<int, int> newPosition) { m_movementPath[i].m_position = newPosition; }
 	private:
 		std::vector<PathNode> m_movementPath;
 		unsigned int getDirectionCost(int currentDirection, int newDirection);

@@ -681,6 +681,9 @@ void BattleUI::onNewTurn()
 {
 	//TODO: Drop info box
 	m_selectedTile.m_tile = nullptr;
+	m_selectedTile.m_position = std::pair<int, int>(0, 0);
+	m_targetArea.clearTargetArea();
+	m_invalidPosition.onReset();
 }
 
 //Weapon Graph
