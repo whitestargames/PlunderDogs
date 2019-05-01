@@ -42,21 +42,6 @@ class BattleUI : public IHapiSpritesInputListener
 		std::pair<int, int> m_position;
 	};
 
-	struct ParticleSystem
-	{
-		std::pair<float, float> m_position;
-		Timer m_lifeSpan;
-		std::unique_ptr<HAPISPACE::Sprite> m_particle;
-		int m_frameNum = 0;
-		bool m_isEmitting;
-
-		ParticleSystem(float lifespan, std::shared_ptr<HAPISPACE::SpriteSheet> texture);
-		void setPosition(std::pair<int, int> position);
-		void run(float deltaTime, const Map& map);
-		void render() const;
-		void orient(eDirection direction);
-	};
-
 	class ShipPlacementPhase
 	{
 		struct CurrentSelectedEntity
@@ -109,17 +94,12 @@ public:
 	int isHumanDeploymentCompleted() const;
 
 	void renderUI() const;
-	void renderParticles() const;
 	void renderGUI() const;
 	void loadGUI(std::pair<int, int> mapDimensions);
 
 	void update(float deltaTime);
 
-	void FactionUpdateGUI(FactionName faction);//tempName
-
-	//void newPhase();
-	//void newTurn(FactionName playersTurn);
-
+	void FactionUpdateGUI(FactionName faction);
 	void deployHumanPlayers(const std::vector<Player>& newPlayers, Map& map, const Battle& battle);
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
@@ -153,7 +133,4 @@ private:
 
 	void onResetBattle();
 	void onNewTurn();
-
-	ParticleSystem m_explosion;
-	ParticleSystem m_fire;
 };

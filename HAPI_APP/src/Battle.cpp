@@ -3,6 +3,89 @@
 #include "GameEventMessenger.h"
 
 using namespace HAPISPACE;
+constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
+constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
+
+Battle::ParticleSystem::ParticleSystem(float lifespan, std::shared_ptr<HAPISPACE::SpriteSheet> texture, float scale) :
+	m_position(),
+	m_lifeSpan(lifespan),
+	m_particle(HAPI_Sprites.MakeSprite(texture)),
+	m_frameNum(0),
+	m_isEmitting(false),
+	m_scale(scale)
+{
+	m_particle->SetFrameNumber(m_frameNum);
+}
+
+void Battle::ParticleSystem::setPosition(std::pair<int, int> position)
+{
+	m_position = position;
+}
+
+void Battle::ParticleSystem::run(float deltaTime, const Map& map)
+{
+	if (m_isEmitting)
+	{
+		const std::pair<int, int> tileTransform = map.getTileScreenPos(m_position);
+		m_particle->GetTransformComp().SetPosition({
+			tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),
+			tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
+
+		m_lifeSpan.update(deltaTime);
+
+		if (m_lifeSpan.isExpired())
+		{
+			m_particle->SetFrameNumber(m_frameNum);
+
+			m_lifeSpan.reset();
+			++m_frameNum;
+		}
+
+		if (m_frameNum >= m_particle->GetNumFrames())
+		{
+			m_isEmitting = false;
+			m_frameNum = 0;
+		}
+	}
+}
+
+void Battle::ParticleSystem::render()const
+{
+	if (m_isEmitting)
+	{
+		m_particle->GetTransformComp().SetOriginToCentreOfFrame();
+		m_particle->GetTransformComp().SetScaling(m_scale);
+		m_particle->Render(SCREEN_SURFACE);
+	}
+}
+
+void Battle::ParticleSystem::orient(eDirection entityDir)
+{
+	eDirection direction;
+	switch (entityDir)
+	{
+	case eNorth:
+		direction = eSouth;
+		break;
+	case eNorthEast:
+		direction = eSouthWest;
+		break;
+	case eSouthEast:
+		direction = eNorthWest;
+		break;
+	case eSouth:
+		direction = eNorth;
+		break;
+	case eSouthWest:
+		direction = eNorthEast;
+		break;
+	case eNorthWest:
+		direction = eSouthEast;
+		break;
+	}
+	m_particle->GetTransformComp().SetRotation(DEGREES_TO_RADIANS(static_cast<int>(direction) * 60 % 360));
+}
+
 
 void Battle::setTimeOfDay(float deltaTime)
 {
@@ -38,7 +121,9 @@ Battle::Battle()
 	m_currentPhase(BattlePhase::ShipPlacement),
 	m_battleUI(*this),
 	m_dayTime(20.0f),
-	m_windTime(10)
+	m_windTime(10),
+	m_explosionParticle(0.10, Textures::m_explosion, 2.5f),
+	m_fireParticle(0.05, Textures::m_fire, 2.0f)
 {
 	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onResetBattle, this), "Battle", GameEvent::eResetBattle);
 	GameEventMessenger::getInstance().subscribe(std::bind(&Battle::onYellowShipDestroyed, this), "Battle", GameEvent::eYellowShipDestroyed);
@@ -65,7 +150,7 @@ void Battle::start(const std::string & newMapName, std::vector<Player>& newPlaye
 	assert(!newPlayers.empty());
 	assert(m_players.empty());
 	m_map.loadmap(newMapName);
-
+	
 	//TODO: Hack to correct sprite sizes
 	for (auto& player : newPlayers)
 	{
@@ -100,7 +185,8 @@ void Battle::render() const
 		}
 	}
 	
-	m_battleUI.renderParticles();
+	m_explosionParticle.render();
+	m_fireParticle.render();
 	m_battleUI.renderGUI();
 }
 
@@ -112,6 +198,9 @@ void Battle::update(float deltaTime)
 
 	setTimeOfDay(deltaTime);
 	setWindDirection(deltaTime);
+
+	m_explosionParticle.run(deltaTime, m_map);
+	m_fireParticle.run(deltaTime, m_map);
 
 	if (m_currentPhase == BattlePhase::Movement)
 	{
@@ -135,11 +224,12 @@ void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination,
 	entity.m_battleProperties.moveEntity(m_map, destination, endDirection);
 }
 
-bool Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea)
+bool Battle::fireEntityWeaponAtPosition(const Tile& tileOnPlayer, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea)
 {
 	assert(m_currentPhase == BattlePhase::Attack);
-	assert(!player.m_battleProperties.isWeaponFired());
+	assert(!tileOnPlayer.m_entityOnTile->m_battleProperties.isWeaponFired());
 	
+
 
 	//Disallow attacking same team
 	if (tileOnAttackPosition.m_entityOnTile && tileOnAttackPosition.m_entityOnTile->m_factionName != getCurentFaction()
@@ -151,13 +241,26 @@ bool Battle::fireEntityWeaponAtPosition(BattleEntity& player, const Tile& tileOn
 		//Enemy within range of weapon
 		if (cIter != targetArea.cend())
 		{
-			player.m_battleProperties.fireWeapon();
+			if (tileOnPlayer.m_entityOnTile->m_entityProperties.m_weaponType == eFlamethrower)
+			{
+				m_fireParticle.orient(tileOnPlayer.m_entityOnTile->m_battleProperties.getCurrentDirection());
+				m_fireParticle.setPosition(targetArea[0]->m_tileCoordinate);
+				m_fireParticle.m_isEmitting = true;
+			}
+			else
+			{
+				m_explosionParticle.setPosition(tileOnAttackPosition.m_entityOnTile->m_battleProperties.getCurrentPosition());
+				m_explosionParticle.m_isEmitting = true;
+			}
+
+			tileOnPlayer.m_entityOnTile->m_battleProperties.fireWeapon();
 			auto& enemy = tileOnAttackPosition.m_entityOnTile;
-			enemy->m_battleProperties.takeDamage(enemy->m_entityProperties, player.m_entityProperties.m_damage, enemy->m_factionName);
+			enemy->m_battleProperties.takeDamage(enemy->m_entityProperties, tileOnPlayer.m_entityOnTile->m_entityProperties.m_damage, enemy->m_factionName);
 			
 			return true;
 		}
 	}
+
 	return false;
 }
 
