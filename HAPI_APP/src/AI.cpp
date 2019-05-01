@@ -179,11 +179,11 @@ void AI::attemptMove(Map& map, std::shared_ptr<BattleEntity> currentShip, std::p
 		currentShip->m_battleProperties.getCurrentPosition(),
 		targetTile.first->m_tileCoordinate);
 	//Loop calling moveEntity for each tile in the path end to start until one of them works
-	for (int pathLength = currentShip->m_battleProperties.generateMovementGraph(map, *tile, *targetTile.first) - 1; pathLength > 0; pathLength--)
+	for (int pathLength = currentShip->m_battleProperties.generateMovementGraph(map, *tile, *targetTile.first) - 1; pathLength > 1; pathLength--)
 	{
 		const Tile* attemptedDest = map.getTile(pathToTile[pathLength].second);
 		if (currentShip->m_battleProperties.moveEntity(map, *attemptedDest, targetTile.second))
-			break;
+			return;
 	}
 	currentShip->m_battleProperties.setDestination();
 }
