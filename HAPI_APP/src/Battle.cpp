@@ -104,16 +104,6 @@ void Battle::setTimeOfDay(float deltaTime)
 	}
 }
 
-void Battle::setWindDirection(float deltaTime)
-{
-	m_windTime.update(deltaTime);
-	if (m_windTime.isExpired())
-	{
-		int wind = rand() % eDirection::Max;
-		m_map.setWindDirection((eDirection)wind);
-		m_windTime.reset();
-	}
-}
 
 void Battle::handleAIMovementPhaseTimer(float deltaTime)
 {
@@ -221,7 +211,7 @@ void Battle::update(float deltaTime)
 	m_map.setDrawOffset(m_battleUI.getCameraPositionOffset());
 
 	setTimeOfDay(deltaTime);
-	setWindDirection(deltaTime);
+
 
 	handleAIMovementPhaseTimer(deltaTime);
 	handleAIAttackPhaseTimer(deltaTime);
@@ -306,6 +296,7 @@ void Battle::nextTurn()
 {
 	FactionName currentPlayer;
 	bool lastPlayer = false;
+
 	switch (m_currentPhase)
 	{
 	case BattlePhase::Deployment :
@@ -460,7 +451,8 @@ void Battle::onResetBattle()
 void Battle::incrementPlayerTurn()
 {
 	++m_currentPlayerTurn;
-
+	int wind = rand() % eDirection::Max;
+	m_map.setWindDirection((eDirection)wind);
 	if (m_currentPlayerTurn == static_cast<int>(m_players.size()))
 	{
 		m_currentPlayerTurn = 0;
