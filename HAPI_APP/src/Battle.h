@@ -96,7 +96,7 @@ private:
 
 	void incrementPlayerTurn();
 	void setTimeOfDay(float deltaTime);
-	void setWindDirection(float deltaTime);
+	
 	void handleAIMovementPhaseTimer(float deltaTime);
 	void handleAIAttackPhaseTimer(float deltaTime);
 
