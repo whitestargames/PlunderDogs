@@ -633,12 +633,12 @@ std::vector<Tile*> Map::getTileLine(
 		if (!pushBackTile)
 			continue;
 		pushBackTile = getAdjacentTiles(pushBackTile->m_tileCoordinate)[direction];
-		//If avoidInvalid skip if the tile is an entity or not water
-		if (avoidInvalid && pushBackTile && (pushBackTile->m_type != eSea && pushBackTile->m_type != eOcean))
-			continue;
 		//If avoidInvalid stop the line if a mountain or Mesa is encountered
 		if (avoidInvalid && pushBackTile && (pushBackTile->m_type == eMountain || pushBackTile->m_type == eMesa))
 			break;
+		//If avoidInvalid skip if the tile is an entity or not water
+		if (avoidInvalid && pushBackTile && (pushBackTile->m_type != eSea && pushBackTile->m_type != eOcean))
+			continue;
 		tileStore.emplace_back(pushBackTile);
 	}
 	return tileStore;
@@ -655,12 +655,12 @@ std::vector<const Tile*> Map::cGetTileLine(
 		if (!pushBackTile)
 			continue;
 		pushBackTile = cGetAdjacentTiles(pushBackTile->m_tileCoordinate)[direction]; 
-		//If avoidInvalid skip if the tile is not water
-		if (avoidInvalid && pushBackTile && (pushBackTile->m_type != eSea && pushBackTile->m_type != eOcean))
-			continue;
 		//If avoidInvalid stop the line if a mountain or Mesa is encountered
 		if (avoidInvalid && pushBackTile && (pushBackTile->m_type == eMountain || pushBackTile->m_type == eMesa))
 			break;
+		//If avoidInvalid skip if the tile is not water
+		if (avoidInvalid && pushBackTile && (pushBackTile->m_type != eSea && pushBackTile->m_type != eOcean))
+			continue;
 		tileStore.emplace_back(pushBackTile);
 	}
 	return tileStore;
