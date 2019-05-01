@@ -53,13 +53,14 @@ class Battle
 
 public:
 	Battle();
-	
 	~Battle();
+
 	const Map& getMap() const;
 	BattlePhase getCurrentPhase() const;
 
 	FactionName getCurrentFaction() const;
 	const BattlePlayer& getPlayer(FactionName name) const;
+	bool isAIPlaying() const;
 
 	void start(const std::string& newMapName, std::vector<Player>& newPlayers);
 	void render() const;
@@ -90,6 +91,7 @@ private:
 	std::vector<ParticleSystem> m_fire;
 	Timer m_timeUntilAIMovementPhase;
 	Timer m_timeUntilAIAttackPhase;
+	bool m_AITurn;
 
 	void updateMovementPhase(float deltaTime);
 	void updateAttackPhase();
@@ -102,7 +104,6 @@ private:
 	void setWindDirection(float deltaTime);
 	void handleAIMovementPhaseTimer(float deltaTime);
 	void handleAIAttackPhaseTimer(float deltaTime);
-
 
 	void onResetBattle();
 	void onYellowShipDestroyed();

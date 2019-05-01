@@ -148,7 +148,8 @@ Battle::Battle()
 	m_explosion(),
 	m_fire(),
 	m_timeUntilAIMovementPhase(2.5f, false),
-	m_timeUntilAIAttackPhase(2.5f, false)
+	m_timeUntilAIAttackPhase(2.5f, false),
+	m_AITurn(false)
 {
 	m_explosion.reserve(6);
 	m_fire.reserve(6);
@@ -270,12 +271,12 @@ void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination,
 
 bool Battle::fireEntityWeaponAtPosition(const Tile& tileOnPlayer, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea)
 {
-	//assert(m_currentPhase == BattlePhase::Attack);
-	//assert(tileOnPlayer.m_entityOnTile);
-	if (!tileOnPlayer.m_entityOnTile)
-	{
-		return false;
-	}
+	assert(m_currentPhase == BattlePhase::Attack);
+	assert(tileOnPlayer.m_entityOnTile);
+	//if (!tileOnPlayer.m_entityOnTile)
+	//{
+	//	return false;
+	//}
 	assert(!tileOnPlayer.m_entityOnTile->m_battleProperties.isWeaponFired());
 
 	//Disallow attacking same team
@@ -338,6 +339,7 @@ void Battle::nextTurn()
 			{
 				m_timeUntilAIMovementPhase.setActive(true);
 				GameEventMessenger::getInstance().broadcast(GameEvent::eEnteredAITurn);
+				m_AITurn = true;
 			}
 
 			m_currentPlayerTurn = 0;
@@ -363,6 +365,7 @@ void Battle::nextTurn()
 		{
 			m_timeUntilAIAttackPhase.setActive(true);
 			GameEventMessenger::getInstance().broadcast(GameEvent::eEnteredAITurn);
+			m_AITurn = true;
 		}
 		break;
 	case BattlePhase::Attack :
@@ -393,6 +396,7 @@ void Battle::nextTurn()
 		else if (m_players[m_currentPlayerTurn].m_playerType == ePlayerType::eHuman)
 		{
 			GameEventMessenger::getInstance().broadcast(GameEvent::eLeftAITurn);
+			m_AITurn = false;
 		}
 		break;
 	}
@@ -530,6 +534,11 @@ const BattlePlayer & Battle::getPlayer(FactionName factionName) const
 	auto cIter = std::find_if(m_players.cbegin(), m_players.cend(), [factionName](const auto& player) { return player.m_factionName == factionName; });
 	assert(cIter != m_players.cend());
 	return *cIter;
+}
+
+bool Battle::isAIPlaying() const
+{
+	return m_AITurn;
 }
 
 void Battle::onYellowShipDestroyed()
