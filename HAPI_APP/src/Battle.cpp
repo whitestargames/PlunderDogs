@@ -2,7 +2,6 @@
 #include "Utilities/MapParser.h"
 #include "GameEventMessenger.h"
 #include "AI.h"
-#include "AudioPlayer.h"
 
 using namespace HAPISPACE;
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
@@ -309,11 +308,9 @@ void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination,
 
 bool Battle::fireEntityWeaponAtPosition(const Tile& tileOnPlayer, const Tile& tileOnAttackPosition, const std::vector<const Tile*>& targetArea)
 {
-
 	assert(m_currentPhase == BattlePhase::Attack);
 	assert(tileOnPlayer.m_entityOnTile);
 
-	AudioPlayer::getInstance().playShortSound("shot");
 	if (!tileOnPlayer.m_entityOnTile)
 	{
 		return false;
@@ -341,7 +338,6 @@ bool Battle::fireEntityWeaponAtPosition(const Tile& tileOnPlayer, const Tile& ti
 
 			tileOnPlayer.m_entityOnTile->m_battleProperties.fireWeapon();
 			auto& enemy = tileOnAttackPosition.m_entityOnTile;
-			AudioPlayer::getInstance().playShortSound("hit");
 			enemy->m_battleProperties.takeDamage(enemy->m_entityProperties, tileOnPlayer.m_entityOnTile->m_entityProperties.m_damage, enemy->m_factionName);
 			
 			return true;
@@ -719,8 +715,6 @@ void Battle::BattleManager::checkGameStatus(const std::vector<BattlePlayer>& pla
 	//Last player standing - Player wins
 	if (playersEliminated == static_cast<int>(players.size()) - 1)
 	{
-		AudioPlayer::getInstance().stopSound("battle theme");
-		AudioPlayer::getInstance().playSound("win", 0.3, true);
 		auto player = std::find_if(players.cbegin(), players.cend(), [](const auto& player) { return player.m_eliminated == false; });
 		assert(player != players.cend());
 		FactionName winningFaction = player->m_factionName;
@@ -739,5 +733,44 @@ void Battle::BattleManager::checkGameStatus(const std::vector<BattlePlayer>& pla
 			GameEventMessenger::broadcast(GameEvent::eRedWin);
 			break;
 		}
+	}
+}
+
+//bool m_reverse;
+//Timer m_transitionTimer;
+//Timer m_fullTimer;
+
+Battle::DayTime::DayTime()
+	: m_reverse(false),
+	m_timer(20.0f),
+	m_timeOfDay(eTimeOfDay::eMorning)
+{
+
+}
+
+void Battle::DayTime::update(float deltaTime)
+{
+	m_timer.update(deltaTime);
+	if (m_timer.isExpired())
+	{
+		m_reverse = true;
+	}
+
+	m_fullTimer.update(deltaTime);
+	if (m_fullTimer.isExpired())
+	{
+		m_transitionTimer.update
+	}
+	m_dayTime.update(deltaTime);
+	if (m_dayTime.isExpired())
+	{
+		int timeOfDay = (int)m_map.getTimeOfDay() + 1;
+		if (timeOfDay > eTimeOfDay::eNight)
+		{
+			timeOfDay = 0;
+		}
+
+		m_map.setTimeOfDay((eTimeOfDay)timeOfDay);
+		m_dayTime.reset();
 	}
 }

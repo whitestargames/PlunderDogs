@@ -35,3 +35,8 @@ void Timer::setActive(bool active)
 {
 	m_active = active;
 }
+
+void Timer::setNewExpirationTime(float newExpirationTime)
+{
+	m_expirationTime = newExpirationTime;
+}

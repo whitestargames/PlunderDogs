@@ -11,9 +11,10 @@ public:
 	void update(float deltaTime);
 	void reset();
 	void setActive(bool active);
+	void setNewExpirationTime(float newExpirationTime);
 
 private:
-	const float m_expirationTime;
+	float m_expirationTime;
 	float m_elaspedTime;
 	bool m_active;
 };

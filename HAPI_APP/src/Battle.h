@@ -14,6 +14,17 @@ enum class BattlePhase
 
 class Battle
 {
+	struct DayTime
+	{
+		DayTime();
+
+		void update(float deltaTime);
+
+		bool m_reverse;
+		Timer m_timer;
+		eTimeOfDay m_timeOfDay;
+	};
+
 	struct ParticleSystem
 	{
 		std::pair<float, float> m_position;

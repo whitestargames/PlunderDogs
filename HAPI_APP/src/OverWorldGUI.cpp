@@ -3,7 +3,6 @@
 #include "OverWorld.h"
 #include "Utilities/Utilities.h"
 #include "GameEventMessenger.h"
-#include "AudioPlayer.h"
 
 OverWorldWindow OverWorldGUI::CURRENT_WINDOW = OverWorldWindow::eMainMenu;
 
@@ -165,7 +164,7 @@ void OverWorldGUI::render(Battle& battle)
 			m_quitButton->Render(SCREEN_SURFACE);
 			HAPI_Sprites.ChangeFontFromFile("data/RAPSCALL.TTF");
 			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1380, 50), HAPISPACE::Colour255::YELLOW, "Plunder\n Dogs", 190, {}, HAPISPACE::Colour255::BLACK, 2.5f);
-			AudioPlayer::getInstance().playSound("main menu", 0.2, true);
+			//AudioPlayer::getInstance().playSound("main menu", 0.2, true);
 			break;
 		}
 	
@@ -202,8 +201,6 @@ void OverWorldGUI::render(Battle& battle)
 		}
 		case OverWorldWindow::eBattle:
 		{
-			AudioPlayer::getInstance().stopSound("main menu");
-			AudioPlayer::getInstance().playSound("battle theme", 0.2, true);
 			battle.render();
 			break;
 		}
@@ -284,7 +281,6 @@ void OverWorldGUI::render(Battle& battle)
 
 void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer, bool& selectNextPlayer, bool& resetPlayer)
 {
-	AudioPlayer::getInstance().playShortSound("click");
 	switch (CURRENT_WINDOW)
 	{
 

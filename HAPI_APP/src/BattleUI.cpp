@@ -830,6 +830,7 @@ BattleUI::TargetArea::HighlightNode::HighlightNode()
 	activate(false)
 {
 	sprite->GetTransformComp().SetOriginToCentreOfFrame();
+	sprite->GetTransformComp().SetScaling({ 0.75f, 0.75f});
 }
 
 BattleUI::DeploymentPhase::DeploymentPhase(std::vector<EntityProperties*> player, 

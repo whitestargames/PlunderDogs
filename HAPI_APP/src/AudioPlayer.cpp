@@ -2,6 +2,7 @@
 #include <HAPISprites_lib.h>
 #include <HAPISprites_UI.h>
 #include "Utilities/Utilities.h"
+#include <iostream>
 
 
 AudioPlayer::AudioPlayer() :m_soundList()
@@ -11,7 +12,7 @@ AudioPlayer::AudioPlayer() :m_soundList()
 
 void AudioPlayer::playSound(const std::string & soundName,  float volume , bool looping)
 {
-	
+	std::cout << "play Sound\n";
 	if (!m_soundList[soundName].m_isPlaying)
 	{
 		HAPI_Sprites.PlayStreamedMedia(Utilities::getDataDirectory() + m_soundList[soundName].m_soundName,
@@ -26,7 +27,7 @@ void AudioPlayer::playSound(const std::string & soundName,  float volume , bool 
 
 void AudioPlayer::playShortSound(const std::string & soundName)
 {
-
+	std::cout << "play Sound\n";
 	if (!m_soundList[soundName].m_isPlaying)
 	{
 		HAPI_Sprites.PlayStreamedMedia(Utilities::getDataDirectory() + m_soundList[soundName].m_soundName,

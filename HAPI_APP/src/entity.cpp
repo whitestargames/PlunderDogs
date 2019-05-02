@@ -115,6 +115,7 @@ EntityBattleProperties::MovementPath::PathNode::PathNode()
 	activate(false)
 {
 	sprite->GetTransformComp().SetOriginToCentreOfFrame();
+	sprite->GetTransformComp().SetScaling({ 0.5f, 0.5f });
 }
 
 //
@@ -142,7 +143,7 @@ void EntityBattleProperties::MovementPath::render(const Map& map) const
 			i.sprite->GetTransformComp().SetPosition({
 				static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * scale),
 				static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * scale) });
-			i.sprite->GetTransformComp().SetScaling({ scale / 2, scale / 2 });
+			i.sprite->GetTransformComp().SetScaling({ 0.5f, 0.5f });
 
 			i.sprite->Render(SCREEN_SURFACE);
 		}	
