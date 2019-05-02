@@ -343,7 +343,8 @@ void BattleUI::clearTargetArea()
 
 void BattleUI::clearSelectedTile()
 {
-	m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.clearMovementPath();
+	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile)
+			m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.clearMovementPath();
 	m_selectedTile.m_tile = nullptr;
 }
 

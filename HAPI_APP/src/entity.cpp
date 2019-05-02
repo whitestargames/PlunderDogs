@@ -580,8 +580,8 @@ void EntityBattleProperties::render(std::shared_ptr<HAPISPACE::Sprite>& sprite, 
 		static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * scale) });
 	sprite->GetTransformComp().SetScaling({ scale / 2, scale / 2 });
 
-	sprite->Render(SCREEN_SURFACE);
 	m_movementPath.render(map);
+	sprite->Render(SCREEN_SURFACE);
 	m_actionSprite.render(map, m_currentPosition);
 }
 
