@@ -231,8 +231,8 @@ Battle::Battle()
 	m_battleUI(*this),
 	m_explosionParticles(),
 	m_fireParticles(),
-	m_timeUntilAITurn(2.0f, false),
-	m_timeBetweenAIUnits(0.75f, false),
+	m_timeUntilAITurn(1.5f, false),
+	m_timeBetweenAIUnits(0.3f, false),
 	m_currentAIUnit(0),
 	m_AITurn(false)
 {
