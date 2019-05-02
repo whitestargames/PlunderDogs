@@ -197,7 +197,7 @@ void OverWorldGUI::render(Battle& battle)
 				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1600, 535), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_movementPoints), 50);
 				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1600, 625), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_range), 50);
 			}
-			
+
 			break;
 		}
 		case OverWorldWindow::eBattle:
@@ -805,23 +805,18 @@ void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, Player& current
 		}
 
 		//varies the position of objects based on the slder value
-		if (mouseData.leftButtonDown)
+		if (windowScreenRect(FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 		{
-
-			
-			if (windowScreenRect(FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			for (int i = 0; i < currentSelectedPlayer.m_entities.size(); i++)
 			{
-				for (int i = 0; i < currentSelectedPlayer.m_entities.size(); i++)
-				{
-					positionEntity(FLEET_WINDOW, FLEET_SLIDER, "entity" + std::to_string(i), i, currentSelectedPlayer.m_entities.size());
-				}
+				positionEntity(FLEET_WINDOW, FLEET_SLIDER, "entity" + std::to_string(i), i, currentSelectedPlayer.m_entities.size());
 			}
-			if (windowScreenRect(BATTLE_FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+		}
+		if (windowScreenRect(BATTLE_FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+		{
+			for (int i = 0; i < currentSelectedPlayer.m_selectedEntities.size(); i++)
 			{
-				for (int i = 0; i < currentSelectedPlayer.m_selectedEntities.size(); i++)
-				{
 					positionEntity(BATTLE_FLEET_WINDOW, BATTLE_FLEET_SLIDER, "entity" + std::to_string(i), i, currentSelectedPlayer.m_selectedEntities.size());
-				}
 			}
 		}
 		bool selection{ false };
@@ -1005,7 +1000,7 @@ void OverWorldGUI::clear()
 
 void OverWorldGUI::positionEntity(const std::string & windowName, const std::string& windowSliderName, const std::string& windowObjectName, int objectNumber, size_t vectorSize)
 {
-	UI.GetWindow(windowName)->PositionObject(windowObjectName, calculateObjectScrolledPosition(windowName, windowSliderName, objectNumber, vectorSize));
+	UI.GetWindow(windowName)->PositionObject(windowObjectName, calculateObjectScrolledPosition(windowName, windowSliderName, objectNumber, vectorSize), false);
 }
 
 void OverWorldGUI::positionUpgradeEntity(const std::string & windowName, const std::string & windowScrollbarName, const std::string & windowObjectName, int objectNumber, size_t vectorSize)
