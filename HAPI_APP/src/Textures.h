@@ -60,25 +60,25 @@ struct Textures
 			return false;
 		}
 	
-		m_playerSelectIconYellow = HAPI_Wrapper::makeSpriteSheet("yellowSelectBtn.png", 3);
+		m_playerSelectIconYellow = HAPI_Wrapper::loadSpriteSheet("yellowSelectBtn.xml");
 		if (!m_playerSelectIconYellow)
 		{
-			HAPI_Sprites.UserMessage("Cannot Load : 'yellowSelectBtn.png'", "Texture Error");
+			HAPI_Sprites.UserMessage("Cannot Load : 'yellowSelectBtn_surface'", "Texture Error");
 			return false;
 		}
-		m_playerSelectIconGreen = HAPI_Wrapper::makeSpriteSheet("greenSelectBtn.png", 3);
+		m_playerSelectIconGreen = HAPI_Wrapper::loadSpriteSheet("greenSelectBtn.xml");
 		if (!m_playerSelectIconGreen)
 		{
 			HAPI_Sprites.UserMessage("Cannot Load : 'greenSelectBtn.png'", "Texture Error");
 			return false;
 		}
-		m_playerSelectIconRed = HAPI_Wrapper::makeSpriteSheet("redSelectBtn.png", 3);
+		m_playerSelectIconRed = HAPI_Wrapper::loadSpriteSheet("redSelectBtn.xml");
 		if (!m_playerSelectIconRed)
 		{
 			HAPI_Sprites.UserMessage("Cannot Load : 'redSelectBtn.png'", "Texture Error");
 			return false;
 		}
-		m_playerSelectIconBlue = HAPI_Wrapper::makeSpriteSheet("blueSelectBtn.png", 3);
+		m_playerSelectIconBlue = HAPI_Wrapper::loadSpriteSheet("blueSelectBtn.xml");
 		if (!m_playerSelectIconBlue)
 		{
 			HAPI_Sprites.UserMessage("Cannot Load : 'blueSelectBtn.png'", "Texture Error");
