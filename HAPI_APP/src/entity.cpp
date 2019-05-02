@@ -284,6 +284,7 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection e
 			//{
 			//	m_movementPath.setNodePosition(i, pathToTile[i].second);
 			//}
+
 			pathToTile.push_back({ endDirection, pathToTile[pathToTile.size() - 1].second });
 
 

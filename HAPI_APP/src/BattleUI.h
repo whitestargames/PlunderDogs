@@ -102,6 +102,7 @@ public:
 
 	void update(float deltaTime);
 
+	void clearSelectedTile();
 	void FactionUpdateGUI(FactionName faction);
 	void deployPlayers(const std::vector<Player>& newPlayers, Map& map, const Battle& battle);
 
@@ -140,5 +141,5 @@ private:
 	void onResetBattle();
 	void onNewTurn();
 	void clearTargetArea();
-	void clearSelectedTile();
+	
 };
