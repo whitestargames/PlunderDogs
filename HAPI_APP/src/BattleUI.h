@@ -111,8 +111,7 @@ public:
 	void setCurrentFaction(FactionName faction);
 	bool isPaused();
 
-	void clearTargetArea();
-	void clearSelectedTile();
+
 private:
 	Battle& m_battle;
 	CurrentSelectedTile m_selectedTile;
@@ -140,4 +139,6 @@ private:
 
 	void onResetBattle();
 	void onNewTurn();
+	void clearTargetArea();
+	void clearSelectedTile();
 };

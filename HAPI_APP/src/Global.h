@@ -95,10 +95,10 @@ enum eWeaponType
 };
 
 
-enum eTimeOfDay
+enum eLightIntensity
 {
-	eMorning = 0,
-	eAfternoon,
-	eEvening,
-	eNight
+	eMaximum = 0,
+	eHigh,
+	eLow,
+	eMinimum
 };

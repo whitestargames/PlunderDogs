@@ -88,23 +88,23 @@ void Battle::ParticleSystem::orient(eDirection entityDir)
 }
 
 
-void Battle::setTimeOfDay(float deltaTime)
-{
-	if (m_battleUI.isPaused())
-		return;
-	m_dayTime.update(deltaTime);
-	if (m_dayTime.isExpired())
-	{
-		int timeOfDay = (int)m_map.getTimeOfDay() + 1;
-		if (timeOfDay > eTimeOfDay::eNight)
-		{
-			timeOfDay = 0;
-		}
-
-		m_map.setTimeOfDay((eTimeOfDay)timeOfDay);
-		m_dayTime.reset();
-	}
-}
+//void Battle::setTimeOfDay(float deltaTime)
+//{
+//	if (m_battleUI.isPaused())
+//		return;
+//	m_dayTime.update(deltaTime);
+//	if (m_dayTime.isExpired())
+//	{
+//		int timeOfDay = (int)m_map.getTimeOfDay() + 1;
+//		if (timeOfDay > eLightIntensity::eMinimum)
+//		{
+//			timeOfDay = 0;
+//		}
+//
+//		m_map.setTimeOfDay((eLightIntensity)timeOfDay);
+//		m_dayTime.reset();
+//	}
+//}
 
 void Battle::updateWindDirection()
 {
@@ -245,7 +245,7 @@ void Battle::start(const std::string & newMapName, std::vector<Player>& newPlaye
 
 void Battle::render() const
 {
-	m_map.drawMap();
+	m_map.drawMap(m_lightIntensity.m_lightIntensity);
 	m_battleUI.renderUI();
 
 	for (const auto& player : m_players)
@@ -272,7 +272,7 @@ void Battle::update(float deltaTime)
 	m_battleUI.update(deltaTime);
 	m_map.setDrawOffset(m_battleUI.getCameraPositionOffset());
 
-	setTimeOfDay(deltaTime);
+	m_lightIntensity.update(deltaTime);
 	for (auto& it : m_explosion)
 	{
 		it.run(deltaTime, m_map);
@@ -409,10 +409,6 @@ void Battle::nextTurn()
 		break;
 	case BattlePhase::Attack :
 		m_currentPhase = BattlePhase::Movement;
-		//Clear the targeting sprites and UI selectedTile
-		m_battleUI.clearTargetArea();
-		m_battleUI.clearSelectedTile();
-		
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringMovementPhase);
 
@@ -736,41 +732,38 @@ void Battle::BattleManager::checkGameStatus(const std::vector<BattlePlayer>& pla
 	}
 }
 
-//bool m_reverse;
-//Timer m_transitionTimer;
-//Timer m_fullTimer;
-
-Battle::DayTime::DayTime()
+Battle::LightIntensity::LightIntensity()
 	: m_reverse(false),
 	m_timer(20.0f),
-	m_timeOfDay(eTimeOfDay::eMorning)
-{
+	m_lightIntensity(eLightIntensity::eMaximum)
+{}
 
-}
-
-void Battle::DayTime::update(float deltaTime)
+void Battle::LightIntensity::update(float deltaTime)
 {
 	m_timer.update(deltaTime);
 	if (m_timer.isExpired())
 	{
-		m_reverse = true;
-	}
-
-	m_fullTimer.update(deltaTime);
-	if (m_fullTimer.isExpired())
-	{
-		m_transitionTimer.update
-	}
-	m_dayTime.update(deltaTime);
-	if (m_dayTime.isExpired())
-	{
-		int timeOfDay = (int)m_map.getTimeOfDay() + 1;
-		if (timeOfDay > eTimeOfDay::eNight)
+		int lightIntensity = 0;
+		if (!m_reverse)
 		{
-			timeOfDay = 0;
+			lightIntensity = (int)m_lightIntensity + 1;
+			if (lightIntensity > static_cast<int>(eLightIntensity::eMinimum))
+			{
+				lightIntensity = static_cast<int>(eLightIntensity::eMinimum);
+				m_reverse = true;
+			}
+		}
+		else
+		{
+			lightIntensity = (int)m_lightIntensity - 1;
+			if (lightIntensity < static_cast<int>(eLightIntensity::eMaximum))
+			{
+				lightIntensity = static_cast<int>(eLightIntensity::eMaximum);
+				m_reverse = false;
+			}
 		}
 
-		m_map.setTimeOfDay((eTimeOfDay)timeOfDay);
-		m_dayTime.reset();
+		m_lightIntensity = static_cast<eLightIntensity>(lightIntensity);
+		m_timer.reset();
 	}
 }

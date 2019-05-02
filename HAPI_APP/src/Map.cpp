@@ -22,7 +22,7 @@ Map::SpawnPosition::SpawnPosition(std::pair<int, int> spawnPosition)
 	inUse(false)
 {}
 
-void Map::drawMap() const 
+void Map::drawMap(eLightIntensity lightIntensity) const 
 {
 	intPair textureDimensions = intPair(
 		m_data[0].m_daySprite->FrameWidth(), 
@@ -38,9 +38,9 @@ void Map::drawMap() const
 		{
 			const float xPos = (float)x * textureDimensions.first * 3 / 4;
 			int fin = access + x;
-			switch (m_timeOfDay)
+			switch (lightIntensity)
 			{
-			case eTimeOfDay::eMorning:
+			case eLightIntensity::eMaximum:
 				m_data[fin].m_daySprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosOdd - m_drawOffset.second)*m_drawScale));
@@ -48,7 +48,7 @@ void Map::drawMap() const
 					HAPISPACE::VectorF(m_drawScale, m_drawScale));
 				m_data[fin].m_daySprite->Render(SCREEN_SURFACE);
 				break;
-			case eTimeOfDay::eAfternoon:
+			case eLightIntensity::eHigh:
 				m_data[fin].m_aftersprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosOdd - m_drawOffset.second)*m_drawScale));
@@ -56,7 +56,7 @@ void Map::drawMap() const
 					HAPISPACE::VectorF(m_drawScale, m_drawScale));
 				m_data[fin].m_aftersprite->Render(SCREEN_SURFACE);
 				break;
-			case eTimeOfDay::eEvening:
+			case eLightIntensity::eLow:
 				m_data[fin].m_eveningSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosOdd - m_drawOffset.second)*m_drawScale));
@@ -64,7 +64,7 @@ void Map::drawMap() const
 					HAPISPACE::VectorF(m_drawScale, m_drawScale));
 				m_data[fin].m_eveningSprite->Render(SCREEN_SURFACE);
 				break;
-			case eTimeOfDay::eNight:
+			case eLightIntensity::eMinimum:
 				m_data[fin].m_nightSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosOdd - m_drawOffset.second)*m_drawScale));
@@ -80,9 +80,9 @@ void Map::drawMap() const
 		{
 			const float xPos = (float)x * textureDimensions.first * 3 / 4;
 			//Is even
-			switch (m_timeOfDay)
+			switch (lightIntensity)
 			{
-			case eTimeOfDay::eMorning:
+			case eLightIntensity::eMaximum:
 				m_data[access + x].m_daySprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosEven - m_drawOffset.second)*m_drawScale));
@@ -90,7 +90,7 @@ void Map::drawMap() const
 					HAPISPACE::VectorF(m_drawScale, m_drawScale));
 				m_data[access + x].m_daySprite->Render(SCREEN_SURFACE);
 				break;
-			case eTimeOfDay::eAfternoon:
+			case eLightIntensity::eHigh:
 				m_data[access + x].m_aftersprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosEven - m_drawOffset.second)*m_drawScale));
@@ -98,7 +98,7 @@ void Map::drawMap() const
 					HAPISPACE::VectorF(m_drawScale, m_drawScale));
 				m_data[access + x].m_aftersprite->Render(SCREEN_SURFACE);
 				break;
-			case eTimeOfDay::eEvening:
+			case eLightIntensity::eLow:
 				m_data[access + x].m_eveningSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosEven - m_drawOffset.second)*m_drawScale));
@@ -106,7 +106,7 @@ void Map::drawMap() const
 					HAPISPACE::VectorF(m_drawScale, m_drawScale));
 				m_data[access + x].m_eveningSprite->Render(SCREEN_SURFACE);
 				break;
-			case eTimeOfDay::eNight:
+			case eLightIntensity::eMinimum:
 				m_data[access + x].m_nightSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
 					(yPosEven - m_drawOffset.second)*m_drawScale));
@@ -503,8 +503,7 @@ Map::Map() :
 	m_drawOffset(intPair(10, 60)),
 	m_windDirection(eNorth),
 	m_windStrength(0.4),
-	m_drawScale(2),
-	m_timeOfDay(eMorning)
+	m_drawScale(2)
 {
 	GameEventMessenger::getInstance().subscribe(std::bind(&Map::onReset, this), "Map", GameEvent::eResetBattle);
 }
@@ -518,7 +517,6 @@ void Map::onReset()
 
 	m_windDirection = eNorth;
 	m_windStrength = 0.4;
-	m_timeOfDay = eMorning;
 	m_spawnPositions.clear();
 }
 

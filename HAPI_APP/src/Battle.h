@@ -14,15 +14,15 @@ enum class BattlePhase
 
 class Battle
 {
-	struct DayTime
+	struct LightIntensity
 	{
-		DayTime();
+		LightIntensity();
 
 		void update(float deltaTime);
 
 		bool m_reverse;
 		Timer m_timer;
-		eTimeOfDay m_timeOfDay;
+		eLightIntensity m_lightIntensity;
 	};
 
 	struct ParticleSystem
@@ -102,6 +102,8 @@ private:
 	Timer m_timeUntilAIMovementPhase;
 	Timer m_timeUntilAIAttackPhase;
 	bool m_AITurn;
+	LightIntensity m_lightIntensity;
+	
 
 	void updateMovementPhase(float deltaTime);
 	void updateAttackPhase();
@@ -110,7 +112,6 @@ private:
 	BattlePlayer& getPlayer(FactionName factionName);
 
 	void incrementPlayerTurn();
-	void setTimeOfDay(float deltaTime);
 	void updateWindDirection();
 
 	void handleAIMovementPhaseTimer(float deltaTime);
