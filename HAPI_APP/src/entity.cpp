@@ -278,7 +278,7 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection e
 		if (!pathToTile.empty() && pathToTile.size() <= m_movementPathSize + 1)
 		{
 			//Set end tile to the correct facing
-			pathToTile[pathToTile.size() - 1].first = endDirection;
+			pathToTile.push_back({ endDirection, pathToTile[pathToTile.size() - 1].second });
 
 			m_pathToTile = pathToTile;
 			map.moveEntity(m_currentPosition, pathToTile.back().second);

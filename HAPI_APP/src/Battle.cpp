@@ -625,6 +625,7 @@ void Battle::onEndMovementPhaseEarly()
 	}
 	else
 	{
+		m_battleUI.clearSelectedTile();
 		nextTurn();
 	}
 }
