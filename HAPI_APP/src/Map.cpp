@@ -246,7 +246,7 @@ std::vector<Tile*> Map::getTileRadius(intPair coord, int range, bool avoidInvali
 	}
 	std::vector<Tile*> tileStore;
 	tileStore.reserve((size_t)reserveSize);
-	if (includeSource)
+	if ((includeSource && !avoidInvalid) || (includeSource && avoidInvalid && (getTile(coord)->m_type == eSea || getTile(coord)->m_type == eOcean)))
 	{
 		tileStore.push_back(getTile(coord));
 	}
@@ -582,7 +582,7 @@ std::vector<const Tile*> Map::cGetTileRadius(std::pair<int, int> coord, int rang
 	}
 	std::vector<const Tile*> tileStore;
 	tileStore.reserve((size_t)reserveSize);
-	if (includeSource)
+	if ((includeSource && !avoidInvalid) || (includeSource && avoidInvalid && (getTile(coord)->m_type == eSea || getTile(coord)->m_type == eOcean)))
 	{
 		tileStore.push_back(getTile(coord));
 	}

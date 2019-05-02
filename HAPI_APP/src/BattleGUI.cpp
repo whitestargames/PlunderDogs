@@ -521,18 +521,18 @@ void BattleGUI::onLeftAITurn()
 
 void BattleGUI::snapCameraToPosition(std::pair<int, int> snapLocation)//snaps the camera to be centered on a given tile
 {
-	snapLocation.first = snapLocation.first * 24 - 480;
-	snapLocation.second = snapLocation.second  * 28 - 270;
+	int xPos = snapLocation.first * 24 - 480;
+	int yPos = snapLocation.second  * 28 - 270;
 	//Ensure values are within bounds
-	snapLocation.first = std::max(-120, snapLocation.first);
-	snapLocation.first = std::min(m_maxCameraOffset.first, snapLocation.first);
-	snapLocation.second = std::max(-100, snapLocation.second);
-	snapLocation.second = std::min(m_maxCameraOffset.second, snapLocation.second);
+	xPos = std::max(-120, xPos);
+	xPos = std::min(m_maxCameraOffset.first, xPos);
+	yPos = std::max(-100, yPos);
+	yPos = std::min(m_maxCameraOffset.second, yPos);
 
-	m_cameraPositionOffset.first = snapLocation.first;
-	m_cameraPositionOffset.second = snapLocation.second;
-	CameraPositionOffset.first = snapLocation.first;
-	CameraPositionOffset.second = snapLocation.second;
+	m_cameraPositionOffset.first = xPos;
+	m_cameraPositionOffset.second = yPos;
+	CameraPositionOffset.first = xPos;
+	CameraPositionOffset.second = yPos;
 }
 
 bool BattleGUI::isPaused()
