@@ -502,7 +502,7 @@ Map::Map() :
 	m_data(),
 	m_drawOffset(intPair(10, 60)),
 	m_windDirection(eNorth),
-	m_windStrength(0.4),
+	m_windStrength(0.3f),
 	m_drawScale(2)
 {
 	GameEventMessenger::getInstance().subscribe(std::bind(&Map::onReset, this), "Map", GameEvent::eResetBattle);
@@ -516,7 +516,7 @@ void Map::onReset()
 	m_drawScale = 2;
 
 	m_windDirection = eNorth;
-	m_windStrength = 0.4;
+	m_windStrength = 0.3f;
 	m_spawnPositions.clear();
 }
 
