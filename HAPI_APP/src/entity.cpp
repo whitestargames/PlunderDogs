@@ -159,32 +159,33 @@ int EntityBattleProperties::MovementPath::generatePath(const Map& map, const Til
 
 	clearPath();
 
-	int bonusMove = 0;
 	float movementPointsUsed = 0;
 	if (!source.m_entityOnTile)
 		return 1;
 	int prevDir = source.m_entityOnTile->m_battleProperties.m_currentDirection;
+	std::pair<int, int> prevPos = source.m_tileCoordinate;
 	float windStrength = map.getWindStrength();
 	int windDirection = static_cast<int>(map.getWindDirection());
 	//Don't interact with path from source.
 	int i = 1;
 	for (i ; i < pathToTile.size(); ++i)
 	{
-		movementPointsUsed += 1;
-
+		//If moved from prev position handle forward cost
+		if (pathToTile[i].second != prevPos)
+		{
+			movementPointsUsed += 1;
+			if (prevDir == windDirection)
+			{
+				movementPointsUsed -= windStrength;
+			}
+		}
+		//Turning cost handling
 		int pathDir = pathToTile[i].first;
-		int movementCost = getDirectionCost(prevDir, pathDir);
+		movementPointsUsed += static_cast<float>(getDirectionCost(prevDir, pathDir));
 		prevDir = pathDir;
 
-		movementPointsUsed += static_cast<float>(movementCost);
-
-		if (prevDir == windDirection)
-		{
-			movementPointsUsed -= windStrength;
-		}
-
-		source.m_entityOnTile->m_battleProperties.m_movementPathSize = i;
-		if ((static_cast<float>(source.m_entityOnTile->m_entityProperties.m_movementPoints) - movementPointsUsed) >= 1)
+		
+		if ((static_cast<float>(source.m_entityOnTile->m_entityProperties.m_movementPoints) - movementPointsUsed) >= 0)
 		{
 			auto tileScreenPosition = map.getTileScreenPos(pathToTile[i].second);
 			m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
@@ -195,9 +196,11 @@ int EntityBattleProperties::MovementPath::generatePath(const Map& map, const Til
 		}
 		else
 		{
+			source.m_entityOnTile->m_battleProperties.m_movementPathSize = i - 1;
 			return i;
 		}
 	}
+	source.m_entityOnTile->m_battleProperties.m_movementPathSize = i - 1;
 	return i;
 }
 
@@ -264,7 +267,6 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 			return false;
 		}
 	}
-
 	return true;
 }
 
@@ -277,10 +279,6 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection e
 		{
 			//Set end tile to the correct facing
 			pathToTile[pathToTile.size() - 1].first = endDirection;
-			for (int i = 0; i < pathToTile.size(); ++i)
-			{
-				m_movementPath.setNodePosition(i, pathToTile[i].second);
-			}
 
 			m_pathToTile = pathToTile;
 			map.moveEntity(m_currentPosition, pathToTile.back().second);
@@ -295,7 +293,6 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection e
 			return false;
 		}
 	}
-
 	return true;
 }
 
