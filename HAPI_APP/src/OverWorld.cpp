@@ -67,7 +67,7 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 	}
 	if (mouseEvent == EMouseEvent::eRightButtonDown)
 	{
-		m_GUI.onRightClick(mouseData, m_players[m_currentPlayer]);
+		//m_GUI.onRightClick(mouseData, m_players[m_currentPlayer]);
 	}
 }
 

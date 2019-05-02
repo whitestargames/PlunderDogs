@@ -38,7 +38,6 @@ private:
 	std::unique_ptr<Sprite> m_background;
 	std::unique_ptr<Sprite> m_quitButton;
 
-
 	void positionEntity(const std::string& windowName, const std::string& windowSliderName, const std::string& windowObjectName, int objectNumber, size_t vectorSize);
 	void positionUpgradeEntity(const std::string& windowName, const std::string& windowScrollbarName, const std::string& windowObjectName, int objectNumber, size_t vectorSize);
 	float getWindowSliderValue(const std::string &windowName, const std::string &windowSliderName) const;
@@ -61,7 +60,6 @@ private:
 	HAPISPACE::VectorI m_battleFleetWindowTopLeft{ HAPISPACE::VectorI(350, 300) };
 	HAPISPACE::VectorI m_upgradeFleetWindowTopLeft{ HAPISPACE::VectorI(380,210) };
 
-	const int m_maxShips{ 6 };
 	int m_currentShips{ 0 };
 
 	const std::string fleetWindowSliderSkinName;
@@ -106,7 +104,7 @@ public:
 	bool getLeftPlayerSelectionTrig();
 	void setLeftPlayerSelectionTrig(bool trigger);
 	void onLeftClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer, bool& selectNextPlayer,bool& resetPlayer);
-	void onRightClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer);
+	//void onRightClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer);
 	void onMouseMove(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer);
 
 	void reset(const std::vector<EntityProperties>& playerEntities);
