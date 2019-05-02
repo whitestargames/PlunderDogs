@@ -14,6 +14,8 @@ constexpr int UPGRADE_WINDOW_OBJECTWIDTH = 150;
 constexpr int UPGRADE_WINDOW_OBJECTHEIGHT = 300;
 constexpr int UPGRADE_WINDOW_WIDTH = 200;
 constexpr int UPGRADE_WINDOW_HEIGHT = 600;
+
+constexpr int MAX_SHIPS = 6;
 //cost for upgrade screen
 constexpr float UPGRADE_POWER = 0.25;
 //constexpr int UPGRADE_COST_HEALTH = 1;
@@ -196,7 +198,7 @@ void OverWorldGUI::render(Battle& battle)
 				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1600, 535), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_movementPoints), 50);
 				SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1600, 625), HAPISPACE::Colour255::BLACK, std::to_string(m_currentlySelected->m_range), 50);
 			}
-			
+
 			break;
 		}
 		case OverWorldWindow::eBattle:
@@ -671,17 +673,6 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 	}
 }
 
-void OverWorldGUI::onRightClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer)
-{
-	switch (CURRENT_WINDOW)
-	{
-	case OverWorldWindow::eShipSelection:
-	{
-		break;
-	}
-	}
-}
-
 void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer)
 {
 	switch (CURRENT_WINDOW)
@@ -800,24 +791,19 @@ void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, Player& current
 			m_upgradesButton->SetFrameNumber(0);
 		}
 
-		//varies the position of objects based on the slder value
-		if (mouseData.leftButtonDown)
+		//varies the position of objects based on the slider value
+		if (windowScreenRect(FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 		{
-
-			
-			if (windowScreenRect(FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+			for (int i = 0; i < currentSelectedPlayer.m_entities.size(); i++)
 			{
-				for (int i = 0; i < currentSelectedPlayer.m_entities.size(); i++)
-				{
-					positionEntity(FLEET_WINDOW, FLEET_SLIDER, "entity" + std::to_string(i), i, currentSelectedPlayer.m_entities.size());
-				}
+				positionEntity(FLEET_WINDOW, FLEET_SLIDER, "entity" + std::to_string(i), i, currentSelectedPlayer.m_entities.size());
 			}
-			if (windowScreenRect(BATTLE_FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+		}
+		if (windowScreenRect(BATTLE_FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
+		{
+			for (int i = 0; i < currentSelectedPlayer.m_selectedEntities.size(); i++)
 			{
-				for (int i = 0; i < currentSelectedPlayer.m_selectedEntities.size(); i++)
-				{
 					positionEntity(BATTLE_FLEET_WINDOW, BATTLE_FLEET_SLIDER, "entity" + std::to_string(i), i, currentSelectedPlayer.m_selectedEntities.size());
-				}
 			}
 		}
 		bool selection{ false };
@@ -1001,7 +987,7 @@ void OverWorldGUI::clear()
 
 void OverWorldGUI::positionEntity(const std::string & windowName, const std::string& windowSliderName, const std::string& windowObjectName, int objectNumber, size_t vectorSize)
 {
-	UI.GetWindow(windowName)->PositionObject(windowObjectName, calculateObjectScrolledPosition(windowName, windowSliderName, objectNumber, vectorSize));
+	UI.GetWindow(windowName)->PositionObject(windowObjectName, calculateObjectScrolledPosition(windowName, windowSliderName, objectNumber, vectorSize), false);
 }
 
 void OverWorldGUI::positionUpgradeEntity(const std::string & windowName, const std::string & windowScrollbarName, const std::string & windowObjectName, int objectNumber, size_t vectorSize)
@@ -1106,7 +1092,7 @@ void OverWorldGUI::checkShipSelect(bool & selection, const std::string & shipWin
 
 void OverWorldGUI::selectBattleShip(const std::string & shipWindow, const std::string & windowSlider, const std::string & selectedShipWindow, const std::string & selectedWindowSlider, const HAPISPACE::VectorI & mouseData, const HAPISPACE::VectorI & windowTopLeft, const HAPISPACE::VectorI & selectedTopLeft, std::vector<EntityProperties>& entities, std::vector<EntityProperties*>& selectedEntities)
 {
-	if (m_currentShips < m_maxShips)
+	if (m_currentShips < MAX_SHIPS)
 	{
 		if (windowScreenRect(shipWindow).Contains(mouseData))
 		{

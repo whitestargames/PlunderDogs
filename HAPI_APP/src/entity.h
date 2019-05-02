@@ -90,6 +90,7 @@ public:
 
 	void update(float deltaTime, const Map& map, EntityProperties& entityProperties);
 	void render(std::shared_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
+	void renderPath(const Map & map);
 
 	int generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
 	void clearMovementPath();

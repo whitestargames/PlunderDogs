@@ -175,7 +175,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 			m_leftMouseDownPosition = { mouseData.x, mouseData.y };
 			break;
 		}
-		case BattlePhase::Movement:
+		case BattlePhase::Movement :
 		{
 			m_leftMouseDownPosition = { mouseData.x, mouseData.y };
 			onLeftClickMovementPhase();
@@ -229,12 +229,13 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 						{
 							//TODO:: Snap to new screen position
 							m_selectedTile.m_tile = nullptr;
+							m_invalidPosition.m_activate = true;
 							m_gui.snapCameraToPosition(m_shipDeployment.front()->getSpawnPosition());
-							
 						}
 						else
 						{
 							m_selectedTile.m_tile = nullptr;
+							m_invalidPosition.m_activate = true;
 							m_battle.nextTurn();
 						}
 						
@@ -342,6 +343,8 @@ void BattleUI::clearTargetArea()
 
 void BattleUI::clearSelectedTile()
 {
+	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile)
+		m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.clearMovementPath();
 	m_selectedTile.m_tile = nullptr;
 }
 
@@ -841,7 +844,8 @@ BattleUI::DeploymentPhase::DeploymentPhase(std::vector<EntityProperties*> player
 	m_player(player),
 	m_currentSelectedEntity(),
 	m_spawnArea(),
-	m_spawnSprites()
+	m_spawnSprites(),
+	m_spawnPosition(spawnPosition)
 {
 	//Might change this - for now its two containers but looks confusing
 	m_spawnArea = map.cGetTileRadius(spawnPosition, range, true, true);
@@ -874,7 +878,7 @@ BattleUI::DeploymentPhase::DeploymentPhase(std::vector<EntityProperties*> player
 
 		m_spawnSprites.push_back(std::move(sprite));
 	}
-
+	/*
 	for (int i = 0; i < m_spawnArea.size(); ++i)
 	{
 		//const std::pair<int, int> tileTransform = map.getTileScreenPos(m_tile->m_tileCoordinate);
@@ -885,11 +889,11 @@ BattleUI::DeploymentPhase::DeploymentPhase(std::vector<EntityProperties*> player
 
 		auto screenPosition = map.getTileScreenPos(m_spawnArea[i]->m_tileCoordinate);
 		m_spawnSprites[i]->GetTransformComp().SetPosition({
-		(float)screenPosition.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale() ,
-		(float)screenPosition.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
+			(float)screenPosition.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),
+			(float)screenPosition.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
 		m_spawnSprites[i]->GetTransformComp().SetOriginToCentreOfFrame();
 		m_spawnSprites[i]->GetTransformComp().SetScaling({ 2.f, 2.f });
-	}
+	}*/
 
 	m_currentSelectedEntity.m_currentSelectedEntity = m_player.back();
 }
@@ -1004,12 +1008,10 @@ void BattleUI::DeploymentPhase::onLeftClick(InvalidPosition& invalidPosition, eD
 		if (m_player.empty())
 		{
 			battle.nextTurn();
-			invalidPosition.m_activate = false;
 		}
 		else
 		{
 			m_currentSelectedEntity.m_currentSelectedEntity = m_player.back();
-			invalidPosition.m_activate = false;
 		}
 	}
 }

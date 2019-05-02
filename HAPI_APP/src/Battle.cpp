@@ -298,6 +298,10 @@ void Battle::render() const
 	{
 		for (const auto& entity : player.m_entities)
 		{
+			entity->m_battleProperties.renderPath(m_map);
+		}
+		for (const auto& entity : player.m_entities)
+		{
 			entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
 		}
 	}
@@ -664,6 +668,7 @@ void Battle::onEndMovementPhaseEarly()
 	}
 	else
 	{
+		m_battleUI.clearSelectedTile();
 		nextTurn();
 	}
 }
