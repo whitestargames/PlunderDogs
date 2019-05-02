@@ -175,7 +175,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 			m_leftMouseDownPosition = { mouseData.x, mouseData.y };
 			break;
 		}
-		case BattlePhase::Movement:
+		case BattlePhase::Movement :
 		{
 			m_leftMouseDownPosition = { mouseData.x, mouseData.y };
 			onLeftClickMovementPhase();

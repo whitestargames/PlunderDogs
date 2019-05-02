@@ -270,7 +270,7 @@ std::vector<Tile*> Map::getTileRadius(intPair coord, int range, bool avoidInvali
 						continue;
 					if (avoidInvalid)
 					{
-						if (!((pushBackTile->m_entityOnTile) || (pushBackTile->m_type != eTileType::eSea && pushBackTile->m_type != eTileType::eOcean)))
+						if (!(pushBackTile->m_type != eTileType::eSea && pushBackTile->m_type != eTileType::eOcean))
 						{
 							tileStore.push_back(getTile(intPair(x, y)));
 						}
@@ -321,7 +321,7 @@ std::vector<Tile*> Map::getTileCone(intPair coord, int range, eDirection directi
 							continue;
 						if (avoidInvalid)
 						{
-							if (!((pushBackTile->m_entityOnTile) || (pushBackTile->m_type != eTileType::eSea && pushBackTile->m_type != eTileType::eOcean)))
+							if (!(pushBackTile->m_type != eTileType::eSea && pushBackTile->m_type != eTileType::eOcean))
 							{
 								tileStore.push_back(getTile(intPair(x, y)));
 							}
@@ -373,7 +373,7 @@ std::vector<const Tile*> Map::cGetTileCone(intPair coord, int range, eDirection 
 							continue;
 						if (avoidInvalid)
 						{
-							if (!((pushBackTile->m_entityOnTile) || (pushBackTile->m_type != eTileType::eSea && pushBackTile->m_type != eTileType::eOcean)))
+							if (!(pushBackTile->m_type != eTileType::eSea && pushBackTile->m_type != eTileType::eOcean))
 							{
 								tileStore.push_back(getTile(intPair(x, y)));
 							}
@@ -606,7 +606,7 @@ std::vector<const Tile*> Map::cGetTileRadius(std::pair<int, int> coord, int rang
 						continue;
 					if (avoidInvalid)
 					{
-						if (!((pushBackTile->m_entityOnTile) || (pushBackTile->m_type != eTileType::eSea && pushBackTile->m_type != eTileType::eOcean)))
+						if (!(pushBackTile->m_type != eTileType::eSea && pushBackTile->m_type != eTileType::eOcean))
 						{
 							tileStore.push_back(getTile(intPair(x, y)));
 						}
