@@ -19,7 +19,7 @@ namespace AI
 	void attemptMove(Map& map, std::shared_ptr<BattleEntity> currentShip, std::pair<const Tile*, eDirection> targetTile);
 	void attemptShot(Battle& battle, const Map& mapPtr, std::shared_ptr<BattleEntity> firingShip);
 //External use
-	void handleMovementPhase(const Battle& battle, Map& map, BattlePlayer& player);
-	void handleShootingPhase(Battle& battle, const Map& map, BattlePlayer& player);
+	void handleMovementPhase(const Battle& battle, Map& map, BattlePlayer& player, int currentUnit);
+	void handleShootingPhase(Battle& battle, const Map& map, BattlePlayer& player, int currentUnit);
 	void handleDeploymentPhase(Battle& battle, Map& map, BattlePlayer& player);
 };

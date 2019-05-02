@@ -278,10 +278,10 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection e
 		{
 			//Set end tile to the correct facing
 			pathToTile[pathToTile.size() - 1].first = endDirection;
-			for (int i = 0; i < pathToTile.size(); ++i)
-			{
-				m_movementPath.setNodePosition(i, pathToTile[i].second);
-			}
+			//for (int i = 1; i < pathToTile.size(); ++i)
+			//{
+			//	m_movementPath.setNodePosition(i, pathToTile[i].second);
+			//}
 
 			m_pathToTile = pathToTile;
 			map.moveEntity(m_currentPosition, pathToTile.back().second);

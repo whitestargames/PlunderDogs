@@ -276,43 +276,66 @@ void AI::attemptShot(Battle& battle, const Map& map, std::shared_ptr<BattleEntit
 	firingShip->m_battleProperties.fireWeapon();
 }
 
-void AI::handleMovementPhase(const Battle& battle, Map& map, BattlePlayer& battlePlayer)
+void AI::handleMovementPhase(const Battle& battle, Map& map, BattlePlayer& battlePlayer, int currentUnit)
 {
 	auto& ships = battlePlayer.m_entities;
 
-	//loop through all the ships in the faction
-	for (int i = 0; i < ships.size(); i++)
+	//if (ships[currentUnit]->m_battleProperties.isDead()) return;
+	//find the nearest enemy ship
+	const Tile* enemyPosition{ findClosestEnemy(battle, map, ships[currentUnit]->m_battleProperties.getCurrentPosition(), battlePlayer.m_factionName) };
+	if (!enemyPosition)
 	{
-		if (ships[i]->m_battleProperties.isDead()) continue;
-		//find the nearest enemy ship
-		const Tile* enemyPosition{ findClosestEnemy(battle, map, ships[i]->m_battleProperties.getCurrentPosition(), battlePlayer.m_factionName) };
-		if (!enemyPosition)
-		{
-			ships[i]->m_battleProperties.setDestination();
-			continue;
-		}
-		//find the nearest tile and facing that can fire upon the chosen enemy ship
-		std::pair<const Tile*, eDirection>  firingPosition{ AI::findFiringPosition(
-			map, 
-			enemyPosition, 
-			map.getTile(ships[i]->m_battleProperties.getCurrentPosition()), 
-			static_cast<eWeaponType>(ships[i]->m_entityProperties.m_weaponType), 
-			ships[i]->m_entityProperties.m_range) };
-
-		//move as far as possible on the path to the chosen position
-		attemptMove(map, ships[i], firingPosition);
+		ships[currentUnit]->m_battleProperties.setDestination();
+		return;
 	}
+	//find the nearest tile and facing that can fire upon the chosen enemy ship
+	std::pair<const Tile*, eDirection>  firingPosition{ AI::findFiringPosition(
+		map,
+		enemyPosition,
+		map.getTile(ships[currentUnit]->m_battleProperties.getCurrentPosition()),
+		static_cast<eWeaponType>(ships[currentUnit]->m_entityProperties.m_weaponType),
+		ships[currentUnit]->m_entityProperties.m_range) };
+
+	//move as far as possible on the path to the chosen position
+	attemptMove(map, ships[currentUnit], firingPosition);
+
+	////loop through all the ships in the faction
+	//for (int i = 0; i < ships.size(); i++)
+	//{
+	//	if (ships[i]->m_battleProperties.isDead()) continue;
+	//	//find the nearest enemy ship
+	//	const Tile* enemyPosition{ findClosestEnemy(battle, map, ships[i]->m_battleProperties.getCurrentPosition(), battlePlayer.m_factionName) };
+	//	if (!enemyPosition)
+	//	{
+	//		ships[i]->m_battleProperties.setDestination();
+	//		continue;
+	//	}
+	//	//find the nearest tile and facing that can fire upon the chosen enemy ship
+	//	std::pair<const Tile*, eDirection>  firingPosition{ AI::findFiringPosition(
+	//		map, 
+	//		enemyPosition, 
+	//		map.getTile(ships[i]->m_battleProperties.getCurrentPosition()), 
+	//		static_cast<eWeaponType>(ships[i]->m_entityProperties.m_weaponType), 
+	//		ships[i]->m_entityProperties.m_range) };
+
+	//	//move as far as possible on the path to the chosen position
+	//	attemptMove(map, ships[i], firingPosition);
+	//}
 }
 
-void AI::handleShootingPhase(Battle& battle, const Map& map, BattlePlayer& player)
+void AI::handleShootingPhase(Battle& battle, const Map& map, BattlePlayer& player, int currentUnit)
 {
+	//if (player.m_entities[i]->m_battleProperties.isDead()) continue;
+	//check if the ship is able to fire upon any enemies and fire if possible
+	attemptShot(battle, map, player.m_entities[currentUnit]);
+
 	//loop through all the ships in the faction
-	for (int i = 0; i < player.m_entities.size(); i++)
-	{
-		if (player.m_entities[i]->m_battleProperties.isDead()) continue;
-		//check if the ship is able to fire upon any enemies and fire if possible
-		attemptShot(battle, map, player.m_entities[i]);
-	}
+	//for (int i = 0; i < player.m_entities.size(); i++)
+	//{
+	//	if (player.m_entities[i]->m_battleProperties.isDead()) continue;
+	//	//check if the ship is able to fire upon any enemies and fire if possible
+	//	attemptShot(battle, map, player.m_entities[i]);
+	//}
 }
 
 void AI::handleDeploymentPhase(Battle& battlePtr, Map& mapPtr, BattlePlayer& player)
