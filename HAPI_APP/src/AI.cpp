@@ -322,11 +322,12 @@ void AI::handleDeploymentPhase(Battle& battlePtr, Map& mapPtr, BattlePlayer& pla
 {
 	std::vector<Tile*> spawnArea{ mapPtr.getTileRadius(player.m_spawnPosition,3,true,true) };
 	assert(spawnArea.size() > 6);
-	int location = static_cast<int>(rand() % (spawnArea.size() - 6));
+	int location = static_cast<int>(std::rand() % (spawnArea.size() - 6));
 	int spawnPoint{ location };
+	eDirection randomDir = static_cast<eDirection>(std::rand() % 6);
 	for (unsigned int i = 0; i < player.m_entities.size(); i++)
 	{
-		battlePtr.insertEntity(spawnArea[spawnPoint]->m_tileCoordinate, eNorth, player.m_entities[i]->m_entityProperties, player.m_factionName);
+		battlePtr.insertEntity(spawnArea[spawnPoint]->m_tileCoordinate, randomDir, player.m_entities[i]->m_entityProperties, player.m_factionName);
 		spawnPoint++;
 	}
 }
