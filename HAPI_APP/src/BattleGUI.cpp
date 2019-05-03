@@ -34,7 +34,7 @@ BattleGUI::BattleGUI()
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleGUI::onLeftAITurn, this), "BattleGUI", GameEvent::eLeftAITurn);
 
 	m_battleIcons->GetTransformComp().SetPosition({ 510, 890 });
-	m_endPhaseButtons->GetTransformComp().SetPosition({ 40, 925 });
+	m_endPhaseButtons->GetTransformComp().SetPosition({ 40, 900 });
 	m_pauseButton->GetTransformComp().SetPosition({ 1790, 30 });
 	m_chickenButton->GetTransformComp().SetPosition({ 1610, 840 });
 	m_CompassBackGround->GetTransformComp().SetOriginToCentreOfFrame();
@@ -44,7 +44,6 @@ BattleGUI::BattleGUI()
 	m_activeFactionToken->GetTransformComp().SetOriginToCentreOfFrame();
 	m_activeFactionToken->GetTransformComp().SetPosition({ 960, 55 });
 	
-
 	//pauseMenu
 	m_resumeButton->GetTransformComp().SetPosition({ 818, 387 });
 	m_quitButton->GetTransformComp().SetPosition({ 818, 517 });
@@ -425,7 +424,7 @@ void BattleGUI::onBattleReset()
 	m_AIInPlay = false;
 
 	m_battleIcons->GetTransformComp().SetPosition({ 510, 890 });
-	m_endPhaseButtons->GetTransformComp().SetPosition({ 40, 925 });
+	m_endPhaseButtons->GetTransformComp().SetPosition({ 40, 900 });
 	m_pauseButton->GetTransformComp().SetPosition({ 1790, 30 });
 	//m_chickenButton->GetTransformComp().SetPosition({ 1610, 840 });
 	m_CompassBackGround->GetTransformComp().SetOriginToCentreOfFrame();
