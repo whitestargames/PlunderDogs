@@ -1002,7 +1002,7 @@ void BattleUI::DeploymentPhase::onLeftClick(InvalidPosition& invalidPosition, eD
 	if (!invalidPosition.m_activate && !currentTileSelected->m_entityOnTile)
 	{
 		battle.insertEntity(currentTileSelected->m_tileCoordinate, startingDirection, *m_currentSelectedEntity.m_currentSelectedEntity, m_factionName);
-		invalidPosition.m_activate = true;
+		//invalidPosition.m_activate = true;
 		invalidPosition.m_position = currentTileSelected->m_tileCoordinate;
 		//Change ordering around to pop front with different container
 		m_player.pop_back();
