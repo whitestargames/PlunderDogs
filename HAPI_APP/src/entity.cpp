@@ -301,6 +301,7 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection e
 			return false;
 		}
 	}
+	clearMovementPath();
 	return true;
 }
 
