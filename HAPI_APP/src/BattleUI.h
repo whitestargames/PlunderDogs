@@ -112,7 +112,6 @@ public:
 	void setCurrentFaction(FactionName faction);
 	bool isPaused();
 
-	void clearSelectedTile();
 private:
 	Battle& m_battle;
 	CurrentSelectedTile m_selectedTile;
