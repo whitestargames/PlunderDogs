@@ -74,7 +74,6 @@ void Map::drawMap(eLightIntensity lightIntensity) const
 				break;
 			}
 			//Is Odd
-			
 		}
 		for (int x = 0; x < m_mapDimensions.first; x += 2)
 		{
@@ -115,7 +114,6 @@ void Map::drawMap(eLightIntensity lightIntensity) const
 				m_data[access + x].m_nightSprite->Render(SCREEN_SURFACE);
 				break;
 			}
-		
 		}
 		access += m_mapDimensions.first;
 	}

@@ -318,6 +318,11 @@ void Battle::render() const
 
 void Battle::update(float deltaTime)
 {
+	if (m_battleManager.isGameOver())
+	{
+		return;
+	}
+
 	m_battleUI.setCurrentFaction(getCurrentFaction());
 	m_battleUI.update(deltaTime);
 	m_map.setDrawOffset(m_battleUI.getCameraPositionOffset());
@@ -686,7 +691,8 @@ Battle::BattleManager::BattleManager()
 	m_blueShipsDestroyed(0),
 	m_greenShipsDestroyed(0),
 	m_redShipsDestroyed(0),
-	m_winTimer(2.0f, false)
+	m_winTimer(2.0f, false),
+	m_gameOver(false)
 {
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleManager::onReset, this), "BattleManager", GameEvent::eResetBattle);
 }
@@ -694,6 +700,11 @@ Battle::BattleManager::BattleManager()
 Battle::BattleManager::~BattleManager()
 {
 	GameEventMessenger::getInstance().unsubscribe("BattleManager", GameEvent::eResetBattle);
+}
+
+bool Battle::BattleManager::isGameOver() const
+{
+	return m_gameOver;
 }
 
 void Battle::BattleManager::update(float deltaTime)
@@ -716,6 +727,8 @@ void Battle::BattleManager::update(float deltaTime)
 			GameEventMessenger::getInstance().broadcast(GameEvent::eGreenWin);
 			break;
 		}
+
+		m_gameOver = true;
 	}
 }
 
@@ -773,6 +786,9 @@ void Battle::BattleManager::onReset()
 	m_redShipsDestroyed = 0;
 	m_blueShipsDestroyed = 0;
 	m_greenShipsDestroyed = 0;
+	m_winTimer.reset();
+	m_winTimer.setActive(false);
+	m_gameOver = false;
 }
 
 void Battle::BattleManager::checkGameStatus(const std::vector<BattlePlayer>& players)

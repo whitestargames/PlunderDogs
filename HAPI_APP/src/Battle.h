@@ -47,6 +47,8 @@ class Battle
 		BattleManager();
 		~BattleManager();
 	
+		bool isGameOver() const;
+
 		void update(float deltaTime);
 
 		void onYellowShipDestroyed(std::vector<BattlePlayer>& players);
@@ -64,6 +66,7 @@ class Battle
 		void checkGameStatus(const std::vector<BattlePlayer>& players);
 		Timer m_winTimer;
 		FactionName m_winningFaction;
+		bool m_gameOver;
 	};
 
 public:
