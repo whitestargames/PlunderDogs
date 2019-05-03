@@ -250,7 +250,7 @@ void Battle::start(const std::string & newMapName, std::vector<Player>& newPlaye
 	assert(!newPlayers.empty());
 	assert(m_players.empty());
 	m_map.loadmap(newMapName);
-	
+	m_battleUI.loadGUI(m_map.getDimensions());
 	//TODO: Hack to correct sprite sizes
 	for (auto& player : newPlayers)
 	{
@@ -263,12 +263,16 @@ void Battle::start(const std::string & newMapName, std::vector<Player>& newPlaye
 
 	for (auto& player : newPlayers)
 	{
-		m_players.emplace_back(player.m_factionName, m_map.getSpawnPosition(), player.m_type);
+		auto spawnPosition = m_map.getSpawnPosition();
+		std::cout << spawnPosition.first << "\n";
+		std::cout << spawnPosition.second << "\n";
+		std::cout << "\n";
+		m_players.emplace_back(player.m_factionName, spawnPosition, player.m_type);
 	}
 	
 	m_battleUI.deployPlayers(newPlayers, m_map, *this);
 
-	m_battleUI.loadGUI(m_map.getDimensions());
+	
 }
 
 void Battle::render() const
@@ -776,30 +780,32 @@ Battle::LightIntensity::LightIntensity()
 
 void Battle::LightIntensity::update(float deltaTime)
 {
-	m_timer.update(deltaTime);
-	if (m_timer.isExpired())
-	{
-		int lightIntensity = 0;
-		if (!m_reverse)
-		{
-			lightIntensity = (int)m_lightIntensity + 1;
-			if (lightIntensity > static_cast<int>(eLightIntensity::eMinimum))
-			{
-				lightIntensity = static_cast<int>(eLightIntensity::eMinimum);
-				m_reverse = true;
-			}
-		}
-		else
-		{
-			lightIntensity = (int)m_lightIntensity - 1;
-			if (lightIntensity < static_cast<int>(eLightIntensity::eMaximum))
-			{
-				lightIntensity = static_cast<int>(eLightIntensity::eMaximum);
-				m_reverse = false;
-			}
-		}
+	//m_timer.update(deltaTime);
+	//if (m_timer.isExpired())
+	//{
+	//	int lightIntensity = 0;
+	//	if (!m_reverse)
+	//	{
+	//		lightIntensity = (int)m_lightIntensity + 1;
+	//		if (lightIntensity > static_cast<int>(eLightIntensity::eMinimum))
+	//		{
+	//			//m_timer.setNewExpirationTime(10.f);
+	//			lightIntensity = static_cast<int>(eLightIntensity::eMinimum);
+	//			m_reverse = true;
+	//		}
+	//	}
+	//	else
+	//	{
+	//		lightIntensity = (int)m_lightIntensity - 1;
+	//		if (lightIntensity < static_cast<int>(eLightIntensity::eMaximum))
+	//		{
+	//			//m_timer.setNewExpirationTime(30.0f);
+	//			lightIntensity = static_cast<int>(eLightIntensity::eMaximum);
+	//			m_reverse = false;
+	//		}
+	//	}
 
-		m_lightIntensity = static_cast<eLightIntensity>(lightIntensity);
-		m_timer.reset();
-	}
+	//	m_lightIntensity = static_cast<eLightIntensity>(lightIntensity);
+	//	m_timer.reset();
+	//}
 }
