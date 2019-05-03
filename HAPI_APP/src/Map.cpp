@@ -48,22 +48,6 @@ void Map::drawMap(eLightIntensity lightIntensity) const
 					HAPISPACE::VectorF(m_drawScale, m_drawScale));
 				m_data[fin].m_daySprite->Render(SCREEN_SURFACE);
 				break;
-			//case eLightIntensity::eHigh:
-			//	m_data[fin].m_aftersprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
-			//		(xPos - m_drawOffset.first)*m_drawScale,
-			//		(yPosOdd - m_drawOffset.second)*m_drawScale));
-			//	m_data[fin].m_aftersprite->GetTransformComp().SetScaling(
-			//		HAPISPACE::VectorF(m_drawScale, m_drawScale));
-			//	m_data[fin].m_aftersprite->Render(SCREEN_SURFACE);
-			//	break;
-			//case eLightIntensity::eLow:
-			//	m_data[fin].m_eveningSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
-			//		(xPos - m_drawOffset.first)*m_drawScale,
-			//		(yPosOdd - m_drawOffset.second)*m_drawScale));
-			//	m_data[fin].m_eveningSprite->GetTransformComp().SetScaling(
-			//		HAPISPACE::VectorF(m_drawScale, m_drawScale));
-			//	m_data[fin].m_eveningSprite->Render(SCREEN_SURFACE);
-			//	break;
 			case eLightIntensity::eMinimum:
 				m_data[fin].m_nightSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
@@ -74,7 +58,6 @@ void Map::drawMap(eLightIntensity lightIntensity) const
 				break;
 			}
 			//Is Odd
-			
 		}
 		for (int x = 0; x < m_mapDimensions.first; x += 2)
 		{
@@ -90,22 +73,6 @@ void Map::drawMap(eLightIntensity lightIntensity) const
 					HAPISPACE::VectorF(m_drawScale, m_drawScale));
 				m_data[access + x].m_daySprite->Render(SCREEN_SURFACE);
 				break;
-			//case eLightIntensity::eHigh:
-			//	m_data[access + x].m_aftersprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
-			//		(xPos - m_drawOffset.first)*m_drawScale,
-			//		(yPosEven - m_drawOffset.second)*m_drawScale));
-			//	m_data[access + x].m_aftersprite->GetTransformComp().SetScaling(
-			//		HAPISPACE::VectorF(m_drawScale, m_drawScale));
-			//	m_data[access + x].m_aftersprite->Render(SCREEN_SURFACE);
-			//	break;
-			//case eLightIntensity::eLow:
-			//	m_data[access + x].m_eveningSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
-			//		(xPos - m_drawOffset.first)*m_drawScale,
-			//		(yPosEven - m_drawOffset.second)*m_drawScale));
-			//	m_data[access + x].m_eveningSprite->GetTransformComp().SetScaling(
-			//		HAPISPACE::VectorF(m_drawScale, m_drawScale));
-			//	m_data[access + x].m_eveningSprite->Render(SCREEN_SURFACE);
-			//	break;
 			case eLightIntensity::eMinimum:
 				m_data[access + x].m_nightSprite->GetTransformComp().SetPosition(HAPISPACE::VectorF(
 					(xPos - m_drawOffset.first)*m_drawScale,
@@ -115,7 +82,6 @@ void Map::drawMap(eLightIntensity lightIntensity) const
 				m_data[access + x].m_nightSprite->Render(SCREEN_SURFACE);
 				break;
 			}
-		
 		}
 		access += m_mapDimensions.first;
 	}
