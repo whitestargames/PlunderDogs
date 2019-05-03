@@ -47,6 +47,8 @@ class Battle
 		BattleManager();
 		~BattleManager();
 	
+		void update(float deltaTime);
+
 		void onYellowShipDestroyed(std::vector<BattlePlayer>& players);
 		void onBlueShipDestroyed(std::vector<BattlePlayer>& players);
 		void onGreenShipDestroyed(std::vector<BattlePlayer>& players);
@@ -60,6 +62,8 @@ class Battle
 		void onReset();
 
 		void checkGameStatus(const std::vector<BattlePlayer>& players);
+		Timer m_winTimer;
+		FactionName m_winningFaction;
 	};
 
 public:
@@ -100,6 +104,7 @@ private:
 	std::vector<Particle> m_fireParticles;
 	Timer m_timeUntilAITurn;
 	Timer m_timeBetweenAIUnits;
+	
 	bool m_AITurn;
 	LightIntensity m_lightIntensity;
 	

@@ -216,7 +216,8 @@ Battle::Battle()
 	m_fireParticles(),
 	m_timeUntilAITurn(1.5f, false),
 	m_timeBetweenAIUnits(0.3f, false),
-	m_AITurn(false)
+	m_AITurn(false),
+	m_lightIntensity()
 {
 	m_explosionParticles.reserve(6);
 	m_fireParticles.reserve(6);
@@ -332,6 +333,8 @@ void Battle::update(float deltaTime)
 			handleAIAttackPhaseTimer(deltaTime);
 		}
 	}
+
+	m_battleManager.update(deltaTime);
 }
 
 void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
@@ -670,7 +673,8 @@ Battle::BattleManager::BattleManager()
 	: m_yellowShipsDestroyed(0),
 	m_blueShipsDestroyed(0),
 	m_greenShipsDestroyed(0),
-	m_redShipsDestroyed(0)
+	m_redShipsDestroyed(0),
+	m_winTimer(2.0f, false)
 {
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleManager::onReset, this), "BattleManager", GameEvent::eResetBattle);
 }
@@ -678,6 +682,29 @@ Battle::BattleManager::BattleManager()
 Battle::BattleManager::~BattleManager()
 {
 	GameEventMessenger::getInstance().unsubscribe("BattleManager", GameEvent::eResetBattle);
+}
+
+void Battle::BattleManager::update(float deltaTime)
+{
+	m_winTimer.update(deltaTime);
+	if (m_winTimer.isExpired())
+	{
+		switch (m_winningFaction)
+		{
+		case FactionName::eYellow :
+			GameEventMessenger::getInstance().broadcast(GameEvent::eYellowWin);
+			break;
+		case FactionName::eBlue :
+			GameEventMessenger::getInstance().broadcast(GameEvent::eBlueWin);
+			break;
+		case FactionName::eRed :
+			GameEventMessenger::getInstance().broadcast(GameEvent::eRedWin);
+			break;
+		case FactionName::eGreen :
+			GameEventMessenger::getInstance().broadcast(GameEvent::eGreenWin);
+			break;
+		}
+	}
 }
 
 void Battle::BattleManager::onYellowShipDestroyed(std::vector<BattlePlayer>& players)
@@ -747,7 +774,6 @@ void Battle::BattleManager::checkGameStatus(const std::vector<BattlePlayer>& pla
 			++playersEliminated;
 		}
 	}
-
 	//Last player standing - Player wins
 	if (playersEliminated == static_cast<int>(players.size()) - 1)
 	{
@@ -757,18 +783,19 @@ void Battle::BattleManager::checkGameStatus(const std::vector<BattlePlayer>& pla
 		switch (winningFaction)
 		{
 		case FactionName::eYellow:
-			GameEventMessenger::broadcast(GameEvent::eYellowWin);
+			m_winningFaction = FactionName::eYellow;
 			break;
 		case FactionName::eBlue:
-			GameEventMessenger::broadcast(GameEvent::eBlueWin);
+			m_winningFaction = FactionName::eBlue;
 			break;
 		case FactionName::eGreen:
-			GameEventMessenger::broadcast(GameEvent::eGreenWin);
+			m_winningFaction = FactionName::eGreen;
 			break;
 		case FactionName::eRed:
-			GameEventMessenger::broadcast(GameEvent::eRedWin);
+			m_winningFaction = FactionName::eRed;
 			break;
 		}
+		m_winTimer.setActive(true);
 	}
 }
 
