@@ -327,6 +327,7 @@ void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int
 	}
 	else
 	{
+		currentHealth = 0;
 		entitySprite->SetFrameNumber(eShipSpriteFrame::eDead);
 		entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
 		m_isDead = true;
