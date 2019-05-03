@@ -289,7 +289,6 @@ void Battle::start(const std::string & newMapName, std::vector<Player>& newPlaye
 void Battle::render() const
 {
 	m_map.drawMap(m_lightIntensity.m_lightIntensity);
-	m_battleUI.renderUI();
 
 	for (const auto& player : m_players)
 	{
@@ -297,6 +296,10 @@ void Battle::render() const
 		{
 			entity->m_battleProperties.renderPath(m_map);
 		}
+	}
+	m_battleUI.renderUI();
+	for (const auto& player : m_players)
+	{
 		for (const auto& entity : player.m_entities)
 		{
 			entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);

@@ -11,6 +11,8 @@ constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
 constexpr int UPGRADE_POINTS = 2;
 
+struct PathNode;
+
 //std::pair<int, int> m_currentPosition;
 ////std::deque<std::pair<eDirection, std::pair<int, int>>> m_pathToTile;
 ////Timer m_movementTimer;
@@ -225,6 +227,17 @@ void EntityBattleProperties::MovementPath::clearPath()
 	}
 }
 
+std::pair<int, int> EntityBattleProperties::MovementPath::getFinalNode() const
+{
+	int i = m_movementPath.size() - 1;
+	for (i; i >= 0; i--)
+	{
+		if (m_movementPath[i].activate)
+			break;
+	}
+	return m_movementPath[i].m_position;
+}
+
 int EntityBattleProperties::generateMovementGraph(const Map & map, const Tile & source, const Tile & destination)
 {
 	return m_movementPath.generatePath(map, source, destination);
@@ -233,6 +246,11 @@ int EntityBattleProperties::generateMovementGraph(const Map & map, const Tile & 
 void EntityBattleProperties::clearMovementPath()
 {
 	m_movementPath.clearPath();
+}
+
+std::pair<int, int> EntityBattleProperties::getEndOfPath()
+{
+	return m_movementPath.getFinalNode();
 }
 
 void EntityBattleProperties::enableAction()

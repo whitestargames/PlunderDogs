@@ -180,13 +180,11 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 		case BattlePhase::Deployment :
 		{
 			m_isMovingEntity = true;
-			m_arrowActive = true;
 			m_leftMouseDownPosition = { mouseData.x, mouseData.y };
 			break;
 		}
 		case BattlePhase::Movement :
 		{
-			m_arrowActive = true;
 			m_leftMouseDownPosition = { mouseData.x, mouseData.y };
 			onLeftClickMovementPhase();
 			break;
@@ -363,10 +361,13 @@ void BattleUI::renderArrow() const
 {
 	if (!m_arrowActive || !m_mouseDownTile)
 		return;
-
-	int windDirection = static_cast<int>(MouseSelection::calculateDirection(m_leftMouseDownPosition, m_lastMouseData).second);
+	auto directionData = MouseSelection::calculateDirection(m_leftMouseDownPosition, m_lastMouseData);
+	if (directionData.first < 20)
+		return;
+	int windDirection = static_cast<int>(directionData.second);
 	std::pair<int, int> pos = m_battle.getMap().getTileScreenPos(m_mouseDownTile->m_tileCoordinate);
-	m_arrowSprite->GetTransformComp().SetPosition({ static_cast<float>(pos.first + 32), static_cast<float>(pos.second + 64) });
+	float scale = m_battle.getMap().getDrawScale();
+	m_arrowSprite->GetTransformComp().SetPosition({ static_cast<float>(pos.first + (16 * scale)), static_cast<float>(pos.second + (32 * scale)) });
 	m_arrowSprite->GetTransformComp().SetRotation(((windDirection * 60) % 360) * M_PI / 180.0f);
 	m_arrowSprite->Render(SCREEN_SURFACE);
 }
@@ -503,6 +504,9 @@ void BattleUI::onLeftClickMovementPhase()
 			assert(m_selectedTile.m_tile->m_entityOnTile->m_factionName == m_battle.getCurrentFaction());
 			m_mouseDownTile = tileOnMouse;
 			m_isMovingEntity = true;
+			auto test = m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.getEndOfPath();
+			if (m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.getEndOfPath() == tileOnMouse->m_tileCoordinate)
+				m_arrowActive = true;
 			//m_battle.moveEntityToPosition(*m_selectedTile.m_tile->m_entityOnTile, *tileOnMouse);
 			//m_selectedTile.m_tile = nullptr;
 		}
