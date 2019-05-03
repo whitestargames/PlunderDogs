@@ -69,6 +69,7 @@ class EntityBattleProperties
 		void eraseNode(std::pair<int, int> position, const Map& map);
 		void clearPath();
 		void setNodePosition(int i, std::pair<int, int> newPosition) { m_movementPath[i].m_position = newPosition; }
+
 		std::pair<int, int> getFinalNode() const;
 	private:
 		std::vector<PathNode> m_movementPath;
