@@ -111,6 +111,7 @@ public:
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
 	void setCurrentFaction(FactionName faction);
 	bool isPaused();
+
 private:
 	Battle& m_battle;
 	CurrentSelectedTile m_selectedTile;

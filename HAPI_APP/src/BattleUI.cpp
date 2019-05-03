@@ -708,6 +708,7 @@ void BattleUI::onNewTurn()
 {
 	//TODO: Drop info box
 	m_selectedTile.m_tile = nullptr;
+	m_invalidPosition.m_activate = false;
 	clearTargetArea();
 	clearSelectedTile();
 }
