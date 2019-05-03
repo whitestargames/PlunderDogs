@@ -331,6 +331,7 @@ void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int
 		entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
 		m_isDead = true;
 		m_actionSprite.active = false;
+		m_movementPath.clearPath();
 		switch (entityFaction)
 		{
 		case FactionName::eYellow :

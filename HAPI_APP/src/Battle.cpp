@@ -160,13 +160,14 @@ void Battle::handleAIMovementPhaseTimer(float deltaTime)
 	m_timeBetweenAIUnits.update(deltaTime);
 	if (m_timeBetweenAIUnits.isExpired())
 	{
-		if (!m_players[m_currentPlayerTurn].m_entities[m_currentAIUnit]->m_battleProperties.isDead())
-		{
+		if (!m_players[m_currentPlayerTurn].m_entities[m_currentAIUnit]->m_battleProperties.isDead() && 
+			!m_players[m_currentPlayerTurn].m_entities[m_currentAIUnit]->m_battleProperties.isDestinationSet())
+		{	
+			/*assert(!m_players[m_currentPlayerTurn].m_entities[m_currentAIUnit]->m_battleProperties.isDestinationSet());*/
 			AI::handleMovementPhase(*this, m_map, m_players[m_currentPlayerTurn], m_currentAIUnit);
 			m_timeBetweenAIUnits.reset();
 		}
 		++m_currentAIUnit;
-		
 		if(m_currentAIUnit == static_cast<int>(m_players[m_currentPlayerTurn].m_entities.size()))
 		{
 			m_timeBetweenAIUnits.setActive(false);
