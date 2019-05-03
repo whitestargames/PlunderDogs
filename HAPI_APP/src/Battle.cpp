@@ -133,16 +133,6 @@ void Battle::updateWindDirection()
 
 void Battle::handleAIMovementPhaseTimer(float deltaTime)
 {
-	//if (m_battleUI.isPaused())
-	//	return;
-	//m_timeUntilAIAttackPhase.update(deltaTime);
-	//if (m_timeUntilAIAttackPhase.isExpired())
-	//{
-	//	assert(m_currentPhase == BattlePhase::Attack);
-	//	AI::handleShootingPhase(*this, m_map, m_players[m_currentPlayerTurn]);
-	//	m_timeUntilAIAttackPhase.reset();
-	//	m_timeUntilAIAttackPhase.setActive(false);
-	//}
 	if (!m_AITurn)
 	{
 		m_timeUntilAITurn.reset();
@@ -166,7 +156,6 @@ void Battle::handleAIMovementPhaseTimer(float deltaTime)
 			if (!it->m_battleProperties.isDead() &&
 				!it->m_battleProperties.isDestinationSet())
 			{
-				/*assert(!m_players[m_currentPlayerTurn].m_entities[m_currentAIUnit]->m_battleProperties.isDestinationSet());*/
 				AI::handleMovementPhase(*this, m_map, m_players[m_currentPlayerTurn], i);
 				m_timeBetweenAIUnits.reset();
 				return;
@@ -177,30 +166,10 @@ void Battle::handleAIMovementPhaseTimer(float deltaTime)
 		m_timeBetweenAIUnits.reset();
 	}
 
-	//	assert(m_currentPhase == BattlePhase::Movement);
-	//	AI::handleMovementPhase(*this, m_map, m_players[m_currentPlayerTurn]);
-	//	//m_timeUntilAITurn.reset();
-	//	m_timeUntilAITurn.setActive(false);
-	//	if (m_currentAIUnit == static_cast<int>(m_players[m_currentPlayerTurn].m_entities.size()))
-	//	{
-	//	}
-	//	else
-	//	{
-	//		++m_currentAIUnit;
-	//	}
-	//}
 }
 
 void Battle::handleAIAttackPhaseTimer(float deltaTime)
 {
-	//m_timeUntilAITurn.update(deltaTime);
-	//if (m_timeUntilAITurn.isExpired())
-	//{
-	//	assert(m_currentPhase == BattlePhase::Attack);
-	//	AI::handleShootingPhase(*this, m_map, m_players[m_currentPlayerTurn]);
-	//	m_timeUntilAITurn.reset();
-	//	m_timeUntilAITurn.setActive(false);
-	//}
 	if (!m_AITurn)
 	{
 		m_timeUntilAITurn.reset();
@@ -224,7 +193,6 @@ void Battle::handleAIAttackPhaseTimer(float deltaTime)
 			if (!it->m_battleProperties.isDead() &&
 				!it->m_battleProperties.isWeaponFired())
 			{
-				/*assert(!m_players[m_currentPlayerTurn].m_entities[m_currentAIUnit]->m_battleProperties.isDestinationSet());*/
 				AI::handleShootingPhase(*this, m_map, m_players[m_currentPlayerTurn], i);
 				m_timeBetweenAIUnits.reset();
 				return;
@@ -235,33 +203,9 @@ void Battle::handleAIAttackPhaseTimer(float deltaTime)
 		m_timeBetweenAIUnits.reset();
 	}
 
-	//if (m_timeBetweenAIUnits.isExpired())
-	//{
-	//	if (!m_players[m_currentPlayerTurn].m_entities[m_currentAIUnit]->m_battleProperties.isDead())
-	//	{
-	//		AI::handleShootingPhase(*this, m_map, m_players[m_currentPlayerTurn], m_currentAIUnit);
-	//		//AI::handleMovementPhase(*this, m_map, m_players[m_currentPlayerTurn], m_currentAIUnit);
-	//		m_timeBetweenAIUnits.reset();
-	//	}
-	//	++m_currentAIUnit;
 
-	//	if (m_currentAIUnit == static_cast<int>(m_players[m_currentPlayerTurn].m_entities.size()))
-	//	{
-	//		m_timeBetweenAIUnits.setActive(false);
-	//		m_timeBetweenAIUnits.reset();
-	//		m_currentAIUnit = 0;
-	//	}
-	//}
 }
-/*
-void Battle::resetAITimers()
-{
-	m_timeUntilAITurn.setActive(false);
-	m_timeUntilAITurn.reset();
-	m_timeBetweenAIUnits.setActive(false);
-	m_timeBetweenAIUnits.reset();
-}
-*/
+
 Battle::Battle()
 	: m_players(),
 	m_currentPlayerTurn(0),
@@ -272,7 +216,6 @@ Battle::Battle()
 	m_fireParticles(),
 	m_timeUntilAITurn(1.5f, false),
 	m_timeBetweenAIUnits(0.3f, false),
-	m_currentAIUnit(0),
 	m_AITurn(false)
 {
 	m_explosionParticles.reserve(6);
