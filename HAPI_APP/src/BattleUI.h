@@ -125,7 +125,12 @@ private:
 	BattleGUI m_gui;
 	InvalidPosition m_invalidPosition;
 	std::deque<std::unique_ptr<DeploymentPhase>> m_shipDeployment;
+	//Directional arrow
+	std::pair<int, int> m_lastMouseData;
+	bool m_arrowActive;
+	std::unique_ptr<Sprite> m_arrowSprite;
 
+	void renderArrow() const;
 	//Movement Phase
 	void onMouseMoveMovementPhase();
 	void onLeftClickMovementPhase();

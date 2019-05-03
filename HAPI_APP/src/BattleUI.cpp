@@ -61,8 +61,13 @@ BattleUI::BattleUI(Battle & battle)
 	m_invalidPosition(),
 	m_leftMouseDownPosition({ 0, 0 }),
 	m_isMovingEntity(false),
-	m_mouseDownTile(nullptr)
+	m_mouseDownTile(nullptr),
+	m_arrowActive(false),
+	m_arrowSprite(HAPI_Sprites.MakeSprite(Textures::m_CompassPointer)),
+	m_lastMouseData({0,0})
 {
+	m_arrowSprite->GetTransformComp().SetScaling({ 0.5, 0.5 });
+	m_arrowSprite->GetTransformComp().SetOriginToCentreOfFrame();
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleUI::onResetBattle, this), "BattleUI", GameEvent::eResetBattle);
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleUI::onNewTurn, this), "BattleUI", GameEvent::eNewTurn);
 }
@@ -90,10 +95,12 @@ void BattleUI::renderUI() const
 	case BattlePhase::Deployment:
 		assert(!m_shipDeployment.empty());
 		m_shipDeployment.front()->render(m_invalidPosition, m_battle.getMap());
+		renderArrow();
 		break;
 
 	case BattlePhase::Movement:
 		m_selectedTile.render(m_battle.getMap());
+		renderArrow();
 		break;
 	
 	case BattlePhase::Attack:
@@ -159,6 +166,7 @@ void BattleUI::deployHumanPlayers(const std::vector<Player>& newPlayers, Map& ma
 
 void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mouseData)
 {
+	m_lastMouseData = { mouseData.x , mouseData.y };
 	if (OverWorldGUI::CURRENT_WINDOW != OverWorldWindow::eBattle)
 	{
 		return;
@@ -172,11 +180,13 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 		case BattlePhase::Deployment :
 		{
 			m_isMovingEntity = true;
+			m_arrowActive = true;
 			m_leftMouseDownPosition = { mouseData.x, mouseData.y };
 			break;
 		}
 		case BattlePhase::Movement :
 		{
+			m_arrowActive = true;
 			m_leftMouseDownPosition = { mouseData.x, mouseData.y };
 			onLeftClickMovementPhase();
 			break;
@@ -260,6 +270,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 						}
 					}
 				}
+				m_arrowActive = false;
 				break;
 			}
 			case BattlePhase::Movement :
@@ -276,6 +287,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 				{
 					m_battle.moveEntityToPosition(*m_selectedTile.m_tile->m_entityOnTile, *m_mouseDownTile);
 				}
+				m_arrowActive = false;
 				break;
 			}
 			}
@@ -290,6 +302,7 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 
 void BattleUI::OnMouseMove(const HAPI_TMouseData & mouseData)
 {
+	m_lastMouseData = { mouseData.x , mouseData.y };
 	if (OverWorldGUI::CURRENT_WINDOW != OverWorldWindow::eBattle)
 	{
 		return;
@@ -340,9 +353,22 @@ void BattleUI::clearTargetArea()
 
 void BattleUI::clearSelectedTile()
 {
+	m_arrowActive = false;
 	if (m_selectedTile.m_tile && m_selectedTile.m_tile->m_entityOnTile)
 		m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.clearMovementPath();
 	m_selectedTile.m_tile = nullptr;
+}
+
+void BattleUI::renderArrow() const
+{
+	if (!m_arrowActive || !m_mouseDownTile)
+		return;
+
+	int windDirection = static_cast<int>(MouseSelection::calculateDirection(m_leftMouseDownPosition, m_lastMouseData).second);
+	std::pair<int, int> pos = m_battle.getMap().getTileScreenPos(m_mouseDownTile->m_tileCoordinate);
+	m_arrowSprite->GetTransformComp().SetPosition({ static_cast<float>(pos.first + 32), static_cast<float>(pos.second + 64) });
+	m_arrowSprite->GetTransformComp().SetRotation(((windDirection * 60) % 360) * M_PI / 180.0f);
+	m_arrowSprite->Render(SCREEN_SURFACE);
 }
 
 void BattleUI::onMouseMoveMovementPhase()
@@ -699,6 +725,8 @@ void BattleUI::onResetBattle()
 	m_invalidPosition.onReset();
 	m_leftMouseDownPosition = std::pair<int, int>(0, 0);
 	m_mouseDownTile = nullptr;
+	m_arrowActive = false;
+	m_lastMouseData = { 0,0 };
 }
 
 void BattleUI::onNewTurn()
