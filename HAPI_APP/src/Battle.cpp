@@ -277,11 +277,6 @@ void Battle::start(const std::string & newMapName, std::vector<Player>& newPlaye
 	{
 		if (player.m_type == ePlayerType::eAI)
 		{
-			/*if (!positionToSnapToChosen)
-			{
-				positionToSnapToChosen = true;
-				positionToSnapTo = battle.getPlayer(player.m_factionName).m_spawnPosition;
-			}*/
 			AI::handleDeploymentPhase(*this, m_map, this->getPlayer(player.m_factionName), player);
 		}
 	}

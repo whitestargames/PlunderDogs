@@ -32,6 +32,7 @@ std::shared_ptr<SpriteSheet> Textures::m_resumeButton;
 std::shared_ptr<SpriteSheet> Textures::m_quitButton;
 std::shared_ptr<SpriteSheet> Textures::m_CompassBackGround;
 std::shared_ptr<SpriteSheet> Textures::m_CompassPointer;
+std::shared_ptr<SpriteSheet> Textures::m_WindArrow;
 std::shared_ptr<SpriteSheet> Textures::m_activeFactionToken;
 std::shared_ptr<SpriteSheet> Textures::m_postBattleBackground;
 std::shared_ptr<SpriteSheet> Textures::m_doneButton;

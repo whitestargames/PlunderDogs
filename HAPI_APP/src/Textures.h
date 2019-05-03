@@ -232,6 +232,13 @@ struct Textures
 			return false;
 		}
 
+		m_WindArrow = HAPI_Wrapper::makeSpriteSheet("windArrow.png");
+		if (!m_CompassPointer)
+		{
+			HAPI_Sprites.UserMessage("Cannot Load : 'windArrow.png'", "Texture Error");
+			return false;
+		}
+
 		m_activeFactionToken = HAPI_Wrapper::loadSpriteSheet("playerFlags.xml");
 		if (!m_activeFactionToken)
 		{
@@ -435,6 +442,7 @@ struct Textures
 	static std::shared_ptr<SpriteSheet> m_quitButton;
 	static std::shared_ptr<SpriteSheet> m_CompassBackGround;
 	static std::shared_ptr<SpriteSheet> m_CompassPointer;
+	static std::shared_ptr<SpriteSheet> m_WindArrow;
 	static std::shared_ptr<SpriteSheet> m_activeFactionToken;
 	static std::shared_ptr<SpriteSheet> m_postBattleBackground;
 	static std::shared_ptr<SpriteSheet> m_doneButton;
