@@ -54,6 +54,7 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 
 			if (m_currentPlayer < static_cast<int>(m_players.size()) && m_players[m_currentPlayer].m_type != ePlayerType::eAI)
 			{
+				m_GUI.setShipSelectionTrigger(true);
 				m_GUI.reset(m_players[m_currentPlayer].m_entities);
 			}
 		}
