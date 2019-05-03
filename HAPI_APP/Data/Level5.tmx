@@ -9,9 +9,9 @@
   </data>
  </layer>
  <objectgroup name="SpawnPositionLayer">
-  <object id="1" gid="12" x="1032" y="28" width="32" height="48"/>
-  <object id="3" gid="12" x="192" y="70" width="32" height="48"/>
-  <object id="4" gid="12" x="144" y="462" width="32" height="48"/>
-  <object id="5" gid="12" x="1032" y="476" width="32" height="48"/>
+  <object id="1" gid="12" x="960" y="98" width="32" height="48"/>
+  <object id="3" gid="12" x="120" y="84" width="32" height="48"/>
+  <object id="4" gid="12" x="120" y="532" width="32" height="48"/>
+  <object id="5" gid="12" x="960" y="518" width="32" height="48"/>
  </objectgroup>
 </map>

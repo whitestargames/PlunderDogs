@@ -123,8 +123,8 @@ std::vector<std::pair<int, int>> parseSpawnPositions(const TiXmlElement & rootEl
 			entityElement->Attribute("x", &startingPosition.first);
 			entityElement->Attribute("y", &startingPosition.second);
 			//startingPosition.second -= tileSize; //Tiled Hack
-			startingPosition.first /= tileSize.first;
-			startingPosition.second /= tileSize.second;
+			startingPosition.first /= 24;
+			startingPosition.second /= 28;
 			entityStartingPositions.push_back(startingPosition);
 		}
 	}
