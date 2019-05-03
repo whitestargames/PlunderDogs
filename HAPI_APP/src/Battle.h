@@ -100,7 +100,6 @@ private:
 	std::vector<Particle> m_fireParticles;
 	Timer m_timeUntilAITurn;
 	Timer m_timeBetweenAIUnits;
-	int m_currentAIUnit;
 	bool m_AITurn;
 	LightIntensity m_lightIntensity;
 	
