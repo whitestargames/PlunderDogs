@@ -5,6 +5,9 @@
 #include "Battle.h"
 #include "Map.h"
 #include "entity.h"
+#include <ctime>
+#include <cstdlib>
+
 
 const Tile* AI::findClosestEnemy(const Battle& battle, const Map& map, std::pair<int, int> alliedShipPosition, FactionName ourFaction)
 {
@@ -317,5 +320,93 @@ void AI::handleShootingPhase(Battle& battle, const Map& map, BattlePlayer& playe
 
 void AI::handleDeploymentPhase(Battle& battlePtr, Map& mapPtr, BattlePlayer& player)
 {
+	std::vector<Tile*> spawnArea{ mapPtr.getTileRadius(player.m_spawnPosition,3,true,true) };
+	int spawnPoint{ rand() % spawnArea.size() - 6 };
+	for (unsigned int i = 0; i < player.m_entities.size(); i++)
+	{
+		battlePtr.insertEntity(spawnArea[spawnPoint]->m_tileCoordinate, eNorth, player.m_entities[i]->m_entityProperties, player.m_factionName);
+		spawnPoint++;
+	}
+}
 
+void AI::handleShipSelection(std::vector<EntityProperties>& shipPool, FactionName player)
+{
+	int randomNumber{ std::rand() % 6 };
+	int numSideCannons{ 0 };
+	int numOfAddedSideCannons{ 0 };
+	int numTurtle{ 0 };
+	int numOfAddedTurtle{ 0 };
+	int numFlame{ 0 };
+	int numOfAddedFlame{ 0 };
+	int numSniper{ 0 };
+	int numOfAddedSniper{ 0 };
+
+	switch (randomNumber)
+	{
+	case 0:
+	{
+		numFlame = 4;
+		numSideCannons = 2;
+	}
+	case 1:
+	{
+		numTurtle = 2;
+		numSideCannons = 2;
+		numSniper = 2;
+	}
+	case 2:
+	{
+		numTurtle = 3;
+		numSideCannons = 3;
+	}
+	case 3:
+	{
+		numFlame = 2;
+		numSideCannons = 2;
+		numTurtle = 2;
+	}
+	case 4:
+	{
+		numSniper = 4;
+		numSideCannons = 2;
+	}
+	case 5:
+	{
+		numFlame = 3;
+		numSideCannons = 3;
+	}
+	for (unsigned int i = 0; i < shipPool.size() && numOfAddedFlame < numFlame; i++)
+	{
+		if (shipPool[i].m_weaponType == eShotgun)
+		{
+			EntityProperties* tmp{ &shipPool[i] };
+			
+			//selectedShips.push_back(tmp);
+		}
+	}
+	for (unsigned int i = 0; i < shipPool.size() && numOfAddedSideCannons < numSideCannons; i++)
+	{
+		if (shipPool[i].m_weaponType == eSideCannons)
+		{
+			EntityProperties* tmp{ &shipPool[i] };
+			//selectedShips.push_back(tmp);
+		}
+	}
+	for (unsigned int i = 0; i < shipPool.size() && numOfAddedTurtle < numTurtle; i++)
+	{
+		if (shipPool[i].m_weaponType == eShotgun)
+		{
+			EntityProperties* tmp{ &shipPool[i] };
+
+			//selectedShips.push_back(tmp);
+		}
+	}
+	for (unsigned int i = 0; i < shipPool.size() && numOfAddedSniper < numSniper; i++)
+	{
+		if (shipPool[i].m_weaponType == eSideCannons)
+		{
+			EntityProperties* tmp{ &shipPool[i] };
+			//selectedShips.push_back(tmp);
+		}
+	}
 }

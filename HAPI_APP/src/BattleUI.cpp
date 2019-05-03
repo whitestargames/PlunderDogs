@@ -218,9 +218,6 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 					break;
 				if (mouseMoveDirection.first > 20)
 				{
-					//This function call will be used if the mouse moved a significant enough distance during inputing a move command to assume it was on purpose, it sends not only the
-					//destination tile but the direction of the aformentioned movement.  In order for this to work the pathfinding must be capable of taking an eDirection as part of the
-					//function used by the battle to move the entity.
 					m_shipDeployment.front()->onLeftClick(m_invalidPosition, mouseMoveDirection.second, m_selectedTile.m_tile, m_battle);
 					if (m_shipDeployment.front()->isCompleted())
 					{
