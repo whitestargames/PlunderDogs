@@ -98,7 +98,7 @@ enum eWeaponType
 enum eLightIntensity
 {
 	eMaximum = 0,
-	//eHigh,
-	//eLow,
+	eHigh,
+	eLow,
 	eMinimum
 };
