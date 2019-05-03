@@ -104,7 +104,7 @@ public:
 
 	void clearSelectedTile();
 	void FactionUpdateGUI(FactionName faction);
-	void deployPlayers(const std::vector<Player>& newPlayers, Map& map, const Battle& battle);
+	void deployHumanPlayers(const std::vector<Player>& newPlayers, Map& map, const Battle& battle);
 
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;

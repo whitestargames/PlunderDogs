@@ -8,6 +8,7 @@ struct Tile;
 class Map;
 struct BattleEntity;
 struct BattlePlayer;
+struct Player;
 struct EntityProperties;
 
 namespace AI
@@ -22,6 +23,6 @@ namespace AI
 //External use
 	void handleMovementPhase(const Battle& battle, Map& map, BattlePlayer& player, int currentUnit);
 	void handleShootingPhase(Battle& battle, const Map& map, BattlePlayer& player, int currentUnit);
-	void handleDeploymentPhase(Battle& battle, Map& map, BattlePlayer& player);
+	void handleDeploymentPhase(Battle& battle, Map& map, BattlePlayer& bPlayer, Player& player);
 	void handleShipSelection(std::vector<EntityProperties>& shipPool, std::vector<EntityProperties*>& selectedShips);
 };

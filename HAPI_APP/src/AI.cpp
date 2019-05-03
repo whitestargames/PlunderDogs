@@ -341,16 +341,19 @@ void AI::handleShootingPhase(Battle& battle, const Map& map, BattlePlayer& playe
 	//}
 }
 
-void AI::handleDeploymentPhase(Battle& battlePtr, Map& mapPtr, BattlePlayer& player)
+void AI::handleDeploymentPhase(Battle& battle, Map& map, BattlePlayer& bPlayer, Player& player)
 {
-	std::vector<Tile*> spawnArea{ mapPtr.getTileRadius(player.m_spawnPosition,3,true,true) };
+
+
+
+	std::vector<Tile*> spawnArea{ map.getTileRadius(bPlayer.m_spawnPosition,3,true,true) };
 	assert(spawnArea.size() > 6);
 	int location = static_cast<int>(std::rand() % (spawnArea.size() - 6));
 	int spawnPoint{ location };
 	eDirection randomDir = static_cast<eDirection>(std::rand() % 6);
-	for (unsigned int i = 0; i < player.m_entities.size(); i++)
+	for (int i = 0; i < player.m_selectedEntities.size(); i++)
 	{
-		battlePtr.insertEntity(spawnArea[spawnPoint]->m_tileCoordinate, randomDir, player.m_entities[i]->m_entityProperties, player.m_factionName);
+		battle.insertEntity(spawnArea[spawnPoint]->m_tileCoordinate, randomDir, *player.m_selectedEntities[i], player.m_factionName);
 		spawnPoint++;
 	}
 }

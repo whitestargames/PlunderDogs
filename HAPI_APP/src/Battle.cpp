@@ -303,9 +303,24 @@ void Battle::start(const std::string & newMapName, std::vector<Player>& newPlaye
 		m_players.emplace_back(player.m_factionName, m_map.getSpawnPosition(), player.m_type);
 	}
 	
-	m_battleUI.deployPlayers(newPlayers, m_map, *this);
+	m_battleUI.deployHumanPlayers(newPlayers, m_map, *this);
+
+	for (auto& player : newPlayers)
+	{
+		if (player.m_type == ePlayerType::eAI)
+		{
+			/*if (!positionToSnapToChosen)
+			{
+				positionToSnapToChosen = true;
+				positionToSnapTo = battle.getPlayer(player.m_factionName).m_spawnPosition;
+			}*/
+			AI::handleDeploymentPhase(*this, m_map, this->getPlayer(player.m_factionName), player);
+		}
+	}
 
 	m_battleUI.loadGUI(m_map.getDimensions());
+	if (m_battleUI.isHumanDeploymentCompleted())
+		nextTurn();
 }
 
 void Battle::render() const
@@ -599,7 +614,7 @@ bool Battle::allEntitiesAttacked(std::vector<std::shared_ptr<BattleEntity>>& pla
 	return allEntitiesAttacked;
 }
 
-BattlePlayer & Battle::getPlayer(FactionName factionName)
+BattlePlayer& Battle::getPlayer(FactionName factionName)
 {
 	auto cIter = std::find_if(m_players.begin(), m_players.end(), [factionName](const auto& player) { return factionName == player.m_factionName; });
 	assert(cIter != m_players.end());
