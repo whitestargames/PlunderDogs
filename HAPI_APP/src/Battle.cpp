@@ -216,7 +216,8 @@ Battle::Battle()
 	m_fireParticles(),
 	m_timeUntilAITurn(1.5f, false),
 	m_timeBetweenAIUnits(0.3f, false),
-	m_AITurn(false)
+	m_AITurn(false),
+	m_lightIntensity()
 {
 	m_explosionParticles.reserve(6);
 	m_fireParticles.reserve(6);
@@ -250,7 +251,7 @@ void Battle::start(const std::string & newMapName, std::vector<Player>& newPlaye
 	assert(!newPlayers.empty());
 	assert(m_players.empty());
 	m_map.loadmap(newMapName);
-	
+	m_battleUI.loadGUI(m_map.getDimensions());
 	//TODO: Hack to correct sprite sizes
 	for (auto& player : newPlayers)
 	{
@@ -263,7 +264,11 @@ void Battle::start(const std::string & newMapName, std::vector<Player>& newPlaye
 
 	for (auto& player : newPlayers)
 	{
-		m_players.emplace_back(player.m_factionName, m_map.getSpawnPosition(), player.m_type);
+		auto spawnPosition = m_map.getSpawnPosition();
+		std::cout << spawnPosition.first << "\n";
+		std::cout << spawnPosition.second << "\n";
+		std::cout << "\n";
+		m_players.emplace_back(player.m_factionName, spawnPosition, player.m_type);
 	}
 	
 	m_battleUI.deployHumanPlayers(newPlayers, m_map, *this);
@@ -280,7 +285,6 @@ void Battle::start(const std::string & newMapName, std::vector<Player>& newPlaye
 			AI::handleDeploymentPhase(*this, m_map, this->getPlayer(player.m_factionName), player);
 		}
 	}
-
 	m_battleUI.loadGUI(m_map.getDimensions());
 	if (m_battleUI.isHumanDeploymentCompleted())
 		nextTurn();
@@ -346,6 +350,8 @@ void Battle::update(float deltaTime)
 			handleAIAttackPhaseTimer(deltaTime);
 		}
 	}
+
+	m_battleManager.update(deltaTime);
 }
 
 void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
@@ -684,7 +690,8 @@ Battle::BattleManager::BattleManager()
 	: m_yellowShipsDestroyed(0),
 	m_blueShipsDestroyed(0),
 	m_greenShipsDestroyed(0),
-	m_redShipsDestroyed(0)
+	m_redShipsDestroyed(0),
+	m_winTimer(2.0f, false)
 {
 	GameEventMessenger::getInstance().subscribe(std::bind(&BattleManager::onReset, this), "BattleManager", GameEvent::eResetBattle);
 }
@@ -692,6 +699,29 @@ Battle::BattleManager::BattleManager()
 Battle::BattleManager::~BattleManager()
 {
 	GameEventMessenger::getInstance().unsubscribe("BattleManager", GameEvent::eResetBattle);
+}
+
+void Battle::BattleManager::update(float deltaTime)
+{
+	m_winTimer.update(deltaTime);
+	if (m_winTimer.isExpired())
+	{
+		switch (m_winningFaction)
+		{
+		case FactionName::eYellow :
+			GameEventMessenger::getInstance().broadcast(GameEvent::eYellowWin);
+			break;
+		case FactionName::eBlue :
+			GameEventMessenger::getInstance().broadcast(GameEvent::eBlueWin);
+			break;
+		case FactionName::eRed :
+			GameEventMessenger::getInstance().broadcast(GameEvent::eRedWin);
+			break;
+		case FactionName::eGreen :
+			GameEventMessenger::getInstance().broadcast(GameEvent::eGreenWin);
+			break;
+		}
+	}
 }
 
 void Battle::BattleManager::onYellowShipDestroyed(std::vector<BattlePlayer>& players)
@@ -761,7 +791,6 @@ void Battle::BattleManager::checkGameStatus(const std::vector<BattlePlayer>& pla
 			++playersEliminated;
 		}
 	}
-
 	//Last player standing - Player wins
 	if (playersEliminated == static_cast<int>(players.size()) - 1)
 	{
@@ -771,18 +800,19 @@ void Battle::BattleManager::checkGameStatus(const std::vector<BattlePlayer>& pla
 		switch (winningFaction)
 		{
 		case FactionName::eYellow:
-			GameEventMessenger::broadcast(GameEvent::eYellowWin);
+			m_winningFaction = FactionName::eYellow;
 			break;
 		case FactionName::eBlue:
-			GameEventMessenger::broadcast(GameEvent::eBlueWin);
+			m_winningFaction = FactionName::eBlue;
 			break;
 		case FactionName::eGreen:
-			GameEventMessenger::broadcast(GameEvent::eGreenWin);
+			m_winningFaction = FactionName::eGreen;
 			break;
 		case FactionName::eRed:
-			GameEventMessenger::broadcast(GameEvent::eRedWin);
+			m_winningFaction = FactionName::eRed;
 			break;
 		}
+		m_winTimer.setActive(true);
 	}
 }
 
@@ -794,30 +824,32 @@ Battle::LightIntensity::LightIntensity()
 
 void Battle::LightIntensity::update(float deltaTime)
 {
-	m_timer.update(deltaTime);
-	if (m_timer.isExpired())
-	{
-		int lightIntensity = 0;
-		if (!m_reverse)
-		{
-			lightIntensity = (int)m_lightIntensity + 1;
-			if (lightIntensity > static_cast<int>(eLightIntensity::eMinimum))
-			{
-				lightIntensity = static_cast<int>(eLightIntensity::eMinimum);
-				m_reverse = true;
-			}
-		}
-		else
-		{
-			lightIntensity = (int)m_lightIntensity - 1;
-			if (lightIntensity < static_cast<int>(eLightIntensity::eMaximum))
-			{
-				lightIntensity = static_cast<int>(eLightIntensity::eMaximum);
-				m_reverse = false;
-			}
-		}
+	//m_timer.update(deltaTime);
+	//if (m_timer.isExpired())
+	//{
+	//	int lightIntensity = 0;
+	//	if (!m_reverse)
+	//	{
+	//		lightIntensity = (int)m_lightIntensity + 1;
+	//		if (lightIntensity > static_cast<int>(eLightIntensity::eMinimum))
+	//		{
+	//			//m_timer.setNewExpirationTime(10.f);
+	//			lightIntensity = static_cast<int>(eLightIntensity::eMinimum);
+	//			m_reverse = true;
+	//		}
+	//	}
+	//	else
+	//	{
+	//		lightIntensity = (int)m_lightIntensity - 1;
+	//		if (lightIntensity < static_cast<int>(eLightIntensity::eMaximum))
+	//		{
+	//			//m_timer.setNewExpirationTime(30.0f);
+	//			lightIntensity = static_cast<int>(eLightIntensity::eMaximum);
+	//			m_reverse = false;
+	//		}
+	//	}
 
-		m_lightIntensity = static_cast<eLightIntensity>(lightIntensity);
-		m_timer.reset();
-	}
+	//	m_lightIntensity = static_cast<eLightIntensity>(lightIntensity);
+	//	m_timer.reset();
+	//}
 }
