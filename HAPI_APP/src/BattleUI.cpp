@@ -105,7 +105,7 @@ void BattleUI::renderUI() const
 	
 	case BattlePhase::Attack:
 		m_selectedTile.render(m_battle.getMap());
-		m_targetArea.render(m_battle.getMap());
+		//m_targetArea.render(m_battle.getMap());
 		
 		break;
 	}
@@ -125,6 +125,23 @@ void BattleUI::renderGUI() const
 void BattleUI::loadGUI(std::pair<int, int> mapDimensions)
 {
 	m_gui.setMaxCameraOffset(mapDimensions);
+}
+
+void BattleUI::drawTargetArea() const
+{
+	for (const auto& i : m_targetArea.m_targetAreaSprites)
+	{
+		if (i.activate)
+		{
+			const std::pair<int, int> tileTransform = m_battle.getMap().getTileScreenPos(i.position);
+
+			i.sprite->GetTransformComp().SetPosition({
+			static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * m_battle.getMap().getDrawScale()),
+			static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * m_battle.getMap().getDrawScale()) });
+
+			i.sprite->Render(SCREEN_SURFACE);
+		}
+	}
 }
 
 void BattleUI::update(float deltaTime)

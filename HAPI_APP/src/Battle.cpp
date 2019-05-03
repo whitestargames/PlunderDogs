@@ -304,6 +304,7 @@ void Battle::render() const
 			entity->m_battleProperties.render(entity->m_entityProperties.m_sprite, m_map);
 		}
 	}
+	m_battleUI.drawTargetArea();
 	for (const auto& explosionParticle : m_explosionParticles)
 	{
 		explosionParticle.render();

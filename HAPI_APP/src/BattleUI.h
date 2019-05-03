@@ -100,6 +100,8 @@ public:
 	void renderGUI() const;
 	void loadGUI(std::pair<int, int> mapDimensions);
 
+	void drawTargetArea() const;
+
 	void update(float deltaTime);
 
 	void clearSelectedTile();
