@@ -1,6 +1,7 @@
 #include  "Overworld.h"
 #include "Textures.h"
 #include "GameEventMessenger.h"
+#include "AI.h"
 
 OverWorld::OverWorld()
 	: m_currentPlayer(0),
@@ -42,8 +43,13 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 			}
 		// create bool which triggers if leaving selection into map or leaving map into fleet
 		}
-
-		if (selectNextPlayer && m_currentPlayer < static_cast<int>(m_players.size()))
+		if (m_players[m_currentPlayer].m_type == ePlayerType::eAI && m_currentPlayer < static_cast<int>(m_players.size()))
+		{
+			//Call ai ship selection
+			AI::handleShipSelection(m_players[m_currentPlayer].m_entities, m_players[m_currentPlayer].m_selectedEntities);
+			++m_currentPlayer;
+		}
+		else if (selectNextPlayer && m_currentPlayer < static_cast<int>(m_players.size()))
 		{
 			++m_currentPlayer;
 
@@ -52,6 +58,7 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 				m_GUI.reset(m_players[m_currentPlayer].m_entities);
 			}
 		}
+
 		if (resetPlayer)
 		{
 		//m_currentPlayer = 0;

@@ -332,9 +332,9 @@ void AI::handleDeploymentPhase(Battle& battlePtr, Map& mapPtr, BattlePlayer& pla
 	}
 }
 
-void AI::handleShipSelection(std::vector<EntityProperties>& shipPool, FactionName player)
+void AI::handleShipSelection(std::vector<EntityProperties>& shipPool, std::vector<EntityProperties*>& selectedShips)
 {
-	int randomNumber{ std::rand() % 6 };
+	int randomNumber{ std::rand() % 7 };
 	int numSideCannons{ 0 };
 	int numOfAddedSideCannons{ 0 };
 	int numTurtle{ 0 };
@@ -347,59 +347,46 @@ void AI::handleShipSelection(std::vector<EntityProperties>& shipPool, FactionNam
 	switch (randomNumber)
 	{
 	case 0:
-	{
 		numFlame = 4;
 		numSideCannons = 2;
 		break;
-	}
 	case 1:
-	{
 		numTurtle = 2;
 		numSideCannons = 2;
 		numSniper = 2;
 		break;
-	}
 	case 2:
-	{
 		numTurtle = 3;
 		numSideCannons = 3;
 		break;
-	}
 	case 3:
-	{
 		numFlame = 2;
 		numSideCannons = 2;
 		numTurtle = 2;
 		break;
-	}
 	case 4:
-	{
 		numSniper = 4;
 		numSideCannons = 2;
 		break;
-	}
 	case 5:
-	{
 		numFlame = 3;
 		numSideCannons = 3;
 		break;
-	}
 	case 6:
-	{
 		numSideCannons = 2;
 		numTurtle = 1;
 		numFlame = 2;
 		numSniper = 1;
 		break;
 	}
+
 	assert(numSideCannons + numTurtle + numFlame + numSniper < 7);
 	for (unsigned int i = 0; i < shipPool.size() && numOfAddedFlame < numFlame; i++)
 	{
 		if (shipPool[i].m_weaponType == eShotgun)
 		{
 			EntityProperties* tmp{ &shipPool[i] };
-
-			//selectedShips.push_back(tmp);
+			selectedShips.push_back(tmp);
 		}
 	}
 	for (unsigned int i = 0; i < shipPool.size() && numOfAddedSideCannons < numSideCannons; i++)
@@ -407,7 +394,7 @@ void AI::handleShipSelection(std::vector<EntityProperties>& shipPool, FactionNam
 		if (shipPool[i].m_weaponType == eSideCannons)
 		{
 			EntityProperties* tmp{ &shipPool[i] };
-			//selectedShips.push_back(tmp);
+			selectedShips.push_back(tmp);
 		}
 	}
 	for (unsigned int i = 0; i < shipPool.size() && numOfAddedTurtle < numTurtle; i++)
@@ -415,8 +402,7 @@ void AI::handleShipSelection(std::vector<EntityProperties>& shipPool, FactionNam
 		if (shipPool[i].m_weaponType == eShotgun)
 		{
 			EntityProperties* tmp{ &shipPool[i] };
-
-			//selectedShips.push_back(tmp);
+			selectedShips.push_back(tmp);
 		}
 	}
 	for (unsigned int i = 0; i < shipPool.size() && numOfAddedSniper < numSniper; i++)
@@ -424,8 +410,7 @@ void AI::handleShipSelection(std::vector<EntityProperties>& shipPool, FactionNam
 		if (shipPool[i].m_weaponType == eSideCannons)
 		{
 			EntityProperties* tmp{ &shipPool[i] };
-			//selectedShips.push_back(tmp);
+			selectedShips.push_back(tmp);
 		}
-	}
 	}
 }
