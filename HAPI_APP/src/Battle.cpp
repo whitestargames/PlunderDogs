@@ -143,7 +143,12 @@ void Battle::handleAIMovementPhaseTimer(float deltaTime)
 	//	m_timeUntilAIAttackPhase.reset();
 	//	m_timeUntilAIAttackPhase.setActive(false);
 	//}
-
+	if (!m_AITurn)
+	{
+		m_timeUntilAITurn.reset();
+		m_timeBetweenAIUnits.reset();
+		return;
+	}
 	m_timeUntilAITurn.update(deltaTime);
 	if (m_timeUntilAITurn.isExpired())
 	{
@@ -194,7 +199,12 @@ void Battle::handleAIAttackPhaseTimer(float deltaTime)
 	//	m_timeUntilAITurn.reset();
 	//	m_timeUntilAITurn.setActive(false);
 	//}
-
+	if (!m_AITurn)
+	{
+		m_timeUntilAITurn.reset();
+		m_timeBetweenAIUnits.reset();
+		return;
+	}
 	m_timeUntilAITurn.update(deltaTime);
 	if (m_timeUntilAITurn.isExpired())
 	{
@@ -222,7 +232,15 @@ void Battle::handleAIAttackPhaseTimer(float deltaTime)
 		}
 	}
 }
-
+/*
+void Battle::resetAITimers()
+{
+	m_timeUntilAITurn.setActive(false);
+	m_timeUntilAITurn.reset();
+	m_timeBetweenAIUnits.setActive(false);
+	m_timeBetweenAIUnits.reset();
+}
+*/
 Battle::Battle()
 	: m_players(),
 	m_currentPlayerTurn(0),
@@ -445,6 +463,7 @@ void Battle::nextTurn()
 		break;
 	case BattlePhase::Movement :
 		m_currentPhase = BattlePhase::Attack;
+		//resetAITimers();
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringAttackPhase);
 
@@ -462,6 +481,7 @@ void Battle::nextTurn()
 		break;
 	case BattlePhase::Attack :
 		m_currentPhase = BattlePhase::Movement;
+		//resetAITimers();
 		GameEventMessenger::getInstance().broadcast(GameEvent::eNewTurn);
 		GameEventMessenger::getInstance().broadcast(GameEvent::eEnteringMovementPhase);
 

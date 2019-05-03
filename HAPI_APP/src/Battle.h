@@ -116,6 +116,7 @@ private:
 
 	void handleAIMovementPhaseTimer(float deltaTime);
 	void handleAIAttackPhaseTimer(float deltaTime);
+	//void resetAITimers();
 
 	void onResetBattle();
 	void onYellowShipDestroyed();
