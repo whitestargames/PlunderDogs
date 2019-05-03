@@ -70,6 +70,7 @@ class EntityBattleProperties
 		void clearPath();
 		void setNodePosition(int i, std::pair<int, int> newPosition) { m_movementPath[i].m_position = newPosition; }
 
+
 	private:
 		std::vector<PathNode> m_movementPath;
 		unsigned int getDirectionCost(int currentDirection, int newDirection);
