@@ -20,7 +20,6 @@ class Battle
 
 		void update(float deltaTime);
 
-		bool m_reverse;
 		Timer m_timer;
 		eLightIntensity m_lightIntensity;
 	};

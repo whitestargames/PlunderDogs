@@ -828,8 +828,7 @@ void Battle::BattleManager::checkGameStatus(const std::vector<BattlePlayer>& pla
 }
 
 Battle::LightIntensity::LightIntensity()
-	: m_reverse(false),
-	m_timer(30.0f),
+	: m_timer(30.0f),
 	m_lightIntensity(eLightIntensity::eMaximum)
 {}
 
@@ -838,27 +837,17 @@ void Battle::LightIntensity::update(float deltaTime)
 	m_timer.update(deltaTime);
 	if (m_timer.isExpired())
 	{
-		int lightIntensity = 0;
-		if (!m_reverse)
+		if (m_lightIntensity == eLightIntensity::eMaximum)
 		{
-			lightIntensity = (int)m_lightIntensity + 1;
-			if (lightIntensity == static_cast<int>(eLightIntensity::eMinimum))
-			{
-				m_timer.setNewExpirationTime(15.f);
-				m_reverse = true;
-			}
+			m_lightIntensity = eLightIntensity::eMinimum;
+			m_timer.setNewExpirationTime(15.f);
+			m_timer.reset();
 		}
 		else
 		{
-			lightIntensity = static_cast<int>(m_lightIntensity) - 1;
-			if (lightIntensity == static_cast<int>(eLightIntensity::eMaximum))
-			{
-				m_timer.setNewExpirationTime(30.f);
-				m_reverse = false;
-			}
+			m_lightIntensity = eLightIntensity::eMaximum;
+			m_timer.setNewExpirationTime(30.f);
+			m_timer.reset();
 		}
-
-		m_lightIntensity = static_cast<eLightIntensity>(lightIntensity);
-		m_timer.reset();
 	}
 }
