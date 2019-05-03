@@ -8,6 +8,7 @@ struct Tile;
 class Map;
 struct BattleEntity;
 struct BattlePlayer;
+struct EntityProperties;
 
 namespace AI
 {

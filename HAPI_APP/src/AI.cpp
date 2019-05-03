@@ -321,7 +321,9 @@ void AI::handleShootingPhase(Battle& battle, const Map& map, BattlePlayer& playe
 void AI::handleDeploymentPhase(Battle& battlePtr, Map& mapPtr, BattlePlayer& player)
 {
 	std::vector<Tile*> spawnArea{ mapPtr.getTileRadius(player.m_spawnPosition,3,true,true) };
-	int spawnPoint{ rand() % spawnArea.size() - 6 };
+	assert(spawnArea.size() > 6);
+	int location = static_cast<int>(rand() % (spawnArea.size() - 6));
+	int spawnPoint{ location };
 	for (unsigned int i = 0; i < player.m_entities.size(); i++)
 	{
 		battlePtr.insertEntity(spawnArea[spawnPoint]->m_tileCoordinate, eNorth, player.m_entities[i]->m_entityProperties, player.m_factionName);
@@ -347,40 +349,55 @@ void AI::handleShipSelection(std::vector<EntityProperties>& shipPool, FactionNam
 	{
 		numFlame = 4;
 		numSideCannons = 2;
+		break;
 	}
 	case 1:
 	{
 		numTurtle = 2;
 		numSideCannons = 2;
 		numSniper = 2;
+		break;
 	}
 	case 2:
 	{
 		numTurtle = 3;
 		numSideCannons = 3;
+		break;
 	}
 	case 3:
 	{
 		numFlame = 2;
 		numSideCannons = 2;
 		numTurtle = 2;
+		break;
 	}
 	case 4:
 	{
 		numSniper = 4;
 		numSideCannons = 2;
+		break;
 	}
 	case 5:
 	{
 		numFlame = 3;
 		numSideCannons = 3;
+		break;
 	}
+	case 6:
+	{
+		numSideCannons = 2;
+		numTurtle = 1;
+		numFlame = 2;
+		numSniper = 1;
+		break;
+	}
+	assert(numSideCannons + numTurtle + numFlame + numSniper < 7);
 	for (unsigned int i = 0; i < shipPool.size() && numOfAddedFlame < numFlame; i++)
 	{
 		if (shipPool[i].m_weaponType == eShotgun)
 		{
 			EntityProperties* tmp{ &shipPool[i] };
-			
+
 			//selectedShips.push_back(tmp);
 		}
 	}
@@ -408,5 +425,6 @@ void AI::handleShipSelection(std::vector<EntityProperties>& shipPool, FactionNam
 			EntityProperties* tmp{ &shipPool[i] };
 			//selectedShips.push_back(tmp);
 		}
+	}
 	}
 }

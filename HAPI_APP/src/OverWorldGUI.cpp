@@ -384,14 +384,11 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 			{
 
 				// put int function
-				if (getActivePlayerCount() >=2)
+				if (getActivePlayerCount() > 1)
 				{
 					CURRENT_WINDOW = OverWorldWindow::eLevelSelection;
 					leftPlayerSelectionTrig = true;
-				
 				}
-				
-		
 			}
 			break;
 
@@ -468,8 +465,8 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 					selectNextPlayer = true;
 					UI.CloseWindow(FLEET_WINDOW);
 					UI.CloseWindow(BATTLE_FLEET_WINDOW);
-					shipSelectionTrigger=  true ;
-;					//reset here 
+					shipSelectionTrigger=  true;
+					//reset here 
 					return;
 				}
 			}
