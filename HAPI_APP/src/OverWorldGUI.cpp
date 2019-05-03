@@ -963,10 +963,6 @@ void OverWorldGUI::reset(const std::vector<EntityProperties>& playerEntities)
 	}
 	UI.GetWindow(UPGRADE_FLEET_WINDOW)->AddScrollbar(UPGRADE_FLEET_SCROLLBAR);
 	UI.GetWindow(UPGRADE_FLEET_WINDOW)->GetObject(UPGRADE_FLEET_SCROLLBAR)->SetValue(1.0f);
-	
-	
-
-	
 
 	//upgrade buttons positions
 	HAPI_Wrapper::setPosition(m_upgradesScreenBackground, { 345, 140 });

@@ -43,17 +43,26 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 			}
 		// create bool which triggers if leaving selection into map or leaving map into fleet
 		}
-		if (m_players[m_currentPlayer].m_type == ePlayerType::eAI && m_currentPlayer < static_cast<int>(m_players.size()))
+
+		if(selectNextPlayer)
+			++m_currentPlayer;
+		while (OverWorldGUI::CURRENT_WINDOW == eShipSelection && m_currentPlayer < static_cast<int>(m_players.size()) && m_players[m_currentPlayer].m_type == ePlayerType::eAI)
 		{
 			//Call ai ship selection
 			AI::handleShipSelection(m_players[m_currentPlayer].m_entities, m_players[m_currentPlayer].m_selectedEntities);
 			++m_currentPlayer;
-		}
-		else if (selectNextPlayer && m_currentPlayer < static_cast<int>(m_players.size()))
-		{
-			++m_currentPlayer;
 
-			if (m_currentPlayer <= static_cast<int>(m_players.size()) - 1)
+			if (m_currentPlayer < static_cast<int>(m_players.size()) && m_players[m_currentPlayer].m_type != ePlayerType::eAI)
+			{
+				m_GUI.reset(m_players[m_currentPlayer].m_entities);
+			}
+		}
+
+		if (selectNextPlayer && m_currentPlayer < static_cast<int>(m_players.size()))
+		{
+			//++m_currentPlayer;
+
+			if (m_currentPlayer < static_cast<int>(m_players.size()))
 			{
 				m_GUI.reset(m_players[m_currentPlayer].m_entities);
 			}
@@ -67,7 +76,7 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 			onReset();
 			return;
 		}
-		if (m_currentPlayer == static_cast<int>(m_players.size()))
+		if (m_currentPlayer >= static_cast<int>(m_players.size()))
 		{
 			m_startBattle = true;
 			m_currentPlayer = 0;

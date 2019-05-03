@@ -383,10 +383,11 @@ void AI::handleShipSelection(std::vector<EntityProperties>& shipPool, std::vecto
 	assert(numSideCannons + numTurtle + numFlame + numSniper < 7);
 	for (unsigned int i = 0; i < shipPool.size() && numOfAddedFlame < numFlame; i++)
 	{
-		if (shipPool[i].m_weaponType == eShotgun)
+		if (shipPool[i].m_weaponType == eFlamethrower)
 		{
 			EntityProperties* tmp{ &shipPool[i] };
 			selectedShips.push_back(tmp);
+			numOfAddedFlame++;
 		}
 	}
 	for (unsigned int i = 0; i < shipPool.size() && numOfAddedSideCannons < numSideCannons; i++)
@@ -395,6 +396,7 @@ void AI::handleShipSelection(std::vector<EntityProperties>& shipPool, std::vecto
 		{
 			EntityProperties* tmp{ &shipPool[i] };
 			selectedShips.push_back(tmp);
+			numOfAddedSideCannons++;
 		}
 	}
 	for (unsigned int i = 0; i < shipPool.size() && numOfAddedTurtle < numTurtle; i++)
@@ -403,14 +405,16 @@ void AI::handleShipSelection(std::vector<EntityProperties>& shipPool, std::vecto
 		{
 			EntityProperties* tmp{ &shipPool[i] };
 			selectedShips.push_back(tmp);
+			numOfAddedTurtle++;
 		}
 	}
 	for (unsigned int i = 0; i < shipPool.size() && numOfAddedSniper < numSniper; i++)
 	{
-		if (shipPool[i].m_weaponType == eSideCannons)
+		if (shipPool[i].m_weaponType == eStraightShot)
 		{
 			EntityProperties* tmp{ &shipPool[i] };
 			selectedShips.push_back(tmp);
+			numOfAddedSniper++;
 		}
 	}
 }
