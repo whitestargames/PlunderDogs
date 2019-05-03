@@ -360,7 +360,7 @@ void AI::handleDeploymentPhase(Battle& battle, Map& map, BattlePlayer& bPlayer, 
 
 void AI::handleShipSelection(std::vector<EntityProperties>& shipPool, std::vector<EntityProperties*>& selectedShips)
 {
-	int randomNumber{ std::rand() % 7 };
+	int randomNumber{ std::rand() % 8 };
 	int numSideCannons{ 0 };
 	int numOfAddedSideCannons{ 0 };
 	int numTurtle{ 0 };
@@ -403,6 +403,10 @@ void AI::handleShipSelection(std::vector<EntityProperties>& shipPool, std::vecto
 		numTurtle = 1;
 		numFlame = 2;
 		numSniper = 1;
+		break;
+	case 7:
+		numFlame = 4;
+		numSniper = 2;
 		break;
 	}
 
