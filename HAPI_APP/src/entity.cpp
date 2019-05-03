@@ -115,6 +115,7 @@ EntityBattleProperties::MovementPath::PathNode::PathNode()
 	activate(false)
 {
 	sprite->GetTransformComp().SetOriginToCentreOfFrame();
+	sprite->GetTransformComp().SetScaling({ 0.5f, 0.5f });
 }
 
 //
@@ -142,7 +143,7 @@ void EntityBattleProperties::MovementPath::render(const Map& map) const
 			i.sprite->GetTransformComp().SetPosition({
 				static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * scale),
 				static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * scale) });
-			i.sprite->GetTransformComp().SetScaling({ scale / 2, scale / 2 });
+			i.sprite->GetTransformComp().SetScaling({ 0.5f, 0.5f });
 
 			i.sprite->Render(SCREEN_SURFACE);
 		}	
@@ -278,7 +279,14 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection e
 		if (!pathToTile.empty() && pathToTile.size() <= m_movementPathSize + 1)
 		{
 			//Set end tile to the correct facing
+			//pathToTile[pathToTile.size() - 1].first = endDirection;
+			//for (int i = 1; i < pathToTile.size(); ++i)
+			//{
+			//	m_movementPath.setNodePosition(i, pathToTile[i].second);
+			//}
+
 			pathToTile.push_back({ endDirection, pathToTile[pathToTile.size() - 1].second });
+
 
 			m_pathToTile = pathToTile;
 			map.moveEntity(m_currentPosition, pathToTile.back().second);
@@ -319,10 +327,12 @@ void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int
 	}
 	else
 	{
+		currentHealth = 0;
 		entitySprite->SetFrameNumber(eShipSpriteFrame::eDead);
 		entitySprite->GetTransformComp().SetOriginToCentreOfFrame();
 		m_isDead = true;
 		m_actionSprite.active = false;
+		m_movementPath.clearPath();
 		switch (entityFaction)
 		{
 		case FactionName::eYellow :

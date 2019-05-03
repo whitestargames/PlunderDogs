@@ -14,7 +14,18 @@ enum class BattlePhase
 
 class Battle
 {
-	struct ParticleSystem
+	struct LightIntensity
+	{
+		LightIntensity();
+
+		void update(float deltaTime);
+
+		bool m_reverse;
+		Timer m_timer;
+		eLightIntensity m_lightIntensity;
+	};
+
+	struct Particle
 	{
 		std::pair<float, float> m_position;
 		Timer m_lifeSpan;
@@ -23,7 +34,7 @@ class Battle
 		bool m_isEmitting;
 		const float m_scale;
 
-		ParticleSystem(float lifespan, std::shared_ptr<HAPISPACE::SpriteSheet> texture, float scale);
+		Particle(float lifespan, std::shared_ptr<HAPISPACE::SpriteSheet> texture, float scale);
 		void setPosition(std::pair<int, int> position);
 		void run(float deltaTime, const Map& map);
 		void render() const;
@@ -84,26 +95,28 @@ private:
 	Map m_map;
 	BattlePhase m_currentPhase;
 	BattleUI m_battleUI;
-	Timer m_dayTime;
 	BattleManager m_battleManager;
-	std::vector<ParticleSystem> m_explosion;
-	std::vector<ParticleSystem> m_fire;
-	Timer m_timeUntilAIMovementPhase;
-	Timer m_timeUntilAIAttackPhase;
+	std::vector<Particle> m_explosionParticles;
+	std::vector<Particle> m_fireParticles;
+	Timer m_timeUntilAITurn;
+	Timer m_timeBetweenAIUnits;
+	int m_currentAIUnit;
 	bool m_AITurn;
-
+	LightIntensity m_lightIntensity;
+	
 	void updateMovementPhase(float deltaTime);
 	void updateAttackPhase();
 
 	bool allEntitiesAttacked(std::vector<std::shared_ptr<BattleEntity>>& playerEntities) const;
 	BattlePlayer& getPlayer(FactionName factionName);
 
+
 	void incrementPlayerTurn();
-	void setTimeOfDay(float deltaTime);
 	void updateWindDirection();
 
 	void handleAIMovementPhaseTimer(float deltaTime);
 	void handleAIAttackPhaseTimer(float deltaTime);
+	//void resetAITimers();
 
 	void onResetBattle();
 	void onYellowShipDestroyed();

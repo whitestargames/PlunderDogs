@@ -705,6 +705,9 @@ void BattleUI::onNewTurn()
 {
 	//TODO: Drop info box
 	m_selectedTile.m_tile = nullptr;
+	m_invalidPosition.m_activate = false;
+	clearTargetArea();
+	clearSelectedTile();
 }
 
 //Weapon Graph
@@ -830,6 +833,7 @@ BattleUI::TargetArea::HighlightNode::HighlightNode()
 	activate(false)
 {
 	sprite->GetTransformComp().SetOriginToCentreOfFrame();
+	sprite->GetTransformComp().SetScaling({ 0.75f, 0.75f});
 }
 
 BattleUI::DeploymentPhase::DeploymentPhase(std::vector<EntityProperties*> player, 
@@ -995,7 +999,7 @@ void BattleUI::DeploymentPhase::onLeftClick(InvalidPosition& invalidPosition, eD
 	if (!invalidPosition.m_activate && !currentTileSelected->m_entityOnTile)
 	{
 		battle.insertEntity(currentTileSelected->m_tileCoordinate, startingDirection, *m_currentSelectedEntity.m_currentSelectedEntity, m_factionName);
-		invalidPosition.m_activate = true;
+		//invalidPosition.m_activate = true;
 		invalidPosition.m_position = currentTileSelected->m_tileCoordinate;
 		//Change ordering around to pop front with different container
 		m_player.pop_back();

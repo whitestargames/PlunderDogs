@@ -3,7 +3,6 @@
 #include "OverWorld.h"
 #include "Utilities/Utilities.h"
 #include "GameEventMessenger.h"
-#include "AudioPlayer.h"
 
 OverWorldWindow OverWorldGUI::CURRENT_WINDOW = OverWorldWindow::eMainMenu;
 
@@ -15,6 +14,8 @@ constexpr int UPGRADE_WINDOW_OBJECTWIDTH = 150;
 constexpr int UPGRADE_WINDOW_OBJECTHEIGHT = 300;
 constexpr int UPGRADE_WINDOW_WIDTH = 200;
 constexpr int UPGRADE_WINDOW_HEIGHT = 600;
+
+constexpr int MAX_SHIPS = 6;
 //cost for upgrade screen
 constexpr float UPGRADE_POWER = 0.25;
 //constexpr int UPGRADE_COST_HEALTH = 1;
@@ -165,7 +166,7 @@ void OverWorldGUI::render(Battle& battle)
 			m_quitButton->Render(SCREEN_SURFACE);
 			HAPI_Sprites.ChangeFontFromFile("data/RAPSCALL.TTF");
 			SCREEN_SURFACE->DrawText(HAPISPACE::VectorI(1380, 50), HAPISPACE::Colour255::YELLOW, "Plunder\n Dogs", 190, {}, HAPISPACE::Colour255::BLACK, 2.5f);
-			AudioPlayer::getInstance().playSound("main menu", 0.2, true);
+			//AudioPlayer::getInstance().playSound("main menu", 0.2, true);
 			break;
 		}
 	
@@ -202,8 +203,6 @@ void OverWorldGUI::render(Battle& battle)
 		}
 		case OverWorldWindow::eBattle:
 		{
-			AudioPlayer::getInstance().stopSound("main menu");
-			AudioPlayer::getInstance().playSound("battle theme", 0.2, true);
 			battle.render();
 			break;
 		}
@@ -284,7 +283,6 @@ void OverWorldGUI::render(Battle& battle)
 
 void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer, bool& selectNextPlayer, bool& resetPlayer)
 {
-	AudioPlayer::getInstance().playShortSound("click");
 	switch (CURRENT_WINDOW)
 	{
 
@@ -672,17 +670,6 @@ void OverWorldGUI::onLeftClick(const HAPI_TMouseData& mouseData, Player& current
 	}
 }
 
-void OverWorldGUI::onRightClick(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer)
-{
-	switch (CURRENT_WINDOW)
-	{
-	case OverWorldWindow::eShipSelection:
-	{
-		break;
-	}
-	}
-}
-
 void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, Player& currentSelectedPlayer)
 {
 	switch (CURRENT_WINDOW)
@@ -801,7 +788,7 @@ void OverWorldGUI::onMouseMove(const HAPI_TMouseData& mouseData, Player& current
 			m_upgradesButton->SetFrameNumber(0);
 		}
 
-		//varies the position of objects based on the slder value
+		//varies the position of objects based on the slider value
 		if (windowScreenRect(FLEET_WINDOW).Contains(HAPISPACE::VectorI(mouseData.x, mouseData.y)))
 		{
 			for (int i = 0; i < currentSelectedPlayer.m_entities.size(); i++)
@@ -1098,7 +1085,7 @@ void OverWorldGUI::checkShipSelect(bool & selection, const std::string & shipWin
 
 void OverWorldGUI::selectBattleShip(const std::string & shipWindow, const std::string & windowSlider, const std::string & selectedShipWindow, const std::string & selectedWindowSlider, const HAPISPACE::VectorI & mouseData, const HAPISPACE::VectorI & windowTopLeft, const HAPISPACE::VectorI & selectedTopLeft, std::vector<EntityProperties>& entities, std::vector<EntityProperties*>& selectedEntities)
 {
-	if (m_currentShips < m_maxShips)
+	if (m_currentShips < MAX_SHIPS)
 	{
 		if (windowScreenRect(shipWindow).Contains(mouseData))
 		{

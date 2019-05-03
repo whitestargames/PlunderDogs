@@ -85,7 +85,6 @@ private:
 	std::pair<int, int> m_drawOffset;
 	std::vector<Tile> m_data;
 	std::vector<SpawnPosition> m_spawnPositions;
-	eTimeOfDay m_timeOfDay;
 
 	std::pair<int, int> offsetToCube(std::pair<int, int> offset) const;
 	std::pair<int, int> cubeToOffset(std::pair<int, int> cube) const;
@@ -131,7 +130,7 @@ public:
 	//Places a new entity on the map (no check for duplicates yet so try to avoid creating multiples)
 	void insertEntity(BattleEntity& newEntity);
 
-	void drawMap() const;
+	void drawMap(eLightIntensity lightIntensity) const;
 	std::pair<int, int> getDrawOffset() const { return m_drawOffset; }
 	void setDrawOffset(std::pair<int, int> newOffset) { m_drawOffset = newOffset; }
 
@@ -142,9 +141,6 @@ public:
 
 	float getWindStrength() const { return m_windStrength; }
 	void setWindStrength(float strength) { if (strength > 0.0) m_windStrength = strength; }
-
-	eTimeOfDay getTimeOfDay()const { return m_timeOfDay; }
-	void setTimeOfDay(eTimeOfDay timeOfDay) { m_timeOfDay = timeOfDay; }
 
 	eDirection getWindDirection() const { return m_windDirection; }
 	void setWindDirection(eDirection direction) { m_windDirection = direction; }

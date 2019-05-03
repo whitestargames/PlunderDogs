@@ -358,15 +358,15 @@ struct Textures
 		}
 
 
-		m_explosion = HAPI_Wrapper::loadSpriteSheet("explosion.xml");
-		if (!m_explosion)
+		m_explosionParticles = HAPI_Wrapper::loadSpriteSheet("explosion.xml");
+		if (!m_explosionParticles)
 		{
 			HAPI_Sprites.UserMessage("Connot Load: 'explosion.xml'", "Texture Error");
 			return false;
 		}
 
-		m_fire = HAPI_Wrapper::loadSpriteSheet("fire.xml");
-		if (!m_fire)
+		m_fireParticles = HAPI_Wrapper::loadSpriteSheet("fire.xml");
+		if (!m_fireParticles)
 		{
 			HAPI_Sprites.UserMessage("Connot Load: 'fire.xml'", "Texture Error");
 			return false;
@@ -457,8 +457,8 @@ struct Textures
 
 
 	static std::shared_ptr<SpriteSheet> m_background;
-	static std::shared_ptr<SpriteSheet> m_explosion;
-	static std::shared_ptr<SpriteSheet> m_fire;
+	static std::shared_ptr<SpriteSheet> m_explosionParticles;
+	static std::shared_ptr<SpriteSheet> m_fireParticles;
 
 	static std::shared_ptr<SpriteSheet> m_redSpawnHex;
 	static std::shared_ptr<SpriteSheet> m_blueSpawnHex;

@@ -171,7 +171,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\AI.cpp" />
-    <ClCompile Include="src\AudioPlayer.cpp" />
     <ClCompile Include="src\BattleGUI.cpp" />
     <ClCompile Include="src\Battle.cpp" />
     <ClCompile Include="src\BattleUI.cpp" />
@@ -194,9 +193,7 @@
     <ClCompile Include="src\Utilities\Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AudioPlayer.h" />
     <ClInclude Include="src\AI.h" />
-    <ClInclude Include="src\AudioPlayer.h" />
     <ClInclude Include="src\BattleGUI.h" />
     <ClInclude Include="src\Battle.h" />
     <ClInclude Include="src\BattleUI.h" />

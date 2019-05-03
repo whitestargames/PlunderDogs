@@ -102,6 +102,7 @@ public:
 
 	void update(float deltaTime);
 
+	void clearSelectedTile();
 	void FactionUpdateGUI(FactionName faction);
 	void deployPlayers(const std::vector<Player>& newPlayers, Map& map, const Battle& battle);
 
@@ -111,8 +112,6 @@ public:
 	void setCurrentFaction(FactionName faction);
 	bool isPaused();
 
-	void clearTargetArea();
-	void clearSelectedTile();
 private:
 	Battle& m_battle;
 	CurrentSelectedTile m_selectedTile;
@@ -140,4 +139,5 @@ private:
 
 	void onResetBattle();
 	void onNewTurn();
+	void clearTargetArea();
 };
