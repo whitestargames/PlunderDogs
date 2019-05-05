@@ -149,6 +149,9 @@ public:
 
 	void loadmap(const std::string& mapName);
 
+	//Only for pathfinding
+	const std::vector<Tile>& getData()const { return m_data; }
+
 	Map();
 	~Map();
 };

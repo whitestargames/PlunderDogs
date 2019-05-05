@@ -19,6 +19,14 @@ enum eDirection
 	Max = eNorthWest
 };
 
+struct posi
+{
+	int x;
+	int y;
+	eDirection dir;
+	posi(int numX = 0, int numY = 0, eDirection direction = eNorth) : x(numX), y(numY), dir(direction) {}
+};
+
 enum OverWorldWindow
 {
 	eBattle = 0,
