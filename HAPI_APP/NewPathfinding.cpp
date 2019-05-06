@@ -3,13 +3,86 @@
 #include <queue>
 #include <algorithm>
 
+#define NO_TILE posi(-1, -1, eNorth)
+
+struct tileData;
+struct finderMap;
+
+bool pathExplorer(finderMap& exploreArea, std::queue<posi>& queue, posi destination)
+{
+	//Dequeue a tile
+	posi tile = queue.front();
+	queue.pop();
+	//Check if this is the destination
+	if (tile == destination)
+		return true;
+	//Check if any movements are unexplored and movable, if so set those to true and set their parent to this tile
+	//Then enqueue forward, left, and right as appropriate:
+	//Forward
+	posi forward = exploreArea.nextTile(tile);
+	if (forward != NO_TILE && 
+		exploreArea.access(forward).parent[forward.dir] == NO_TILE && 
+		exploreArea.access(forward).isTraversable && 
+		!exploreArea.access(forward).isOccupied)
+	{
+		exploreArea.access(forward).parent[forward.dir] = tile;
+		queue.emplace(forward);
+	}
+	//Left
+	posi left = exploreArea.turnLeft(tile);
+	if (exploreArea.access(left).parent[left.dir] == NO_TILE)
+	{
+		exploreArea.access(left).parent[left.dir] = tile;
+		queue.emplace(left);
+	}
+	//Right
+	posi right = exploreArea.turnRight(tile);
+	if (exploreArea.access(right).parent[right.dir] == NO_TILE)
+	{
+		exploreArea.access(right).parent[right.dir] = tile;
+		queue.emplace(right);
+	}
+	//If queue is not empty run algorithm again
+	bool final{ false };
+	if (!queue.empty())
+		final = pathExplorer(exploreArea, queue, destination);
+	return final;
+}
+
+std::vector<Tile*> BreadthFirst::findPath(Map& map, posi startPos, posi endPos, float maxMovement)
+{
+	finderMap exploreArea(map);
+	std::queue<posi> exploreQueue;
+	//Add first element and set it to explored
+	exploreQueue.emplace(startPos);
+	//Start recursion
+	if (!pathExplorer(exploreArea, exploreQueue, endPos))
+		return std::vector<Tile*>();
+	//Trace path back from destination via parents
+	std::vector<posi> pathToTile;
+	pathToTile.reserve(30);
+	posi trace = endPos;
+	while (trace != startPos)
+	{
+		pathToTile.emplace_back(trace);
+		trace = exploreArea.access(trace).parent[trace.dir];
+	}
+	//Invert for convenience and fetch tile* for each address
+	pathToTile.rever
+	//return pathToTile;
+}
+
 struct tileData
 {
-	bool isTraversable;
-	bool isOccupied;
-	bool dir[6];
+	const bool isTraversable;
+	const bool isOccupied;
+	//The node that was first used to access the corresponding direction during the BFS
+	//One for each direction in order
+	posi parent[6];
 
-	tileData(bool traversable, bool occupied) : isTraversable(traversable), isOccupied(occupied), dir{ 0,0,0,0,0,0 } {}
+	tileData(bool traversable, bool occupied) : 
+		isTraversable(traversable), isOccupied(occupied),
+		parent{ NO_TILE, NO_TILE, NO_TILE, NO_TILE, NO_TILE, NO_TILE } {}
 };
 
 struct finderMap
@@ -30,88 +103,133 @@ struct finderMap
 
 	tileData& access(posi tile) { return data[tile.x + tile.y * width]; }
 
-	int nextTile(int currentTile, eDirection facing)
+	posi nextTile(const posi& currentTile) const
 	{
-		int x = currentTile % width;
-		int y = static_cast<int>(currentTile / width);
-		int nextAddress{ 0 };
-
+		int x = currentTile.x;
+		int y = currentTile.y;
+		posi nextAddress;
+		nextAddress.dir = currentTile.dir;
 		if (x & 1)//odd
 		{
-			switch (facing)
+			switch (currentTile.dir)
 			{
 			case eNorth:
-				nextAddress = x + (y - 1) * width;
+				nextAddress.x = x;
+				nextAddress.y = y - 1;
 				break;
 			case eNorthEast:
-				nextAddress = (x + 1) + (y - 1) * width;
+				nextAddress.x = x + 1;
+				nextAddress.y = y - 1;
 				break;
 			case eSouthEast:
-				nextAddress = (x + 1) + y * width;
+				nextAddress.x = x + 1;
+				nextAddress.y = y;
 				break;
 			case eSouth:
-				nextAddress = x + (y + 1) * width;
+				nextAddress.x = x;
+				nextAddress.y = y + 1;
 				break;
 			case eSouthWest:
-				nextAddress = (x - 1) + y * width;
+				nextAddress.x = x - 1;
+				nextAddress.y = y;
 				break;
 			case eNorthWest:
-				nextAddress = (x - 1) + (y - 1) * width;
+				nextAddress = x - 1;
+				nextAddress.y = y - 1;
 				break;
 			}
 		}
 		else//even
 		{
-			switch (facing)
+			switch (currentTile.dir)
 			{
 			case eNorth:
-				nextAddress = x + (y - 1) * width;
+				nextAddress = x;
+				nextAddress.y = y - 1;
 				break;
 			case eNorthEast:
-				nextAddress = (x + 1) + y * width;
+				nextAddress = x + 1;
+				nextAddress.y = y;
 				break;
 			case eSouthEast:
-				nextAddress = (x + 1) + (y + 1) * width;
+				nextAddress = x + 1;
+				nextAddress.y = y + 1;
 				break;
 			case eSouth:
-				nextAddress = x + (y + 1) * width;
+				nextAddress = x;
+				nextAddress.y = y + 1;
 				break;
 			case eSouthWest:
-				nextAddress = (x - 1) + (y + 1) * width;
+				nextAddress = x - 1;
+				nextAddress.y = y + 1;
 				break;
 			case eNorthWest:
-				nextAddress = (x - 1) + y * width;
+				nextAddress = x - 1;
+				nextAddress.y = y;
 				break;
 			}
-			return nextAddress;
 		}
-	};
-
-	bool pathExplorer(std::vector<tileData>& exploreArea, std::queue<std::pair<int, eDirection>> queue, std::vector<Tile*>& path)
-	{
-		//dequeue a tile
-		//Check if this is the destination if so pushback path and return true
-		//Check if it is not traversable or is occupied and if either return false
-		//Check if any of FLR are unexplored if so set those to true then enqueue forward, left, and right as appropriate. 
-		//Each time, if one of them returns true also return true and pushback path with current tile
+		//Bounds checking
+		if (nextAddress.x < 0 || nextAddress.y < 0 || nextAddress.x >= width || (nextAddress.x + nextAddress.y * width) >= data.size())
+			nextAddress = NO_TILE;
+		return nextAddress;
 	}
 
-	std::vector<Tile*> BreadthFirst::findPath(Map& map, posi startPos, posi endPos, float maxMovement)
+	posi turnLeft(const posi& currentTile) const
 	{
-		finderMap exploreArea(map);
-		std::queue<posi> exploreQueue;
-		std::vector<Tile*> pathToTile;
-		pathToTile.reserve(30);
-		//Add first element and set it to explored
-		exploreArea.access(startPos).dir[static_cast<int>(startPos.dir)] = true;
-		exploreQueue.emplace(startPos);
-		//Start recursion
-		pathExplorer(exploreArea, exploreQueue, pathToTile);
-		//Invert for convenience
-
-		return pathToTile;
+		posi nextTile = currentTile;
+		switch (currentTile.dir)
+		{
+		case eNorth:
+			nextTile.dir = eNorthWest;
+			break;
+		case eNorthEast:
+			nextTile.dir = eNorth;
+			break;
+		case eSouthEast:
+			nextTile.dir = eNorthEast;
+			break;
+		case eSouth:
+			nextTile.dir = eSouthEast;
+			break;
+		case eSouthWest:
+			nextTile.dir = eSouth;
+			break;
+		case eNorthWest:
+			nextTile.dir = eSouthWest;
+			break;
+		}
+		return nextTile;
 	}
 
+	posi turnRight(const posi& currentTile) const
+	{
+		posi nextTile = currentTile;
+		switch (currentTile.dir)
+		{
+		case eNorth:
+			nextTile.dir = eNorthEast;
+			break;
+		case eNorthEast:
+			nextTile.dir = eSouthEast;
+			break;
+		case eSouthEast:
+			nextTile.dir = eSouth;
+			break;
+		case eSouth:
+			nextTile.dir = eSouthWest;
+			break;
+		case eSouthWest:
+			nextTile.dir = eNorthWest;
+			break;
+		case eNorthWest:
+			nextTile.dir = eNorth;
+			break;
+		}
+		return nextTile;
+	}
+};
+	
 	/*
 	//A 1 byte store for all the data, very compact but annoying to use
 	struct byteStore

@@ -25,6 +25,15 @@ struct posi
 	int y;
 	eDirection dir;
 	posi(int numX = 0, int numY = 0, eDirection direction = eNorth) : x(numX), y(numY), dir(direction) {}
+	inline bool operator==(const posi& rhs) const 
+	{
+		bool ans{ false };
+		posi lhs = *this;
+		if (lhs.x == rhs.x && lhs.y == rhs.y && lhs.dir == rhs.dir)
+			ans = true;
+		return ans;
+	}
+	inline bool operator!=(const posi& rhs) const { return !(*this == rhs); }
 };
 
 enum OverWorldWindow
