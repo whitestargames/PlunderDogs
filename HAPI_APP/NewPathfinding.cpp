@@ -68,7 +68,12 @@ std::vector<Tile*> BreadthFirst::findPath(Map& map, posi startPos, posi endPos, 
 		trace = exploreArea.access(trace).parent[trace.dir];
 	}
 	//Invert for convenience and fetch tile* for each address
-	pathToTile.rever
+	std::vector<Tile*> tilePtrs;
+	tilePtrs.reserve(pathToTile.size());
+	for (int i = pathToTile.size() - 1; i >= 0; i--)
+	{
+		tilePtrs.emplace_back(map.getTile(pathToTile[i]));
+	}
 	//return pathToTile;
 }
 

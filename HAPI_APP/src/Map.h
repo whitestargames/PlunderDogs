@@ -95,8 +95,10 @@ private:
 	void onReset();
 public:
 	//Returns a pointer to a given tile, returns nullptr if there is no tile there
-	Tile *getTile(std::pair<int, int> coordinate);
-	const Tile *getTile(std::pair<int, int> coordinate) const;
+	Tile* getTile(std::pair<int, int> coordinate);
+	const Tile* getTile(std::pair<int, int> coordinate) const;
+	Tile* getTile(posi coordinate);
+	const Tile* getTile(posi coordinate) const;
 	//An n = 1 version of getTileRadius for use in pathfinding, 
 	//returns nullptr for each tile out of bounds
 	std::vector<Tile*> getAdjacentTiles(std::pair<int, int> coord);

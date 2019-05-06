@@ -538,6 +538,19 @@ const Tile * Map::getTile(std::pair<int, int> coordinate) const
 	return nullptr;
 }
 
+Tile * Map::getTile(posi coordinate)
+{
+	//Bounds check
+	if (coordinate.x < m_mapDimensions.first &&
+		coordinate.y < m_mapDimensions.second &&
+		coordinate.x >= 0 &&
+		coordinate.y >= 0)
+	{
+		return &m_data[coordinate.x + coordinate.y * m_mapDimensions.first];
+	}
+	return nullptr;
+}
+
 std::vector<const Tile*> Map::cGetAdjacentTiles(std::pair<int, int> coord) const
 {
 	const size_t allAdjacentTiles = 6;
