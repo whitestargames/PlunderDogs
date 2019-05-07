@@ -1,6 +1,6 @@
 #include "entity.h"
 #include "Map.h"
-#include "Pathfinding.h"
+#include "NewPathfinding.h"
 #include "Textures.h"
 #include "GameEventMessenger.h"
 
@@ -154,7 +154,9 @@ void EntityBattleProperties::MovementPath::render(const Map& map) const
 
 int EntityBattleProperties::MovementPath::generatePath(const Map& map, const Tile& source, const Tile& destination)
 {
-	auto pathToTile = PathFinding::getPathToTile(map, source.m_tileCoordinate, destination.m_tileCoordinate);
+	posi start = { source.m_tileCoordinate.first, source.m_tileCoordinate.second, source.m_entityOnTile->m_battleProperties.m_currentDirection };
+	posi end = { destination.m_tileCoordinate.first, destination.m_tileCoordinate.second };
+	std::queue<posi> pathToTile = BFS::findPath(map, start, end, true);
 	if (pathToTile.empty())
 	{
 		return 0;
@@ -164,17 +166,18 @@ int EntityBattleProperties::MovementPath::generatePath(const Map& map, const Til
 
 	float movementPointsUsed = 0;
 	if (!source.m_entityOnTile)
-		return 1;
+		return 0;
 	int prevDir = source.m_entityOnTile->m_battleProperties.m_currentDirection;
 	std::pair<int, int> prevPos = source.m_tileCoordinate;
 	float windStrength = map.getWindStrength();
 	int windDirection = static_cast<int>(map.getWindDirection());
 	//Don't interact with path from source.
-	int i = 1;
-	for (i ; i < pathToTile.size(); ++i)
+	int i = 0;
+	int queueSize = pathToTile.size();
+	for (i ; i < queueSize; ++i)
 	{
 		//If moved from prev position handle forward cost
-		if (pathToTile[i].second != prevPos)
+		if (pathToTile.front().pair() != prevPos)
 		{
 			movementPointsUsed += 1;
 			if (prevDir == windDirection)
@@ -183,25 +186,26 @@ int EntityBattleProperties::MovementPath::generatePath(const Map& map, const Til
 			}
 		}
 		//Turning cost handling
-		int pathDir = pathToTile[i].first;
+		int pathDir = pathToTile.front().dir;
 		movementPointsUsed += static_cast<float>(getDirectionCost(prevDir, pathDir));
 		prevDir = pathDir;
 
 		
 		if ((static_cast<float>(source.m_entityOnTile->m_entityProperties.m_movementPoints) - movementPointsUsed) >= 0)
 		{
-			auto tileScreenPosition = map.getTileScreenPos(pathToTile[i].second);
-			m_movementPath[i - 1].sprite->GetTransformComp().SetPosition({
+			auto tileScreenPosition = map.getTileScreenPos(pathToTile.front().pair());
+			m_movementPath[i].sprite->GetTransformComp().SetPosition({
 				static_cast<float>(tileScreenPosition.first + DRAW_OFFSET_X * map.getDrawScale()),
 				static_cast<float>(tileScreenPosition.second + DRAW_OFFSET_Y * map.getDrawScale()) });
-			m_movementPath[i - 1].activate = true;
-			m_movementPath[i - 1].m_position = pathToTile[i].second;
+			m_movementPath[i].activate = true;
+			m_movementPath[i].m_position = pathToTile.front().pair();
 		}
 		else
 		{
 			source.m_entityOnTile->m_battleProperties.m_movementPathSize = i - 1;
 			return i;
 		}
+		pathToTile.pop();
 	}
 	source.m_entityOnTile->m_battleProperties.m_movementPathSize = i - 1;
 	return i;
@@ -270,11 +274,13 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 {
 	if (!m_destinationSet)
 	{
-		auto pathToTile = PathFinding::getPathToTile(map, m_currentPosition, tile.m_tileCoordinate);
+		posi currentPos = { m_currentPosition.first, m_currentPosition.second, m_currentDirection };
+		posi destination = { tile.m_tileCoordinate.first, tile.m_tileCoordinate.second };
+		auto pathToTile = BFS::findPath(map, currentPos, destination, true);
 		if (!pathToTile.empty() && pathToTile.size() <= m_movementPathSize + 1)
 		{
 			m_pathToTile = pathToTile;
-			map.moveEntity(m_currentPosition, pathToTile.back().second);
+			map.moveEntity(m_currentPosition, pathToTile.back().pair());
 			m_destinationSet = true;
 			m_movingToDestination = true;
 			m_actionSprite.active = false;
@@ -286,6 +292,7 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 			return false;
 		}
 	}
+	clearMovementPath();
 	return true;
 }
 
@@ -293,21 +300,14 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection e
 {
 	if (!m_destinationSet)
 	{
-		auto pathToTile = PathFinding::getPathToTile(map, m_currentPosition, tile.m_tileCoordinate);
+		posi currentPos = { m_currentPosition.first, m_currentPosition.second, m_currentDirection };
+		posi destination = { tile.m_tileCoordinate.first, tile.m_tileCoordinate.second };
+		std::queue<posi> pathToTile = BFS::findPath(map, currentPos, destination, true);
 		if (!pathToTile.empty() && pathToTile.size() <= m_movementPathSize + 1)
 		{
-			//Set end tile to the correct facing
-			//pathToTile[pathToTile.size() - 1].first = endDirection;
-			//for (int i = 1; i < pathToTile.size(); ++i)
-			//{
-			//	m_movementPath.setNodePosition(i, pathToTile[i].second);
-			//}
-
-			pathToTile.push_back({ endDirection, pathToTile[pathToTile.size() - 1].second });
-
-
+			pathToTile.emplace(posi(pathToTile.back().pair(), endDirection));
 			m_pathToTile = pathToTile;
-			map.moveEntity(m_currentPosition, pathToTile.back().second);
+			map.moveEntity(m_currentPosition, pathToTile.back().pair());
 			m_destinationSet = true;
 			m_movingToDestination = true;
 			m_actionSprite.active = false;
@@ -392,7 +392,7 @@ void EntityBattleProperties::onNewTurn()
 void EntityBattleProperties::handleRotation(EntityProperties& entityProperties)
 {
 	int rotationAngle = 60;
-	int directionToTurn = m_pathToTile.front().first;
+	int directionToTurn = m_pathToTile.front().dir;
 	entityProperties.m_sprite->GetTransformComp().SetRotation(
 		DEGREES_TO_RADIANS(directionToTurn*rotationAngle % 360));
 	m_currentDirection = (eDirection)directionToTurn;
@@ -583,11 +583,11 @@ void EntityBattleProperties::update(float deltaTime, const Map & map, EntityProp
 		if (m_movementTimer.isExpired())
 		{
 			m_movementTimer.reset();
-			m_currentPosition = m_pathToTile.front().second;
+			m_currentPosition = m_pathToTile.front().pair();
 			m_movementPath.eraseNode(m_currentPosition, map);
 
 			handleRotation(entityProperties);
-			m_pathToTile.pop_front();
+			m_pathToTile.pop();
 
 			if (m_pathToTile.empty())
 			{

@@ -108,7 +108,7 @@ public:
 	void disableAction();
 private:
 	std::pair<int, int> m_currentPosition;
-	std::deque<std::pair<eDirection, std::pair<int, int>>> m_pathToTile;
+	std::queue<posi> m_pathToTile;
 	Timer m_movementTimer;
 	MovementPath m_movementPath;
 	int m_movementPathSize;

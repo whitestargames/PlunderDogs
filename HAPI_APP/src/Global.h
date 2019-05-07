@@ -1,4 +1,5 @@
 #pragma once
+#include <utility>
 
 enum FactionName
 {
@@ -24,7 +25,12 @@ struct posi
 	int x;
 	int y;
 	eDirection dir;
+
 	posi(int numX = 0, int numY = 0, eDirection direction = eNorth) : x(numX), y(numY), dir(direction) {}
+	posi(std::pair<int, int> pair, eDirection direction = eNorth) : x(pair.first), y(pair.second), dir(direction) {}
+
+	std::pair<int, int> pair() { return { x, y }; }
+
 	inline bool operator==(const posi& rhs) const 
 	{
 		bool ans{ false };
