@@ -23,7 +23,7 @@ class BattleUI : public IHapiSpritesInputListener
 
 		TargetArea();
 		void render(const Map& map) const;
-		void generateTargetArea(const Map& map, const Tile& source);
+		void generateTargetArea(const Map& map, const Tile& source, BattlePhase phase = BattlePhase::Attack);
 		void clearTargetArea();
 		void onReset();
 

@@ -93,6 +93,7 @@ public:
 	void render(std::shared_ptr<HAPISPACE::Sprite>& sprite, const Map& map);
 	void renderPath(const Map & map);
 
+	std::vector<posi> generateMovementArea(const Map& map, float movement) const;
 	int generateMovementGraph(const Map& map, const Tile& source, const Tile& destination);
 	void clearMovementPath();
 	std::pair<int, int> getEndOfPath();
@@ -119,7 +120,6 @@ private:
 	ActionSprite m_actionSprite;
 	bool m_movingToDestination;
 	bool m_destinationSet;
-
 
 	void handleRotation(EntityProperties& entityProperties);
 };

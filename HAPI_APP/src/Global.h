@@ -52,6 +52,13 @@ enum OverWorldWindow
 	eUpgrade
 };
 
+enum BattlePhase
+{
+	Deployment = 0,
+	Movement,
+	Attack
+};
+
 enum ePlayerType
 {
 	eNone = 0,
@@ -100,7 +107,6 @@ enum eTileType
 	eSwampRuins
 };
 
-
 enum eShipSpriteFrame
 {
 	eMaxHealth = 0,
@@ -116,7 +122,6 @@ enum eWeaponType
 	eShotgun, 
 	eFlamethrower
 };
-
 
 enum eLightIntensity
 {

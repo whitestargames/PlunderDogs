@@ -16,7 +16,7 @@ enum BattleWindow
 	ePause,
 	ePostBattle
 };
-enum class BattlePhase;
+
 class BattleGUI
 {
 public:

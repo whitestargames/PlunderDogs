@@ -5,13 +5,6 @@
 #include "BattleUI.h"
 #include "entity.h"
 
-enum class BattlePhase
-{
-	Deployment = 0,
-	Movement,
-	Attack
-};
-
 class Battle
 {
 	struct LightIntensity

@@ -49,22 +49,6 @@ struct Tile
 		m_eveningSprite = HAPI_Sprites.MakeSprite(eveningSpriteSheet);
 		m_nightSprite = HAPI_Sprites.MakeSprite(nightSpriteSheet);
 	}
-
-	//Tile(eTileType type, const std::string& spriteName, std::pair<int, int> coord) :
-	//	m_type(type), m_tileCoordinate(coord),
-	//	m_entityOnTile(nullptr)
-	//{
-	//	//HAPI's Sprite constructor takes two strings: the name of the file to load (append .xml) 
-	//	//and the path to that file relative to the program
-	//	m_sprite = HAPI_Sprites.LoadSprite(spriteName);
-	//}
-
-	//Tile(const Tile &other) : m_tileCoordinate(std::pair<int, int>(other.m_tileCoordinate.first, other.m_tileCoordinate.second))
-	//{
-	//	m_type = other.m_type;
-	//	m_entityOnTile = other.m_entityOnTile;
-	//	m_sprite = HAPI_Sprites.MakeSprite(other.m_sprite->GetSpritesheet());
-	//}
 };
 
 class Map

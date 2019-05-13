@@ -15,6 +15,7 @@ typedef std::pair<int, int> intPair;
 constexpr int FRAME_HEIGHT{ 28 };
 constexpr float FRAME_CENTRE_X{ 15.5 };
 constexpr float FRAME_CENTRE_Y{ 32.5 };
+constexpr float WIND_STRENGTH{ 0.3 };
 
 //SpawnPosition
 Map::SpawnPosition::SpawnPosition(std::pair<int, int> spawnPosition)
@@ -500,7 +501,7 @@ Map::Map() :
 	m_data(),
 	m_drawOffset(intPair(10, 60)),
 	m_windDirection(eNorth),
-	m_windStrength(0.3f),
+	m_windStrength(WIND_STRENGTH),
 	m_drawScale(2)
 {
 	GameEventMessenger::getInstance().subscribe(std::bind(&Map::onReset, this), "Map", GameEvent::eResetBattle);
@@ -549,6 +550,19 @@ Tile * Map::getTile(posi coordinate)
 		return &m_data[coordinate.x + coordinate.y * m_mapDimensions.first];
 	}
 	return nullptr;
+}
+
+const Tile * Map::getTile(posi coordinate) const
+{
+//Bounds check
+if (coordinate.x < m_mapDimensions.first &&
+	coordinate.y < m_mapDimensions.second &&
+	coordinate.x >= 0 &&
+	coordinate.y >= 0)
+{
+	return &m_data[coordinate.x + coordinate.y * m_mapDimensions.first];
+}
+return nullptr;
 }
 
 std::vector<const Tile*> Map::cGetAdjacentTiles(std::pair<int, int> coord) const

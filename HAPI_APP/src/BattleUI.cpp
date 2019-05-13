@@ -105,8 +105,6 @@ void BattleUI::renderUI() const
 	
 	case BattlePhase::Attack:
 		m_selectedTile.render(m_battle.getMap());
-		//m_targetArea.render(m_battle.getMap());
-		
 		break;
 	}
 }
@@ -449,6 +447,8 @@ void BattleUI::onLeftClickMovementPhase()
 		if (!m_battle.isAIPlaying())
 		{
 			m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.clearMovementPath();
+			//TODO: remove TEMP
+			m_targetArea.generateTargetArea(m_battle.getMap(), *tileOnMouse, m_battle.getCurrentPhase());
 		}
 		return;
 	}
@@ -502,6 +502,7 @@ void BattleUI::onLeftClickMovementPhase()
 			m_selectedTile.m_tile = nullptr;
 		}
 
+		//TODO: TAKE A LONG HARD LOOK AT THIS STATEMENT
 		//Disallow movement to tile occupied by other player
 		else if (tileOnMouse->m_entityOnTile && tileOnMouse->m_entityOnTile->m_factionName != m_battle.getCurrentFaction())
 		{
@@ -786,9 +787,22 @@ void BattleUI::TargetArea::render(const Map& map) const
 	}
 }
 
-void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & source)
+void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & source, BattlePhase phase)
 {
-	if (source.m_entityOnTile->m_entityProperties.m_weaponType == eSideCannons)
+	//TODO: REMOVE TEMP!
+	if (phase == BattlePhase::Movement)
+	{
+		m_targetArea.clear();
+		float movement = static_cast<float>(source.m_entityOnTile->m_entityProperties.m_movementPoints);
+		auto tempArea = source.m_entityOnTile->m_battleProperties.generateMovementArea(map, movement);
+		m_targetArea.reserve(tempArea.size());
+		for (auto it : tempArea)
+		{
+			m_targetArea.emplace_back(map.getTile(it.pair()));
+		}
+	}
+	//TODO: Why isn't this a switch case?
+	else if (source.m_entityOnTile->m_entityProperties.m_weaponType == eSideCannons)
 	{
 		m_targetArea = map.cGetTileCone(source.m_tileCoordinate,
 			source.m_entityOnTile->m_entityProperties.m_range, 
