@@ -232,7 +232,7 @@ void EntityBattleProperties::MovementPath::clearPath()
 std::pair<int, int> EntityBattleProperties::MovementPath::getFinalNode() const
 {
 	int i = m_movementPath.size() - 1;
-	for (i; i >= 0; i--)
+	for (i; i > 0; i--)
 	{
 		if (m_movementPath[i].activate)
 			break;
@@ -281,7 +281,7 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile)
 		posi currentPos = { m_currentPosition, m_currentDirection };
 		posi destination = { tile.m_tileCoordinate.first, tile.m_tileCoordinate.second };
 		//TODO: We should not have to go throught the map from the entity to get to the entity movement data!
-		auto pathToTile = BFS::findPath(map, currentPos, destination, map.getTile(currentPos)->m_entityOnTile->m_entityProperties.m_movementPoints);
+		std::queue<posi> pathToTile = BFS::findPath(map, currentPos, destination, map.getTile(currentPos)->m_entityOnTile->m_entityProperties.m_movementPoints);
 		if (!pathToTile.empty() && pathToTile.size() <= m_movementPathSize + 1)
 		{
 			m_pathToTile = pathToTile;
@@ -307,7 +307,8 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection e
 	{
 		posi currentPos = { m_currentPosition.first, m_currentPosition.second, m_currentDirection };
 		posi destination = { tile.m_tileCoordinate.first, tile.m_tileCoordinate.second };
-		std::queue<posi> pathToTile = BFS::findPath(map, currentPos, destination);
+		//TODO: We should not have to go throught the map from the entity to get to the entity movement data!
+		std::queue<posi> pathToTile = BFS::findPath(map, currentPos, destination, map.getTile(currentPos)->m_entityOnTile->m_entityProperties.m_movementPoints);
 		if (!pathToTile.empty() && pathToTile.size() <= m_movementPathSize + 1)
 		{
 			pathToTile.emplace(posi(pathToTile.back().pair(), endDirection));
@@ -327,9 +328,7 @@ bool EntityBattleProperties::moveEntity(Map& map, const Tile& tile, eDirection e
 	clearMovementPath();
 	return true;
 }
-
-//TODO: Will change.
-//Not sure how damage/health is going to be implemented yet. 
+ 
 void EntityBattleProperties::takeDamage(EntityProperties & entityProperties, int damageAmount, FactionName entityFaction)
 {
 	entityProperties.m_currentHealth -= damageAmount;

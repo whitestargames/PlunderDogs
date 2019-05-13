@@ -763,8 +763,8 @@ void BattleUI::onNewTurn()
 //Weapon Graph
 BattleUI::TargetArea::TargetArea()
 {
-	m_targetAreaSprites.reserve(size_t(300));
-	for (int i = 0; i < 300; ++i)
+	m_targetAreaSprites.reserve(size_t(400));
+	for (int i = 0; i < 400; ++i)
 	{
 		m_targetAreaSprites.push_back({});
 	}
@@ -892,11 +892,11 @@ void BattleUI::TargetArea::onReset()
 }
 
 BattleUI::TargetArea::HighlightNode::HighlightNode()
-	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),
+	: sprite(std::make_unique<Sprite>(Textures::m_selectedHex)),//TODO: replace with what it was previously using: Textures::m_mouseCrossHair
 	activate(false)
 {
 	sprite->GetTransformComp().SetOriginToCentreOfFrame();
-	sprite->GetTransformComp().SetScaling({ 0.75f, 0.75f});
+	sprite->GetTransformComp().SetScaling({ 1.50f, 1.50f});//Was { 0.75f, 0.75f}
 }
 
 BattleUI::DeploymentPhase::DeploymentPhase(std::vector<EntityProperties*> player, 
