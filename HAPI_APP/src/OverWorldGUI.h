@@ -110,5 +110,5 @@ public:
 	void reset(const std::vector<EntityProperties>& playerEntities);
 	void clear();
 
-	void render(Battle& battle);
+	void render(const Battle& battle) const;
 };

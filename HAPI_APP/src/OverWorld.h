@@ -12,13 +12,17 @@ class OverWorld : public IHapiSpritesInputListener
 {
 public:
 	OverWorld();
+	OverWorld(const OverWorld&) = delete;
+	OverWorld& operator=(const OverWorld&) = delete;
+	OverWorld(OverWorld&&) = delete;
+	OverWorld&& operator=(OverWorld&&) = delete;
 	~OverWorld();
 
 	void OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData& mouseData) override final;
 	void OnMouseMove(const HAPI_TMouseData& mouseData) override final;
 	void OnKeyEvent(EKeyEvent keyEvent, BYTE keyCode) override final {}
 
-	void render();
+	void render() const;
 	void update(float deltaTime);
 	void startBattle();
 private:

@@ -26,8 +26,6 @@ void OverWorld::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mou
 {
 	if (mouseEvent == EMouseEvent::eLeftButtonDown)
 	{
-
-
 		bool selectNextPlayer = false;
 		bool resetPlayer = false;
 		m_GUI.onLeftClick(mouseData, m_players[m_currentPlayer], selectNextPlayer, resetPlayer);
@@ -95,7 +93,7 @@ void OverWorld::OnMouseMove(const HAPI_TMouseData & mouseData)
 	m_GUI.onMouseMove(mouseData, m_players[m_currentPlayer]);
 }
 
-void OverWorld::render()
+void OverWorld::render() const
 {
 	m_GUI.render(m_battle);
 }
