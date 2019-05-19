@@ -31,20 +31,7 @@ struct PathNode;
 //	:  m_currentPosition(startingPosition),
 //=======
 //TODO: Will change
-std::vector<EntityProperties> assignEntities(FactionName name)
-{
-	std::vector<EntityProperties> entities;
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			EntityProperties newEntity(name, (EntityType)(i));
-			entities.push_back(newEntity);
-		}
-	}
-	assert(!entities.empty());
-	return entities;
-}
+
 
 
 //ENTITY BATTLE PROPERTIES
@@ -624,7 +611,8 @@ BattlePlayer::BattlePlayer(FactionName name, std::pair<int, int> spawnPosition, 
 	m_factionName(name),
 	m_playerType(playerType),
 	m_spawnPosition(spawnPosition),
-	m_eliminated(false)
+	m_eliminated(false),
+	m_deployed(false)
 {}
 
 EntityBattleProperties::ActionSprite::ActionSprite(FactionName factionName)
@@ -664,12 +652,6 @@ void EntityBattleProperties::ActionSprite::render(const Map& map, std::pair<int,
 }
 
 
-Player::Player(FactionName name, ePlayerType playerType)
-	: m_entities(assignEntities(name)),
-	m_selectedEntities(),
-	m_factionName(name),
-	m_type(playerType)
-{}
 //
 //Player::Player(FactionName name, ePlayerType playerType)
 //	: m_factionName(name),

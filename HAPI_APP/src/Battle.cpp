@@ -2,10 +2,53 @@
 #include "Utilities/MapParser.h"
 #include "GameEventMessenger.h"
 #include "AI.h"
+#include "OverWorld.h"
 
 using namespace HAPISPACE;
 constexpr float DRAW_ENTITY_OFFSET_X{ 16 };
 constexpr float DRAW_ENTITY_OFFSET_Y{ 32 };
+
+//BATTLE PLAYER
+BattlePlayer::BattlePlayer(FactionName name, std::pair<int, int> spawnPosition, ePlayerType playerType, const Map& map)
+	: m_entities(),
+	m_factionName(name),
+	m_playerType(playerType),
+	m_spawnPosition(spawnPosition),
+	m_eliminated(false),
+	m_deployed(false)
+{
+	//Might change this - for now its two containers but looks confusing
+	m_spawnArea = map.cGetTileRadius(spawnPosition, 6, true, true);
+	m_spawnSprites.reserve(m_spawnArea.size());
+	for (int i = 0; i < m_spawnArea.size(); ++i)
+	{
+		std::unique_ptr<Sprite> sprite;
+		switch (m_factionName)
+		{
+		case eYellow:
+			sprite = HAPI_Sprites.MakeSprite(Textures::m_yellowSpawnHex);
+			break;
+		case eBlue:
+			sprite = HAPI_Sprites.MakeSprite(Textures::m_blueSpawnHex);
+			break;
+		case eGreen:
+			sprite = HAPI_Sprites.MakeSprite(Textures::m_greenSpawnHex);
+			break;
+		case eRed:
+			sprite = HAPI_Sprites.MakeSprite(Textures::m_redSpawnHex);
+			break;
+		};
+
+		auto screenPosition = map.getTileScreenPos(m_spawnArea[i]->m_tileCoordinate);
+		sprite->GetTransformComp().SetPosition({
+			(float)screenPosition.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),
+			(float)screenPosition.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
+		sprite->GetTransformComp().SetOriginToCentreOfFrame();
+		sprite->GetTransformComp().SetScaling({ 2.f, 2.f });
+
+		m_spawnSprites.push_back(std::move(sprite));
+	}
+}
 
 Battle::Particle::Particle(float lifespan, std::shared_ptr<HAPISPACE::SpriteSheet> texture, float scale) :
 	m_position(),
@@ -262,24 +305,14 @@ void Battle::start(const std::string & newMapName, const std::vector<Player>& ne
 		}
 	}
 
-	for (auto& player : newPlayers)
+	//Populate players in battle
+	for (const auto& player : newPlayers)
 	{
-		auto spawnPosition = m_map.getSpawnPosition();
-		m_players.emplace_back(player.m_factionName, spawnPosition, player.m_type);
+		m_players.emplace_back(player.m_factionName, m_map.getSpawnPosition(), player.m_type);	
+		m_playersToDeploy.
 	}
-	
-	m_battleUI.deployHumanPlayers(newPlayers, m_map, *this);
 
-	for (auto& player : newPlayers)
-	{
-		if (player.m_type == ePlayerType::eAI)
-		{
-			AI::handleDeploymentPhase(*this, m_map, this->getPlayer(player.m_factionName), player);
-		}
-	}
 	m_battleUI.loadGUI(m_map.getDimensions());
-	if (m_battleUI.isHumanDeploymentCompleted())
-		nextTurn();
 }
 
 void Battle::render() const
@@ -316,7 +349,7 @@ void Battle::render() const
 
 void Battle::update(float deltaTime)
 {
-	if (m_battleManager.isGameOver())
+	if (m_factionWinHandler.isGameOver())
 	{
 		return;
 	}
@@ -349,7 +382,7 @@ void Battle::update(float deltaTime)
 		}
 	}
 
-	m_battleManager.update(deltaTime);
+	m_factionWinHandler.update(deltaTime);
 }
 
 void Battle::moveEntityToPosition(BattleEntity& entity, const Tile& destination)
@@ -537,6 +570,19 @@ void Battle::playExplosionAnimation(BattleEntity& entity)
 	}
 }
 
+void Battle::updateDeploymentPhase()
+{
+	for (auto& player : m_players)
+	{
+		if (!player.m_deployed)
+		{
+			return;
+		}
+	}
+
+	nextTurn();
+}
+
 void Battle::updateMovementPhase(float deltaTime)
 {
 	for (auto& entity : m_players[m_currentPlayerTurn].m_entities)
@@ -640,22 +686,22 @@ bool Battle::isAIPlaying() const
 
 void Battle::onYellowShipDestroyed()
 {
-	m_battleManager.onYellowShipDestroyed(m_players);
+	m_factionWinHandler.onYellowShipDestroyed(m_players);
 }
 
 void Battle::onBlueShipDestroyed()
 {
-	m_battleManager.onBlueShipDestroyed(m_players);
+	m_factionWinHandler.onBlueShipDestroyed(m_players);
 }
 
 void Battle::onGreenShipDestroyed()
 {
-	m_battleManager.onGreenShipDestroyed(m_players);
+	m_factionWinHandler.onGreenShipDestroyed(m_players);
 }
 
 void Battle::onRedShipDestroyed()
 {
-	m_battleManager.onRedShipDestroyed(m_players);
+	m_factionWinHandler.onRedShipDestroyed(m_players);
 }
 
 void Battle::onEndMovementPhaseEarly()
@@ -684,7 +730,15 @@ void Battle::onEndAttackPhaseEarly()
 	nextTurn();
 }
 
-Battle::BattleManager::BattleManager()
+void Battle::deployHumanPlayers(const std::vector<Player>& newPlayers)
+{
+
+
+	//Snap the Camera to the first position of play
+	//m_gui.snapCameraToPosition(positionToSnapTo);
+}
+
+Battle::FactionWinHandler::FactionWinHandler()
 	: m_yellowShipsDestroyed(0),
 	m_blueShipsDestroyed(0),
 	m_greenShipsDestroyed(0),
@@ -692,20 +746,20 @@ Battle::BattleManager::BattleManager()
 	m_winTimer(2.0f, false),
 	m_gameOver(false)
 {
-	GameEventMessenger::getInstance().subscribe(std::bind(&BattleManager::onReset, this), "BattleManager", GameEvent::eResetBattle);
+	GameEventMessenger::getInstance().subscribe(std::bind(&FactionWinHandler::onReset, this), "BattleManager", GameEvent::eResetBattle);
 }
 
-Battle::BattleManager::~BattleManager()
+Battle::FactionWinHandler::~FactionWinHandler()
 {
 	GameEventMessenger::getInstance().unsubscribe("BattleManager", GameEvent::eResetBattle);
 }
 
-bool Battle::BattleManager::isGameOver() const
+bool Battle::FactionWinHandler::isGameOver() const
 {
 	return m_gameOver;
 }
 
-void Battle::BattleManager::update(float deltaTime)
+void Battle::FactionWinHandler::update(float deltaTime)
 {
 	m_winTimer.update(deltaTime);
 	if (m_winTimer.isExpired())
@@ -730,7 +784,7 @@ void Battle::BattleManager::update(float deltaTime)
 	}
 }
 
-void Battle::BattleManager::onYellowShipDestroyed(std::vector<BattlePlayer>& players)
+void Battle::FactionWinHandler::onYellowShipDestroyed(std::vector<BattlePlayer>& players)
 {
 	++m_yellowShipsDestroyed;
 	auto player = std::find_if(players.begin(), players.end(), [](const auto& player) { return player.m_factionName == FactionName::eYellow; });
@@ -742,7 +796,7 @@ void Battle::BattleManager::onYellowShipDestroyed(std::vector<BattlePlayer>& pla
 	}
 }
 
-void Battle::BattleManager::onBlueShipDestroyed(std::vector<BattlePlayer>& players)
+void Battle::FactionWinHandler::onBlueShipDestroyed(std::vector<BattlePlayer>& players)
 {
 	++m_blueShipsDestroyed;
 	auto player = std::find_if(players.begin(), players.end(), [](const auto& player) { return player.m_factionName == FactionName::eBlue; });
@@ -754,7 +808,7 @@ void Battle::BattleManager::onBlueShipDestroyed(std::vector<BattlePlayer>& playe
 	}
 }
 
-void Battle::BattleManager::onGreenShipDestroyed(std::vector<BattlePlayer>& players)
+void Battle::FactionWinHandler::onGreenShipDestroyed(std::vector<BattlePlayer>& players)
 {
 	++m_greenShipsDestroyed;
 	auto player = std::find_if(players.begin(), players.end(), [](const auto& player) { return player.m_factionName == FactionName::eGreen; });
@@ -766,7 +820,7 @@ void Battle::BattleManager::onGreenShipDestroyed(std::vector<BattlePlayer>& play
 	}
 }
 
-void Battle::BattleManager::onRedShipDestroyed(std::vector<BattlePlayer>& players)
+void Battle::FactionWinHandler::onRedShipDestroyed(std::vector<BattlePlayer>& players)
 {
 	++m_redShipsDestroyed;
 	auto player = std::find_if(players.begin(), players.end(), [](const auto& player) { return player.m_factionName == FactionName::eRed; });
@@ -778,7 +832,7 @@ void Battle::BattleManager::onRedShipDestroyed(std::vector<BattlePlayer>& player
 	}
 }
 
-void Battle::BattleManager::onReset()
+void Battle::FactionWinHandler::onReset()
 {
 	m_yellowShipsDestroyed = 0;
 	m_redShipsDestroyed = 0;
@@ -789,7 +843,7 @@ void Battle::BattleManager::onReset()
 	m_gameOver = false;
 }
 
-void Battle::BattleManager::checkGameStatus(const std::vector<BattlePlayer>& players)
+void Battle::FactionWinHandler::checkGameStatus(const std::vector<BattlePlayer>& players)
 {
 	//Check to see if all players have been eliminated
 	int playersEliminated = 0;
