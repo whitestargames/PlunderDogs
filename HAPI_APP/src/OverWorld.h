@@ -8,6 +8,16 @@
 using namespace HAPI_UI_SPACE;
 using namespace HAPISPACE;
 
+struct Player
+{
+	Player(FactionName name, ePlayerType playerType);
+
+	std::vector<EntityProperties> m_entities;
+	std::vector<EntityProperties*> m_selectedEntities;
+	FactionName m_factionName;
+	ePlayerType m_type;
+};
+
 class OverWorld : public IHapiSpritesInputListener
 {
 public:

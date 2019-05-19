@@ -50,6 +50,31 @@ BattlePlayer::BattlePlayer(FactionName name, std::pair<int, int> spawnPosition, 
 	}
 }
 
+void BattlePlayer::render(const InvalidPosition & invalidPosition, const Map & map)
+{
+	if (m_currentSelectedEntity.m_currentSelectedEntity && !invalidPosition.m_activate)
+	{
+		const std::pair<int, int> tileTransform = map.getTileScreenPos(m_currentSelectedEntity.m_position);
+
+		m_currentSelectedEntity.m_currentSelectedEntity->m_sprite->GetTransformComp().SetPosition({
+		static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
+		static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
+
+		m_currentSelectedEntity.m_currentSelectedEntity->m_sprite->Render(SCREEN_SURFACE);
+	}
+
+	for (int i = 0; i < m_spawnSprites.size(); ++i)
+	{
+		const std::pair<int, int> tileTransform = map.getTileScreenPos(m_spawnArea[i]->m_tileCoordinate);
+
+		m_spawnSprites[i]->GetTransformComp().SetPosition({
+		static_cast<float>(tileTransform.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale()),
+		static_cast<float>(tileTransform.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale()) });
+
+		m_spawnSprites[i]->Render(SCREEN_SURFACE);
+	}
+}
+
 Battle::Particle::Particle(float lifespan, std::shared_ptr<HAPISPACE::SpriteSheet> texture, float scale) :
 	m_position(),
 	m_lifeSpan(lifespan),

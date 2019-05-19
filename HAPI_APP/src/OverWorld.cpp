@@ -3,6 +3,28 @@
 #include "GameEventMessenger.h"
 #include "AI.h"
 
+std::vector<EntityProperties> assignEntities(FactionName name)
+{
+	std::vector<EntityProperties> entities;
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			EntityProperties newEntity(name, (EntityType)(i));
+			entities.push_back(newEntity);
+		}
+	}
+	assert(!entities.empty());
+	return entities;
+}
+
+Player::Player(FactionName name, ePlayerType playerType)
+	: m_entities(assignEntities(name)),
+	m_selectedEntities(),
+	m_factionName(name),
+	m_type(playerType)
+{}
+
 OverWorld::OverWorld()
 	: m_currentPlayer(0),
 	m_selectNextPlayer(false),
