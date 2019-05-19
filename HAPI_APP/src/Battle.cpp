@@ -261,7 +261,7 @@ void Battle::start(const std::string & newMapName, std::vector<Player>& newPlaye
 			entity.m_sprite->GetTransformComp().SetScaling({ 1, 1 });
 		}
 	}
-
+	//Create all players
 	for (auto& player : newPlayers)
 	{
 		auto spawnPosition = m_map.getSpawnPosition();
@@ -270,9 +270,9 @@ void Battle::start(const std::string & newMapName, std::vector<Player>& newPlaye
 		std::cout << "\n";
 		m_players.emplace_back(player.m_factionName, spawnPosition, player.m_type);
 	}
-	
+	//Cycle through human players
 	m_battleUI.deployHumanPlayers(newPlayers, m_map, *this);
-
+	//Cycle through AI deployments
 	for (auto& player : newPlayers)
 	{
 		if (player.m_type == ePlayerType::eAI)
