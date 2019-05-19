@@ -134,4 +134,23 @@ struct BattleEntity
 	const FactionName m_factionName;
 };
 
+struct Player
+{
+	Player(FactionName name, ePlayerType playerType);
 
+	std::vector<EntityProperties> m_entities;
+	std::vector<EntityProperties*> m_selectedEntities;
+	FactionName m_factionName;
+	ePlayerType m_type;
+};
+
+struct BattlePlayer
+{
+	BattlePlayer(FactionName name, std::pair<int, int> spawnPosition, ePlayerType playerType);
+
+	std::vector<std::shared_ptr<BattleEntity>> m_entities;
+	const FactionName m_factionName;
+	const ePlayerType m_playerType;
+	const std::pair<int, int> m_spawnPosition;
+	bool m_eliminated;
+};

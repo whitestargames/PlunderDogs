@@ -605,7 +605,15 @@ void EntityBattleProperties::renderPath(const Map & map)
 	m_movementPath.render(map);
 }
 
-
+//BATTLE PLAYER
+BattlePlayer::BattlePlayer(FactionName name, std::pair<int, int> spawnPosition, ePlayerType playerType)
+	: m_entities(),
+	m_factionName(name),
+	m_playerType(playerType),
+	m_spawnPosition(spawnPosition),
+	m_eliminated(false),
+	m_deployed(false)
+{}
 
 EntityBattleProperties::ActionSprite::ActionSprite(FactionName factionName)
 	: sprite(),
