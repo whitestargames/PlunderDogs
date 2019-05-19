@@ -333,8 +333,7 @@ void Battle::start(const std::string & newMapName, const std::vector<Player>& ne
 	//Populate players in battle
 	for (const auto& player : newPlayers)
 	{
-		m_players.emplace_back(player.m_factionName, m_map.getSpawnPosition(), player.m_type);	
-		m_playersToDeploy.
+		m_players.emplace_back(player.m_factionName, m_map.getSpawnPosition(), player.m_type);
 	}
 
 	m_battleUI.loadGUI(m_map.getDimensions());
@@ -479,6 +478,7 @@ void Battle::nextTurn()
 	switch (m_currentPhase)
 	{
 	case BattlePhase::Deployment :
+		
 		lastPlayer = (m_battleUI.isHumanDeploymentCompleted());
 		incrementPlayerTurn();
 		if (lastPlayer)
@@ -702,6 +702,12 @@ const BattlePlayer & Battle::getPlayer(FactionName factionName) const
 	auto cIter = std::find_if(m_players.cbegin(), m_players.cend(), [factionName](const auto& player) { return player.m_factionName == factionName; });
 	assert(cIter != m_players.cend());
 	return *cIter;
+}
+
+const std::vector<BattlePlayer>& Battle::getAllPlayers() const
+{
+	assert(!m_players.empty());
+	return m_players;
 }
 
 bool Battle::isAIPlaying() const

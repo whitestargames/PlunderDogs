@@ -50,17 +50,13 @@ struct BattlePlayer
 {
 	BattlePlayer(FactionName name, std::pair<int, int> spawnPosition, ePlayerType playerType, const Map& map);
 
-	std::vector<std::shared_ptr<BattleEntity>> m_entities;
+	std::vector<std::shared_ptr<BattleEntity>> m_entities; 
 	const FactionName m_factionName;
 	const ePlayerType m_playerType;
 	const std::pair<int, int> m_spawnPosition;
 	bool m_eliminated;
 	//Deployment
-	void render(const InvalidPosition& invalidPosition, const Map& map);
-	int m_currentSelectedEntity;
 	bool m_deployed;
-	std::vector<const Tile*> m_spawnArea;
-	std::vector<std::unique_ptr<Sprite>> m_spawnSprites;
 };
 
 class Player;
@@ -129,6 +125,7 @@ public:
 
 	FactionName getCurrentFaction() const;
 	const BattlePlayer& getPlayer(FactionName name) const;
+	const std::vector<BattlePlayer>& getAllPlayers() const;
 	bool isAIPlaying() const;
 
 	void start(const std::string& newMapName, const std::vector<Player>& newPlayers);
