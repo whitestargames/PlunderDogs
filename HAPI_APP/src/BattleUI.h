@@ -9,7 +9,6 @@ struct EntityProperties;
 struct Tile;
 class Battle;
 class Map;
-class BattlePlayer;
 class BattleUI : public IHapiSpritesInputListener
 {
 	struct TargetArea
@@ -45,7 +44,7 @@ class BattleUI : public IHapiSpritesInputListener
 		std::pair<int, int> m_position;
 	};
 
-	class DeploymentPhaseVisuals
+	class DeploymentPhase
 	{
 		struct CurrentSelectedEntity
 		{
@@ -58,20 +57,25 @@ class BattleUI : public IHapiSpritesInputListener
 			std::pair<int, int> m_position;
 		};
 	public:
-		DeploymentPhaseVisuals();
+		DeploymentPhase(std::vector<EntityProperties*> player,
+			std::pair<int, int> spawnPosition, int range, const Map& map, FactionName factionName);
 
+		std::pair<int, int> getSpawnPosition() const;
+
+		bool isCompleted() const;
 		void render(const InvalidPosition& invalidPosition, const Map& map) const;
 		void onReset();
-		void assignPlayer(BattlePlayer& playerToDeploy, const Map& map);
 
 		const Tile* getTileOnMouse(InvalidPosition& invalidPosition, const Tile* currentTileSelected, const Map& map);
 		void onLeftClick(InvalidPosition& invalidPosition, eDirection startingDirection, const Tile* currectTileSelected, Battle& battle);
 
 	private:
-		BattlePlayer* m_playerToDeploy;
+		FactionName m_factionName;
+		std::vector<EntityProperties*> m_player;
 		CurrentSelectedEntity m_currentSelectedEntity;
 		std::vector<const Tile*> m_spawnArea;
 		std::vector<std::unique_ptr<Sprite>> m_spawnSprites;
+		std::pair<int, int> m_spawnPosition;
 	};
 
 	struct CurrentSelectedTile

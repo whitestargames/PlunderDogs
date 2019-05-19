@@ -977,10 +977,12 @@ void BattleUI::DeploymentPhase::render(const InvalidPosition& invalidPosition, c
 
 void BattleUI::DeploymentPhase::onReset()
 {
+	m_player.clear();
 	m_currentSelectedEntity.m_position = std::pair<int, int>(0, 0);
 	m_currentSelectedEntity.m_currentSelectedEntity = nullptr;
 	m_spawnArea.clear();
 	m_spawnSprites.clear();
+	m_spawnPosition = std::pair<int, int>(0, 0);
 }
 
 const Tile* BattleUI::DeploymentPhase::getTileOnMouse(InvalidPosition& invalidPosition, const Tile* currentTileSelected, const Map& map)
@@ -1088,50 +1090,4 @@ void BattleUI::CurrentSelectedTile::render(const Map & map) const
 std::pair<int, int> BattleUI::DeploymentPhase::getSpawnPosition() const
 {
 	return m_spawnPosition;
-}
-
-void BattleUI::DeploymentPhaseVisuals::assignPlayer(BattlePlayer & playerToDeploy, const Map& map)
-{
-	bool playersAllDeployed = true;
-	for (auto& player : m_battle.getAllPlayers())
-	{
-		if (player.m_playerType == PlayerType::eHuman)
-		{
-			playersAllDeployed = player.m_deployed;
-		}
-	}
-	assert(!playersAllDeployed);
-
-	m_playerToDeploy = &playerToDeploy;
-
-	m_spawnArea = map.cGetTileRadius(m_playerToDeploy->m_spawnPosition, 6, true, true);
-	m_spawnSprites.reserve(m_spawnArea.size());
-	for (int i = 0; i < m_spawnArea.size(); ++i)
-	{
-		std::unique_ptr<Sprite> sprite;
-		switch (m_playerToDeploy->m_factionName)
-		{
-		case eYellow:
-			sprite = HAPI_Sprites.MakeSprite(Textures::m_yellowSpawnHex);
-			break;
-		case eBlue:
-			sprite = HAPI_Sprites.MakeSprite(Textures::m_blueSpawnHex);
-			break;
-		case eGreen:
-			sprite = HAPI_Sprites.MakeSprite(Textures::m_greenSpawnHex);
-			break;
-		case eRed:
-			sprite = HAPI_Sprites.MakeSprite(Textures::m_redSpawnHex);
-			break;
-		};
-
-		auto screenPosition = map.getTileScreenPos(m_spawnArea[i]->m_tileCoordinate);
-		sprite->GetTransformComp().SetPosition({
-			(float)screenPosition.first + DRAW_ENTITY_OFFSET_X * map.getDrawScale(),
-			(float)screenPosition.second + DRAW_ENTITY_OFFSET_Y * map.getDrawScale() });
-		sprite->GetTransformComp().SetOriginToCentreOfFrame();
-		sprite->GetTransformComp().SetScaling({ 2.f, 2.f });
-
-		m_spawnSprites.push_back(std::move(sprite));
-	}
 }
