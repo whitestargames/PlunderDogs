@@ -152,7 +152,7 @@ void OverWorldGUI::setLeftPlayerSelectionTrig(bool trigger)
 	leftPlayerSelectionTrig = trigger;
 }
 
-void OverWorldGUI::render(Battle& battle)
+void OverWorldGUI::render(const Battle& battle) const
 {
 	SCREEN_SURFACE->Clear();
 
@@ -208,17 +208,14 @@ void OverWorldGUI::render(Battle& battle)
 		}
 		case OverWorldWindow::eLevelSelection:
 		{
-
-			//HAPI_Wrapper::render(m_battleMapBackground);
-			HAPI_Wrapper::render(m_background);
-			//HAPI_Wrapper::render(m_enemyTerritoryHexSheet);
-			HAPI_Wrapper::render(m_battleMapBackground);
-			HAPI_Wrapper::render(m_backButton);
-			HAPI_Wrapper::render(m_selectMapButtons1);
-			HAPI_Wrapper::render(m_selectMapButtons2);
-			HAPI_Wrapper::render(m_selectMapButtons3);
-			HAPI_Wrapper::render(m_selectMapButtons4);
-			HAPI_Wrapper::render(m_selectMapButtons5);
+			m_background->Render(SCREEN_SURFACE);
+			m_battleMapBackground->Render(SCREEN_SURFACE);
+			m_backButton->Render(SCREEN_SURFACE);
+			m_selectMapButtons1->Render(SCREEN_SURFACE);
+			m_selectMapButtons2->Render(SCREEN_SURFACE);
+			m_selectMapButtons3->Render(SCREEN_SURFACE);
+			m_selectMapButtons4->Render(SCREEN_SURFACE);
+			m_selectMapButtons5->Render(SCREEN_SURFACE);
 
 			break;
 		}

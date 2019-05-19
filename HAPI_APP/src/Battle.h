@@ -72,7 +72,7 @@ public:
 	const BattlePlayer& getPlayer(FactionName name) const;
 	bool isAIPlaying() const;
 
-	void start(const std::string& newMapName, std::vector<Player>& newPlayers);
+	void start(const std::string& newMapName, const std::vector<Player>& newPlayers);
 	void render() const;
 	void update(float deltaTime);
 	void moveEntityToPosition(BattleEntity& entity, const Tile& destination);

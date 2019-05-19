@@ -15,6 +15,6 @@ namespace AI
 {
 	void handleMovementPhase(const Battle& battle, Map& map, BattlePlayer& player, int currentUnit);
 	void handleShootingPhase(Battle& battle, const Map& map, BattlePlayer& player, int currentUnit);
-	void handleDeploymentPhase(Battle& battle, Map& map, BattlePlayer& bPlayer, Player& player);
+	void handleDeploymentPhase(Battle& battle, Map& map, BattlePlayer& bPlayer, const Player& player);
 	void handleShipSelection(std::vector<EntityProperties>& shipPool, std::vector<EntityProperties*>& selectedShips);
 };

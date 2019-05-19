@@ -246,7 +246,7 @@ Battle::~Battle()
 	GameEventMessenger::getInstance().unsubscribe("Battle", GameEvent::eEndAttackPhaseEarly);
 }
 
-void Battle::start(const std::string & newMapName, std::vector<Player>& newPlayers)
+void Battle::start(const std::string & newMapName, const std::vector<Player>& newPlayers)
 {
 	assert(!newPlayers.empty());
 	assert(m_players.empty());
@@ -265,9 +265,6 @@ void Battle::start(const std::string & newMapName, std::vector<Player>& newPlaye
 	for (auto& player : newPlayers)
 	{
 		auto spawnPosition = m_map.getSpawnPosition();
-		std::cout << spawnPosition.first << "\n";
-		std::cout << spawnPosition.second << "\n";
-		std::cout << "\n";
 		m_players.emplace_back(player.m_factionName, spawnPosition, player.m_type);
 	}
 	//Cycle through human players
