@@ -12,58 +12,6 @@ enum class BattlePhase
 	Attack
 };
 
-class DeploymentPhase
-{
-	struct CurrentSelectedEntity
-	{
-		CurrentSelectedEntity()
-			: m_currentSelectedEntity(nullptr),
-			m_position()
-		{}
-
-		EntityProperties* m_currentSelectedEntity;
-		std::pair<int, int> m_position;
-	};
-public:
-	DeploymentPhase(FactionName factionName);
-
-	std::pair<int, int> getSpawnPosition() const;
-
-	bool isCompleted() const;
-	void render(const InvalidPosition& invalidPosition, const Map& map) const;
-	void onReset();
-
-	const Tile* getTileOnMouse(InvalidPosition& invalidPosition, const Tile* currentTileSelected, const Map& map);
-	void onLeftClick(InvalidPosition& invalidPosition, eDirection startingDirection, const Tile* currectTileSelected, Battle& battle);
-
-private:
-	FactionName m_factionName;
-	std::vector<EntityProperties*> m_player;
-	CurrentSelectedEntity m_currentSelectedEntity;
-	std::vector<const Tile*> m_spawnArea;
-	std::vector<std::unique_ptr<Sprite>> m_spawnSprites;
-	std::pair<int, int> m_spawnPosition;
-};
-
-class InvalidPosition;
-struct BattlePlayer
-{
-	BattlePlayer(FactionName name, std::pair<int, int> spawnPosition, ePlayerType playerType, const Map& map);
-
-	std::vector<std::shared_ptr<BattleEntity>> m_entities;
-	const FactionName m_factionName;
-	const ePlayerType m_playerType;
-	const std::pair<int, int> m_spawnPosition;
-	bool m_eliminated;
-	//Deployment
-	void render(const InvalidPosition& invalidPosition, const Map& map);
-	int m_currentSelectedEntity;
-	bool m_deployed;
-	std::vector<const Tile*> m_spawnArea;
-	std::vector<std::unique_ptr<Sprite>> m_spawnSprites;
-};
-
-class Player;
 class Battle
 {
 	struct LightIntensity
@@ -92,11 +40,11 @@ class Battle
 		void orient(eDirection direction);
 	};
 
-	class FactionWinHandler
+	class BattleManager
 	{
 	public:
-		FactionWinHandler();
-		~FactionWinHandler();
+		BattleManager();
+		~BattleManager();
 	
 		bool isGameOver() const;
 
@@ -153,7 +101,7 @@ private:
 	Map m_map;
 	BattlePhase m_currentPhase;
 	BattleUI m_battleUI;
-	FactionWinHandler m_factionWinHandler;
+	BattleManager m_battleManager;
 	std::vector<Particle> m_explosionParticles;
 	std::vector<Particle> m_fireParticles;
 	Timer m_timeUntilAITurn;
@@ -162,7 +110,6 @@ private:
 	bool m_AITurn;
 	LightIntensity m_lightIntensity;
 	
-	void updateDeploymentPhase();
 	void updateMovementPhase(float deltaTime);
 	void updateAttackPhase();
 
@@ -184,5 +131,4 @@ private:
 	void onRedShipDestroyed();
 	void onEndMovementPhaseEarly();
 	void onEndAttackPhaseEarly();
-	std::vector<DeploymentPhase> m_playersToDeploy;
 };
