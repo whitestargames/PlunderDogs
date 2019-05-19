@@ -77,11 +77,8 @@ void AI::handleShootingPhase(Battle& battle, const Map& map, BattlePlayer& playe
 	//}
 }
 
-void AI::handleDeploymentPhase(Battle& battle, Map& map, BattlePlayer& bPlayer, Player& player)
+void AI::handleDeploymentPhase(Battle& battle, Map& map, BattlePlayer& bPlayer, const Player& player)
 {
-
-
-
 	std::vector<Tile*> spawnArea{ map.getTileRadius(bPlayer.m_spawnPosition,3,true,true) };
 	assert(spawnArea.size() > 6);
 	int location = static_cast<int>(std::rand() % (spawnArea.size() - 6));
@@ -358,7 +355,7 @@ void attemptMove(Map& map, std::shared_ptr<BattleEntity> currentShip, std::pair<
 	auto availableTiles = BFS::findArea(
 		map,
 		posi(currentShip->m_battleProperties.getCurrentPosition(), currentShip->m_battleProperties.getCurrentDirection()),
-		currentShip->m_entityProperties.m_movementPoints);
+		static_cast<float>(currentShip->m_entityProperties.m_movementPoints));
 	//Loop to find the closest tile to the target tile
 	std::pair<int, int> targetPos = targetTile.first->m_tileCoordinate;
 	std::pair<int, int> currentPos = currentShip->m_battleProperties.getCurrentPosition();

@@ -123,7 +123,7 @@ struct posi
 	{
 		int diff = std::abs(static_cast<int>(this->dir) - static_cast<int>(compare.dir));
 		if (diff != 0)
-			(static_cast<int>(eDirection::Max) % diff) + 1;
+			diff = (static_cast<int>(eDirection::Max) % diff) + 1;
 		return diff;
 	}
 	//Comparison operators
