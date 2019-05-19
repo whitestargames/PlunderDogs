@@ -247,7 +247,6 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 						m_shipDeployment.pop_front();
 						if (!m_shipDeployment.empty())
 						{
-							//TODO:: Snap to new screen position
 							m_selectedTile.m_tile = nullptr;
 							m_invalidPosition.m_activate = true;
 							m_gui.snapCameraToPosition(m_shipDeployment.front()->getSpawnPosition());
@@ -272,7 +271,6 @@ void BattleUI::OnMouseEvent(EMouseEvent mouseEvent, const HAPI_TMouseData & mous
 						m_shipDeployment.pop_front();
 						if (!m_shipDeployment.empty())
 						{
-							//TODO: Snap to new screen position
 							m_selectedTile.m_tile = nullptr;
 							m_gui.snapCameraToPosition(m_shipDeployment.front()->getSpawnPosition());
 						}
@@ -447,8 +445,7 @@ void BattleUI::onLeftClickMovementPhase()
 		if (!m_battle.isAIPlaying())
 		{
 			m_selectedTile.m_tile->m_entityOnTile->m_battleProperties.clearMovementPath();
-			//TODO: remove TEMP
-			m_targetArea.generateTargetArea(m_battle.getMap(), *tileOnMouse, m_battle.getCurrentPhase());
+			//TODO: Trigger movement area showing
 		}
 		return;
 	}
@@ -789,20 +786,8 @@ void BattleUI::TargetArea::render(const Map& map) const
 
 void BattleUI::TargetArea::generateTargetArea(const Map & map, const Tile & source, BattlePhase phase)
 {
-	//TODO: REMOVE TEMP!
-	if (phase == BattlePhase::Movement)
-	{
-		m_targetArea.clear();
-		float movement = static_cast<float>(source.m_entityOnTile->m_entityProperties.m_movementPoints);
-		auto tempArea = source.m_entityOnTile->m_battleProperties.generateMovementArea(map, movement);
-		m_targetArea.reserve(tempArea.size());
-		for (auto it : tempArea)
-		{
-			m_targetArea.emplace_back(map.getTile(it.pair()));
-		}
-	}
 	//TODO: Why isn't this a switch case?
-	else if (source.m_entityOnTile->m_entityProperties.m_weaponType == eSideCannons)
+	if (source.m_entityOnTile->m_entityProperties.m_weaponType == eSideCannons)
 	{
 		m_targetArea = map.cGetTileCone(source.m_tileCoordinate,
 			source.m_entityOnTile->m_entityProperties.m_range, 
@@ -892,11 +877,11 @@ void BattleUI::TargetArea::onReset()
 }
 
 BattleUI::TargetArea::HighlightNode::HighlightNode()
-	: sprite(std::make_unique<Sprite>(Textures::m_selectedHex)),//TODO: replace with what it was previously using: Textures::m_mouseCrossHair
+	: sprite(std::make_unique<Sprite>(Textures::m_mouseCrossHair)),
 	activate(false)
 {
 	sprite->GetTransformComp().SetOriginToCentreOfFrame();
-	sprite->GetTransformComp().SetScaling({ 1.50f, 1.50f});//Was { 0.75f, 0.75f}
+	sprite->GetTransformComp().SetScaling({ 0.75f, 0.75f });
 }
 
 BattleUI::DeploymentPhase::DeploymentPhase(std::vector<EntityProperties*> player, 

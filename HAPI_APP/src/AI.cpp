@@ -380,7 +380,7 @@ void attemptMove(Map& map, std::shared_ptr<BattleEntity> currentShip, std::pair<
 	if (bestTile != posi(-1, -1, eNorth))
 	{
 		currentShip->m_battleProperties.generateMovementGraph(map, *map.getTile(currentPos), *map.getTile(bestTile.pair()));
-		currentShip->m_battleProperties.moveEntity();//TODO: Fix this
+		currentShip->m_battleProperties.moveEntity(map, *map.getTile(bestTile.pair()), targetTile.second);
 	}
 	currentShip->m_battleProperties.setDestination();
 }
