@@ -20,28 +20,6 @@ enum eDirection
 	Max = eNorthWest
 };
 
-struct posi
-{
-	int x;
-	int y;
-	eDirection dir;
-
-	posi(int numX = 0, int numY = 0, eDirection direction = eNorth) : x(numX), y(numY), dir(direction) {}
-	posi(std::pair<int, int> pair, eDirection direction = eNorth) : x(pair.first), y(pair.second), dir(direction) {}
-
-	std::pair<int, int> pair() { return { x, y }; }
-
-	inline bool operator==(const posi& rhs) const 
-	{
-		bool ans{ false };
-		posi lhs = *this;
-		if (lhs.x == rhs.x && lhs.y == rhs.y && lhs.dir == rhs.dir)
-			ans = true;
-		return ans;
-	}
-	inline bool operator!=(const posi& rhs) const { return !(*this == rhs); }
-};
-
 enum OverWorldWindow
 {
 	eBattle = 0,
@@ -129,4 +107,45 @@ enum eLightIntensity
 	//eHigh,
 	//eLow,
 	eMinimum
+};
+
+struct posi
+{
+	int x;
+	int y;
+	eDirection dir;
+
+	posi(int numX = 0, int numY = 0, eDirection direction = eNorth) : x(numX), y(numY), dir(direction) {}
+	posi(std::pair<int, int> pair, eDirection direction = eNorth) : x(pair.first), y(pair.second), dir(direction) {}
+
+	std::pair<int, int> pair() { return { x, y }; }
+	int dirDiff(const posi& compare)
+	{
+		int diff = std::abs(static_cast<int>(this->dir) - static_cast<int>(compare.dir));
+		if (diff != 0)
+			(static_cast<int>(eDirection::Max) % diff) + 1;
+		return diff;
+	}
+	//Comparison operators
+	inline bool operator==(const posi& rhs) const
+	{
+		bool ans{ false };
+		posi lhs = *this;
+		if (lhs.x == rhs.x && lhs.y == rhs.y && lhs.dir == rhs.dir)
+			ans = true;
+		return ans;
+	}
+	inline bool operator!=(const posi& rhs) const { return !(*this == rhs); }
+	//Assignment operators
+	inline void operator+=(const posi& rhs) { this->x += rhs.x; this->y += rhs.y; }
+	inline void operator-=(const posi& rhs) { this->x -= rhs.x; this->y -= rhs.y; }
+	inline void operator*=(const posi& rhs) { this->x *= rhs.x; this->y *= rhs.y; }
+	inline void operator/=(const posi& rhs) { this->x /= rhs.x; this->y /= rhs.y; }
+	inline void operator%=(const posi& rhs) { this->x %= rhs.x; this->y %= rhs.y; }
+	//Maths operators
+	inline posi& operator+(const posi& rhs) const { return posi(this->x + rhs.x, this->y + rhs.y, this->dir); }
+	inline posi& operator-(const posi& rhs) const { return posi(this->x - rhs.x, this->y - rhs.y, this->dir); }
+	inline posi& operator*(const posi& rhs) const { return posi(this->x * rhs.x, this->y * rhs.y, this->dir); }
+	inline posi& operator/(const posi& rhs) const { return posi(this->x / rhs.x, this->y / rhs.y, this->dir); }
+	inline posi& operator%(const posi& rhs) const { return posi(this->x % rhs.x, this->y % rhs.y, this->dir); }
 };
