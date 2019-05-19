@@ -341,7 +341,7 @@ void AI::handleShootingPhase(Battle& battle, const Map& map, BattlePlayer& playe
 	//}
 }
 
-void AI::handleDeploymentPhase(Battle& battle, Map& map, BattlePlayer& bPlayer, Player& player)
+void AI::handleDeploymentPhase(Battle& battle, Map& map, BattlePlayer& bPlayer, const Player& player)
 {
 
 
